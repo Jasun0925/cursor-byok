@@ -1,0 +1,126 @@
+{
+  "bundlePath": "/Applications/Cursor.app/Contents/Resources/app/out/vs/workbench/workbench.desktop.main.js",
+  "bundleSha256": "65885d20e0beabb64748b99460e68fec1574bbf3f9932a9fcdabaafa06599955",
+  "executorPath": "/Applications/Cursor.app/Contents/Resources/app/extensions/cursor-agent-exec/dist/main.js",
+  "executorSha256": "ecd612407715bdf444615d1e4350e5eaae3285a3aeddb83583cf69f8a7a44ed5",
+  "scope": "Unmodified extracted Cursor methods, mocked service/filesystem dependencies and manual 5000ms timers; no live Cursor UI/RPC or disk edits.",
+  "result": "12 assertions scenarios passed",
+  "results": [
+    {
+      "scenario": "bubble exists before callback",
+      "originals": 1,
+      "checkpoints": 1,
+      "diffs": 1,
+      "queued": 0,
+      "timers": 0
+    },
+    {
+      "scenario": "new file",
+      "originals": 1,
+      "checkpoints": 1,
+      "diffs": 1,
+      "queued": 0,
+      "timers": 0
+    },
+    {
+      "scenario": "bubble arrives before 5000ms timeout",
+      "originals": 1,
+      "checkpoints": 1,
+      "diffs": 1,
+      "queued": 0,
+      "timers": 0
+    },
+    {
+      "scenario": "bubble arrives after timeout: registration permanently lost",
+      "originals": 0,
+      "checkpoints": 0,
+      "diffs": 0,
+      "queued": 0,
+      "timers": 0
+    },
+    {
+      "scenario": "same toolCallId in unrelated composer: immediate drain drops change",
+      "originals": 0,
+      "checkpoints": 0,
+      "diffs": 0,
+      "queued": 0,
+      "timers": 0
+    },
+    {
+      "scenario": "missing toolCallId: explicit error",
+      "originals": 0,
+      "checkpoints": 0,
+      "diffs": 0,
+      "queued": 0,
+      "timers": 0
+    },
+    {
+      "scenario": "checkpoint storage error stops inline diff registration",
+      "originals": 1,
+      "checkpoints": 0,
+      "diffs": 0,
+      "queued": 0,
+      "timers": 0
+    },
+    {
+      "scenario": "no earlier bubble checkpoint: native checkpoint update silently skips",
+      "checkpointWrites": 0
+    },
+    {
+      "scenario": "native writer and callback with existing bubble",
+      "write": {
+        "result": "success",
+        "content": "new\n",
+        "callbacks": 1
+      },
+      "originals": 1,
+      "checkpoints": 1,
+      "diffs": 1,
+      "queued": 0,
+      "timers": 0
+    },
+    {
+      "scenario": "native writer returns success but callback later expires",
+      "write": {
+        "result": "success",
+        "content": "new\n",
+        "callbacks": 1
+      },
+      "originals": 0,
+      "checkpoints": 0,
+      "diffs": 0,
+      "queued": 0,
+      "timers": 0
+    },
+    {
+      "scenario": "native binary write skips callback",
+      "write": {
+        "result": "success",
+        "content": "new\n",
+        "callbacks": 0
+      },
+      "originals": 0,
+      "checkpoints": 0,
+      "diffs": 0,
+      "queued": 0,
+      "timers": 0
+    },
+    {
+      "scenario": "native existing file above 50MiB skips callback",
+      "write": {
+        "result": "success",
+        "content": "new\n",
+        "callbacks": 0
+      },
+      "originals": 0,
+      "checkpoints": 0,
+      "diffs": 0,
+      "queued": 0,
+      "timers": 0
+    }
+  ],
+  "date": "2026-10-10",
+  "cursor_version": "3.24.9",
+  "base_commit": "2e2193ad0820238b8939c2637d89c3ff7598f9f8",
+  "root_cause_confirmed_for_user_incident": false
+}

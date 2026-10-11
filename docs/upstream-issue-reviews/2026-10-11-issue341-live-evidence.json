@@ -1,0 +1,315 @@
+{
+  "capturedAt": "2026-10-11T08:47:59.325864+00:00",
+  "phase": "edit_completed_before_user_rollback",
+  "composerId": "056c23d3-7202-4329-abf8-b58a0531ccc4",
+  "workspace": "/private/tmp/cursor-byok-issue341-20261011/workspace",
+  "disk": {
+    "path": "/private/tmp/cursor-byok-issue341-20261011/workspace/rollback-probe.txt",
+    "content": "ISSUE341_BASELINE\nvalue=2\n",
+    "sha256": "34d5692dc6d9a89795773f90c763f93ef10300f487a5a4da981d7c58789bcde4"
+  },
+  "originalFileStates": {
+    "file:///private/tmp/cursor-byok-issue341-20261011/workspace/rollback-probe.txt": {
+      "firstEditBubbleId": "8d3ec54f-1b8f-4d7f-a1da-8ce9989727e7",
+      "isNewlyCreated": false,
+      "newlyCreatedFolders": [],
+      "contentKey": "ofsContent:056c23d3-7202-4329-abf8-b58a0531ccc4:file:///private/tmp/cursor-byok-issue341-20261011/workspace/rollback-probe.txt"
+    }
+  },
+  "originalContents": {
+    "file:///private/tmp/cursor-byok-issue341-20261011/workspace/rollback-probe.txt": "ISSUE341_BASELINE\nvalue=1\n"
+  },
+  "bubbles": [
+    {
+      "bubbleId": "a5083111-98ae-4787-ac2e-9219057b2950",
+      "type": 1,
+      "checkpointId": "86901f7c-08b1-4a0f-9ae5-aae20ed77a7e"
+    },
+    {
+      "bubbleId": "7c6797ca-2845-4856-ab61-285072d86c39",
+      "type": 2,
+      "startedAtMs": 1791708211928,
+      "completedAtMs": 1791708212273,
+      "toolFormerData": {
+        "toolCallId": "call_af6c7746d7374fe0b2ea8ddb0fddbcf1",
+        "toolIndex": 0,
+        "modelCallId": "call_af6c7746d7374fe0b2ea8ddb0fddbcf1",
+        "status": "completed",
+        "name": "read_file_v2",
+        "rawArgs": "{\"path\":\"/private/tmp/cursor-byok-issue341-20261011/workspace/rollback-probe.txt\"}",
+        "tool": 40,
+        "params": "{\"targetFile\":\"/private/tmp/cursor-byok-issue341-20261011/workspace/rollback-probe.txt\",\"charsLimit\":1000000,\"effectiveUri\":\"/private/tmp/cursor-byok-issue341-20261011/workspace/rollback-probe.txt\"}",
+        "result": "{\"totalLinesInFile\":3}",
+        "toolCallBinary": "Qp4BCkkKRy9wcml2YXRlL3RtcC9jdXJzb3ItYnlvay1pc3N1ZTM0MS0yMDI2MTAxMS93b3Jrc3BhY2Uvcm9sbGJhY2stcHJvYmUudHh0ElEKTwoAIAMoGjpHL3ByaXZhdGUvdG1wL2N1cnNvci1ieW9rLWlzc3VlMzQxLTIwMjYxMDExL3dvcmtzcGFjZS9yb2xsYmFjay1wcm9iZS50eHTKAyVjYWxsX2FmNmM3NzQ2ZDczNzRmZTBiMmVhOGRkYjBmZGRiY2Yx2APY1YbRkjTgA7HYhtGSNA=="
+      }
+    },
+    {
+      "bubbleId": "8d3ec54f-1b8f-4d7f-a1da-8ce9989727e7",
+      "type": 2,
+      "startedAtMs": 1791708220160,
+      "completedAtMs": 1791708220237,
+      "toolFormerData": {
+        "tool": 38,
+        "toolIndex": 0,
+        "modelCallId": "",
+        "toolCallId": "call_Ibk8UuvpgEApjMozyPtORvhx",
+        "status": "completed",
+        "name": "edit_file_v2",
+        "params": "{\"relativeWorkspacePath\":\"/private/tmp/cursor-byok-issue341-20261011/workspace/rollback-probe.txt\",\"noCodeblock\":true,\"cloudAgentEdit\":false}",
+        "result": "{}",
+        "additionalData": {
+          "precomputedDiff": {
+            "lines": [
+              {
+                "type": "unchanged",
+                "content": "ISSUE341_BASELINE",
+                "originalLineNumber": 1,
+                "modifiedLineNumber": 1
+              },
+              {
+                "type": "removed",
+                "content": "value=1",
+                "originalLineNumber": 2
+              },
+              {
+                "type": "added",
+                "content": "value=2",
+                "modifiedLineNumber": 2
+              },
+              {
+                "type": "unchanged",
+                "content": "",
+                "originalLineNumber": 3,
+                "modifiedLineNumber": 3
+              }
+            ],
+            "hasChanges": true
+          }
+        },
+        "toolCallBinary": "YpwBCkkKRy9wcml2YXRlL3RtcC9jdXJzb3ItYnlvay1pc3N1ZTM0MS0yMDI2MTAxMS93b3Jrc3BhY2Uvcm9sbGJhY2stcHJvYmUudHh0Ek8KTQpHL3ByaXZhdGUvdG1wL2N1cnNvci1ieW9rLWlzc3VlMzQxLTIwMjYxMDExL3dvcmtzcGFjZS9yb2xsYmFjay1wcm9iZS50eHQYASABygMdY2FsbF9JYms4VXV2cGdFQXBqTW96eVB0T1J2aHjYA4CWh9GSNOADzZaH0ZI0"
+      }
+    },
+    {
+      "bubbleId": "423d5a11-1a0f-4f6f-b18f-aa63f5e19d55",
+      "type": 2
+    }
+  ],
+  "conversationStateSerialized": "~CiAlslVzyZxv2Z+8bgDxbQ2ji5fc/uLsgP9K1mhBAhtr5Aogvz0crjSBDXLUijo5+vTWiRdU7gJeSbgbHZzkhe7KmtIKII1I+24sUzzkcB2Mxnrb1kmKy/rFipah5e3x6vtIt3MTCiB5VKJpq+A2Q661wExVe5p4sJB+Z+Cc6JMubfzW1J9OUgogGUov5SXlHJqOtYr+yL78RGi89uzs4c51Qqhcz/MmvXQKIAFO1ApF1cAzkwmMJ1FPaKTUk+Ytvou8Xmd/gVCDkRvqCiCXZXbPDlrQendL3CWUKs7ta9I+plcmxZWGuWN56DMIgwogs5RleSpKHhNj4yrM/JkzenGllbGM8rFSY5mGeN3EXDsqCAi1jQEQwJoMQiBJ59ZcpzIeUIeJreCS3T+br2l9WIFOgGL6xmdScgimalABkgFHL3ByaXZhdGUvdG1wL2N1cnNvci1ieW9rLWlzc3VlMzQxLTIwMjYxMDExL3dvcmtzcGFjZS9yb2xsYmFjay1wcm9iZS50eHQ=",
+  "ui": {
+    "sourceScreenshot": "/var/folders/94/7x3w4znd6fl1k54t41jbw46m0000gn/T/codex-clipboard-953fa021-4992-46eb-bf58-76ca90d67ca5.png",
+    "displayedChangedFiles": 1,
+    "displayedDiff": "+1 -1",
+    "reviewButtonVisible": true
+  },
+  "undoResult": {
+    "status": "passed",
+    "checkedAt": "2026-10-11T08:53:12.216303+00:00",
+    "userAction": "Clicked file changes Undo as instructed; user reports value returned to 1.",
+    "diskContent": "ISSUE341_BASELINE\nvalue=1\n",
+    "diskSha256": "e23b9a601089ca7747298b60e86725fc7391981facafefc25e6d9eb938b27b9c",
+    "filesChangedCountAfterUndo": 0,
+    "boundary": "Single existing text file, one StrReplace edit, one user-operated Undo. Restore Checkpoint and multi-turn cases remain unverified."
+  },
+  "restoreCheckpointResult": {
+    "status": "user_reported_passed_initial_disk_baseline_confirmed",
+    "checkedAt": "2026-10-11T09:01:08.261596+00:00",
+    "userReport": "User explicitly reports Restore Checkpoint was also tested and worked.",
+    "composerId": "056c23d3-7202-4329-abf8-b58a0531ccc4",
+    "sameConversationAsUndoTest": true,
+    "path": "/private/tmp/cursor-byok-issue341-20261011/workspace/checkpoint-probe.txt",
+    "originalFileState": {
+      "firstEditBubbleId": "58b41384-87ca-4514-b1cf-828398f6e6c9",
+      "isNewlyCreated": false,
+      "newlyCreatedFolders": [],
+      "contentKey": "ofsContent:056c23d3-7202-4329-abf8-b58a0531ccc4:file:///private/tmp/cursor-byok-issue341-20261011/workspace/checkpoint-probe.txt"
+    },
+    "originalContent": "ISSUE341_CHECKPOINT_BASELINE\nvalue=1\n",
+    "bubbles": [
+      {
+        "bubbleId": "412fc800-c682-4351-ba32-ff5a33424799",
+        "type": 1,
+        "checkpointId": "2a27662f-67e9-4636-8b46-8bce8a8fc01a"
+      },
+      {
+        "bubbleId": "1948b0ce-967b-4922-b3c7-4a78a18df909",
+        "type": 2,
+        "startedAtMs": 1791709183954,
+        "completedAtMs": 1791709183975,
+        "toolFormerData": {
+          "toolCallId": "call_5370325a05df4e529a693b7e7cc074f4",
+          "toolIndex": 0,
+          "modelCallId": "call_5370325a05df4e529a693b7e7cc074f4",
+          "status": "completed",
+          "name": "read_file_v2",
+          "rawArgs": "{\"path\":\"/private/tmp/cursor-byok-issue341-20261011/workspace/checkpoint-probe.txt\"}",
+          "tool": 40,
+          "params": "{\"targetFile\":\"/private/tmp/cursor-byok-issue341-20261011/workspace/checkpoint-probe.txt\",\"charsLimit\":1000000,\"effectiveUri\":\"/private/tmp/cursor-byok-issue341-20261011/workspace/checkpoint-probe.txt\"}",
+          "result": "{\"totalLinesInFile\":3}",
+          "toolCallBinary": "QqIBCksKSS9wcml2YXRlL3RtcC9jdXJzb3ItYnlvay1pc3N1ZTM0MS0yMDI2MTAxMS93b3Jrc3BhY2UvY2hlY2twb2ludC1wcm9iZS50eHQSUwpRCgAgAyglOkkvcHJpdmF0ZS90bXAvY3Vyc29yLWJ5b2staXNzdWUzNDEtMjAyNjEwMTEvd29ya3NwYWNlL2NoZWNrcG9pbnQtcHJvYmUudHh0ygMlY2FsbF81MzcwMzI1YTA1ZGY0ZTUyOWE2OTNiN2U3Y2MwNzRmNNgD0v/B0ZI04APn/8HRkjQ="
+        }
+      },
+      {
+        "bubbleId": "58b41384-87ca-4514-b1cf-828398f6e6c9",
+        "type": 2,
+        "startedAtMs": 1791709189540,
+        "completedAtMs": 1791709189575,
+        "toolFormerData": {
+          "tool": 38,
+          "toolIndex": 0,
+          "modelCallId": "",
+          "toolCallId": "call_c5b284e74aa34dc8a0a854c024a75f5a",
+          "status": "completed",
+          "name": "edit_file_v2",
+          "params": "{\"relativeWorkspacePath\":\"/private/tmp/cursor-byok-issue341-20261011/workspace/checkpoint-probe.txt\",\"noCodeblock\":true,\"cloudAgentEdit\":false}",
+          "result": "{}",
+          "additionalData": {
+            "precomputedDiff": {
+              "lines": [
+                {
+                  "type": "unchanged",
+                  "content": "ISSUE341_CHECKPOINT_BASELINE",
+                  "originalLineNumber": 1,
+                  "modifiedLineNumber": 1
+                },
+                {
+                  "type": "removed",
+                  "content": "value=1",
+                  "originalLineNumber": 2
+                },
+                {
+                  "type": "added",
+                  "content": "value=4",
+                  "modifiedLineNumber": 2
+                },
+                {
+                  "type": "unchanged",
+                  "content": "",
+                  "originalLineNumber": 3,
+                  "modifiedLineNumber": 3
+                }
+              ],
+              "hasChanges": true
+            }
+          },
+          "toolCallBinary": "YqABCksKSS9wcml2YXRlL3RtcC9jdXJzb3ItYnlvay1pc3N1ZTM0MS0yMDI2MTAxMS93b3Jrc3BhY2UvY2hlY2twb2ludC1wcm9iZS50eHQSUQpPCkkvcHJpdmF0ZS90bXAvY3Vyc29yLWJ5b2staXNzdWUzNDEtMjAyNjEwMTEvd29ya3NwYWNlL2NoZWNrcG9pbnQtcHJvYmUudHh0GAEgAcoDJWNhbGxfYzViMjg0ZTc0YWEzNGRjOGEwYTg1NGMwMjRhNzVmNWHYA6SrwtGSNOADx6vC0ZI0"
+        }
+      },
+      {
+        "bubbleId": "8f5a3b9b-8a9d-492f-8781-ab6740f7a624",
+        "type": 2
+      }
+    ],
+    "byokCalls": [
+      {
+        "call_id": "bc0cea4c-8aa8-449b-b3c6-7dda40cc7407:293d986f:0",
+        "run_id": "bc0cea4c-8aa8-449b-b3c6-7dda40cc7407:293d986f",
+        "conversation_id": "056c23d3-7202-4329-abf8-b58a0531ccc4",
+        "provider_type": "openai-chat",
+        "model_id": "gpt-6-astra",
+        "status": "completed",
+        "created_at_ms": 1791709072617,
+        "finished_at_ms": 1791709076879
+      },
+      {
+        "call_id": "bc0cea4c-8aa8-449b-b3c6-7dda40cc7407:293d986f:1",
+        "run_id": "bc0cea4c-8aa8-449b-b3c6-7dda40cc7407:293d986f",
+        "conversation_id": "056c23d3-7202-4329-abf8-b58a0531ccc4",
+        "provider_type": "openai-chat",
+        "model_id": "gpt-6-astra",
+        "status": "completed",
+        "created_at_ms": 1791709077389,
+        "finished_at_ms": 1791709084514
+      },
+      {
+        "call_id": "bc0cea4c-8aa8-449b-b3c6-7dda40cc7407:293d986f:2",
+        "run_id": "bc0cea4c-8aa8-449b-b3c6-7dda40cc7407:293d986f",
+        "conversation_id": "056c23d3-7202-4329-abf8-b58a0531ccc4",
+        "provider_type": "openai-chat",
+        "model_id": "gpt-6-astra",
+        "status": "completed",
+        "created_at_ms": 1791709084700,
+        "finished_at_ms": 1791709091682
+      },
+      {
+        "call_id": "085e464e-30ee-4f71-8f97-12d37a75d049:67f74c84:0",
+        "run_id": "085e464e-30ee-4f71-8f97-12d37a75d049:67f74c84",
+        "conversation_id": "056c23d3-7202-4329-abf8-b58a0531ccc4",
+        "provider_type": "openai-chat",
+        "model_id": "gpt-6-astra",
+        "status": "completed",
+        "created_at_ms": 1791709178480,
+        "finished_at_ms": 1791709183939
+      },
+      {
+        "call_id": "085e464e-30ee-4f71-8f97-12d37a75d049:67f74c84:1",
+        "run_id": "085e464e-30ee-4f71-8f97-12d37a75d049:67f74c84",
+        "conversation_id": "056c23d3-7202-4329-abf8-b58a0531ccc4",
+        "provider_type": "openai-chat",
+        "model_id": "gpt-6-astra",
+        "status": "completed",
+        "created_at_ms": 1791709184121,
+        "finished_at_ms": 1791709189531
+      },
+      {
+        "call_id": "085e464e-30ee-4f71-8f97-12d37a75d049:67f74c84:2",
+        "run_id": "085e464e-30ee-4f71-8f97-12d37a75d049:67f74c84",
+        "conversation_id": "056c23d3-7202-4329-abf8-b58a0531ccc4",
+        "provider_type": "openai-chat",
+        "model_id": "gpt-6-astra",
+        "status": "completed",
+        "created_at_ms": 1791709189707,
+        "finished_at_ms": 1791709196540
+      }
+    ],
+    "boundary": "User reports Restore Checkpoint succeeded. First read-only check confirmed baseline value=1. A subsequent check observed another edit to value=4 and additional completed BYOK calls. Persisted bubbles captured during that later check may reflect the newer edit rather than the already completed restore test. Second test occurred in the original conversation; exact click sequence was not observed.",
+    "firstDiskObservation": {
+      "content": "ISSUE341_CHECKPOINT_BASELINE\nvalue=1\n",
+      "fileMtimeUnixSeconds": 1791709204.6243958,
+      "source": "First read in this turn, before a subsequent edit was observed."
+    },
+    "subsequentDiskObservation": {
+      "content": "ISSUE341_CHECKPOINT_BASELINE\nvalue=4\n",
+      "sha256": "34472b9904adf73a15eb3e0629195345539cd742542fd8798d025c46e3c96bb8",
+      "checkedAt": "2026-10-11T09:01:08.261596+00:00",
+      "interpretation": "File changed again between two read-only checks; the later value cannot be treated as a failed restore without correlating the additional user operations."
+    }
+  },
+  "limitations": [
+    "UI actions were performed by the user; the assistant did not observe the exact Restore Checkpoint click sequence.",
+    "The first disk check confirmed both files at value=1. An additional edit was observed during later evidence collection; later bubbles may reflect the newer test.",
+    "Complex multi-turn, create/delete, concurrent edits and original failure trigger remain unverified."
+  ],
+  "byokCalls": [
+    {
+      "call_id": "b9514eb2-120c-4d02-94a9-4dad97f30b3e:712685bf:0",
+      "run_id": "b9514eb2-120c-4d02-94a9-4dad97f30b3e:712685bf",
+      "conversation_id": "056c23d3-7202-4329-abf8-b58a0531ccc4",
+      "provider_type": "openai-chat",
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "created_at_ms": 1791708207554,
+      "finished_at_ms": 1791708211917
+    },
+    {
+      "call_id": "b9514eb2-120c-4d02-94a9-4dad97f30b3e:712685bf:1",
+      "run_id": "b9514eb2-120c-4d02-94a9-4dad97f30b3e:712685bf",
+      "conversation_id": "056c23d3-7202-4329-abf8-b58a0531ccc4",
+      "provider_type": "openai-chat",
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "created_at_ms": 1791708212423,
+      "finished_at_ms": 1791708220150
+    },
+    {
+      "call_id": "b9514eb2-120c-4d02-94a9-4dad97f30b3e:712685bf:2",
+      "run_id": "b9514eb2-120c-4d02-94a9-4dad97f30b3e:712685bf",
+      "conversation_id": "056c23d3-7202-4329-abf8-b58a0531ccc4",
+      "provider_type": "openai-chat",
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "created_at_ms": 1791708220386,
+      "finished_at_ms": 1791708225188
+    }
+  ],
+  "currentStatus": "Both rollback entry points passed the user-operated single-edit checks; issue not reproduced in these scenarios. No production fix applied."
+}

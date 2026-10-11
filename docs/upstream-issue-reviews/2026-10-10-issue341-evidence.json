@@ -1,0 +1,50 @@
+{
+  "date": "2026-10-10",
+  "base_commit": "2e2193ad0820238b8939c2637d89c3ff7598f9f8",
+  "cursor_version": "3.24.9",
+  "test": "cargo test -p cursor-server --test issue341_probe -- --nocapture",
+  "result": "2 expected preservation assertions failed",
+  "observations": [
+    {
+      "tool": "Write",
+      "requested_write_correct": true,
+      "before_full_file_content": null,
+      "after_full_file_content_bytes": 0,
+      "diff_present": true,
+      "replay_step_roundtrip": true
+    },
+    {
+      "tool": "StrReplace",
+      "requested_write_correct": true,
+      "before_full_file_content": null,
+      "after_full_file_content_bytes": 0,
+      "diff_present": true,
+      "replay_step_roundtrip": true
+    }
+  ],
+  "ui_rollback_test_performed": false,
+  "production_code_modified": false,
+  "client_files": [
+    {
+      "path": "/Applications/Cursor.app/Contents/Resources/app/out/vs/workbench/workbench.desktop.main.js",
+      "sha256": "65885d20e0beabb64748b99460e68fec1574bbf3f9932a9fcdabaafa06599955"
+    },
+    {
+      "path": "/Applications/Cursor.app/Contents/Resources/app/extensions/cursor-agent-exec/dist/main.js",
+      "sha256": "ecd612407715bdf444615d1e4350e5eaae3285a3aeddb83583cf69f8a7a44ed5"
+    }
+  ],
+  "limits": [
+    "Synthetic client Read/Write responses; no user file edited.",
+    "FileState checkpoint map absence established by source inspection, not full run test.",
+    "Native executor has independent fileChangeTracker and renderer originalFileStates; UI rollback cause remains unproven."
+  ],
+  "user_reported_affected_entries": [
+    "Restore Checkpoint",
+    "Undo/Reject"
+  ],
+  "shared_registration_source": "Native fileChangeTracker -> renderer _handleFileChangeImpl -> checkpoint originals and inline diff handler",
+  "ui_access_error": "ScreenCaptureKit -3811",
+  "targeted_log_search_matches": 0,
+  "root_cause_confirmed": false
+}

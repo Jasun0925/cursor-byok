@@ -1,0 +1,181 @@
+{
+  "bundlePath": "/Applications/Cursor.app/Contents/Resources/app/out/vs/workbench/workbench.desktop.main.js",
+  "cursorVersion": "3.24.12",
+  "bundleSha256": "044ce0931100af5fe95403e9a692b02932bc3e13a6763f576b851f503fefa518",
+  "executorPath": "/Applications/Cursor.app/Contents/Resources/app/extensions/cursor-agent-exec/dist/main.js",
+  "executorSha256": "8cd2bff239f0df51b403ac72271cd1acae141d532b64263537e342144a796790",
+  "scope": "Unmodified extracted Cursor methods, mocked service/filesystem dependencies and manual 5000ms timers; no live Cursor UI/RPC or disk edits.",
+  "result": "16 assertions scenarios passed",
+  "results": [
+    {
+      "scenario": "bubble exists before callback",
+      "originals": 1,
+      "checkpoints": 1,
+      "diffs": 1,
+      "queued": 0,
+      "timers": 0
+    },
+    {
+      "scenario": "new file",
+      "originals": 1,
+      "checkpoints": 1,
+      "diffs": 1,
+      "queued": 0,
+      "timers": 0
+    },
+    {
+      "scenario": "bubble arrives before 5000ms timeout",
+      "originals": 1,
+      "checkpoints": 1,
+      "diffs": 1,
+      "queued": 0,
+      "timers": 0
+    },
+    {
+      "scenario": "bubble arrives after timeout: registration permanently lost",
+      "originals": 0,
+      "checkpoints": 0,
+      "diffs": 0,
+      "queued": 0,
+      "timers": 0
+    },
+    {
+      "scenario": "same toolCallId in unrelated composer: immediate drain drops change",
+      "originals": 0,
+      "checkpoints": 0,
+      "diffs": 0,
+      "queued": 0,
+      "timers": 0
+    },
+    {
+      "scenario": "missing toolCallId: explicit error",
+      "originals": 0,
+      "checkpoints": 0,
+      "diffs": 0,
+      "queued": 0,
+      "timers": 0
+    },
+    {
+      "scenario": "checkpoint storage error stops inline diff registration",
+      "originals": 1,
+      "checkpoints": 0,
+      "diffs": 0,
+      "queued": 0,
+      "timers": 0
+    },
+    {
+      "scenario": "no earlier bubble checkpoint: native checkpoint update silently skips",
+      "checkpointWrites": 0
+    },
+    {
+      "scenario": "native writer and callback with existing bubble",
+      "write": {
+        "result": "success",
+        "content": "new\n",
+        "callbacks": 1
+      },
+      "originals": 1,
+      "checkpoints": 1,
+      "diffs": 1,
+      "queued": 0,
+      "timers": 0
+    },
+    {
+      "scenario": "native writer returns success but callback later expires",
+      "write": {
+        "result": "success",
+        "content": "new\n",
+        "callbacks": 1
+      },
+      "originals": 0,
+      "checkpoints": 0,
+      "diffs": 0,
+      "queued": 0,
+      "timers": 0
+    },
+    {
+      "scenario": "native binary write skips callback",
+      "write": {
+        "result": "success",
+        "content": "new\n",
+        "callbacks": 0
+      },
+      "originals": 0,
+      "checkpoints": 0,
+      "diffs": 0,
+      "queued": 0,
+      "timers": 0
+    },
+    {
+      "scenario": "native existing file above 50MiB skips callback",
+      "write": {
+        "result": "success",
+        "content": "new\n",
+        "callbacks": 0
+      },
+      "originals": 0,
+      "checkpoints": 0,
+      "diffs": 0,
+      "queued": 0,
+      "timers": 0
+    },
+    {
+      "scenario": "native restore consumes registered original and synthetic V0 checkpoint",
+      "restore": {
+        "content": "old\n",
+        "saved": 1
+      }
+    },
+    {
+      "scenario": "native restore after lost registration silently leaves new content",
+      "restore": {
+        "content": "new\n",
+        "saved": 0
+      }
+    },
+    {
+      "scenario": "callback registered but fileStatesV2 empty: All Agent Changes empty",
+      "resources": 0,
+      "originals": 1,
+      "checkpoints": 1,
+      "diffs": 1,
+      "queued": 0,
+      "timers": 0
+    },
+    {
+      "scenario": "same edit with fileStatesV2 populated: All Agent Changes has one file",
+      "resources": 1
+    }
+  ],
+  "date": "2026-10-11",
+  "base_commit": "2e2193ad0820238b8939c2637d89c3ff7598f9f8",
+  "checkpoint_builder_probe": {
+    "test": "completed_edit_with_full_snapshots_should_update_file_states",
+    "result": "expected preservation assertion failed",
+    "edit_step_roundtrip_preserved": true,
+    "file_states_count": 0,
+    "file_states_v2_count": 0,
+    "exit_code": 101,
+    "scope": "Real CheckpointBuilder and Store; synthetic full edit step and KV acknowledgements; bypasses tool-result gate to isolate checkpoint projection."
+  },
+  "ui": {
+    "login_restored": true,
+    "test_prompt_sent": false,
+    "rollback_clicked": false,
+    "errors": [
+      "ScreenCaptureKit -3811",
+      "ScreenCaptureKit -3812",
+      "noWindowsAvailable"
+    ],
+    "isolated_workspace": "/private/tmp/cursor-byok-issue341-20261011/workspace",
+    "scope": "Earlier automated UI attempt only; subsequent user-operated verification is recorded in the linked live evidence."
+  },
+  "local_history_check": {
+    "scope": "Read-only latest conversation metadata, no source content exported",
+    "most_recent_persisted_conversation_utc": "2026-10-08T09:56:16.811Z",
+    "limitation": "Recent inspected conversations did not provide a matching edit incident; empty originalFileStates is not evidence of this failure."
+  },
+  "production_code_modified": false,
+  "user_incident_root_cause_confirmed": false,
+  "subsequent_live_evidence": "2026-10-11-issue341-live-evidence.json"
+}
