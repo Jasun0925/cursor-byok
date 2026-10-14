@@ -16,3 +16,6 @@ pub(crate) use insert_messages::task_completion;
 
 #[cfg(test)]
 mod subagent_models_tests;
+
+#[cfg(test)]
+mod rule_scope_tests;

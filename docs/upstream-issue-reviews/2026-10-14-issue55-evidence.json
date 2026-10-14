@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-14",
+  "baseline": "b541d696e71943550e38135191d77cf05ddbda94",
+  "issue": 55,
+  "upstream_state": "OPEN",
+  "scope": "Synthetic Cursor rule inputs through actual TransportRegistry/run/checkpoint; FakeProvider captures provider-visible context. No real Cursor selection or model behavior tested.",
+  "command": "cargo test --locked -p cursor-server --test issue55_probe -- --nocapture",
+  "exit_code": 101,
+  "passed": 0,
+  "failed": 2,
+  "cases": [
+    {
+      "case": "nested_agents_path",
+      "input_path": "/probe/frontend/AGENTS.md",
+      "output": "<rules>\n<user_rule>\nUse FRONTEND_STYLE for files governed by this rule.\n</user_rule>\n</rules>\n\n<subagent_models>\nCursor-supplied model IDs mapped to display names (local BYOK names resolve local IDs), and the effective Cursor subagent setting. An empty map means no model list was supplied, not that subagents are unavailable. An empty display name means the label is unknown, not that the model is unavailable. When the user names a model, match its display name and pass the corresponding map key as Task.model, never a guessed ID or display name. Use inherit by default. For a new subagent, an explicit Task.model takes precedence over the Cursor setting. If Task.model is omitted or inherit, use the configured Cursor model, or the parent model for inherit_parent/no_override. The disabled setting always prevents launching subagents. A different configured model is a default, not a conflict; honor the user's explicitly requested model without silently substituting another model. This latest selection policy supersedes older model-selection instructions in the conversation.\n{\"client_selected_models\":{},\"cursor_setting\":{\"mode\":\"no_override\"}}\n</subagent_models>",
+      "path_preserved": false
+    },
+    {
+      "case": "distinct_globs",
+      "input_globs": [
+        "frontend/**/*.tsx",
+        "backend/**/*.py"
+      ],
+      "outputs": [
+        "<rules>\n<user_rule>\nApply MODULE_STYLE to matching files.\n</user_rule>\n</rules>\n\n<subagent_models>\nCursor-supplied model IDs mapped to display names (local BYOK names resolve local IDs), and the effective Cursor subagent setting. An empty map means no model list was supplied, not that subagents are unavailable. An empty display name means the label is unknown, not that the model is unavailable. When the user names a model, match its display name and pass the corresponding map key as Task.model, never a guessed ID or display name. Use inherit by default. For a new subagent, an explicit Task.model takes precedence over the Cursor setting. If Task.model is omitted or inherit, use the configured Cursor model, or the parent model for inherit_parent/no_override. The disabled setting always prevents launching subagents. A different configured model is a default, not a conflict; honor the user's explicitly requested model without silently substituting another model. This latest selection policy supersedes older model-selection instructions in the conversation.\n{\"client_selected_models\":{},\"cursor_setting\":{\"mode\":\"no_override\"}}\n</subagent_models>",
+        "<rules>\n<user_rule>\nApply MODULE_STYLE to matching files.\n</user_rule>\n</rules>\n\n<subagent_models>\nCursor-supplied model IDs mapped to display names (local BYOK names resolve local IDs), and the effective Cursor subagent setting. An empty map means no model list was supplied, not that subagents are unavailable. An empty display name means the label is unknown, not that the model is unavailable. When the user names a model, match its display name and pass the corresponding map key as Task.model, never a guessed ID or display name. Use inherit by default. For a new subagent, an explicit Task.model takes precedence over the Cursor setting. If Task.model is omitted or inherit, use the configured Cursor model, or the parent model for inherit_parent/no_override. The disabled setting always prevents launching subagents. A different configured model is a default, not a conflict; honor the user's explicitly requested model without silently substituting another model. This latest selection policy supersedes older model-selection instructions in the conversation.\n{\"client_selected_models\":{},\"cursor_setting\":{\"mode\":\"no_override\"}}\n</subagent_models>"
+      ],
+      "outputs_identical": true
+    }
+  ],
+  "production_code_changed": false
+}

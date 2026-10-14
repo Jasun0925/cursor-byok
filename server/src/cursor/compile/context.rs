@@ -7,6 +7,9 @@ use std::{
 use prost::Message;
 use serde_json::Value;
 
+#[path = "rules.rs"]
+mod rules;
+
 use crate::{
     cursor::{
         protocol::proto::agent::v1 as pb, services::context_sync::RequestContextSynchronizer,
@@ -242,7 +245,7 @@ pub fn compile_context(context: &pb::RequestContext, today: &str) -> String {
                 && !is_skill_rule(rule)
                 && !skill_contents.contains(rule.content.as_str())
         })
-        .map(|rule| format!("<user_rule>\n{}\n</user_rule>", rule.content))
+        .map(rules::compile)
         .collect::<Vec<_>>();
     rules.extend(
         context
@@ -250,9 +253,7 @@ pub fn compile_context(context: &pb::RequestContext, today: &str) -> String {
             .iter()
             .map(|rule| format!("<user_rule>\n{rule}\n</user_rule>")),
     );
-    if !rules.is_empty() {
-        sections.push(format!("<rules>\n{}\n</rules>", rules.join("\n")));
-    }
+    sections.extend(rules::section(rules));
     let skills = context
         .agent_skills
         .iter()
@@ -436,14 +437,14 @@ pub fn selected_context(user: &pb::UserMessage) -> Option<String> {
             value.content
         )
     }));
-    sections.extend(selected.cursor_rules.iter().filter_map(|value| {
-        value.rule.as_ref().map(|rule| {
-            format!(
-                "<rule path=\"{}\">\n{}\n</rule>",
-                rule.full_path, rule.content
-            )
-        })
-    }));
+    sections.extend(rules::section(
+        selected
+            .cursor_rules
+            .iter()
+            .filter_map(|value| value.rule.as_ref())
+            .map(rules::compile)
+            .collect(),
+    ));
     sections.extend(selected.cursor_commands.iter().map(|value| {
         format!(
             "<command name=\"{}\">\n{}\n</command>",

@@ -1,0 +1,517 @@
+{
+  "date": "2026-10-14",
+  "baseline": "b541d696e71943550e38135191d77cf05ddbda94",
+  "cursor_version": "3.24.12",
+  "model": "gpt-6-astra",
+  "ui_model": "gpt-6 High",
+  "conversation_id": "60fe890b-6e19-4bcf-9f88-f2d51aedd37d",
+  "scope": "Real Cursor GUI, configured real provider, isolated SQLite copy and workspace",
+  "prompts": [
+    "请只完成 frontend/view.py 中的 greeting(name)，返回 \"Hello, {name}!\"。运行 frontend 中现有的单元测试，最后简要说明修改和实际测试结果。",
+    "现在只完成 backend/api.py 中的 health_response()，返回 {\"status\": \"ok\"}。运行 backend 中现有的单元测试，最后简要说明修改和实际测试结果。",
+    "回到 frontend/view.py：让 greeting(name) 先去掉 name 首尾的空白，再返回问候语；例如输入 \" Alice \" 应返回 \"Hello, Alice!\"。只修改这个文件，运行已有前端测试并额外验证这个带空格的输入。"
+  ],
+  "cursor_wire_rule_inputs": [
+    {
+      "conversation_id": "60fe890b-6e19-4bcf-9f88-f2d51aedd37d",
+      "direct_context": {
+        "non_file_rule_count": 0,
+        "rules": [
+          {
+            "content": "# Repository instructions\n\nEvery Python module you modify must define `GLOBAL_TAG = \"ROOT_55\"`. Use only the Python standard library. Do not modify test files.\n",
+            "frontmatter": "",
+            "full_path": "/private/tmp/cursor-byok-issue55-20261014/workspace/AGENTS.md",
+            "scoped_to": [],
+            "source": 0,
+            "type": "Some(CursorRuleType { r#type: Some(Global(CursorRuleTypeGlobal)) })"
+          }
+        ],
+        "rules_count": 53
+      },
+      "request_id": "eb39e2df-6fe0-4ab7-8cb5-f59fcb4049e8"
+    },
+    {
+      "conversation_id": "60fe890b-6e19-4bcf-9f88-f2d51aedd37d",
+      "direct_context": {
+        "non_file_rule_count": 0,
+        "rules": [
+          {
+            "content": "# Repository instructions\n\nEvery Python module you modify must define `GLOBAL_TAG = \"ROOT_55\"`. Use only the Python standard library. Do not modify test files.\n",
+            "frontmatter": "",
+            "full_path": "/private/tmp/cursor-byok-issue55-20261014/workspace/AGENTS.md",
+            "scoped_to": [],
+            "source": 0,
+            "type": "Some(CursorRuleType { r#type: Some(Global(CursorRuleTypeGlobal)) })"
+          }
+        ],
+        "rules_count": 53
+      },
+      "request_id": "67c8095a-e6b1-43eb-9f24-5b2a3dc643d8"
+    },
+    {
+      "conversation_id": "60fe890b-6e19-4bcf-9f88-f2d51aedd37d",
+      "direct_context": {
+        "non_file_rule_count": 0,
+        "rules": [
+          {
+            "content": "# Repository instructions\n\nEvery Python module you modify must define `GLOBAL_TAG = \"ROOT_55\"`. Use only the Python standard library. Do not modify test files.\n",
+            "frontmatter": "",
+            "full_path": "/private/tmp/cursor-byok-issue55-20261014/workspace/AGENTS.md",
+            "scoped_to": [],
+            "source": 0,
+            "type": "Some(CursorRuleType { r#type: Some(Global(CursorRuleTypeGlobal)) })"
+          }
+        ],
+        "rules_count": 53
+      },
+      "request_id": "288ecbe9-a3ef-4c8b-a86e-8aac20ad0e71"
+    }
+  ],
+  "runs": [
+    {
+      "run_id": "eb39e2df-6fe0-4ab7-8cb5-f59fcb4049e8:f1dd4726",
+      "cursor_request_id": "eb39e2df-6fe0-4ab7-8cb5-f59fcb4049e8",
+      "status": "completed",
+      "created_at_ms": 1791964344718,
+      "updated_at_ms": 1791964422571,
+      "failure_summary": null,
+      "elapsed_ms": 77853,
+      "calls": [
+        {
+          "provider_call_index": 0,
+          "model_id": "gpt-6-astra",
+          "status": "completed",
+          "finish_reason": "tool_use",
+          "duration_ms": 19005
+        },
+        {
+          "provider_call_index": 1,
+          "model_id": "gpt-6-astra",
+          "status": "completed",
+          "finish_reason": "tool_use",
+          "duration_ms": 4163
+        },
+        {
+          "provider_call_index": 2,
+          "model_id": "gpt-6-astra",
+          "status": "completed",
+          "finish_reason": "tool_use",
+          "duration_ms": 5014
+        },
+        {
+          "provider_call_index": 3,
+          "model_id": "gpt-6-astra",
+          "status": "completed",
+          "finish_reason": "tool_use",
+          "duration_ms": 7554
+        },
+        {
+          "provider_call_index": 4,
+          "model_id": "gpt-6-astra",
+          "status": "completed",
+          "finish_reason": "tool_use",
+          "duration_ms": 4536
+        },
+        {
+          "provider_call_index": 5,
+          "model_id": "gpt-6-astra",
+          "status": "completed",
+          "finish_reason": "tool_use",
+          "duration_ms": 5086
+        },
+        {
+          "provider_call_index": 6,
+          "model_id": "gpt-6-astra",
+          "status": "completed",
+          "finish_reason": "tool_use",
+          "duration_ms": 6523
+        },
+        {
+          "provider_call_index": 7,
+          "model_id": "gpt-6-astra",
+          "status": "completed",
+          "finish_reason": "tool_use",
+          "duration_ms": 8171
+        },
+        {
+          "provider_call_index": 8,
+          "model_id": "gpt-6-astra",
+          "status": "completed",
+          "finish_reason": "stop",
+          "duration_ms": 7034
+        }
+      ],
+      "tool_calls": [
+        {
+          "index": 0,
+          "call_id": "call_ecc2b6144720479d8b2a59c812296def",
+          "name": "Glob",
+          "arguments": {
+            "glob_pattern": "**/*",
+            "target_directory": "/private/tmp/cursor-byok-issue55-20261014/workspace/frontend"
+          }
+        },
+        {
+          "index": 0,
+          "call_id": "call_4b4d40421e564f53ba3159d4c537a90a",
+          "name": "Read",
+          "arguments": {
+            "path": "/private/tmp/cursor-byok-issue55-20261014/workspace/frontend/view.py"
+          }
+        },
+        {
+          "index": 0,
+          "call_id": "call_0d08bb0be9ac4618ae5e51fabaf5dec2",
+          "name": "Read",
+          "arguments": {
+            "path": "/private/tmp/cursor-byok-issue55-20261014/workspace/frontend/AGENTS.md"
+          }
+        },
+        {
+          "index": 0,
+          "call_id": "call_c599512e3dd24946b4a6ba196f03b970",
+          "name": "Read",
+          "arguments": {
+            "path": "/private/tmp/cursor-byok-issue55-20261014/workspace/frontend/test_view.py"
+          }
+        },
+        {
+          "index": 0,
+          "call_id": "call_8c9dd423ebbd4ceb93e176b3a392bebd",
+          "name": "Glob",
+          "arguments": {
+            "glob_pattern": "AGENTS.md",
+            "target_directory": "/private/tmp/cursor-byok-issue55-20261014/workspace"
+          }
+        },
+        {
+          "index": 0,
+          "call_id": "call_763a187362664885b5cc1c64895082f5",
+          "name": "Read",
+          "arguments": {
+            "path": "/private/tmp/cursor-byok-issue55-20261014/workspace/AGENTS.md"
+          }
+        },
+        {
+          "index": 0,
+          "call_id": "call_02b4062b1a8f4e728086888fd6501338",
+          "name": "StrReplace",
+          "arguments": {
+            "new_string": "GLOBAL_TAG = \"ROOT_55\"\nRULE_TAG = \"FRONTEND_55\"\n\ndef greeting(name):\n    return f\"Hello, {name}!\"\n",
+            "old_string": "GLOBAL_TAG = \"UNSET\"\nRULE_TAG = \"UNSET\"\n\ndef greeting(name):\n    raise NotImplementedError\n",
+            "path": "/private/tmp/cursor-byok-issue55-20261014/workspace/frontend/view.py"
+          }
+        },
+        {
+          "index": 0,
+          "call_id": "call_744eab661b134a8ebf0a04ba50880796",
+          "name": "Shell",
+          "arguments": {
+            "command": "python3 -m unittest discover -s . -v",
+            "description": "Run existing frontend unit tests",
+            "working_directory": "/private/tmp/cursor-byok-issue55-20261014/workspace/frontend"
+          }
+        }
+      ],
+      "shell_results": [
+        "test_greeting (test_view.GreetingTests) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+      ],
+      "final_response": "已修改 `frontend/view.py`：\n- `greeting(name)` 返回 `f\"Hello, {name}!\"`。\n- 按仓库及目录规则设置 `GLOBAL_TAG = \"ROOT_55\"` 和 `RULE_TAG = \"FRONTEND_55\"`。\n- 未修改测试文件。\n\n在 `frontend` 目录运行 `python3 -m unittest discover -s . -v`，实际结果：**1 个测试通过，结果为 OK**，覆盖 Alice 和 Bob 两个输入。",
+      "provider_initial_rule_sections": [
+        "<rules>\n<user_rule>\n# Repository instructions\n\nEvery Python module you modify must define `GLOBAL_TAG = \"ROOT_55\"`. Use only the Python standard library. Do not modify test files.\n\n</user_rule>\n</rules>"
+      ],
+      "read_paths": [
+        "/private/tmp/cursor-byok-issue55-20261014/workspace/frontend/view.py",
+        "/private/tmp/cursor-byok-issue55-20261014/workspace/frontend/AGENTS.md",
+        "/private/tmp/cursor-byok-issue55-20261014/workspace/frontend/test_view.py",
+        "/private/tmp/cursor-byok-issue55-20261014/workspace/AGENTS.md"
+      ]
+    },
+    {
+      "run_id": "67c8095a-e6b1-43eb-9f24-5b2a3dc643d8:99d382a7",
+      "cursor_request_id": "67c8095a-e6b1-43eb-9f24-5b2a3dc643d8",
+      "status": "completed",
+      "created_at_ms": 1791964478424,
+      "updated_at_ms": 1791964548248,
+      "failure_summary": null,
+      "elapsed_ms": 69824,
+      "calls": [
+        {
+          "provider_call_index": 0,
+          "model_id": "gpt-6-astra",
+          "status": "completed",
+          "finish_reason": "tool_use",
+          "duration_ms": 7218
+        },
+        {
+          "provider_call_index": 1,
+          "model_id": "gpt-6-astra",
+          "status": "completed",
+          "finish_reason": "tool_use",
+          "duration_ms": 4540
+        },
+        {
+          "provider_call_index": 2,
+          "model_id": "gpt-6-astra",
+          "status": "completed",
+          "finish_reason": "tool_use",
+          "duration_ms": 9281
+        },
+        {
+          "provider_call_index": 3,
+          "model_id": "gpt-6-astra",
+          "status": "completed",
+          "finish_reason": "tool_use",
+          "duration_ms": 4253
+        },
+        {
+          "provider_call_index": 4,
+          "model_id": "gpt-6-astra",
+          "status": "completed",
+          "finish_reason": "tool_use",
+          "duration_ms": 5928
+        },
+        {
+          "provider_call_index": 5,
+          "model_id": "gpt-6-astra",
+          "status": "completed",
+          "finish_reason": "tool_use",
+          "duration_ms": 23766
+        },
+        {
+          "provider_call_index": 6,
+          "model_id": "gpt-6-astra",
+          "status": "completed",
+          "finish_reason": "stop",
+          "duration_ms": 6971
+        }
+      ],
+      "tool_calls": [
+        {
+          "index": 0,
+          "call_id": "call_f67dd7d8b8a84b789de681725a49baa0",
+          "name": "Glob",
+          "arguments": {
+            "glob_pattern": "**/*",
+            "target_directory": "/private/tmp/cursor-byok-issue55-20261014/workspace/backend"
+          }
+        },
+        {
+          "index": 0,
+          "call_id": "call_82032a72a08941b2b100f7d4a7511732",
+          "name": "Read",
+          "arguments": {
+            "path": "/private/tmp/cursor-byok-issue55-20261014/workspace/backend/AGENTS.md"
+          }
+        },
+        {
+          "index": 0,
+          "call_id": "call_3b84df06a110415987ec784cf4d08cd1",
+          "name": "Read",
+          "arguments": {
+            "path": "/private/tmp/cursor-byok-issue55-20261014/workspace/backend/api.py"
+          }
+        },
+        {
+          "index": 0,
+          "call_id": "call_e97ebbc250f249edb55ea7187a206655",
+          "name": "Read",
+          "arguments": {
+            "path": "/private/tmp/cursor-byok-issue55-20261014/workspace/backend/test_api.py"
+          }
+        },
+        {
+          "index": 0,
+          "call_id": "call_932a963cd9584b8f873ef2545ce3d9b4",
+          "name": "StrReplace",
+          "arguments": {
+            "new_string": "GLOBAL_TAG = \"ROOT_55\"\nRULE_TAG = \"BACKEND_55\"\n\ndef health_response():\n    return {\"status\": \"ok\"}",
+            "old_string": "GLOBAL_TAG = \"UNSET\"\nRULE_TAG = \"UNSET\"\n\ndef health_response():\n    raise NotImplementedError",
+            "path": "/private/tmp/cursor-byok-issue55-20261014/workspace/backend/api.py"
+          }
+        },
+        {
+          "index": 0,
+          "call_id": "call_2aa937a1e1714107b70cf7bbc7866565",
+          "name": "Shell",
+          "arguments": {
+            "command": "python3 -m unittest discover -s . -v",
+            "description": "Run existing backend unit tests",
+            "working_directory": "/private/tmp/cursor-byok-issue55-20261014/workspace/backend"
+          }
+        }
+      ],
+      "shell_results": [
+        "test_health (test_api.HealthTests) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n"
+      ],
+      "final_response": "本次仅修改 `backend/api.py`：\n- `health_response()` 返回 `{\"status\": \"ok\"}`。\n- 按仓库及目录规则设置 `GLOBAL_TAG = \"ROOT_55\"` 和 `RULE_TAG = \"BACKEND_55\"`。\n- 未修改测试文件或 frontend 文件。\n\n在 `backend` 目录运行 `python3 -m unittest discover -s . -v`，实际结果：**1 个测试通过，结果为 OK**。",
+      "provider_initial_rule_sections": [
+        "<rules>\n<user_rule>\n# Repository instructions\n\nEvery Python module you modify must define `GLOBAL_TAG = \"ROOT_55\"`. Use only the Python standard library. Do not modify test files.\n\n</user_rule>\n</rules>"
+      ],
+      "read_paths": [
+        "/private/tmp/cursor-byok-issue55-20261014/workspace/backend/AGENTS.md",
+        "/private/tmp/cursor-byok-issue55-20261014/workspace/backend/api.py",
+        "/private/tmp/cursor-byok-issue55-20261014/workspace/backend/test_api.py"
+      ]
+    },
+    {
+      "run_id": "288ecbe9-a3ef-4c8b-a86e-8aac20ad0e71:e7b4d8f2",
+      "cursor_request_id": "288ecbe9-a3ef-4c8b-a86e-8aac20ad0e71",
+      "status": "completed",
+      "created_at_ms": 1791964631325,
+      "updated_at_ms": 1791964660839,
+      "failure_summary": null,
+      "elapsed_ms": 29514,
+      "calls": [
+        {
+          "provider_call_index": 0,
+          "model_id": "gpt-6-astra",
+          "status": "completed",
+          "finish_reason": "tool_use",
+          "duration_ms": 5113
+        },
+        {
+          "provider_call_index": 1,
+          "model_id": "gpt-6-astra",
+          "status": "completed",
+          "finish_reason": "tool_use",
+          "duration_ms": 4620
+        },
+        {
+          "provider_call_index": 2,
+          "model_id": "gpt-6-astra",
+          "status": "completed",
+          "finish_reason": "tool_use",
+          "duration_ms": 6527
+        },
+        {
+          "provider_call_index": 3,
+          "model_id": "gpt-6-astra",
+          "status": "completed",
+          "finish_reason": "stop",
+          "duration_ms": 8594
+        }
+      ],
+      "tool_calls": [
+        {
+          "index": 0,
+          "call_id": "call_2ac1c07d0a234a13af20c684ff9db96a",
+          "name": "Read",
+          "arguments": {
+            "path": "/private/tmp/cursor-byok-issue55-20261014/workspace/frontend/view.py"
+          }
+        },
+        {
+          "index": 0,
+          "call_id": "call_e6b234fe4ccf4da7a3d74dfc6cf02e80",
+          "name": "StrReplace",
+          "arguments": {
+            "new_string": "    return f\"Hello, {name.strip()}!\"",
+            "old_string": "    return f\"Hello, {name}!\"",
+            "path": "/private/tmp/cursor-byok-issue55-20261014/workspace/frontend/view.py"
+          }
+        },
+        {
+          "index": 0,
+          "call_id": "call_21739638d0444c04a638c3d954ef9cb9",
+          "name": "Shell",
+          "arguments": {
+            "command": "python3 -B -m unittest discover -s . -v && python3 -B -c 'from view import greeting; result = greeting(\" Alice \"); assert result == \"Hello, Alice!\", repr(result); print(\"Extra check passed:\", repr(\" Alice \"), \"->\", repr(result))'",
+            "description": "Run frontend tests and verify whitespace trimming",
+            "working_directory": "/private/tmp/cursor-byok-issue55-20261014/workspace/frontend"
+          }
+        }
+      ],
+      "shell_results": [
+        "Extra check passed: ' Alice ' -> 'Hello, Alice!'\n\n\n<stderr>\ntest_greeting (test_view.GreetingTests) ... ok\n\n----------------------------------------------------------------------\nRan 1 test in 0.000s\n\nOK\n\n</stderr>"
+      ],
+      "final_response": "仅修改了 `frontend/view.py`：`greeting(name)` 现在通过 `name.strip()` 去掉首尾空白，再返回问候语；保留了所需的两个标签常量。\n\n实际验证结果：\n- 已有前端单元测试：**1 个测试通过，结果为 OK**。\n- 额外断言验证：输入 `\" Alice \"` 返回 `\"Hello, Alice!\"`，**通过**。\n\n未修改测试文件或其他文件。",
+      "provider_initial_rule_sections": [
+        "<rules>\n<user_rule>\n# Repository instructions\n\nEvery Python module you modify must define `GLOBAL_TAG = \"ROOT_55\"`. Use only the Python standard library. Do not modify test files.\n\n</user_rule>\n</rules>"
+      ],
+      "read_paths": [
+        "/private/tmp/cursor-byok-issue55-20261014/workspace/frontend/view.py"
+      ]
+    }
+  ],
+  "file_snapshots": {
+    "initial": {
+      "AGENTS.md": "# Repository instructions\n\nEvery Python module you modify must define `GLOBAL_TAG = \"ROOT_55\"`. Use only the Python standard library. Do not modify test files.\n",
+      "frontend/AGENTS.md": "# Module instructions\n\nEvery Python module you modify must define `RULE_TAG = \"FRONTEND_55\"`.\n",
+      "backend/AGENTS.md": "# Module instructions\n\nEvery Python module you modify must define `RULE_TAG = \"BACKEND_55\"`.\n",
+      "frontend/view.py": "GLOBAL_TAG = \"UNSET\"\nRULE_TAG = \"UNSET\"\n\ndef greeting(name):\n    raise NotImplementedError\n",
+      "backend/api.py": "GLOBAL_TAG = \"UNSET\"\nRULE_TAG = \"UNSET\"\n\ndef health_response():\n    raise NotImplementedError\n",
+      "frontend/test_view.py": "import unittest\nfrom view import greeting\n\nclass GreetingTests(unittest.TestCase):\n    def test_greeting(self):\n        self.assertEqual(greeting(\"Alice\"), \"Hello, Alice!\")\n        self.assertEqual(greeting(\"Bob\"), \"Hello, Bob!\")\n\nif __name__ == \"__main__\":\n    unittest.main()\n",
+      "backend/test_api.py": "import unittest\nfrom api import health_response\n\nclass HealthTests(unittest.TestCase):\n    def test_health(self):\n        self.assertEqual(health_response(), {\"status\": \"ok\"})\n\nif __name__ == \"__main__\":\n    unittest.main()\n",
+      "README.md": "# Frontend and backend exercise\n\nTwo independent Python modules. Implement the function named in the chat task and run its existing test using unittest discovery. No third-party dependencies are needed.\n"
+    },
+    "after_frontend": {
+      "AGENTS.md": "# Repository instructions\n\nEvery Python module you modify must define `GLOBAL_TAG = \"ROOT_55\"`. Use only the Python standard library. Do not modify test files.\n",
+      "frontend/AGENTS.md": "# Module instructions\n\nEvery Python module you modify must define `RULE_TAG = \"FRONTEND_55\"`.\n",
+      "backend/AGENTS.md": "# Module instructions\n\nEvery Python module you modify must define `RULE_TAG = \"BACKEND_55\"`.\n",
+      "frontend/view.py": "GLOBAL_TAG = \"ROOT_55\"\nRULE_TAG = \"FRONTEND_55\"\n\ndef greeting(name):\n    return f\"Hello, {name}!\"\n",
+      "backend/api.py": "GLOBAL_TAG = \"UNSET\"\nRULE_TAG = \"UNSET\"\n\ndef health_response():\n    raise NotImplementedError\n",
+      "frontend/test_view.py": "import unittest\nfrom view import greeting\n\nclass GreetingTests(unittest.TestCase):\n    def test_greeting(self):\n        self.assertEqual(greeting(\"Alice\"), \"Hello, Alice!\")\n        self.assertEqual(greeting(\"Bob\"), \"Hello, Bob!\")\n\nif __name__ == \"__main__\":\n    unittest.main()\n",
+      "backend/test_api.py": "import unittest\nfrom api import health_response\n\nclass HealthTests(unittest.TestCase):\n    def test_health(self):\n        self.assertEqual(health_response(), {\"status\": \"ok\"})\n\nif __name__ == \"__main__\":\n    unittest.main()\n",
+      "README.md": "# Frontend and backend exercise\n\nTwo independent Python modules. Implement the function named in the chat task and run its existing test using unittest discovery. No third-party dependencies are needed.\n"
+    },
+    "after_backend": {
+      "AGENTS.md": "# Repository instructions\n\nEvery Python module you modify must define `GLOBAL_TAG = \"ROOT_55\"`. Use only the Python standard library. Do not modify test files.\n",
+      "frontend/AGENTS.md": "# Module instructions\n\nEvery Python module you modify must define `RULE_TAG = \"FRONTEND_55\"`.\n",
+      "backend/AGENTS.md": "# Module instructions\n\nEvery Python module you modify must define `RULE_TAG = \"BACKEND_55\"`.\n",
+      "frontend/view.py": "GLOBAL_TAG = \"ROOT_55\"\nRULE_TAG = \"FRONTEND_55\"\n\ndef greeting(name):\n    return f\"Hello, {name}!\"\n",
+      "backend/api.py": "GLOBAL_TAG = \"ROOT_55\"\nRULE_TAG = \"BACKEND_55\"\n\ndef health_response():\n    return {\"status\": \"ok\"}\n",
+      "frontend/test_view.py": "import unittest\nfrom view import greeting\n\nclass GreetingTests(unittest.TestCase):\n    def test_greeting(self):\n        self.assertEqual(greeting(\"Alice\"), \"Hello, Alice!\")\n        self.assertEqual(greeting(\"Bob\"), \"Hello, Bob!\")\n\nif __name__ == \"__main__\":\n    unittest.main()\n",
+      "backend/test_api.py": "import unittest\nfrom api import health_response\n\nclass HealthTests(unittest.TestCase):\n    def test_health(self):\n        self.assertEqual(health_response(), {\"status\": \"ok\"})\n\nif __name__ == \"__main__\":\n    unittest.main()\n",
+      "README.md": "# Frontend and backend exercise\n\nTwo independent Python modules. Implement the function named in the chat task and run its existing test using unittest discovery. No third-party dependencies are needed.\n"
+    },
+    "final": {
+      "AGENTS.md": "# Repository instructions\n\nEvery Python module you modify must define `GLOBAL_TAG = \"ROOT_55\"`. Use only the Python standard library. Do not modify test files.\n",
+      "frontend/AGENTS.md": "# Module instructions\n\nEvery Python module you modify must define `RULE_TAG = \"FRONTEND_55\"`.\n",
+      "backend/AGENTS.md": "# Module instructions\n\nEvery Python module you modify must define `RULE_TAG = \"BACKEND_55\"`.\n",
+      "frontend/view.py": "GLOBAL_TAG = \"ROOT_55\"\nRULE_TAG = \"FRONTEND_55\"\n\ndef greeting(name):\n    return f\"Hello, {name.strip()}!\"\n",
+      "backend/api.py": "GLOBAL_TAG = \"ROOT_55\"\nRULE_TAG = \"BACKEND_55\"\n\ndef health_response():\n    return {\"status\": \"ok\"}\n",
+      "frontend/test_view.py": "import unittest\nfrom view import greeting\n\nclass GreetingTests(unittest.TestCase):\n    def test_greeting(self):\n        self.assertEqual(greeting(\"Alice\"), \"Hello, Alice!\")\n        self.assertEqual(greeting(\"Bob\"), \"Hello, Bob!\")\n\nif __name__ == \"__main__\":\n    unittest.main()\n",
+      "backend/test_api.py": "import unittest\nfrom api import health_response\n\nclass HealthTests(unittest.TestCase):\n    def test_health(self):\n        self.assertEqual(health_response(), {\"status\": \"ok\"})\n\nif __name__ == \"__main__\":\n    unittest.main()\n",
+      "README.md": "# Frontend and backend exercise\n\nTwo independent Python modules. Implement the function named in the chat task and run its existing test using unittest discovery. No third-party dependencies are needed.\n"
+    }
+  },
+  "changed_files_by_turn": [
+    [
+      "frontend/view.py"
+    ],
+    [
+      "backend/api.py"
+    ],
+    [
+      "frontend/view.py"
+    ]
+  ],
+  "ui_elapsed": [
+    "56s",
+    "1m 1s",
+    "22s"
+  ],
+  "independent_validation": {
+    "frontend_unittest": "1 passed",
+    "backend_unittest": "1 passed",
+    "trimmed_name_assertion": true,
+    "root_and_directory_tags_correct": true,
+    "untouched_fixture_files_verified": true
+  },
+  "conclusion": "Original UI wrong-directory Read/incorrect rule application not reproduced in these three turns. Earlier synthetic metadata-loss probes remain valid but nested rules did not arrive as CursorRule inputs in this scenario.",
+  "production_code_changed": false,
+  "cleanup": {
+    "server_stopped": true,
+    "ports_closed": true,
+    "proxy_keys_restored": true,
+    "unrelated_settings_preserved": true,
+    "formal_database_hash_unchanged": true,
+    "temporary_db_and_log_removed": true,
+    "temporary_decoder_removed": true,
+    "workspace_retained": false,
+    "temporary_workdir_removed": true,
+    "test_build_artifacts_removed": true,
+    "cleanup_date": "2026-10-14"
+  }
+}
