@@ -8,7 +8,7 @@ use crate::{
     cursor::{
         checkpoint::CheckpointBuilder,
         compile,
-        protocol::proto::agent::v1 as pb,
+        protocol::{events, proto::agent::v1 as pb},
         services::{blob_sync::BlobSynchronizer, context_sync::RequestContextSynchronizer},
         tools::{
             codec, compat,
@@ -714,6 +714,17 @@ fn finish_pending(
 fn finish_transport(handle: &TransportHandle, finish: TransportFinish) {
     match finish {
         TransportFinish::Success => super::finish_success(handle),
+        TransportFinish::Acknowledged => {
+            // Cursor retries even an error-free EOF unless this event precedes it.
+            // Do not publish a checkpoint: this transport owns no model turn and
+            // its incoming checkpoint may be older than the active conversation.
+            match handle.emit(&events::turn_ended(None)) {
+                Ok(()) => super::finish_success(handle),
+                Err(error) => {
+                    super::finish_failed(handle, &error).ok();
+                }
+            }
+        }
         TransportFinish::Failed(error) => {
             let _ = super::finish_failed(handle, &error);
         }
@@ -751,17 +762,21 @@ fn spawn_run_request(
 
         // Reject repeated completion actions before importing their potentially
         // stale checkpoint or preparing a fresh model invocation.
+        let mut request = request;
         let continuation = generation.prepared.lock().clone();
         let _completion_guard = if continuation.is_none() {
             match registry
-                .admit_background(handle.request_id(), &request)
+                .admit_background(handle.request_id(), &mut request)
                 .await
             {
                 Ok(super::background::Admission::New(guard)) => Some(guard),
                 Ok(super::background::Admission::Ordinary) => None,
                 result => {
                     let finish = match result {
-                        Ok(super::background::Admission::Duplicate) => TransportFinish::Success,
+                        Ok(
+                            super::background::Admission::Ignored
+                            | super::background::Admission::Duplicate,
+                        ) => TransportFinish::Acknowledged,
                         Err(error) => TransportFinish::Failed(error),
                         _ => unreachable!(),
                     };
@@ -839,15 +854,18 @@ fn spawn_run_request(
                 return;
             }
         };
-        checkpoint.configure(
-            prepared.model.model_id.clone(),
-            prepared.model.context_window_tokens,
-            context.checkpoint_prompt.instructions.clone(),
-            context.checkpoint_prompt.tools.clone(),
-            context.dynamic_tools.keys().cloned().collect(),
-            context.turn_user.clone(),
-        );
         if context.background_completion {
+            if prepared.initial_messages.is_empty() {
+                if !generation.superseded.is_cancelled() {
+                    let _ = handle
+                        .command(TransportCommand::RunFinished {
+                            generation: generation.id,
+                            finish: RunFinish::Transport(TransportFinish::Acknowledged),
+                        })
+                        .await;
+                }
+                return;
+            }
             let event_id = prepared
                 .initial_messages
                 .first()
@@ -870,7 +888,7 @@ fn spawn_run_request(
                         let _ = handle
                             .command(TransportCommand::RunFinished {
                                 generation: generation.id,
-                                finish: RunFinish::Transport(TransportFinish::Success),
+                                finish: RunFinish::Transport(TransportFinish::Acknowledged),
                             })
                             .await;
                     }
@@ -883,13 +901,6 @@ fn spawn_run_request(
                         _ = generation.superseded.cancelled() => return,
                         _ = registry.wait_until_idle(&prepared.conversation_id) => {}
                     }
-                    if let Ok(checkpoint) = dependencies
-                        .store
-                        .ensure_conversation(&prepared.conversation_id)
-                        .await
-                    {
-                        prepared.base_checkpoint_id = checkpoint;
-                    }
                 }
                 CommandResult::RunEnded => {
                     prepared.initial_messages.clear();
@@ -899,7 +910,7 @@ fn spawn_run_request(
                         let _ = handle
                             .command(TransportCommand::RunFinished {
                                 generation: generation.id,
-                                finish: RunFinish::Transport(TransportFinish::Success),
+                                finish: RunFinish::Transport(TransportFinish::Acknowledged),
                             })
                             .await;
                     }
@@ -915,14 +926,43 @@ fn spawn_run_request(
                 .collect::<Vec<_>>();
             messages.extend(prepared.initial_messages);
             prepared.initial_messages = messages;
-            if let Ok(checkpoint) = dependencies
-                .store
-                .ensure_conversation(&prepared.conversation_id)
-                .await
+            let (base, state) = match super::background::pending_base_checkpoint(
+                &dependencies.store,
+                &prepared.conversation_id,
+                prepared.base_checkpoint_id,
+                request.conversation_state.as_ref(),
+            )
+            .await
             {
-                prepared.base_checkpoint_id = checkpoint;
+                Ok(base) => base,
+                Err(error) => {
+                    let _ = handle
+                        .command(TransportCommand::RunFinished {
+                            generation: generation.id,
+                            finish: RunFinish::Transport(TransportFinish::Failed(error)),
+                        })
+                        .await;
+                    return;
+                }
+            };
+            prepared.base_checkpoint_id = base;
+            if let Some(state) = state {
+                checkpoint = CheckpointBuilder::new(
+                    dependencies.store.clone(),
+                    blob_sync.clone(),
+                    handle.parent().and_then(|parent| parent.tool_call_id),
+                    Some(state),
+                );
             }
         }
+        checkpoint.configure(
+            prepared.model.model_id.clone(),
+            prepared.model.context_window_tokens,
+            context.checkpoint_prompt.instructions.clone(),
+            context.checkpoint_prompt.tools.clone(),
+            context.dynamic_tools.keys().cloned().collect(),
+            context.turn_user.clone(),
+        );
         if generation.superseded.is_cancelled() {
             return;
         }

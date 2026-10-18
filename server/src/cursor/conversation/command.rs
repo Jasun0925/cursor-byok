@@ -11,6 +11,8 @@ pub enum RunFinish {
 #[derive(Debug)]
 pub enum TransportFinish {
     Success,
+    /// Accepts a background notification without running a model turn on this transport.
+    Acknowledged,
     Failed(Error),
     Cancelled,
 }

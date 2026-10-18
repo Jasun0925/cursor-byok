@@ -1,0 +1,575 @@
+{
+  "recorded_at": "2026-10-18T17:19:11.076160+00:00",
+  "issue": 155,
+  "status": "partial_real_client_acceptance_passed",
+  "excluded_by_user": [
+    "20-minute task acceptance"
+  ],
+  "cursor_version": "3.25.9",
+  "formal_app_version": "1.0.16",
+  "test_environment": {
+    "prepared_at_ms": 1792342654497,
+    "formal_settings_sha256": "a79a5dcb9759a0fce3e0708baf1516c377c96c71f37b33b2baa66546124f4cf3",
+    "test_root": "/private/tmp/cursor-byok-issue155-acceptance-20261019",
+    "source": "current uncommitted working tree",
+    "test_service_port": 57573,
+    "test_proxy_port": 49642,
+    "test_only_change": "skip automatic Cursor termination on proxy activation",
+    "skip_20_minute": true,
+    "source_sha256": {
+      "server/src/cursor/conversation/background.rs": "b36eaefa59a36d5d18953825c6772f402940944197701d517168117017925d30",
+      "server/src/cursor/conversation/runtime.rs": "cd776f8a38d482c0808945a0d88a22355b946f12d2eb6988df0a45a948302251",
+      "server/src/cursor/compile/insert_messages.rs": "62fed8ded67759ced38f0517bcf699faf64029435066e39144b47b27f29dbe2c",
+      "server/src/cursor/compile/run.rs": "e358ddb9431a5f17f9c6d797e07b438bec07f24b0db9c44c9e5cba384d3bdba6",
+      "server/src/cursor/checkpoint/worker.rs": "d1f594400bc85da65e77b71c1562cd20c515bc3d574f1fa07db9feaf0a6058ff",
+      "server/src/store/cursor_checkpoints.rs": "8eb14b002c938160a4529ab233fe0c66370a5b4bf6e0ede049e4acf28afd5105",
+      "server/migrations/0011_add_cursor_checkpoints.sql": "b63645686f53e1015f47fab5f0d28048db7652e731b38a478fdf2270118d972e",
+      "server/src/cursor/services/analytics.rs": "b9b7df8d3c7042697ca227aac47bed5e5d3bb1997c996722a3a9777022f1b844"
+    },
+    "all_selected_source_matches": true,
+    "binary_sha256": "8f605db1f7ef10212bf021cedcf7e7b7f9517ba663ed11cad1b3a598f560973f",
+    "dependency_versions_changed": [],
+    "started_at_ms": 1792342839970,
+    "formal_pid_before": 78677,
+    "cursor_pid_before": 85196
+  },
+  "conversation_id": "028ca946-f03a-4e19-9d58-411c8a9bd8b0",
+  "model": {
+    "selected": "gpt-6 High JIHU.DPDNS.ORG",
+    "configured_provider_model": "gpt-6-astra",
+    "route": "local_byok"
+  },
+  "cases": {
+    "plain": {
+      "execution_status": "passed",
+      "approval_wait_status": "not_applicable",
+      "initial_request_id": "751ee571-a4f8-43b4-b0a9-b5f8eea42771",
+      "automatic_completion_request_id": "e580c035-4dfc-460b-895d-16d72df5c120",
+      "command_count": 1,
+      "task_id": "872505",
+      "probe_duration_seconds": 25.009,
+      "exit_code": 0,
+      "exit_to_notification_ms": 304,
+      "exit_to_response_end_ms": 7251,
+      "initial_model_calls": 2,
+      "completion_model_calls": 1,
+      "started_marker": "ACCEPT_PLAIN_STARTED",
+      "completed_marker": "ACCEPT_PLAIN_COMPLETED",
+      "both_markers_observed_in_cursor_ui": true,
+      "completion_between_user_messages": true
+    },
+    "approval": {
+      "execution_status": "passed",
+      "approval_wait_status": "not_covered_no_prompt",
+      "initial_request_id": "4cacf66d-7071-4a09-88e1-7dc703a9d87d",
+      "automatic_completion_request_id": "7486ad89-ebd8-44df-abca-e99fc552981d",
+      "command_count": 1,
+      "task_id": "872506",
+      "probe_duration_seconds": 25.009,
+      "exit_code": 0,
+      "exit_to_notification_ms": 191,
+      "exit_to_response_end_ms": 7190,
+      "initial_model_calls": 2,
+      "completion_model_calls": 1,
+      "started_marker": "ACCEPT_APPROVAL_STARTED",
+      "completed_marker": "ACCEPT_APPROVAL_COMPLETED",
+      "both_markers_observed_in_cursor_ui": true,
+      "completion_between_user_messages": true
+    }
+  },
+  "duplicate_replay": {
+    "scope": "HTTP replay of already completed real Cursor notifications; replay itself is synthetic, not a new automatic Cursor notification",
+    "conversation_id": "028ca946-f03a-4e19-9d58-411c8a9bd8b0",
+    "source_request_ids": [
+      "e580c035-4dfc-460b-895d-16d72df5c120",
+      "7486ad89-ebd8-44df-abca-e99fc552981d"
+    ],
+    "results": [
+      {
+        "case": "same_event",
+        "request_id": "acceptance-replay-ff3ecc53-31c2-44b3-8c97-e63cd610862e",
+        "task_ids": [
+          "872505"
+        ],
+        "turn_ended_count": 1,
+        "trailer": {},
+        "other_events": [],
+        "model_calls_before": 6,
+        "model_calls_after": 6,
+        "head_unchanged": true
+      },
+      {
+        "case": "combined_completed_events",
+        "request_id": "acceptance-replay-3ca0713a-f279-47fa-8383-26f57e250eda",
+        "task_ids": [
+          "872505",
+          "872506"
+        ],
+        "turn_ended_count": 1,
+        "trailer": {},
+        "other_events": [],
+        "model_calls_before": 6,
+        "model_calls_after": 6,
+        "head_unchanged": true
+      },
+      {
+        "case": "reordered_completed_events",
+        "request_id": "acceptance-replay-63de31f2-167f-4b52-8075-70b85474a3a3",
+        "task_ids": [
+          "872506",
+          "872505"
+        ],
+        "turn_ended_count": 1,
+        "trailer": {},
+        "other_events": [],
+        "model_calls_before": 6,
+        "model_calls_after": 6,
+        "head_unchanged": true
+      },
+      {
+        "case": "subset_again",
+        "request_id": "acceptance-replay-046968fa-5635-4dbf-a4cc-b205781fb5e8",
+        "task_ids": [
+          "872505"
+        ],
+        "turn_ended_count": 1,
+        "trailer": {},
+        "other_events": [],
+        "model_calls_before": 6,
+        "model_calls_after": 6,
+        "head_unchanged": true
+      }
+    ]
+  },
+  "traces": [
+    {
+      "request_id": "751ee571-a4f8-43b4-b0a9-b5f8eea42771",
+      "conversation_id": "028ca946-f03a-4e19-9d58-411c8a9bd8b0",
+      "route": "local_byok",
+      "model_id": "df862e8a9cc595ec",
+      "status": "completed",
+      "http_status": 200,
+      "received_at_ms": 1792343107358,
+      "finished_at_ms": 1792343119330,
+      "response_bytes": 52147,
+      "response_event_count": 80,
+      "error_message": null,
+      "actions": [
+        "user_message"
+      ],
+      "notifications": [],
+      "shell_requests": [
+        {
+          "command": "python3 -u /private/tmp/cursor-byok-issue155-acceptance-20261019/workspace/probe.py plain",
+          "timeout_ms": 1000,
+          "tool_call_id": "call_4808f547db7747de9e018cb31309ae80",
+          "conversation_id": "028ca946-f03a-4e19-9d58-411c8a9bd8b0",
+          "sandbox_policy_type": null,
+          "smart_mode_approval_present": false
+        }
+      ],
+      "shell_results": [
+        {
+          "shell_id": 872505,
+          "command": "python3 -u /private/tmp/cursor-byok-issue155-acceptance-20261019/workspace/probe.py plain",
+          "pid": 88289,
+          "ms_to_wait": 1000,
+          "exit_code": 0
+        }
+      ],
+      "response_text": "ACCEPT_PLAIN_STARTED",
+      "turn_ended_count": 1,
+      "incoming_roots": 0,
+      "history_projection": {
+        "checkpoint_root_count": 0,
+        "checkpoint_turn_count": 0,
+        "conversation_history_message_count": 0,
+        "hydrated_image_count": 0,
+        "hydrated_message_count": 0,
+        "selected_source": "root_prompt_messages_json"
+      },
+      "trailer": {},
+      "local_model_calls": 2
+    },
+    {
+      "request_id": "e580c035-4dfc-460b-895d-16d72df5c120",
+      "conversation_id": "028ca946-f03a-4e19-9d58-411c8a9bd8b0",
+      "route": "local_byok",
+      "model_id": "df862e8a9cc595ec",
+      "status": "completed",
+      "http_status": 200,
+      "received_at_ms": 1792343138863,
+      "finished_at_ms": 1792343145810,
+      "response_bytes": 5387,
+      "response_event_count": 21,
+      "error_message": null,
+      "actions": [
+        "background_task_completion"
+      ],
+      "notifications": [
+        {
+          "task_id": "872505",
+          "kind": 1,
+          "status": 1,
+          "output_path": "/Users/renhao/.cursor/projects/private-tmp-cursor-byok-issue155-stream-20261018-bootstrap-live-workspace/terminals/872505.txt",
+          "reason": 1,
+          "tool_call_id": "call_4808f547db7747de9e018cb31309ae80"
+        }
+      ],
+      "shell_requests": [],
+      "shell_results": [],
+      "response_text": "ACCEPT_PLAIN_COMPLETED",
+      "turn_ended_count": 1,
+      "incoming_roots": 6,
+      "history_projection": {
+        "checkpoint_root_count": 6,
+        "checkpoint_turn_count": 1,
+        "conversation_history_message_count": 0,
+        "hydrated_image_count": 0,
+        "hydrated_message_count": 6,
+        "selected_source": "root_prompt_messages_json"
+      },
+      "trailer": {},
+      "local_model_calls": 1
+    },
+    {
+      "request_id": "4cacf66d-7071-4a09-88e1-7dc703a9d87d",
+      "conversation_id": "028ca946-f03a-4e19-9d58-411c8a9bd8b0",
+      "route": "local_byok",
+      "model_id": "df862e8a9cc595ec",
+      "status": "completed",
+      "http_status": 200,
+      "received_at_ms": 1792343259010,
+      "finished_at_ms": 1792343270976,
+      "response_bytes": 21397,
+      "response_event_count": 84,
+      "error_message": null,
+      "actions": [
+        "user_message"
+      ],
+      "notifications": [],
+      "shell_requests": [
+        {
+          "command": "python3 -u /private/tmp/cursor-byok-issue155-acceptance-20261019/workspace/probe.py approval",
+          "timeout_ms": 1000,
+          "tool_call_id": "call_f60607a6b8e845e98ba50c1f60ae1bd5",
+          "conversation_id": "028ca946-f03a-4e19-9d58-411c8a9bd8b0",
+          "sandbox_policy_type": 1,
+          "smart_mode_approval_present": false
+        }
+      ],
+      "shell_results": [
+        {
+          "shell_id": 872506,
+          "command": "python3 -u /private/tmp/cursor-byok-issue155-acceptance-20261019/workspace/probe.py approval",
+          "pid": 88959,
+          "ms_to_wait": 1000,
+          "exit_code": 0
+        }
+      ],
+      "response_text": "ACCEPT_APPROVAL_STARTED",
+      "turn_ended_count": 1,
+      "incoming_roots": 8,
+      "history_projection": {
+        "checkpoint_root_count": 8,
+        "checkpoint_turn_count": 2,
+        "conversation_history_message_count": 0,
+        "hydrated_image_count": 0,
+        "hydrated_message_count": 8,
+        "selected_source": "root_prompt_messages_json"
+      },
+      "trailer": {},
+      "local_model_calls": 2
+    },
+    {
+      "request_id": "7486ad89-ebd8-44df-abca-e99fc552981d",
+      "conversation_id": "028ca946-f03a-4e19-9d58-411c8a9bd8b0",
+      "route": "local_byok",
+      "model_id": "df862e8a9cc595ec",
+      "status": "completed",
+      "http_status": 200,
+      "received_at_ms": 1792343290662,
+      "finished_at_ms": 1792343297661,
+      "response_bytes": 6497,
+      "response_event_count": 21,
+      "error_message": null,
+      "actions": [
+        "background_task_completion"
+      ],
+      "notifications": [
+        {
+          "task_id": "872506",
+          "kind": 1,
+          "status": 1,
+          "output_path": "/Users/renhao/.cursor/projects/private-tmp-cursor-byok-issue155-stream-20261018-bootstrap-live-workspace/terminals/872506.txt",
+          "reason": 1,
+          "tool_call_id": "call_f60607a6b8e845e98ba50c1f60ae1bd5"
+        }
+      ],
+      "shell_requests": [],
+      "shell_results": [],
+      "response_text": "ACCEPT_APPROVAL_COMPLETED",
+      "turn_ended_count": 1,
+      "incoming_roots": 12,
+      "history_projection": {
+        "checkpoint_root_count": 12,
+        "checkpoint_turn_count": 3,
+        "conversation_history_message_count": 0,
+        "hydrated_image_count": 0,
+        "hydrated_message_count": 12,
+        "selected_source": "root_prompt_messages_json"
+      },
+      "trailer": {},
+      "local_model_calls": 1
+    },
+    {
+      "request_id": "acceptance-replay-ff3ecc53-31c2-44b3-8c97-e63cd610862e",
+      "conversation_id": "028ca946-f03a-4e19-9d58-411c8a9bd8b0",
+      "route": "local_byok",
+      "model_id": "df862e8a9cc595ec",
+      "status": "completed",
+      "http_status": 200,
+      "received_at_ms": 1792343401109,
+      "finished_at_ms": 1792343401111,
+      "response_bytes": 16,
+      "response_event_count": 2,
+      "error_message": null,
+      "actions": [
+        "background_task_completion"
+      ],
+      "notifications": [
+        {
+          "task_id": "872505",
+          "kind": 1,
+          "status": 1,
+          "output_path": "/Users/renhao/.cursor/projects/private-tmp-cursor-byok-issue155-stream-20261018-bootstrap-live-workspace/terminals/872505.txt",
+          "reason": 1,
+          "tool_call_id": "call_4808f547db7747de9e018cb31309ae80"
+        }
+      ],
+      "shell_requests": [],
+      "shell_results": [],
+      "response_text": "",
+      "turn_ended_count": 1,
+      "incoming_roots": 12,
+      "trailer": {},
+      "local_model_calls": 0
+    },
+    {
+      "request_id": "acceptance-replay-3ca0713a-f279-47fa-8383-26f57e250eda",
+      "conversation_id": "028ca946-f03a-4e19-9d58-411c8a9bd8b0",
+      "route": "local_byok",
+      "model_id": "df862e8a9cc595ec",
+      "status": "completed",
+      "http_status": 200,
+      "received_at_ms": 1792343401112,
+      "finished_at_ms": 1792343401114,
+      "response_bytes": 16,
+      "response_event_count": 2,
+      "error_message": null,
+      "actions": [
+        "background_task_completion"
+      ],
+      "notifications": [
+        {
+          "task_id": "872505",
+          "kind": 1,
+          "status": 1,
+          "output_path": "/Users/renhao/.cursor/projects/private-tmp-cursor-byok-issue155-stream-20261018-bootstrap-live-workspace/terminals/872505.txt",
+          "reason": 1,
+          "tool_call_id": "call_4808f547db7747de9e018cb31309ae80"
+        },
+        {
+          "task_id": "872506",
+          "kind": 1,
+          "status": 1,
+          "output_path": "/Users/renhao/.cursor/projects/private-tmp-cursor-byok-issue155-stream-20261018-bootstrap-live-workspace/terminals/872506.txt",
+          "reason": 1,
+          "tool_call_id": "call_f60607a6b8e845e98ba50c1f60ae1bd5"
+        }
+      ],
+      "shell_requests": [],
+      "shell_results": [],
+      "response_text": "",
+      "turn_ended_count": 1,
+      "incoming_roots": 12,
+      "trailer": {},
+      "local_model_calls": 0
+    },
+    {
+      "request_id": "acceptance-replay-63de31f2-167f-4b52-8075-70b85474a3a3",
+      "conversation_id": "028ca946-f03a-4e19-9d58-411c8a9bd8b0",
+      "route": "local_byok",
+      "model_id": "df862e8a9cc595ec",
+      "status": "completed",
+      "http_status": 200,
+      "received_at_ms": 1792343401114,
+      "finished_at_ms": 1792343401115,
+      "response_bytes": 16,
+      "response_event_count": 2,
+      "error_message": null,
+      "actions": [
+        "background_task_completion"
+      ],
+      "notifications": [
+        {
+          "task_id": "872506",
+          "kind": 1,
+          "status": 1,
+          "output_path": "/Users/renhao/.cursor/projects/private-tmp-cursor-byok-issue155-stream-20261018-bootstrap-live-workspace/terminals/872506.txt",
+          "reason": 1,
+          "tool_call_id": "call_f60607a6b8e845e98ba50c1f60ae1bd5"
+        },
+        {
+          "task_id": "872505",
+          "kind": 1,
+          "status": 1,
+          "output_path": "/Users/renhao/.cursor/projects/private-tmp-cursor-byok-issue155-stream-20261018-bootstrap-live-workspace/terminals/872505.txt",
+          "reason": 1,
+          "tool_call_id": "call_4808f547db7747de9e018cb31309ae80"
+        }
+      ],
+      "shell_requests": [],
+      "shell_results": [],
+      "response_text": "",
+      "turn_ended_count": 1,
+      "incoming_roots": 12,
+      "trailer": {},
+      "local_model_calls": 0
+    },
+    {
+      "request_id": "acceptance-replay-046968fa-5635-4dbf-a4cc-b205781fb5e8",
+      "conversation_id": "028ca946-f03a-4e19-9d58-411c8a9bd8b0",
+      "route": "local_byok",
+      "model_id": "df862e8a9cc595ec",
+      "status": "completed",
+      "http_status": 200,
+      "received_at_ms": 1792343401115,
+      "finished_at_ms": 1792343401117,
+      "response_bytes": 16,
+      "response_event_count": 2,
+      "error_message": null,
+      "actions": [
+        "background_task_completion"
+      ],
+      "notifications": [
+        {
+          "task_id": "872505",
+          "kind": 1,
+          "status": 1,
+          "output_path": "/Users/renhao/.cursor/projects/private-tmp-cursor-byok-issue155-stream-20261018-bootstrap-live-workspace/terminals/872505.txt",
+          "reason": 1,
+          "tool_call_id": "call_4808f547db7747de9e018cb31309ae80"
+        }
+      ],
+      "shell_requests": [],
+      "shell_results": [],
+      "response_text": "",
+      "turn_ended_count": 1,
+      "incoming_roots": 12,
+      "trailer": {},
+      "local_model_calls": 0
+    }
+  ],
+  "probe_events": {
+    "plain": [
+      {
+        "case": "plain",
+        "event": "PROBE_START",
+        "pid": 88303,
+        "wall_time": 1792343113.551002,
+        "elapsed_s": 0.0
+      },
+      {
+        "case": "plain",
+        "event": "PROBE_MATCH",
+        "pid": 88303,
+        "wall_time": 1792343123.555957,
+        "elapsed_s": 10.005
+      },
+      {
+        "case": "plain",
+        "event": "PROBE_EXIT",
+        "pid": 88303,
+        "wall_time": 1792343138.559467,
+        "elapsed_s": 25.009
+      }
+    ],
+    "approval": [
+      {
+        "case": "approval",
+        "event": "PROBE_START",
+        "pid": 88975,
+        "wall_time": 1792343265.46183,
+        "elapsed_s": 0.0
+      },
+      {
+        "case": "approval",
+        "event": "PROBE_MATCH",
+        "pid": 88975,
+        "wall_time": 1792343275.4653308,
+        "elapsed_s": 10.004
+      },
+      {
+        "case": "approval",
+        "event": "PROBE_EXIT",
+        "pid": 88975,
+        "wall_time": 1792343290.471244,
+        "elapsed_s": 25.009
+      }
+    ]
+  },
+  "ui_observation": {
+    "window": "Cursor Agents",
+    "chat": "Shell command execution flow",
+    "method": "native accessibility tree and screenshot",
+    "scope": "STARTED and COMPLETED markers for plain and approval are visible; no compaction message is present"
+  },
+  "not_covered": {
+    "approval_wait": "User explicitly reported no approval prompt; sandbox_policy_type=1 was sent, smart_mode_approval absent. required_permissions all does not guarantee approval.",
+    "compaction": "Prompt preparation attempted but click/paste/setValue did not populate input. No new run trace or compaction process exists.",
+    "latest_patch_notify_on_output": "Not rerun in this session; 2026-10-18 real client result belongs to previous patch.",
+    "official_to_byok_transition": "Not repeated on final patch."
+  },
+  "ui_blockers": [
+    "ScreenCaptureKit -3812",
+    "noWindowsAvailable",
+    "AX read succeeds intermittently but click/paste/setValue leave prompt empty"
+  ],
+  "restoration": {
+    "recorded_at": "2026-10-18T17:17:01.330570+00:00",
+    "isolated_server_stopped": true,
+    "formal_pid": 91406,
+    "formal_version": "1.0.16",
+    "formal_harness": {
+      "integration": "enabled",
+      "settings_applied": true,
+      "proxy_url": "http://127.0.0.1:49642",
+      "configured_models": 4
+    },
+    "cursor_settings_changed_keys": [],
+    "formal_schema_version": 10,
+    "formal_database_replaced": false,
+    "test_binary_installed": false,
+    "formal_test_setting_differences": [
+      "llm_detailed_logging",
+      "network_ports"
+    ],
+    "formal_auth_storage_restored_from_backup": false,
+    "note": "正式数据未替换；保留本次官方登录状态，未用旧 globalStorage 覆盖登录数据。",
+    "cursor_pid_after": 91533,
+    "cursor_logged_in_ui_verified": true,
+    "cursor_login_observation": "启动过程中短暂显示登录页；随后确认已登录账号菜单、原工作区与原测试对话可见，无需用户再次操作。"
+  },
+  "prior_automated_validation": {
+    "workspace_tests": 426,
+    "failures": 0,
+    "ignored": 0,
+    "source": "2026-10-18-issue155-audit-fix-evidence.json",
+    "rerun_this_session": false
+  },
+  "production_code_changed_this_session": false,
+  "committed": false,
+  "merged": false,
+  "released": false
+}

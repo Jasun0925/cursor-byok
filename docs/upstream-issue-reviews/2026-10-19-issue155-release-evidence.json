@@ -1,0 +1,35 @@
+{
+  "version": "1.0.17",
+  "repository": "haohaomin/cursor-byok",
+  "base_commit": "8d74b25f3b09432d6d79736b2f6bcb0555f9229c",
+  "scope_status": "issue155 half complete by user decision",
+  "workspace_tests": {
+    "passed": 424,
+    "failed": 0,
+    "ignored": 0,
+    "process_environment": {
+      "NO_PROXY": "127.0.0.1,localhost,::1",
+      "no_proxy": "127.0.0.1,localhost,::1"
+    }
+  },
+  "checks": {
+    "npm_run_check": true,
+    "tauri_debug_no_bundle": true,
+    "clippy_lib_deny_warnings": true,
+    "cargo_fmt": true,
+    "git_diff_check": true,
+    "workflow_yaml": true,
+    "public_key_match": true,
+    "protocol_inputs_tracked": true
+  },
+  "log_sha256": {
+    "issue155-release-tests-direct.log": "8fbc998d81d969be0becf57992f861e1aab4056b9e9a8f61ce218be41796db67",
+    "issue155-release-frontend.log": "a5bc6e593b826cb613088368c46674e4a3e1edd7e999d1ac8f6ee792af614ec9",
+    "issue155-release-tauri.log": "f6058b3a0ec055238b084946ac1d8e7b27758f7e6188da0fa89bb0789dc622e0",
+    "issue155-release-clippy.log": "aaf26794e0f171ac0f7f3ecaefe5a12c5d15c8c50171a897d6455f42397679ae"
+  },
+  "excluded_by_user": [
+    "20-minute acceptance"
+  ],
+  "not_installed": true
+}

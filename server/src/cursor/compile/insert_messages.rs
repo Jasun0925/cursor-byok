@@ -22,6 +22,7 @@ pub(super) const SHELL_FOLLOW_UP: &str = concat!(
 
 #[derive(Debug)]
 pub(super) struct Projection {
+    pub index: usize,
     pub context: String,
     pub turn_user: pb::UserMessage,
 }
@@ -29,7 +30,7 @@ pub(super) struct Projection {
 pub(super) fn project(
     action: &pb::BackgroundTaskCompletionAction,
     mode: i32,
-) -> Result<Projection> {
+) -> Result<Vec<Projection>> {
     if action.completions.is_empty() {
         return Err(Error::Protocol(
             "background task completion action contains no completion".into(),
@@ -37,9 +38,7 @@ pub(super) fn project(
     }
 
     let mut completions = BTreeMap::new();
-    let mut has_shell = false;
-    let mut has_subagent = false;
-    for completion in &action.completions {
+    for (index, completion) in action.completions.iter().enumerate() {
         let kind = pb::BackgroundTaskKind::try_from(completion.kind).map_err(|_| {
             Error::Protocol(format!("unknown background task kind: {}", completion.kind))
         })?;
@@ -57,8 +56,8 @@ pub(super) fn project(
                 ))
             })?;
         if reason != pb::BackgroundTaskCompletionReason::TaskFinished {
-            // Progress and reparenting notifications are informational; the
-            // client batches them together with the real finish notification.
+            // Progress and reparenting notifications are informational and
+            // may arrive alone before the real finish notification.
             continue;
         }
         if completion.task_id.is_empty() || completion.title.is_empty() {
@@ -67,24 +66,16 @@ pub(super) fn project(
             ));
         }
         let agent_id = match kind {
-            pb::BackgroundTaskKind::Shell => {
-                has_shell = true;
-                None
-            }
-            pb::BackgroundTaskKind::Subagent => {
-                has_subagent = true;
-                Some(
-                    completion
-                        .subagent_id
-                        .as_deref()
-                        .filter(|id| !id.is_empty())
-                        .ok_or_else(|| {
-                            Error::Protocol(
-                                "background subagent completion has no subagent_id".into(),
-                            )
-                        })?,
-                )
-            }
+            pb::BackgroundTaskKind::Shell => None,
+            pb::BackgroundTaskKind::Subagent => Some(
+                completion
+                    .subagent_id
+                    .as_deref()
+                    .filter(|id| !id.is_empty())
+                    .ok_or_else(|| {
+                        Error::Protocol("background subagent completion has no subagent_id".into())
+                    })?,
+            ),
             pb::BackgroundTaskKind::Unspecified => unreachable!(),
         };
         let tool_call_id = completion
@@ -101,48 +92,35 @@ pub(super) fn project(
             tool_call_id,
         ))?;
         let context = completion_context(completion, kind, agent_id)?;
-        if completions
-            .insert(identity.clone(), (completion, context))
-            .is_some()
-        {
+        let projection = Projection {
+            index,
+            context,
+            turn_user: pb::UserMessage {
+                text: match kind {
+                    pb::BackgroundTaskKind::Shell => SHELL_FOLLOW_UP,
+                    pb::BackgroundTaskKind::Subagent => FOLLOW_UP,
+                    pb::BackgroundTaskKind::Unspecified => unreachable!(),
+                }
+                .into(),
+                message_id: format!("background-completed:{identity}"),
+                mode,
+                is_simulated_msg: Some(true),
+                simulated_msg_reason: Some(pb::SimulatedMsgReason::BackgroundTaskCompletion as i32),
+                simulated_message_metadata: Some(pb::user_message::SimulatedMessageMetadata {
+                    title: Some(completion.title.clone()),
+                    task_id: Some(completion.task_id.clone()),
+                    ..Default::default()
+                }),
+                ..Default::default()
+            },
+        };
+        if completions.insert(identity.clone(), projection).is_some() {
             return Err(Error::Protocol(format!(
                 "duplicate background task completion: {identity}"
             )));
         }
     }
-
-    let (first, _) = completions.values().next().ok_or_else(|| {
-        Error::Protocol("background task notification contains no finished task".into())
-    })?;
-    let text = match (has_shell, has_subagent) {
-        (true, false) => SHELL_FOLLOW_UP.into(),
-        (false, true) => FOLLOW_UP.into(),
-        (true, true) => format!("{SHELL_FOLLOW_UP}\n\n{FOLLOW_UP}"),
-        (false, false) => unreachable!(),
-    };
-    Ok(Projection {
-        context: completions
-            .values()
-            .map(|(_, context)| context.as_str())
-            .collect::<Vec<_>>()
-            .join("\n\n"),
-        turn_user: pb::UserMessage {
-            text,
-            message_id: format!(
-                "background-completed:{}",
-                completions.keys().cloned().collect::<Vec<_>>().join(":")
-            ),
-            mode,
-            is_simulated_msg: Some(true),
-            simulated_msg_reason: Some(pb::SimulatedMsgReason::BackgroundTaskCompletion as i32),
-            simulated_message_metadata: Some(pb::user_message::SimulatedMessageMetadata {
-                title: Some(first.title.clone()),
-                task_id: Some(first.task_id.clone()),
-                ..Default::default()
-            }),
-            ..Default::default()
-        },
-    })
+    Ok(completions.into_values().collect())
 }
 
 fn status(completion: &pb::BackgroundTaskCompletion) -> Result<pb::BackgroundTaskStatus> {

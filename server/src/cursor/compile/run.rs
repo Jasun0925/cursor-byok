@@ -55,22 +55,22 @@ pub(crate) struct PrepareDependencies<'a> {
     pub local_rules_dir: Option<&'a std::path::Path>,
 }
 
-pub(crate) fn background_completion_event_id(
+pub(crate) fn background_completion_events(
     request: &pb::AgentRunRequest,
-) -> Result<Option<String>> {
+) -> Result<Vec<(usize, String)>> {
     let Some(pb::conversation_action::Action::BackgroundTaskCompletionAction(completion)) = request
         .action
         .as_ref()
         .and_then(|action| action.action.as_ref())
     else {
-        return Ok(None);
+        return Ok(Vec::new());
     };
-    // Use the same validated, sorted identity as the persisted runtime message.
-    Ok(Some(
+    Ok(
         insert_messages::project(completion, pb::AgentMode::Agent as i32)?
-            .turn_user
-            .message_id,
-    ))
+            .into_iter()
+            .map(|projection| (projection.index, projection.turn_user.message_id))
+            .collect(),
+    )
 }
 
 pub(crate) async fn prepare(
@@ -270,29 +270,46 @@ pub(crate) async fn prepare(
     };
     let mut initial_messages = if compacting {
         Vec::new()
+    } else if background_completion {
+        let Some(pb::conversation_action::Action::BackgroundTaskCompletionAction(action)) = request
+            .action
+            .as_ref()
+            .and_then(|action| action.action.as_ref())
+        else {
+            unreachable!()
+        };
+        let mut messages = Vec::new();
+        let mut texts = Vec::new();
+        for projection in insert_messages::project(action, mode_number)? {
+            let event_id = projection.turn_user.message_id.clone();
+            let (message, text) = match store
+                .message(&conversation_id, &format!("runtime:{event_id}"))
+                .await?
+            {
+                Some(message) => {
+                    let text = runtime_message_text(&message)?;
+                    (message, text)
+                }
+                None => {
+                    break_messages::compile_background(
+                        event_id,
+                        &projection.turn_user,
+                        &request_context,
+                        &projection.context,
+                        blob_sync,
+                    )
+                    .await?
+                }
+            };
+            messages.push(message);
+            texts.push(text);
+        }
+        if let Some(user) = turn_user.as_mut() {
+            user.text = texts.join("\n\n");
+        }
+        messages
     } else {
         match (turn_user.clone(), event_id) {
-            (Some(mut user), Some(event_id)) if background_completion => {
-                let (message, text) = match existing_runtime {
-                    Some(message) => {
-                        let text = runtime_message_text(&message)?;
-                        (message, text)
-                    }
-                    None => {
-                        break_messages::compile_background(
-                            event_id,
-                            &user,
-                            &request_context,
-                            &action_context,
-                            blob_sync,
-                        )
-                        .await?
-                    }
-                };
-                user.text = text;
-                turn_user = Some(user);
-                vec![message]
-            }
             (Some(user), Some(event_id)) => {
                 let runtime = match existing_runtime {
                     Some(message) => message,
@@ -528,15 +545,23 @@ fn action(request: &pb::AgentRunRequest) -> Result<ActionProjection> {
             })
         }
         pb::conversation_action::Action::BackgroundTaskCompletionAction(action) => {
-            let projection = insert_messages::project(action, mode)?;
-            let event_id = projection.turn_user.message_id.clone();
+            let projections = insert_messages::project(action, mode)?;
+            let turn_user = projections.first().map(|first| {
+                let mut user = first.turn_user.clone();
+                user.message_id = projections
+                    .iter()
+                    .map(|projection| projection.turn_user.message_id.as_str())
+                    .collect::<Vec<_>>()
+                    .join(":");
+                user
+            });
             Ok(ActionProjection {
                 mode,
-                action_context: projection.context,
-                event_id: Some(event_id),
+                action_context: String::new(),
+                event_id: None,
                 input_id: None,
-                turn_user: Some(projection.turn_user),
-                starts_turn: true,
+                starts_turn: turn_user.is_some(),
+                turn_user,
                 compacting: false,
                 background_completion: true,
             })

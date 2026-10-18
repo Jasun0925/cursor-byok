@@ -1,0 +1,336 @@
+{
+  "issue": 155,
+  "recorded_at": "2026-10-18T12:20:29.563630+00:00",
+  "checkout": "/Users/renhao/works/cursor-byok",
+  "head": "b541d696e71943550e38135191d77cf05ddbda94",
+  "uncommitted_patch_included": true,
+  "scope": "Fix the two reproduced server defects from the additional audit; full issue live acceptance remains open",
+  "source_sha256": {
+    "server/src/cursor/compile/insert_messages.rs": "62fed8ded67759ced38f0517bcf699faf64029435066e39144b47b27f29dbe2c",
+    "server/src/cursor/compile/run.rs": "e358ddb9431a5f17f9c6d797e07b438bec07f24b0db9c44c9e5cba384d3bdba6",
+    "server/src/cursor/conversation/background.rs": "b36eaefa59a36d5d18953825c6772f402940944197701d517168117017925d30",
+    "server/src/cursor/conversation/runtime.rs": "cd776f8a38d482c0808945a0d88a22355b946f12d2eb6988df0a45a948302251",
+    "server/src/cursor/conversation/registry.rs": "1fd3024a5191cde86a3dc112143b54784a564dfe1c06c1a040f06bd04c809bc6",
+    "server/src/cursor/checkpoint/worker.rs": "d1f594400bc85da65e77b71c1562cd20c515bc3d574f1fa07db9feaf0a6058ff",
+    "server/src/store/cursor_checkpoints.rs": "8eb14b002c938160a4529ab233fe0c66370a5b4bf6e0ede049e4acf28afd5105",
+    "server/src/store/mod.rs": "743ad25cc4956641b4fe2ef71a92ef57d55e42b6ba6f286cca6841e9a6afaf00",
+    "server/src/store/migrations.rs": "0d62d85c35e7108efeff18ead6c2912f21d14371f591d4a7cb121e037b94431f",
+    "server/migrations/0011_add_cursor_checkpoints.sql": "b63645686f53e1015f47fab5f0d28048db7652e731b38a478fdf2270118d972e",
+    "server/tests/conversation_delivery.rs": "f891064c8ae9e96813de5f59f14b1877822d33a977028e4f8fd93757509aa38a"
+  },
+  "red_before_fix": [
+    {
+      "test": "delayed_completion_after_compaction_keeps_current_summary",
+      "result": "failed",
+      "summary_retained": false,
+      "self_summary_count": 0,
+      "old_waiting_message_retained": true
+    },
+    {
+      "test": "audit_rebatched_completion_does_not_wake_model_twice",
+      "result": "failed",
+      "provider_calls": 2,
+      "expected_provider_calls": 1
+    }
+  ],
+  "green_after_fix": {
+    "compaction": "summary retained; self_summary_count=1; summary archives, wire root prefix and turn prefix retained; old waiting reply absent",
+    "restart": "connection pool closed and database reopened; current summary retained",
+    "rebatching": "A+B then A makes one model call total",
+    "overlap_after_restart": "A+B then B+C and A then A+B each deliver only the new task; reversed full retries make no additional call",
+    "overlap_while_active": "A+B then B+C: each task appears once, one Run lifecycle, two model calls",
+    "prior_coverage": "first import, newer upstream history, progress acknowledgements, cancelled completion redelivery, distinct child task identities all pass"
+  },
+  "database": {
+    "migration": "0011_add_cursor_checkpoints.sql",
+    "old_migrations_modified": false,
+    "tested_upgrade_from": 10,
+    "checks": [
+      "existing conversation and canonical messages preserved",
+      "checkpoint state insert/update",
+      "nearest ancestor state lookup",
+      "foreign key rejects unknown checkpoint",
+      "conversation isolation",
+      "close and reopen persists state"
+    ]
+  },
+  "checks": {
+    "workspace": {
+      "command": "cargo test --workspace --locked",
+      "exit_code": 0,
+      "passed": 426,
+      "failed": 0,
+      "ignored": 0,
+      "server_lib_passed": 193,
+      "server_integration_passed": 183,
+      "conversation_delivery_passed": 18,
+      "log": "/private/tmp/issue155-audit-fix-workspace-final.log",
+      "suites": [
+        {
+          "suite": "Running unittests src/lib.rs (target/debug/deps/cursor_byok_desktop-ae52b617106b18fc)",
+          "result": "ok",
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "Running unittests src/main.rs (target/debug/deps/cursor_byok_desktop-9215b292947c428e)",
+          "result": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "Running unittests src/lib.rs (target/debug/deps/cursor_server-90acf617ca592c69)",
+          "result": "ok",
+          "passed": 193,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "Running unittests src/bin/cursor-server.rs (target/debug/deps/cursor_server-2c23addd6d854297)",
+          "result": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "Running tests/anthropic_refusal.rs (target/debug/deps/anthropic_refusal-ddcdc80b6b76a74d)",
+          "result": "ok",
+          "passed": 8,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "Running tests/anthropic_signature.rs (target/debug/deps/anthropic_signature-125564dc5880820d)",
+          "result": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "Running tests/chat_think_tags.rs (target/debug/deps/chat_think_tags-94d00888b7daaceb)",
+          "result": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "Running tests/checkpoint_recovery.rs (target/debug/deps/checkpoint_recovery-c115c690d56e4458)",
+          "result": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "Running tests/commit_message.rs (target/debug/deps/commit_message-77caeccc5dace701)",
+          "result": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "Running tests/compaction.rs (target/debug/deps/compaction-adec2f855502c5e1)",
+          "result": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "Running tests/connect_wire.rs (target/debug/deps/connect_wire-abd477a357681486)",
+          "result": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "Running tests/conversation_delivery.rs (target/debug/deps/conversation_delivery-107a47e121e38d45)",
+          "result": "ok",
+          "passed": 18,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "Running tests/cursor_trace_queue.rs (target/debug/deps/cursor_trace_queue-60f1314661125c50)",
+          "result": "ok",
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "Running tests/cursor_transport_lifecycle.rs (target/debug/deps/cursor_transport_lifecycle-7f0e31d7a64334ae)",
+          "result": "ok",
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "Running tests/error_lifecycle.rs (target/debug/deps/error_lifecycle-ac18402a05f782e4)",
+          "result": "ok",
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "Running tests/external_api.rs (target/debug/deps/external_api-893cc8d10d2530c6)",
+          "result": "ok",
+          "passed": 12,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "Running tests/interrupt.rs (target/debug/deps/interrupt-65dc25d9b442241a)",
+          "result": "ok",
+          "passed": 21,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "Running tests/issue172_repro.rs (target/debug/deps/issue172_repro-2973fc16425e5edf)",
+          "result": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "Running tests/knowledge_rules.rs (target/debug/deps/knowledge_rules-98576036c5696689)",
+          "result": "ok",
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "Running tests/local_rules_context.rs (target/debug/deps/local_rules_context-d69d2daf8c0b7029)",
+          "result": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "Running tests/model_connectivity.rs (target/debug/deps/model_connectivity-b153ea2fdff08aca)",
+          "result": "ok",
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "Running tests/prefix_stability.rs (target/debug/deps/prefix_stability-b33e0c16b456f2c6)",
+          "result": "ok",
+          "passed": 13,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "Running tests/responses_text.rs (target/debug/deps/responses_text-847d8e797e1a5c2a)",
+          "result": "ok",
+          "passed": 16,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "Running tests/rule_scope.rs (target/debug/deps/rule_scope-96d83eb1c9e7c7c0)",
+          "result": "ok",
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "Running tests/subagent_admission.rs (target/debug/deps/subagent_admission-1098de671c653be9)",
+          "result": "ok",
+          "passed": 8,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "Running tests/subagent_model_context.rs (target/debug/deps/subagent_model_context-14d3f773fb0ffd97)",
+          "result": "ok",
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "Running tests/tool_presentation.rs (target/debug/deps/tool_presentation-f7689e0f0d2fb921)",
+          "result": "ok",
+          "passed": 9,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "Running tests/tool_round.rs (target/debug/deps/tool_round-1b891961ddef0836)",
+          "result": "ok",
+          "passed": 21,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "Running unittests src/main.rs (target/debug/deps/semble_benchmark-44686679969a525f)",
+          "result": "ok",
+          "passed": 10,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "Running unittests src/lib.rs (target/debug/deps/semble_core-30c3bb53fc2443e8)",
+          "result": "ok",
+          "passed": 37,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "Doc-tests cursor_byok_desktop",
+          "result": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "Doc-tests cursor_server",
+          "result": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "Doc-tests semble_core",
+          "result": "ok",
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0
+        }
+      ]
+    },
+    "clippy": {
+      "command": "cargo clippy -p cursor-server --locked --lib -- -D warnings",
+      "exit_code": 0,
+      "log": "/private/tmp/issue155-audit-fix-clippy.log"
+    },
+    "fmt": {
+      "command": "cargo fmt --all -- --check",
+      "exit_code": 0
+    },
+    "diff": {
+      "command": "git diff --check",
+      "exit_code": 0
+    }
+  },
+  "test_development_note": "The first active-overlap fixture waited for InsertMessages acknowledgement before releasing the model boundary, causing a test deadlock. The fixture now sends while gated, releases the model boundary, then awaits acknowledgement, following the existing active-run test. The initial workspace invocation also used the earlier fixture. The focused rerun and final full workspace invocation passed. No production wait/retry was added for this fixture.",
+  "verification_boundary": {
+    "provider": "FakeProvider",
+    "client": "synthetic Cursor protocol driver",
+    "database": "isolated temporary SQLite per test",
+    "new_live_cursor_test": false,
+    "formal_proxy_changed": false,
+    "formal_app_replaced": false,
+    "formal_database_migrated": false,
+    "committed": false,
+    "merged": false,
+    "released": false
+  },
+  "outstanding_live_checks": [
+    "these two boundary cases in Cursor UI",
+    "ordinary background command without notify_on_output",
+    "over-20-minute automatic completion with current patch",
+    "real delayed command approval",
+    "upstream-to-BYOK completion after repair"
+  ]
+}

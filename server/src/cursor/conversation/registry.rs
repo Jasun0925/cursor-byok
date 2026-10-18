@@ -76,7 +76,7 @@ impl ConversationRegistry {
     pub(super) async fn admit_background(
         &self,
         request_id: &str,
-        request: &crate::cursor::protocol::proto::agent::v1::AgentRunRequest,
+        request: &mut crate::cursor::protocol::proto::agent::v1::AgentRunRequest,
     ) -> crate::Result<super::background::Admission> {
         self.inner
             .background

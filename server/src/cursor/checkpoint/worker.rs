@@ -1,4 +1,5 @@
 //! Serializes checkpoint jobs and completes commit barriers.
+use prost::Message;
 use tokio::sync::{mpsc, oneshot};
 
 use crate::{
@@ -105,15 +106,17 @@ impl CheckpointWorker {
                         summary,
                         result,
                     } => {
-                        let messages = store.load_checkpoint_messages(checkpoint_id).await;
-                        let checkpoint = match messages {
-                            Ok(messages) => {
-                                builder
-                                    .compacted(&messages, mode, &summary, &presentation)
-                                    .await
-                            }
-                            Err(error) => Err(error),
-                        };
+                        let checkpoint = async {
+                            let messages = store.load_checkpoint_messages(checkpoint_id).await?;
+                            let state = builder
+                                .compacted(&messages, mode, &summary, &presentation)
+                                .await?;
+                            store
+                                .save_cursor_checkpoint(checkpoint_id, &state.encode_to_vec())
+                                .await?;
+                            Ok(state)
+                        }
+                        .await;
                         let _ = result.send(checkpoint);
                         Ok(())
                     }
@@ -154,6 +157,9 @@ async fn publish_settled(
 ) -> Result<()> {
     let messages = store.load_checkpoint_messages(checkpoint_id).await?;
     let checkpoint = builder.settled(&messages, mode, presentation).await?;
+    store
+        .save_cursor_checkpoint(checkpoint_id, &checkpoint.encode_to_vec())
+        .await?;
     builder.publish(handle, &checkpoint).await
 }
 
@@ -201,6 +207,9 @@ async fn build_final(
         .await?;
     let settled = builder
         .settled(&messages, mode, &PendingSteps::default())
+        .await?;
+    store
+        .save_cursor_checkpoint(checkpoint_id, &settled.encode_to_vec())
         .await?;
     Ok(FinalCheckpoints { staged, settled })
 }

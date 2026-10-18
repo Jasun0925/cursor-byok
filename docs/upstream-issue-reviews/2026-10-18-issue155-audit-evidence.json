@@ -1,0 +1,96 @@
+{
+  "issue": 155,
+  "recorded_at": "2026-10-18T11:50:44.610919+00:00",
+  "checkout": "/Users/renhao/works/cursor-byok",
+  "head": "b541d696e71943550e38135191d77cf05ddbda94",
+  "uncommitted_patch_included": true,
+  "scope": "read-only audit of current issue155 repair; no production source change",
+  "source_sha256": {
+    "server/src/cursor/conversation/background.rs": "386a5255638019339f18f030807d00078965bf4b51422a8225718930c320a6a1",
+    "server/src/cursor/conversation/runtime.rs": "1c3d09158324824b3afb5e10ee412148352aac93352d710d92f7edd193c4ee97",
+    "server/src/cursor/compile/insert_messages.rs": "7c654d3ecbe58c9b0a7ea6411a4479c2e61cc0182e3207cdce017072dfcf4aee",
+    "server/tests/conversation_delivery.rs": "d5f4c9bf3462cfe52063e8f653203fd58d2ab2f0db9721e5402f00771e7fe991"
+  },
+  "isolation": {
+    "source_root": "/private/tmp/cursor-byok-issue155-stream-20261018/bootstrap-live/source",
+    "production_modules_match_working_tree": [
+      "server/src/cursor",
+      "server/src/run",
+      "server/src/store",
+      "server/src/provider"
+    ],
+    "standalone_test_modules_excluded_from_comparison": true,
+    "database": "fresh tempfile SQLite per test",
+    "provider": "FakeProvider; no external provider or Cursor notification generated",
+    "formal_proxy_switched": false
+  },
+  "findings": [
+    {
+      "id": "stale-completion-undoes-compaction",
+      "severity": "P1",
+      "test": "audit_delayed_completion_after_compaction_keeps_current_summary",
+      "trigger": "finish parent; compact; receive TaskFinished carrying pre-compaction checkpoint",
+      "expected": "retain committed summary and append completion",
+      "actual": {
+        "summary_retained": false,
+        "self_summary_count_before": 1,
+        "self_summary_count_after": 0,
+        "pre_compaction_waiting_message_restored": true
+      },
+      "source": "server/src/cursor/conversation/background.rs:29",
+      "observed_failures": 2,
+      "status": "reproduced; not fixed",
+      "live_cursor_reproduction": false
+    },
+    {
+      "id": "completion-deduplication-depends-on-batch",
+      "severity": "P2",
+      "test": "audit_rebatched_completion_does_not_wake_model_twice",
+      "trigger": "deliver completion batch A+B, then redeliver only A",
+      "expected_provider_calls": 1,
+      "actual_provider_calls": 2,
+      "source": "server/src/cursor/compile/insert_messages.rs:134",
+      "observed_failures": 2,
+      "status": "reproduced; not fixed",
+      "shell_rerun_observed": false,
+      "live_cursor_reproduction": false
+    }
+  ],
+  "existing_suite_recheck": {
+    "single_prior_failure": "passed",
+    "all_lib": {
+      "passed": 192,
+      "failed": 0,
+      "duration_s": 1.79
+    },
+    "prior_failure_cause": "not established; no source or test change was required for this pass",
+    "integration": "178 passed in previous turn; unchanged implementation not rerun wholesale in this audit"
+  },
+  "confirmation": {
+    "passed": 0,
+    "failed": 2,
+    "duration_s": 6.2,
+    "log": "    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.39s\n     Running tests/issue155_audit.rs (target/debug/deps/issue155_audit-e1a3a5d747cb4143)\n\nrunning 2 tests\naudit model_calls_after_batch_and_partial_retry=2\n\nthread 'audit_rebatched_completion_does_not_wake_model_twice' (3694583) panicked at server/tests/issue155_audit.rs:1288:5:\nassertion `left == right` failed: a previously completed task remains consumed when the retry batch changes\n  left: 2\n right: 1\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\ntest audit_rebatched_completion_does_not_wake_model_twice ... FAILED\naudit summary_retained=false summary_count=0 old_waiting_retained=true\n\nthread 'audit_delayed_completion_after_compaction_keeps_current_summary' (3694582) panicked at server/tests/issue155_audit.rs:1257:5:\nlate notification must not undo committed compaction\ntest audit_delayed_completion_after_compaction_keeps_current_summary ... FAILED\n\nfailures:\n\nfailures:\n    audit_delayed_completion_after_compaction_keeps_current_summary\n    audit_rebatched_completion_does_not_wake_model_twice\n\ntest result: FAILED. 0 passed; 2 failed; 0 ignored; 0 measured; 13 filtered out; finished in 6.20s\n\nerror: test failed, to rerun pass `-p cursor-server --test issue155_audit`\n"
+  },
+  "outstanding_live_checks": [
+    "ordinary background command without notify_on_output",
+    "over-20-minute automatic completion with current patch",
+    "real delayed command approval",
+    "upstream-to-BYOK completion after repair"
+  ],
+  "ui_state": "Cursor window visible to AX but editor/chat controls unavailable; no new live request sent",
+  "environment": {
+    "formal_harness_enabled": true,
+    "settings_applied": true,
+    "cursor_settings_match_previous_turn_baseline": true,
+    "formal_database_test_writes": false,
+    "formal_database_hash_matches_previous_turn_baseline": false,
+    "database_note": "Formal database remains live; no rollback performed and no unchanged-content claim made."
+  },
+  "follow_up": {
+    "status": "both reproduced defects fixed in working-tree source and verified by protocol regression",
+    "report": "2026-10-18-issue155-audit-fix.md",
+    "evidence": "2026-10-18-issue155-audit-fix-evidence.json",
+    "note": "Original audit findings and failure output above are retained as historical baseline."
+  }
+}
