@@ -266,8 +266,12 @@ impl ControlService {
         self.plugin_runtime.status()
     }
 
-    pub fn initialize_plugin_runtime(&self) -> PluginRuntimeStatus {
-        self.plugin_runtime.initialize(self.store.clone())
+    pub async fn initialize_plugin_runtime(&self) -> Result<PluginRuntimeStatus> {
+        self.plugins.initialize_runtime().await
+    }
+
+    pub async fn reset_plugins(&self) -> Result<PluginRuntimeStatus> {
+        self.plugins.reset().await
     }
 
     pub fn cancel_plugin_runtime_initialization(&self) -> PluginRuntimeStatus {

@@ -28,6 +28,7 @@ struct PluginRuntimeInner {
     status: RwLock<PluginRuntimeStatus>,
     initializing: AtomicBool,
     cancellation: Mutex<Option<CancellationToken>>,
+    task: Mutex<Option<tokio::task::JoinHandle<()>>>,
 }
 
 #[derive(Clone, Debug, Serialize, PartialEq, Eq)]
@@ -104,7 +105,7 @@ impl PluginRuntime {
         Self::new(config::managed_data_dir()?.join("plugins").join("runtime"))
     }
 
-    fn new(root: PathBuf) -> Result<Self> {
+    pub(super) fn new(root: PathBuf) -> Result<Self> {
         std::fs::create_dir_all(&root)?;
         #[cfg(unix)]
         {
@@ -126,6 +127,7 @@ impl PluginRuntime {
                 status: RwLock::new(status),
                 initializing: AtomicBool::new(false),
                 cancellation: Mutex::new(None),
+                task: Mutex::new(None),
             }),
         })
     }
@@ -176,7 +178,7 @@ impl PluginRuntime {
         let cancellation = CancellationToken::new();
         *self.inner.cancellation.lock() = Some(cancellation.clone());
         let runtime = self.clone();
-        tokio::spawn(async move {
+        let task = tokio::spawn(async move {
             let result = installation::install(
                 &runtime.inner.root,
                 &store,
@@ -203,7 +205,29 @@ impl PluginRuntime {
             runtime.inner.initializing.store(false, Ordering::Release);
         });
 
+        *self.inner.task.lock() = Some(task);
         initializing
+    }
+
+    /// Called with the registry's exclusive lifecycle lock held.
+    pub(super) async fn uninstall(&self) -> Result<PluginRuntimeStatus> {
+        self.cancel_initialization();
+        let task = self.inner.task.lock().take();
+        if let Some(task) = task {
+            task.await.map_err(|error| {
+                Error::Config(format!("plugin initialization task failed: {error}"))
+            })?;
+        }
+        *self.inner.status.write() = match self.inner.asset {
+            Some(asset) => PluginRuntimeStatus::uninitialized(asset),
+            None => PluginRuntimeStatus::unsupported(),
+        };
+        match tokio::fs::remove_dir_all(&self.inner.root).await {
+            Ok(()) => {}
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+            Err(error) => return Err(error.into()),
+        }
+        Ok(self.status())
     }
 
     pub fn cancel_initialization(&self) -> PluginRuntimeStatus {
@@ -225,5 +249,39 @@ impl PluginRuntime {
         status.downloaded_bytes = downloaded_bytes;
         status.total_bytes = total_bytes;
         status.error = None;
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn uninstall_waits_for_initialization_to_finish_cleanup() {
+        let directory = tempfile::tempdir().unwrap();
+        let runtime = PluginRuntime::new(directory.path().join("runtime")).unwrap();
+        let cancellation = CancellationToken::new();
+        *runtime.inner.cancellation.lock() = Some(cancellation.clone());
+        runtime.inner.initializing.store(true, Ordering::Release);
+        let initializing = runtime.clone();
+        *runtime.inner.task.lock() = Some(tokio::spawn(async move {
+            cancellation.cancelled().await;
+            // Simulate a final installer write after cancellation has been requested.
+            tokio::fs::write(
+                initializing.inner.root.join("late-download.part"),
+                b"partial",
+            )
+            .await
+            .unwrap();
+            initializing
+                .inner
+                .initializing
+                .store(false, Ordering::Release);
+        }));
+        let status = runtime.uninstall().await.unwrap();
+        assert_eq!(status.state, PluginRuntimeState::Uninitialized);
+        assert!(!runtime.inner.root.exists());
+        assert!(!runtime.inner.initializing.load(Ordering::Acquire));
+        assert!(runtime.executable().is_none());
     }
 }

@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { api, pluginText, type PluginDescriptor, type PluginImportFile, type PluginRuntimePhase, type PluginRuntimeStatus } from "../../shared/api";
 import { useI18n } from "../../i18n/store";
+import { ConfirmDialog } from "../../shared/ui/ConfirmDialog";
+import { PageActions } from "../../shell/PageActions";
 import { PageContent } from "../../shell/layout/PageContent";
 import { appStore, useAppStore } from "../../shared/store/appStore";
 import { ActionMenu, type ActionMenuItem } from "../../shared/ui/ActionMenu";
@@ -13,7 +15,10 @@ import { PluginAddPanel, PluginSettingsPanel } from "./PluginResourcePanels";
 import styles from "./PluginManagementPage.module.scss";
 
 export function PluginManagementPage() {
-  const { pluginRuntime, plugins } = useAppStore();
+  const { pluginRuntime, plugins, error } = useAppStore();
+  const [resetOpen, setResetOpen] = useState(false);
+  const [resetting, setResetting] = useState(false);
+  const message = useMessage();
   const [progressOpen, setProgressOpen] = useState(false);
   const [starting, setStarting] = useState(false);
   const [selected, setSelected] = useState<{ pluginId: string; mode: "add" | "settings" } | null>(null);
@@ -25,14 +30,14 @@ export function PluginManagementPage() {
   }, [pluginRuntime]);
 
   useEffect(() => {
-    if (pluginRuntime?.state !== "initializing") return;
+    if (resetting || pluginRuntime?.state !== "initializing") return;
     if (!cancelRequested.current) setProgressOpen(true);
     const timer = window.setInterval(() => void appStore.refreshPluginRuntime(), 300);
     return () => window.clearInterval(timer);
-  }, [pluginRuntime?.state]);
+  }, [pluginRuntime?.state, resetting]);
 
   const initialize = async () => {
-    if (starting) return;
+    if (starting || resetting) return;
     cancelRequested.current = false;
     setStarting(true);
     setProgressOpen(true);
@@ -53,14 +58,45 @@ export function PluginManagementPage() {
     }
   };
 
+  const reset = async () => {
+    if (resetting) return;
+    setResetting(true);
+    setProgressOpen(false);
+    cancelRequested.current = true;
+    const succeeded = await appStore.resetPlugins();
+    setResetting(false);
+    if (succeeded) {
+      setSelected(null);
+      setResetOpen(false);
+      message(t("插件已恢复到未初始化状态"));
+    }
+  };
+
   const content = pluginRuntime?.state === "ready"
     ? <PluginCards plugins={plugins} onOpen={(pluginId, mode) => setSelected({ pluginId, mode })} />
-    : <RuntimeGate status={pluginRuntime} starting={starting} onInitialize={() => void initialize()} />;
+    : <RuntimeGate status={pluginRuntime} starting={starting || resetting} onInitialize={() => void initialize()} />;
   const estimatedHeight = plugins.length > 0
     ? Math.max(320, Math.ceil(plugins.length / 3) * 180)
     : 320;
 
   return <>
+    <PageActions>
+      <Button disabled={resetting || starting || pluginRuntime === null} onClick={() => setResetOpen(true)}>
+        {t("恢复未初始化状态")}
+      </Button>
+    </PageActions>
+    <ConfirmDialog
+      open={resetOpen}
+      title={t("恢复未初始化状态")}
+      busy={resetting}
+      confirmLabel={t("删除并重置")}
+      onCancel={() => setResetOpen(false)}
+      onConfirm={() => void reset()}
+    >
+      <p>{t("将停止所有插件请求和登录，删除全部插件、账号、模型缓存和运行环境。再次使用时需要重新初始化并登录账号。")}</p>
+      <p>{t("普通 API 模型配置和调用记录会保留。此操作无法撤销。")}</p>
+      {error && <span className={styles.error} role="alert">{error}</span>}
+    </ConfirmDialog>
     <PageContent
       title={t("插件配置")}
       sections={[{ key: "installed-plugins", estimatedHeight, content }]}

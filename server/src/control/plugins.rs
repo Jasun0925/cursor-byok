@@ -150,11 +150,15 @@ pub async fn runtime_status(
 pub async fn initialize_runtime(
     State(service): State<ControlService>,
 ) -> Result<Json<PluginRuntimeStatus>> {
-    Ok(Json(service.initialize_plugin_runtime()))
+    Ok(Json(service.initialize_plugin_runtime().await?))
 }
 
 pub async fn cancel_runtime_initialization(
     State(service): State<ControlService>,
 ) -> Result<Json<PluginRuntimeStatus>> {
     Ok(Json(service.cancel_plugin_runtime_initialization()))
+}
+
+pub async fn reset(State(service): State<ControlService>) -> Result<Json<PluginRuntimeStatus>> {
+    Ok(Json(service.reset_plugins().await?))
 }

@@ -8,7 +8,7 @@ use std::{
 use tokio::io::AsyncReadExt;
 
 use super::descriptor::PluginModuleDefinition;
-use crate::{config, Error, Result};
+use crate::{Error, Result};
 
 const DEFINITION_TIMEOUT: Duration = Duration::from_secs(10);
 const MAX_OUTPUT_BYTES: u64 = 2 * 1024 * 1024;
@@ -24,27 +24,37 @@ pub struct PluginDefinitionLoader {
 }
 
 impl PluginDefinitionLoader {
-    pub fn managed() -> Result<Self> {
-        Self::in_directory(config::managed_data_dir()?.join("plugins/runtime/sdk/v1"))
-    }
-
     #[cfg(test)]
     pub(super) fn for_test(root: &Path) -> Result<Self> {
-        Self::in_directory(root.join(".plugin-sdk"))
+        let loader = Self::in_directory(root.join(".plugin-sdk"));
+        loader.prepare()?;
+        Ok(loader)
     }
 
-    fn in_directory(sdk_dir: PathBuf) -> Result<Self> {
-        std::fs::create_dir_all(&sdk_dir)?;
+    pub(super) fn in_directory(sdk_dir: PathBuf) -> Self {
+        Self {
+            import_map: sdk_dir.join("import-map.json"),
+            collector: sdk_dir.join("collect.ts"),
+            worker: sdk_dir.join("worker.ts"),
+            deno_dir: sdk_dir.join("cache"),
+            sdk_dir,
+        }
+    }
+
+    pub(super) fn prepare(&self) -> Result<()> {
+        let Self {
+            sdk_dir,
+            import_map,
+            collector,
+            worker,
+            deno_dir,
+        } = self;
         std::fs::create_dir_all(sdk_dir.join("protocol"))?;
-        let import_map = sdk_dir.join("import-map.json");
-        let collector = sdk_dir.join("collect.ts");
-        let worker = sdk_dir.join("worker.ts");
-        let deno_dir = sdk_dir.join("cache");
-        std::fs::create_dir_all(&deno_dir)?;
+        std::fs::create_dir_all(deno_dir)?;
         let modules = [
-            (&import_map, include_str!("sdk/import-map.json")),
-            (&collector, include_str!("sdk/collect.ts")),
-            (&worker, include_str!("sdk/worker.ts")),
+            (import_map, include_str!("sdk/import-map.json")),
+            (collector, include_str!("sdk/collect.ts")),
+            (worker, include_str!("sdk/worker.ts")),
             (&sdk_dir.join("plugin.ts"), include_str!("sdk/plugin.ts")),
             (
                 &sdk_dir.join("provider.ts"),
@@ -70,23 +80,17 @@ impl PluginDefinitionLoader {
         #[cfg(unix)]
         {
             use std::os::unix::fs::PermissionsExt;
-            std::fs::set_permissions(&sdk_dir, std::fs::Permissions::from_mode(0o700))?;
+            std::fs::set_permissions(sdk_dir, std::fs::Permissions::from_mode(0o700))?;
             std::fs::set_permissions(
                 sdk_dir.join("protocol"),
                 std::fs::Permissions::from_mode(0o700),
             )?;
-            std::fs::set_permissions(&deno_dir, std::fs::Permissions::from_mode(0o700))?;
+            std::fs::set_permissions(deno_dir, std::fs::Permissions::from_mode(0o700))?;
             for (path, _) in &modules {
                 std::fs::set_permissions(path, std::fs::Permissions::from_mode(0o600))?;
             }
         }
-        Ok(Self {
-            sdk_dir,
-            import_map,
-            collector,
-            worker,
-            deno_dir,
-        })
+        Ok(())
     }
 
     pub fn worker_path(&self) -> &Path {

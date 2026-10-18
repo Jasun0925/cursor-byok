@@ -218,6 +218,10 @@ impl PluginWorker {
     }
 
     pub async fn stop(&self) {
+        for (_, invocation) in self.inner.host.invocations.lock().await.drain() {
+            invocation.cancellation.cancel();
+        }
+        self.inner.host.streams.lock().await.clear();
         if let Some(mut process) = self.inner.process.lock().await.take() {
             let _ = process.child.kill().await;
         }

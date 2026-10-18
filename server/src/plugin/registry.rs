@@ -31,6 +31,8 @@ use crate::{
     Error, Result,
 };
 
+mod reset;
+
 const OAUTH_SLOW_DOWN_STEP_MS: i64 = 5_000;
 const MAX_IMPORT_DRAFTS: usize = 256;
 
@@ -40,6 +42,10 @@ pub struct PluginRegistry {
 }
 
 struct RegistryInner {
+    root: std::path::PathBuf,
+    operations: RwLock<()>,
+    cancellation: parking_lot::RwLock<CancellationToken>,
+    reset_lock: Mutex<()>,
     store: Store,
     runtime: PluginRuntime,
     catalog: PluginCatalog,
@@ -135,11 +141,19 @@ pub struct PluginInvocationPlan {
 impl PluginRegistry {
     pub fn managed(store: Store, runtime: PluginRuntime, app_version: String) -> Result<Self> {
         let data = PluginDataStore::managed()?;
+        let catalog = PluginCatalog::managed(app_version)?;
+        if runtime.executable().is_some() {
+            catalog.prepare()?;
+        }
         Ok(Self {
             inner: Arc::new(RegistryInner {
+                root: crate::config::managed_data_dir()?.join("plugins"),
+                operations: RwLock::new(()),
+                cancellation: parking_lot::RwLock::new(CancellationToken::new()),
+                reset_lock: Mutex::new(()),
                 store,
                 runtime,
-                catalog: PluginCatalog::managed(app_version)?,
+                catalog,
                 state: PluginStateStore::new(data),
                 entries: RwLock::new(None),
                 workers: Mutex::new(HashMap::new()),
@@ -149,6 +163,9 @@ impl PluginRegistry {
     }
 
     pub async fn plugins(&self) -> Vec<PluginDescriptor> {
+        let Ok(_operation) = self.begin_operation() else {
+            return Vec::new();
+        };
         let Some(executable) = self.inner.runtime.executable() else {
             return self
                 .inner
@@ -175,6 +192,9 @@ impl PluginRegistry {
 
     /// 已满足调用条件的全部插件模型;每个模型独立进入 Cursor 目录。
     pub async fn configured_models(&self) -> Vec<PluginModelDescriptor> {
+        let Ok(_operation) = self.begin_operation() else {
+            return Vec::new();
+        };
         let Some(executable) = self.inner.runtime.executable() else {
             return Vec::new();
         };
@@ -205,6 +225,7 @@ impl PluginRegistry {
     }
 
     pub async fn model_descriptor(&self, model_id: &str) -> Result<PluginModelDescriptor> {
+        let _operation = self.begin_operation()?;
         let (plugin_id, provider_id, upstream_id) = parse_model_id(model_id)
             .ok_or_else(|| Error::Provider(format!("invalid plugin model ID: {model_id}")))?;
         let executable = self.executable()?;
@@ -228,6 +249,7 @@ impl PluginRegistry {
     }
 
     pub async fn plan_model(&self, model_id: &str) -> Result<PluginInvocationPlan> {
+        let _operation = self.begin_operation()?;
         let model = self.model_descriptor(model_id).await?;
         let request_url = format!("plugin://{}/{}", model.plugin_id, model.provider_id);
         Ok(PluginInvocationPlan { model, request_url })
@@ -243,6 +265,10 @@ impl PluginRegistry {
     ) -> ProviderStream {
         let registry = self.clone();
         Box::pin(try_stream! {
+            let operation = registry.begin_operation()?;
+            let reset = registry.cancellation();
+            let request_cancellation = cancellation.child_token();
+            let _cancel_on_drop = request_cancellation.clone().drop_guard();
             let model_id = invocation.request.model.model_id.clone();
             let (plugin_id, provider_id, upstream_id) = parse_model_id(&model_id)
                 .map(|(plugin, provider, model)| (plugin.to_owned(), provider.to_owned(), model.to_owned()))
@@ -269,14 +295,23 @@ impl PluginRegistry {
                 "request": request,
             });
             let worker = registry.worker(&entry, &executable).await;
-            let mut items = worker.invoke_streaming("provider.invoke", params, cancellation.clone(), Some(recorder)).await?;
+            let mut items = worker.invoke_streaming("provider.invoke", params, request_cancellation, Some(recorder)).await?;
+            drop(operation);
             yield ModelEvent::Start { model_call_id: invocation.call_id.clone() };
-            while let Some(item) = items.recv().await {
+            loop {
+                let item = tokio::select! {
+                    biased;
+                    _ = reset.cancelled() => Err(Error::Cancelled),
+                    _ = cancellation.cancelled() => Err(Error::Cancelled),
+                    item = items.recv() => Ok(item),
+                }?;
+                let Some(item) = item else { break; };
                 match item {
                     WorkerStreamItem::Event(event) => {
                         yield wire::model_event(&event)?;
                     }
                     WorkerStreamItem::Result(result) => {
+                        let _operation = registry.begin_operation()?;
                         let value = result?;
                         let status = value.get("status").and_then(serde_json::Value::as_str).unwrap_or_default();
                         let patch = value.get("patch")
@@ -315,6 +350,7 @@ impl PluginRegistry {
         resource_type: &str,
         method_id: &str,
     ) -> Result<OAuthBeginResponse> {
+        let _operation = self.begin_operation()?;
         let executable = self.executable()?;
         let entry = self.find_entry(&executable, plugin_id).await?;
         let resource = find_resource(&entry, resource_type)?;
@@ -354,7 +390,7 @@ impl PluginRegistry {
                             "resourceType": resource_type,
                             "methodId": method.id,
                         }),
-                        CancellationToken::new(),
+                        self.cancellation(),
                     )
                     .await?;
                 let begin: OAuth2Begin = serde_json::from_value(value)?;
@@ -398,7 +434,7 @@ impl PluginRegistry {
                                 "codeChallenge": code_challenge,
                             },
                         }),
-                        CancellationToken::new(),
+                        self.cancellation(),
                     )
                     .await?;
                 let begin: OAuth2AuthorizationCodeBegin = serde_json::from_value(value)?;
@@ -445,8 +481,12 @@ impl PluginRegistry {
         let cleanup = self.clone();
         let cleanup_session_id = session_id.clone();
         let cleanup_delay_ms = expires_at_ms.saturating_sub(now_ms()) as u64;
+        let cancellation = self.cancellation();
         tokio::spawn(async move {
-            tokio::time::sleep(Duration::from_millis(cleanup_delay_ms)).await;
+            tokio::select! {
+                _ = cancellation.cancelled() => return,
+                _ = tokio::time::sleep(Duration::from_millis(cleanup_delay_ms)) => {}
+            }
             cleanup
                 .inner
                 .oauth_sessions
@@ -465,6 +505,7 @@ impl PluginRegistry {
     }
 
     pub async fn oauth_poll(&self, session_id: &str) -> Result<OAuthPollResponse> {
+        let _operation = self.begin_operation()?;
         let work = {
             let now = now_ms();
             let mut sessions = self.inner.oauth_sessions.lock().await;
@@ -592,7 +633,7 @@ impl PluginRegistry {
                     "methodId": method_id,
                     "session": session,
                 }),
-                CancellationToken::new(),
+                self.cancellation(),
             )
             .await?;
         let poll: OAuth2Poll = serde_json::from_value(value)?;
@@ -679,7 +720,7 @@ impl PluginRegistry {
                             "codeVerifier": code_verifier,
                         },
                     }),
-                    CancellationToken::new(),
+                    self.cancellation(),
                 )
                 .await?;
             let resources: Vec<ResourceDraft> = serde_json::from_value(value)?;
@@ -737,6 +778,7 @@ impl PluginRegistry {
         resource_type: &str,
         files: serde_json::Value,
     ) -> Result<ImportResponse> {
+        let _operation = self.begin_operation()?;
         let executable = self.executable()?;
         let entry = self.find_entry(&executable, plugin_id).await?;
         let resource = find_resource(&entry, resource_type)?;
@@ -751,7 +793,7 @@ impl PluginRegistry {
             .invoke(
                 "import.parse",
                 serde_json::json!({ "resourceType": resource_type, "files": files }),
-                CancellationToken::new(),
+                self.cancellation(),
             )
             .await?;
         let parsed: ImportParseResult = serde_json::from_value(value)?;
@@ -791,6 +833,7 @@ impl PluginRegistry {
         plugin_id: &str,
         resource_type: &str,
     ) -> Result<serde_json::Value> {
+        let _operation = self.begin_operation()?;
         let executable = self.executable()?;
         let entry = self.find_entry(&executable, plugin_id).await?;
         find_resource(&entry, resource_type)?;
@@ -809,6 +852,7 @@ impl PluginRegistry {
         resource_type: &str,
         resource_id: &str,
     ) -> Result<()> {
+        let _operation = self.begin_operation()?;
         let executable = self.executable()?;
         let entry = self.find_entry(&executable, plugin_id).await?;
         let resource = find_resource(&entry, resource_type)?;
@@ -829,7 +873,7 @@ impl PluginRegistry {
                     "resourceType": resource_type,
                     "resource": record.snapshot(resource_type),
                 }),
-                CancellationToken::new(),
+                self.cancellation(),
             )
             .await?;
         let patch: ResourcePatch = serde_json::from_value(value)?;
@@ -847,6 +891,7 @@ impl PluginRegistry {
         action_id: &str,
         input: serde_json::Value,
     ) -> Result<serde_json::Value> {
+        let _operation = self.begin_operation()?;
         let executable = self.executable()?;
         let entry = self.find_entry(&executable, plugin_id).await?;
         let resource = find_resource(&entry, resource_type)?;
@@ -878,7 +923,7 @@ impl PluginRegistry {
                     "resource": record.snapshot(resource_type),
                     "input": input,
                 }),
-                CancellationToken::new(),
+                self.cancellation(),
             )
             .await?;
         let result: ResourceActionResult = serde_json::from_value(value)?;
@@ -897,6 +942,7 @@ impl PluginRegistry {
         resource_type: &str,
         resource_id: &str,
     ) -> Result<()> {
+        let _operation = self.begin_operation()?;
         let executable = self.executable()?;
         let entry = self.find_entry(&executable, plugin_id).await?;
         let resource = find_resource(&entry, resource_type)?;
@@ -914,7 +960,7 @@ impl PluginRegistry {
                         "resourceType": resource_type,
                         "resource": record.snapshot(resource_type),
                     }),
-                    CancellationToken::new(),
+                    self.cancellation(),
                 )
                 .await
             {
@@ -929,6 +975,7 @@ impl PluginRegistry {
     }
 
     pub async fn sync_models(&self, plugin_id: &str, provider_id: &str) -> Result<usize> {
+        let _operation = self.begin_operation()?;
         let executable = self.executable()?;
         let entry = self.find_entry(&executable, plugin_id).await?;
         let provider = find_provider(&entry, provider_id)?.clone();
@@ -943,6 +990,7 @@ impl PluginRegistry {
         model_id: &str,
         enabled: bool,
     ) -> Result<()> {
+        let _operation = self.begin_operation()?;
         let executable = self.executable()?;
         let entry = self.find_entry(&executable, plugin_id).await?;
         let provider = find_provider(&entry, provider_id)?;
@@ -958,6 +1006,7 @@ impl PluginRegistry {
     }
 
     pub async fn remove(&self, plugin_id: &str) -> Result<()> {
+        let _operation = self.begin_operation()?;
         if let Some(worker) = self.inner.workers.lock().await.remove(plugin_id) {
             worker.stop().await;
         }
@@ -1054,7 +1103,7 @@ impl PluginRegistry {
                     "resourceType": definition.resource_type,
                     "resources": snapshots,
                 }),
-                CancellationToken::new(),
+                self.cancellation(),
             )
             .await
             .and_then(|value| {
@@ -1159,7 +1208,7 @@ impl PluginRegistry {
             .invoke(
                 "models.list",
                 serde_json::json!({ "providerId": provider.id, "resource": resource }),
-                CancellationToken::new(),
+                self.cancellation(),
             )
             .await?;
         let definitions = value

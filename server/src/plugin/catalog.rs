@@ -35,15 +35,17 @@ pub(crate) struct PluginEntry {
 
 impl PluginCatalog {
     pub fn managed(app_version: String) -> Result<Self> {
-        let installed = config::managed_data_dir()?.join("plugins/installed");
+        Self::in_directory(&config::managed_data_dir()?.join("plugins"), app_version)
+    }
+
+    pub(super) fn in_directory(root: &Path, app_version: String) -> Result<Self> {
+        let installed = root.join("installed");
         fs::create_dir_all(&installed)?;
         #[cfg(unix)]
         {
             use std::os::unix::fs::PermissionsExt;
             fs::set_permissions(&installed, fs::Permissions::from_mode(0o700))?;
         }
-        // 内置插件按版本预装进 installed;版本一致时不写盘。
-        super::builtin::install(&installed)?;
         // 扫描顺序即优先级:debug 下源码目录优先,保证内置插件热改生效;
         // 发布构建只有 installed 一个根。
         #[cfg(debug_assertions)]
@@ -55,9 +57,15 @@ impl PluginCatalog {
         let roots = vec![installed];
         Ok(Self {
             roots,
-            definition_loader: PluginDefinitionLoader::managed()?,
+            definition_loader: PluginDefinitionLoader::in_directory(root.join("runtime/sdk/v1")),
             app_version,
         })
+    }
+
+    pub(super) fn prepare(&self) -> Result<()> {
+        // The installed directory is the last root in both release and debug builds.
+        super::builtin::install(self.roots.last().expect("installed plugin root"))?;
+        self.definition_loader.prepare()
     }
 
     pub(crate) fn loader(&self) -> &PluginDefinitionLoader {

@@ -60,6 +60,8 @@ let snapshot: AppSnapshot = {
   plugins: [],
 };
 
+let pluginRevision = 0;
+
 const listeners = new Set<() => void>();
 
 function update(patch: Partial<AppSnapshot>) {
@@ -84,6 +86,7 @@ export const appStore = {
   getSnapshot: () => snapshot,
 
   async refresh() {
+    const revision = pluginRevision;
     update({ busy: true, error: null });
     try {
       const [models, calls, overview, settings, ports, pricing, cursorHarness, pluginRuntime, plugins] = await Promise.all([
@@ -97,7 +100,7 @@ export const appStore = {
         api.pluginRuntime(),
         api.plugins(),
       ]);
-      update({ models, calls, overview, detailed: settings.detailed, ports, pricing, cursorHarness, pluginRuntime, plugins });
+      update({ models, calls, overview, detailed: settings.detailed, ports, pricing, cursorHarness, ...(revision === pluginRevision ? { pluginRuntime, plugins } : {}) });
     } catch (cause) {
       update({ error: cause instanceof Error ? cause.message : String(cause) });
     } finally {
@@ -123,11 +126,29 @@ export const appStore = {
       return null;
     } finally { update({ cursorBusy: false }); }
   },
+  async resetPlugins() {
+    pluginRevision += 1;
+    update({ error: null });
+    try {
+      const pluginRuntime = await api.resetPlugins();
+      pluginRevision += 1;
+      update({ pluginRuntime, plugins: [] });
+      return true;
+    } catch (cause) {
+      pluginRevision += 1;
+      update({ error: cause instanceof Error ? cause.message : String(cause) });
+      await appStore.refreshPluginRuntime();
+      return false;
+    }
+  },
   async initializePluginRuntime() {
+    const revision = pluginRevision;
     update({ error: null });
     try {
       const pluginRuntime = await api.initializePluginRuntime();
+      if (revision !== pluginRevision) return null;
       update({ pluginRuntime });
+      if (pluginRuntime.state === "ready") await appStore.refreshPlugins();
       return pluginRuntime;
     } catch (cause) {
       update({ error: cause instanceof Error ? cause.message : String(cause) });
@@ -135,12 +156,15 @@ export const appStore = {
     }
   },
   async refreshPluginRuntime() {
+    const revision = pluginRevision;
     try {
       const wasReady = snapshot.pluginRuntime?.state === "ready";
       const pluginRuntime = await api.pluginRuntime();
+      if (revision !== pluginRevision) return null;
       update({ pluginRuntime });
       if (!wasReady && pluginRuntime.state === "ready") {
         const plugins = await api.plugins();
+        if (revision !== pluginRevision) return null;
         update({ plugins });
       }
       return pluginRuntime;
@@ -150,8 +174,10 @@ export const appStore = {
     }
   },
   async cancelPluginRuntimeInitialization() {
+    const revision = pluginRevision;
     try {
       const pluginRuntime = await api.cancelPluginRuntimeInitialization();
+      if (revision !== pluginRevision) return null;
       update({ pluginRuntime });
       return pluginRuntime;
     } catch (cause) {
@@ -160,8 +186,10 @@ export const appStore = {
     }
   },
   async refreshPlugins() {
+    const revision = pluginRevision;
     try {
-      update({ plugins: await api.plugins() });
+      const plugins = await api.plugins();
+      if (revision === pluginRevision) update({ plugins });
     } catch (cause) {
       update({ error: cause instanceof Error ? cause.message : String(cause) });
     }

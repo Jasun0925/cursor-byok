@@ -47,7 +47,6 @@ fn regular_non_file_and_selected_rules_keep_the_same_scope_metadata() {
         selected_context: Some(pb::SelectedContext {
             cursor_rules: vec![pb::SelectedCursorRule {
                 rule: Some(rule.clone()),
-                ..Default::default()
             }],
             ..Default::default()
         }),

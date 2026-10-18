@@ -187,7 +187,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 314,
+          "line": 350,
           "column": 21
         }
       ]
@@ -247,7 +247,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 221,
+          "line": 257,
           "column": 12
         }
       ]
@@ -679,8 +679,20 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 123,
+          "line": 159,
           "column": 16
+        }
+      ]
+    },
+    "18c56751b6d70c73": {
+      "source": "普通 API 模型配置和调用记录会保留。此操作无法撤销。",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/plugins/PluginManagementPage.tsx",
+          "line": 97,
+          "column": 11
         }
       ]
     },
@@ -740,7 +752,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 157,
+          "line": 193,
           "column": 23
         }
       ]
@@ -1004,7 +1016,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 298,
+          "line": 334,
           "column": 122
         }
       ]
@@ -1127,7 +1139,7 @@
         },
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 278,
+          "line": 314,
           "column": 70
         },
         {
@@ -1500,7 +1512,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 246,
+          "line": 282,
           "column": 32
         }
       ]
@@ -1695,7 +1707,7 @@
         },
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 278,
+          "line": 314,
           "column": 80
         },
         {
@@ -1712,7 +1724,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 112,
+          "line": 148,
           "column": 68
         }
       ]
@@ -1993,7 +2005,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 277,
+          "line": 313,
           "column": 12
         }
       ]
@@ -2017,7 +2029,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 112,
+          "line": 148,
           "column": 46
         }
       ]
@@ -2104,6 +2116,18 @@
           "file": "features/settings/TabSettingsCard.tsx",
           "line": 60,
           "column": 41
+        }
+      ]
+    },
+    "504614420c353e6c": {
+      "source": "插件已恢复到未初始化状态",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/plugins/PluginManagementPage.tsx",
+          "line": 71,
+          "column": 15
         }
       ]
     },
@@ -2417,7 +2441,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 270,
+          "line": 306,
           "column": 7
         }
       ]
@@ -2639,7 +2663,7 @@
       "refs": [
         {
           "file": "shared/api.ts",
-          "line": 523,
+          "line": 524,
           "column": 43
         }
       ]
@@ -2913,12 +2937,12 @@
       "refs": [
         {
           "file": "shared/store/appStore.ts",
-          "line": 218,
+          "line": 243,
           "column": 23
         },
         {
           "file": "shared/store/appStore.ts",
-          "line": 225,
+          "line": 250,
           "column": 25
         }
       ]
@@ -2978,7 +3002,7 @@
       "refs": [
         {
           "file": "shared/api.ts",
-          "line": 518,
+          "line": 519,
           "column": 43
         }
       ]
@@ -3014,7 +3038,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 313,
+          "line": 349,
           "column": 31
         }
       ]
@@ -3144,7 +3168,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 216,
+          "line": 252,
           "column": 36
         }
       ]
@@ -3168,7 +3192,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 105,
+          "line": 141,
           "column": 25
         }
       ]
@@ -3198,7 +3222,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 298,
+          "line": 334,
           "column": 20
         }
       ]
@@ -3343,7 +3367,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 310,
+          "line": 346,
           "column": 32
         }
       ]
@@ -3516,7 +3540,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 234,
+          "line": 270,
           "column": 18
         }
       ]
@@ -3583,7 +3607,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 312,
+          "line": 348,
           "column": 31
         }
       ]
@@ -3708,6 +3732,18 @@
         }
       ]
     },
+    "9a337557f0cce4b8": {
+      "source": "删除并重置",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/plugins/PluginManagementPage.tsx",
+          "line": 92,
+          "column": 21
+        }
+      ]
+    },
     "9a84733cc9ab1706": {
       "source": "资源详情",
       "kind": "text",
@@ -3778,12 +3814,12 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 98,
+          "line": 134,
           "column": 9
         },
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 272,
+          "line": 308,
           "column": 9
         }
       ]
@@ -3821,7 +3857,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 78,
+          "line": 114,
           "column": 11
         }
       ]
@@ -3833,7 +3869,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 124,
+          "line": 160,
           "column": 14
         }
       ]
@@ -3845,7 +3881,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 311,
+          "line": 347,
           "column": 30
         }
       ]
@@ -3859,7 +3895,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 159,
+          "line": 195,
           "column": 17
         },
         {
@@ -4143,7 +4179,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 79,
+          "line": 115,
           "column": 11
         }
       ]
@@ -4408,6 +4444,23 @@
         }
       ]
     },
+    "b09f771f70e6de7f": {
+      "source": "恢复未初始化状态",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/plugins/PluginManagementPage.tsx",
+          "line": 85,
+          "column": 10
+        },
+        {
+          "file": "features/plugins/PluginManagementPage.tsx",
+          "line": 90,
+          "column": 14
+        }
+      ]
+    },
     "b16c3b2ecedd6fe1": {
       "source": "Cursor 接管已生效；添加模型配置后即可使用 BYOK 模型。",
       "kind": "text",
@@ -4439,12 +4492,12 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 103,
+          "line": 139,
           "column": 7
         },
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 301,
+          "line": 337,
           "column": 70
         }
       ]
@@ -4485,7 +4538,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 101,
+          "line": 137,
           "column": 11
         }
       ]
@@ -4746,7 +4799,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 112,
+          "line": 148,
           "column": 83
         }
       ]
@@ -4801,7 +4854,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 278,
+          "line": 314,
           "column": 45
         }
       ]
@@ -4844,7 +4897,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 100,
+          "line": 136,
           "column": 11
         }
       ]
@@ -4979,7 +5032,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 106,
+          "line": 142,
           "column": 9
         }
       ]
@@ -5090,7 +5143,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 188,
+          "line": 224,
           "column": 20
         }
       ]
@@ -5232,7 +5285,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 302,
+          "line": 338,
           "column": 44
         }
       ]
@@ -5376,7 +5429,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 216,
+          "line": 252,
           "column": 25
         }
       ]
@@ -5792,6 +5845,18 @@
         }
       ]
     },
+    "eaba9e91bd763f1d": {
+      "source": "将停止所有插件请求和登录，删除全部插件、账号、模型缓存和运行环境。再次使用时需要重新初始化并登录账号。",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/plugins/PluginManagementPage.tsx",
+          "line": 96,
+          "column": 11
+        }
+      ]
+    },
     "eb11e2df1d8ae387": {
       "source": "上游地址",
       "kind": "text",
@@ -5835,7 +5900,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 240,
+          "line": 276,
           "column": 20
         }
       ]
@@ -6032,7 +6097,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 178,
+          "line": 214,
           "column": 32
         }
       ]
@@ -6044,7 +6109,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 65,
+          "line": 101,
           "column": 14
         },
         {
@@ -6161,7 +6226,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 82,
+          "line": 118,
           "column": 20
         },
         {
@@ -6178,7 +6243,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 287,
+          "line": 323,
           "column": 23
         }
       ]
@@ -6190,7 +6255,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 112,
+          "line": 148,
           "column": 19
         },
         {
@@ -6219,12 +6284,12 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 96,
+          "line": 132,
           "column": 7
         },
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 309,
+          "line": 345,
           "column": 29
         }
       ]
@@ -6287,7 +6352,7 @@
       "refs": [
         {
           "file": "features/plugins/PluginManagementPage.tsx",
-          "line": 178,
+          "line": 214,
           "column": 45
         }
       ]
