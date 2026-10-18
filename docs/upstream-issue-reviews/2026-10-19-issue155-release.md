@@ -23,4 +23,16 @@
 
 发布工作流验证为仅 `v*` 标签触发，使用 `tauri-action@v1` 的 `uploadUpdaterJson: true`，`prerelease: false`，最终设为 Latest。Proto 构建输入已跟踪。现有公钥与本地公钥匹配；Actions 存在签名密钥 Secret，无密码 Secret。没有读取或上传签名私钥。
 
-本地构建没有替换已安装应用，也没有升级正式数据库。提交、标签和 CI 结果在发布后追加。
+本地构建没有替换已安装应用，也没有升级正式数据库。
+
+## 发布执行
+
+代码提交 `2df03e3108f4ca15b835a70ba04c03ca1cb2cdde` 已推送到 `main`，标签 `v1.0.17` 指向同一提交。[发布流水线](https://github.com/haohaomin/cursor-byok/actions/runs/39151624186) 已启动；主分支推送未触发发布，标签推送是唯一发布触发。四个平台构建和最终发布均已成功；北京时间 `2026-10-19T02:13:46+08:00` 发布为普通 Latest Release。
+
+## 发布核验完成
+
+[Cursor BYOK v1.0.17](https://github.com/haohaomin/cursor-byok/releases/tag/v1.0.17) 已公开发布，draft=false、prerelease=false，并且是仓库 Latest。共有 20 个资产；`latest.json`、`portable-latest.json`、`update.json` 的版本均为 1.0.17，所有下载地址指向当前仓库和标签。
+
+已下载并核验三份清单引用的全部不同资产：Tauri 各平台及 Windows portable 的签名均使用现有应用公钥通过 Ed25519/Minisign 验证，legacy 四平台归档大小与 SHA256 全部符合清单。资产下载同时核对 GitHub 提供的摘要。发布说明已写明 #155“完成一半”及未验收边界。
+
+没有关闭上游 Issue，没有自动安装新版本。完整摘要见 [发布证据](2026-10-19-issue155-release-evidence.json)。

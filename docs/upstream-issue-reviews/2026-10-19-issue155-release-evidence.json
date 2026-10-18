@@ -31,5 +31,218 @@
   "excluded_by_user": [
     "20-minute acceptance"
   ],
-  "not_installed": true
+  "not_installed": true,
+  "release_commit": "2df03e3108f4ca15b835a70ba04c03ca1cb2cdde",
+  "tag": "v1.0.17",
+  "workflow_run_id": 39151624186,
+  "workflow_url": "https://github.com/haohaomin/cursor-byok/actions/runs/39151624186",
+  "publication_status": "published_verified",
+  "workflow_conclusion": "success",
+  "release_verification": {
+    "checked_at": "2026-10-18T18:14:53.478315+00:00",
+    "repository": "haohaomin/cursor-byok",
+    "tag": "v1.0.17",
+    "release_id": 416613500,
+    "url": "https://github.com/haohaomin/cursor-byok/releases/tag/v1.0.17",
+    "published_at": "2026-10-18T18:13:46Z",
+    "draft": false,
+    "prerelease": false,
+    "is_latest": true,
+    "asset_count": 20,
+    "manifest_checks": [
+      {
+        "manifest": "latest.json",
+        "platform": "darwin-aarch64",
+        "asset": "Cursor.BYOK_1.0.17_aarch64.app.tar.gz",
+        "method": "Ed25519 minisign with existing updater public key",
+        "passed": true
+      },
+      {
+        "manifest": "latest.json",
+        "platform": "darwin-aarch64-app",
+        "asset": "Cursor.BYOK_1.0.17_aarch64.app.tar.gz",
+        "method": "Ed25519 minisign with existing updater public key",
+        "passed": true
+      },
+      {
+        "manifest": "latest.json",
+        "platform": "linux-x86_64",
+        "asset": "Cursor.BYOK_1.0.17_amd64.AppImage",
+        "method": "Ed25519 minisign with existing updater public key",
+        "passed": true
+      },
+      {
+        "manifest": "latest.json",
+        "platform": "linux-x86_64-appimage",
+        "asset": "Cursor.BYOK_1.0.17_amd64.AppImage",
+        "method": "Ed25519 minisign with existing updater public key",
+        "passed": true
+      },
+      {
+        "manifest": "latest.json",
+        "platform": "linux-x86_64-deb",
+        "asset": "Cursor.BYOK_1.0.17_amd64.deb",
+        "method": "Ed25519 minisign with existing updater public key",
+        "passed": true
+      },
+      {
+        "manifest": "latest.json",
+        "platform": "linux-x86_64-rpm",
+        "asset": "Cursor.BYOK-1.0.17-1.x86_64.rpm",
+        "method": "Ed25519 minisign with existing updater public key",
+        "passed": true
+      },
+      {
+        "manifest": "latest.json",
+        "platform": "windows-x86_64",
+        "asset": "Cursor.BYOK_1.0.17_x64-setup.exe",
+        "method": "Ed25519 minisign with existing updater public key",
+        "passed": true
+      },
+      {
+        "manifest": "latest.json",
+        "platform": "windows-x86_64-nsis",
+        "asset": "Cursor.BYOK_1.0.17_x64-setup.exe",
+        "method": "Ed25519 minisign with existing updater public key",
+        "passed": true
+      },
+      {
+        "manifest": "latest.json",
+        "platform": "darwin-x86_64",
+        "asset": "Cursor.BYOK_1.0.17_x64.app.tar.gz",
+        "method": "Ed25519 minisign with existing updater public key",
+        "passed": true
+      },
+      {
+        "manifest": "latest.json",
+        "platform": "darwin-x86_64-app",
+        "asset": "Cursor.BYOK_1.0.17_x64.app.tar.gz",
+        "method": "Ed25519 minisign with existing updater public key",
+        "passed": true
+      },
+      {
+        "manifest": "portable-latest.json",
+        "platform": "windows-x86_64",
+        "asset": "cursor-byok-1.0.17-windows-amd64.zip",
+        "method": "Ed25519 minisign with existing updater public key",
+        "passed": true
+      },
+      {
+        "manifest": "update.json",
+        "platform": "macos-arm64",
+        "asset": "cursor-byok-1.0.17-macos-arm64.tar.gz",
+        "method": "SHA256 and size",
+        "passed": true
+      },
+      {
+        "manifest": "update.json",
+        "platform": "macos-amd64",
+        "asset": "cursor-byok-1.0.17-macos-amd64.tar.gz",
+        "method": "SHA256 and size",
+        "passed": true
+      },
+      {
+        "manifest": "update.json",
+        "platform": "windows-amd64",
+        "asset": "cursor-byok-1.0.17-windows-amd64.zip",
+        "method": "SHA256 and size",
+        "passed": true
+      },
+      {
+        "manifest": "update.json",
+        "platform": "linux-amd64",
+        "asset": "cursor-byok-1.0.17-linux-amd64.tar.gz",
+        "method": "SHA256 and size",
+        "passed": true
+      }
+    ],
+    "files": [
+      {
+        "name": "Cursor.BYOK-1.0.17-1.x86_64.rpm.sig",
+        "size": 424,
+        "sha256": "6b2c29d3bdae095ef191ed36aa5ac2530b2512fffb6db0bfbacac98aeef3cae6"
+      },
+      {
+        "name": "Cursor.BYOK_1.0.17_aarch64.app.tar.gz.sig",
+        "size": 412,
+        "sha256": "bd138bdda0befaec053fda008e986b93bb71d8a04a767f0a34610d5d76a1be9a"
+      },
+      {
+        "name": "Cursor.BYOK_1.0.17_amd64.AppImage.sig",
+        "size": 424,
+        "sha256": "33683e1fd9580b66d5fb0900d7338e243a795f69c388ce4d97509f5534944a69"
+      },
+      {
+        "name": "Cursor.BYOK-1.0.17-1.x86_64.rpm",
+        "size": 31517789,
+        "sha256": "c6c7b60a29bba64e7801c5aae78faab453245f11f11c67d2d7f5955e58a84773"
+      },
+      {
+        "name": "Cursor.BYOK_1.0.17_aarch64.app.tar.gz",
+        "size": 28651330,
+        "sha256": "f12bc1d45f4a66afc66a642bcb66ccb11e92dbb4c7467fed4500031b8e4c5849"
+      },
+      {
+        "name": "Cursor.BYOK_1.0.17_amd64.deb.sig",
+        "size": 420,
+        "sha256": "c2a8e047775200a492f2acd2039d9fc09ffcffa364ae6a3911a21fea18f2af45"
+      },
+      {
+        "name": "Cursor.BYOK_1.0.17_x64-setup.exe.sig",
+        "size": 424,
+        "sha256": "141d38b762a1787239253945a762ec421182e498b57e11ba9cb1afc1560e7ded"
+      },
+      {
+        "name": "Cursor.BYOK_1.0.17_amd64.deb",
+        "size": 31519408,
+        "sha256": "f5bf00cb83f718ff9b94a393e2c2177b0bbf0481b2854ed5f785071a816057ba"
+      },
+      {
+        "name": "Cursor.BYOK_1.0.17_x64-setup.exe",
+        "size": 20989725,
+        "sha256": "83eaea2a475d79ad4f888d27793c95886ae8dd2ed05e1f75aff0c299510fca3c"
+      },
+      {
+        "name": "Cursor.BYOK_1.0.17_amd64.AppImage",
+        "size": 109279736,
+        "sha256": "191d0195bce9589a5a216ac64cb1ac5751dfaccdb15128856155960b7ac9f3ac"
+      },
+      {
+        "name": "Cursor.BYOK_1.0.17_x64.app.tar.gz.sig",
+        "size": 412,
+        "sha256": "87f0430f92ea5139e879b65a2259a14b2ea875c1d044f5b65458bea5e8f775eb"
+      },
+      {
+        "name": "cursor-byok-1.0.17-linux-amd64.tar.gz",
+        "size": 30985646,
+        "sha256": "e587534f0966ba7d0e4f00078bb67a63a0068a868175a41e40a1ff6ccd58dca3"
+      },
+      {
+        "name": "Cursor.BYOK_1.0.17_x64.app.tar.gz",
+        "size": 29688155,
+        "sha256": "d8c8659972e33bad36d5099a267e297911b58a3d61161531a553d97239069070"
+      },
+      {
+        "name": "cursor-byok-1.0.17-macos-amd64.tar.gz",
+        "size": 29688155,
+        "sha256": "d8c8659972e33bad36d5099a267e297911b58a3d61161531a553d97239069070"
+      },
+      {
+        "name": "cursor-byok-1.0.17-windows-amd64.zip.sig",
+        "size": 428,
+        "sha256": "5031eb7364045425182b52a0cacbbf0068ad2c1aed034151e4b4ffd889e10853"
+      },
+      {
+        "name": "cursor-byok-1.0.17-windows-amd64.zip",
+        "size": 27720330,
+        "sha256": "4672dd4dffa62f3ea345ad710611dd720a0efc31c0001a7fa9b26c83dd01b7c0"
+      },
+      {
+        "name": "cursor-byok-1.0.17-macos-arm64.tar.gz",
+        "size": 28651330,
+        "sha256": "f12bc1d45f4a66afc66a642bcb66ccb11e92dbb4c7467fed4500031b8e4c5849"
+      }
+    ]
+  },
+  "release_notes_record_half_complete": true
 }
