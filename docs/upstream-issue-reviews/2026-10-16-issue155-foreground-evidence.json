@@ -1,0 +1,219 @@
+{
+  "baseline": {
+    "baseline": "a7ae78ab1d064206fdbb5aeb0659bd48e3dadb7d",
+    "created_at_ms": 1792084417114,
+    "formal_db_sha256": "8999d8398d1541e4c372307cfc61dcdead4988b91f1e3ad0f6c46ef6f63cc826",
+    "binary_sha256": "6a484fc392724a92904bc32b995c4081da8d31e040662fe0a46fe151ebda1dbc",
+    "cursor_version": "3.24.18",
+    "ports": [
+      57573,
+      57584
+    ]
+  },
+  "observed_at": "2026-10-16T01:22:36.078664+08:00",
+  "runs": [
+    {
+      "run_id": "0686948d-e009-4535-ad24-2ee2587ed928:818deba9",
+      "conversation_id": "d3166891-74f6-4c1f-996f-4f537789d162",
+      "status": "completed",
+      "provider_call_index": 1,
+      "created_at_ms": 1792084873123,
+      "updated_at_ms": 1792084934951,
+      "failure_category": null,
+      "failure_summary": null
+    }
+  ],
+  "llm_calls": [
+    {
+      "call_id": "0686948d-e009-4535-ad24-2ee2587ed928:818deba9:0",
+      "run_id": "0686948d-e009-4535-ad24-2ee2587ed928:818deba9",
+      "provider_call_index": 0,
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "created_at_ms": 1792084873467,
+      "request_started_at_ms": 1792084873467,
+      "first_event_at_ms": 1792084877337,
+      "finished_at_ms": 1792084878685,
+      "http_status": 200,
+      "error_kind": null
+    },
+    {
+      "call_id": "0686948d-e009-4535-ad24-2ee2587ed928:818deba9:1",
+      "run_id": "0686948d-e009-4535-ad24-2ee2587ed928:818deba9",
+      "provider_call_index": 1,
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "created_at_ms": 1792084928130,
+      "request_started_at_ms": 1792084928130,
+      "first_event_at_ms": 1792084934225,
+      "finished_at_ms": 1792084934729,
+      "http_status": 200,
+      "error_kind": null
+    }
+  ],
+  "tools": [
+    {
+      "run_id": "0686948d-e009-4535-ad24-2ee2587ed928:818deba9",
+      "call_id": "call_f77bf5d5c8a64799b4b431b77b266e41",
+      "name": "Shell",
+      "arguments_json": "{\"block_until_ms\":60000,\"command\":\"python3 -u probe.py foreground\",\"description\":\"Run case C foreground probe exactly once\",\"working_directory\":\"/private/tmp/cursor-byok-issue155-foreground-20261016/workspace\"}",
+      "status": "completed",
+      "result_content": "{\"case\": \"foreground\", \"event\": \"PROBE_START\", \"wall_time\": 1792084882.710687, \"elapsed_s\": 0.0, \"pid\": 99960}\n{\"case\": \"foreground\", \"event\": \"PROBE_DONE\", \"wall_time\": 1792084927.716112, \"elapsed_s\": 45.006, \"pid\": 99960}\n",
+      "result_is_error": 0,
+      "completed_at_ms": 1792084927854
+    }
+  ],
+  "actions": [
+    {
+      "request_id": "0686948d-e009-4535-ad24-2ee2587ed928",
+      "created_at_ms": 1792084873159,
+      "action_type": "user_message",
+      "route_outcome": "local",
+      "conversation_id": "d3166891-74f6-4c1f-996f-4f537789d162",
+      "model_id": "df862e8a9cc595ec",
+      "accepted": true
+    }
+  ],
+  "messages": [
+    {
+      "role": "user",
+      "origin": "runtime",
+      "runtime_event_id": "cursor:user:20aab85e-e43e-4296-a047-5d9a1b2649da:yfpNLkXJB4PG0YiFW95Y5DlrlzWnHWiYpUJ9wjIrhGQ=",
+      "created_at_ms": 1792084873143,
+      "content": {
+        "kind": "parts",
+        "parts": [
+          {
+            "type": "text",
+            "text": "<system_reminder>\nYou are now in Agent mode. You have EXITED your previous mode. Continue with the task in the new mode.\n</system_reminder>\n<system_reminder>\nYou are still in **Agent Mode**\n</system_reminder>\n<timestamp>Friday, Oct 16, 2026, 1:21 AM (UTC+8)</timestamp>\n<user_query>\nForeground control, case C. Run python3 -u probe.py foreground exactly once in this workspace using Shell with block_until_ms=60000 and omit notify_on_output. The script intentionally runs 45 seconds. Do not edit, shorten, duplicate, or background it manually. Wait for the tool result, then report CASE_C_COMPLETED, the measured elapsed time, and exit status from the result.\n</user_query>"
+          }
+        ]
+      }
+    },
+    {
+      "role": "assistant",
+      "origin": "assistant",
+      "runtime_event_id": null,
+      "created_at_ms": 1792084927853,
+      "content": {
+        "kind": "assistant",
+        "text": "",
+        "tool_round_id": "0686948d-e009-4535-ad24-2ee2587ed928:818deba9:round:0",
+        "tool_calls": [
+          {
+            "index": 0,
+            "call_id": "call_f77bf5d5c8a64799b4b431b77b266e41",
+            "name": "Shell",
+            "arguments": {
+              "block_until_ms": 60000,
+              "command": "python3 -u probe.py foreground",
+              "description": "Run case C foreground probe exactly once",
+              "working_directory": "/private/tmp/cursor-byok-issue155-foreground-20261016/workspace"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "role": "assistant",
+      "origin": "assistant",
+      "runtime_event_id": null,
+      "created_at_ms": 1792084934748,
+      "content": {
+        "kind": "assistant",
+        "text": "CASE_C_COMPLETED\n\n- Measured elapsed time: **45.006 seconds**\n- Exit status: **Not provided in the tool result**; the script emitted `PROBE_DONE`.",
+        "tool_calls": []
+      }
+    }
+  ],
+  "events": [
+    {
+      "case": "foreground",
+      "event": "PROBE_START",
+      "wall_time": 1792084882.710687,
+      "elapsed_s": 0.0,
+      "pid": 99960
+    },
+    {
+      "case": "foreground",
+      "event": "PROBE_DONE",
+      "wall_time": 1792084927.716112,
+      "elapsed_s": 45.006,
+      "pid": 99960
+    }
+  ],
+  "script": "import json, os, sys, time\nfrom pathlib import Path\ncase = sys.argv[1]\nassert case in [\"default\", \"notify\", \"foreground\"]\nout = Path(__file__).with_name(case + \"-events.jsonl\")\nstart = time.monotonic()\ndef emit(event):\n    row = {\"case\": case, \"event\": event, \"wall_time\": time.time(), \"elapsed_s\": round(time.monotonic() - start, 3), \"pid\": os.getpid()}\n    with out.open(\"a\") as f:\n        f.write(json.dumps(row) + \"\\n\")\n    print(json.dumps(row), flush=True)\nemit(\"PROBE_START\")\ntime.sleep(45)\nemit(\"PROBE_DONE\")\n",
+  "decoded_shell_stream": [
+    {
+      "seq": 78,
+      "at_ms": 1792084880728,
+      "exec_id": 1,
+      "event": "start"
+    },
+    {
+      "seq": 80,
+      "at_ms": 1792084882720,
+      "exec_id": 1,
+      "event": "stdout",
+      "data": "{\"case\": \"foreground\", \"event\": \"PROBE_START\", \"wall_time\": 1792084882.710687, \"elapsed_s\": 0.0, \"pid\": 99960}\n"
+    },
+    {
+      "seq": 115,
+      "at_ms": 1792084927735,
+      "exec_id": 1,
+      "event": "stdout",
+      "data": "{\"case\": \"foreground\", \"event\": \"PROBE_DONE\", \"wall_time\": 1792084927.716112, \"elapsed_s\": 45.006, \"pid\": 99960}\n"
+    },
+    {
+      "seq": 117,
+      "at_ms": 1792084927840,
+      "exec_id": 1,
+      "event": "exit",
+      "code": 0,
+      "aborted": false,
+      "cwd": "/private/tmp/cursor-byok-issue155-foreground-20261016/workspace",
+      "local_execution_time_ms": 47111,
+      "message_local_execution_time_ms": 49096
+    }
+  ],
+  "ui_observation": {
+    "completed": true,
+    "final_text": "CASE_C_COMPLETED\nMeasured elapsed time: 45.006 seconds\nExit status: Not provided in the tool result; the script emitted PROBE_DONE.",
+    "shell_expanded": true,
+    "stdout_contains_start_and_done": true,
+    "intervening_user_message": false
+  },
+  "summary": {
+    "runs": 1,
+    "provider_calls": 2,
+    "shell_calls": 1,
+    "backgrounded": false,
+    "script_elapsed_s": 45.006,
+    "exit_code": 0,
+    "aborted": false,
+    "automatic_continuation": true,
+    "time_from_tool_completion_to_provider_start_ms": 276,
+    "time_from_tool_completion_to_final_message_ms": 6894
+  },
+  "client_approval_log": [
+    "2026-10-16 01:21:19.539 [info] Shell stream: approval gate reached {\"toolCallId\":\"call_f77bf5d5c8a64799b4b431b77b266e41\",\"skipApproval\":false,\"hasSmartModeApproval\":false,\"hasSmartModeApprovalReason\":false,\"hasSmartModeApprovalRequestId\":false,\"requestedPolicyType\":\"undefined\",\"parserCommandCount\":1,\"classifierCommandCount\":0,\"commandLength\":30}",
+    "2026-10-16 01:21:19.791 [info] Shell permissions: evaluating shell command {\"toolCallId\":\"call_f77bf5d5c8a64799b4b431b77b266e41\",\"approvalMode\":\"unrestricted\",\"userConfiguredPolicyType\":\"insecure_none\",\"requestedPolicyType\":\"undefined\",\"effectiveRequestedPolicyType\":\"insecure_none\",\"smartAllowlistEnabled\":false,\"hasSmartModeApprovalReason\":false,\"hasSmartModeApprovalRequestId\":false,\"hookForcesPrompt\":false,\"classifierClassificationFailed\":false,\"classifierCommandCount\":0,\"parserCommandCount\":1,\"parsingFailed\":false,\"hasRedirects\":false,\"commandLength\":30}",
+    "2026-10-16 01:21:20.711 [info] Shell permissions: auto-approved shell command {\"toolCallId\":\"call_f77bf5d5c8a64799b4b431b77b266e41\",\"approvalMode\":\"unrestricted\",\"requestedPolicyType\":\"insecure_none\",\"userConfiguredPolicyType\":\"insecure_none\",\"autoApprovalPolicyType\":\"insecure_none\",\"mergedPolicyType\":\"insecure_none\",\"isSmartAllowlistActive\":false,\"smartModeApprovalBypassedByAllowlist\":false,\"allCommandsRunnable\":true,\"allCommandsAllowlisted\":true,\"allCommandsPreapproved\":false,\"hasSmartModeApprovalReason\":false,\"commandCount\":1}",
+    "2026-10-16 01:21:20.712 [info] Shell stream: approval gate allowed command {\"toolCallId\":\"call_f77bf5d5c8a64799b4b431b77b266e41\",\"skipApproval\":false,\"effectivePolicyType\":\"insecure_none\"}"
+  ],
+  "limitations": [
+    "Existing unrestricted approval mode; real manual-approval wait not tested.",
+    "Foreground streamed exit code is 0, but persisted model-facing result contains only stdout; the assistant explicitly reported exit status unavailable.",
+    "This is a 45-second foreground control, not a 20-minute foreground or approval-delay test."
+  ],
+  "cleanup": {
+    "at": "2026-10-16T01:24:43.933509+08:00",
+    "server_exited": true,
+    "ports_free": true,
+    "proxy_keys_restored": true,
+    "unrelated_settings_preserved": true,
+    "formal_db_unchanged": true,
+    "formal_db_sha256_after": "8999d8398d1541e4c372307cfc61dcdead4988b91f1e3ad0f6c46ef6f63cc826",
+    "temporary_root_removed": true
+  }
+}

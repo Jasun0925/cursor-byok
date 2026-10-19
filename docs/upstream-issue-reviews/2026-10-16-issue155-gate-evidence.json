@@ -1,0 +1,525 @@
+{
+  "baseline": {
+    "baseline": "a7ae78ab1d064206fdbb5aeb0659bd48e3dadb7d",
+    "created_at_ms": 1792085822322,
+    "formal_db_sha256": "8999d8398d1541e4c372307cfc61dcdead4988b91f1e3ad0f6c46ef6f63cc826",
+    "baseline_binary_sha256": "6a484fc392724a92904bc32b995c4081da8d31e040662fe0a46fe151ebda1dbc",
+    "cursor_version": "3.24.18",
+    "ports": [
+      57573,
+      57584
+    ],
+    "experiment_binary_sha256": "74d8556d7f0bbb1b9d263c80cec2624ba726725a573374c5b03fbf391f7e4ca2",
+    "matched_experiment_binary_sha256": "ca97b53a8758f2df30c923f4cebe6dbdb1f8f0f19848c8263d81eb7e36267390"
+  },
+  "observed_at": "2026-10-16T01:51:37.479300+08:00",
+  "runs": [
+    {
+      "run_id": "8d59ade0-3260-48c0-a5b7-fbc79bc15257:ffc0722d",
+      "conversation_id": "967464f0-9d12-43fa-96fb-42444390fa5b",
+      "status": "completed",
+      "provider_call_index": 1,
+      "created_at_ms": 1792086364740,
+      "updated_at_ms": 1792086377357,
+      "failure_category": null,
+      "failure_summary": null
+    },
+    {
+      "run_id": "f210718d-6249-4be8-b680-e359a5323dcf:52bb6a41",
+      "conversation_id": "7970ada5-d50d-4d43-9ea1-064f8628ee69",
+      "status": "completed",
+      "provider_call_index": 1,
+      "created_at_ms": 1792086580434,
+      "updated_at_ms": 1792086594949,
+      "failure_category": null,
+      "failure_summary": null
+    }
+  ],
+  "llm_calls": [
+    {
+      "call_id": "8d59ade0-3260-48c0-a5b7-fbc79bc15257:ffc0722d:0",
+      "run_id": "8d59ade0-3260-48c0-a5b7-fbc79bc15257:ffc0722d",
+      "provider_call_index": 0,
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "created_at_ms": 1792086365066,
+      "request_started_at_ms": 1792086365066,
+      "first_event_at_ms": 1792086368480,
+      "finished_at_ms": 1792086370384,
+      "http_status": 200,
+      "error_kind": null
+    },
+    {
+      "call_id": "8d59ade0-3260-48c0-a5b7-fbc79bc15257:ffc0722d:1",
+      "run_id": "8d59ade0-3260-48c0-a5b7-fbc79bc15257:ffc0722d",
+      "provider_call_index": 1,
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "created_at_ms": 1792086373624,
+      "request_started_at_ms": 1792086373624,
+      "first_event_at_ms": 1792086376723,
+      "finished_at_ms": 1792086377141,
+      "http_status": 200,
+      "error_kind": null
+    },
+    {
+      "call_id": "f210718d-6249-4be8-b680-e359a5323dcf:52bb6a41:0",
+      "run_id": "f210718d-6249-4be8-b680-e359a5323dcf:52bb6a41",
+      "provider_call_index": 0,
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "created_at_ms": 1792086580766,
+      "request_started_at_ms": 1792086580766,
+      "first_event_at_ms": 1792086585020,
+      "finished_at_ms": 1792086589111,
+      "http_status": 200,
+      "error_kind": null
+    },
+    {
+      "call_id": "f210718d-6249-4be8-b680-e359a5323dcf:52bb6a41:1",
+      "run_id": "f210718d-6249-4be8-b680-e359a5323dcf:52bb6a41",
+      "provider_call_index": 1,
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "created_at_ms": 1792086592304,
+      "request_started_at_ms": 1792086592304,
+      "first_event_at_ms": 1792086594610,
+      "finished_at_ms": 1792086594759,
+      "http_status": 200,
+      "error_kind": null
+    }
+  ],
+  "tools": [
+    {
+      "run_id": "8d59ade0-3260-48c0-a5b7-fbc79bc15257:ffc0722d",
+      "call_id": "call_d801cae66cce42568324caa116623bd8",
+      "name": "Shell",
+      "arguments_json": "{\"block_until_ms\":1000,\"command\":\"python3 -u probe.py notify\",\"description\":\"Run notification identity probe exactly once\",\"notify_on_output\":{\"debounce_ms\":5000,\"pattern\":\"PROBE_DONE\",\"reason\":\"probe completion\"},\"working_directory\":\"/private/tmp/cursor-byok-issue155-gate-20261016/workspace\"}",
+      "status": "completed",
+      "result_content": "shell running in background shell_id=943627 pid=6208 terminals_folder=/Users/renhao/.cursor/projects/private-tmp-cursor-byok-issue155-gate-20261016-workspace/terminals",
+      "result_is_error": 0,
+      "completed_at_ms": 1792086373360
+    },
+    {
+      "run_id": "f210718d-6249-4be8-b680-e359a5323dcf:52bb6a41",
+      "call_id": "call_69dc57f50a8547c0a72c408b671352b8",
+      "name": "Shell",
+      "arguments_json": "{\"block_until_ms\":1000,\"command\":\"python3 -u probe.py notify\",\"notify_on_output\":{\"debounce_ms\":5000,\"pattern\":\"PROBE_DONE\",\"reason\":\"probe completion\"},\"working_directory\":\"/private/tmp/cursor-byok-issue155-gate-20261016/workspace-enabled\"}",
+      "status": "completed",
+      "result_content": "shell running in background shell_id=939970 terminals_folder=/Users/renhao/.cursor/projects/private-tmp-cursor-byok-issue155-gate-20261016-workspace-enabled/terminals",
+      "result_is_error": 0,
+      "completed_at_ms": 1792086591911
+    }
+  ],
+  "actions": [],
+  "messages": [
+    {
+      "role": "user",
+      "origin": "runtime",
+      "runtime_event_id": "cursor:user:43c36dcd-72e9-432a-acae-7a3c787b7de7:HL2Z6v81gX4m4T8cuyGhBbBpZ2ZxFD0FZfb8xzjjNak=",
+      "created_at_ms": 1792086364759,
+      "content": {
+        "kind": "parts",
+        "parts": [
+          {
+            "type": "text",
+            "text": "<system_reminder>\nYou are now in Agent mode. You have EXITED your previous mode. Continue with the task in the new mode.\n</system_reminder>\n<system_reminder>\nYou are still in **Agent Mode**\n</system_reminder>\n<timestamp>Friday, Oct 16, 2026, 1:46 AM (UTC+8)</timestamp>\n<user_query>\nNotification identity control, case D. Run python3 -u probe.py notify exactly once in this workspace, using Shell with block_until_ms=1000 and notify_on_output={\"pattern\":\"PROBE_DONE\",\"reason\":\"probe completion\",\"debounce_ms\":5000}. Do not edit, shorten, duplicate, or manually background the script. Once Shell returns a background handle, end your initial response with CASE_D_STARTED. Do not poll with Shell, Read, or other tools. Only if an automatic completion notification arrives, continue with CASE_D_AUTO_COMPLETED and summarize the notification.\n</user_query>"
+          }
+        ]
+      }
+    },
+    {
+      "role": "assistant",
+      "origin": "assistant",
+      "runtime_event_id": null,
+      "created_at_ms": 1792086373360,
+      "content": {
+        "kind": "assistant",
+        "text": "",
+        "tool_round_id": "8d59ade0-3260-48c0-a5b7-fbc79bc15257:ffc0722d:round:0",
+        "tool_calls": [
+          {
+            "index": 0,
+            "call_id": "call_d801cae66cce42568324caa116623bd8",
+            "name": "Shell",
+            "arguments": {
+              "block_until_ms": 1000,
+              "command": "python3 -u probe.py notify",
+              "description": "Run notification identity probe exactly once",
+              "notify_on_output": {
+                "debounce_ms": 5000,
+                "pattern": "PROBE_DONE",
+                "reason": "probe completion"
+              },
+              "working_directory": "/private/tmp/cursor-byok-issue155-gate-20261016/workspace"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "role": "assistant",
+      "origin": "assistant",
+      "runtime_event_id": null,
+      "created_at_ms": 1792086377157,
+      "content": {
+        "kind": "assistant",
+        "text": "CASE_D_STARTED",
+        "tool_calls": []
+      }
+    },
+    {
+      "role": "user",
+      "origin": "runtime",
+      "runtime_event_id": "cursor:user:22e36d6b-9681-4823-83ae-687225020dda:Qh74H16pWuofS75u2/ieY4n9AsSfv3NUOdtPnyB9P/0=",
+      "created_at_ms": 1792086580456,
+      "content": {
+        "kind": "parts",
+        "parts": [
+          {
+            "type": "text",
+            "text": "<system_reminder>\nYou are now in Agent mode. You have EXITED your previous mode. Continue with the task in the new mode.\n</system_reminder>\n<system_reminder>\nYou are still in **Agent Mode**\n</system_reminder>\n<timestamp>Friday, Oct 16, 2026, 1:49 AM (UTC+8)</timestamp>\n<user_query>\nNotification gate control, case E. Run python3 -u probe.py notify exactly once in this workspace, using Shell with block_until_ms=1000 and notify_on_output={\"pattern\":\"PROBE_DONE\",\"reason\":\"probe completion\",\"debounce_ms\":5000}. Do not edit, shorten, duplicate, or manually background the script. Once Shell returns a background handle, end your initial response with CASE_E_STARTED. Do not poll with Shell, Read, or other tools. Only if an automatic completion notification arrives, continue with CASE_E_AUTO_COMPLETED and summarize the notification.\n</user_query>"
+          }
+        ]
+      }
+    },
+    {
+      "role": "assistant",
+      "origin": "assistant",
+      "runtime_event_id": null,
+      "created_at_ms": 1792086591910,
+      "content": {
+        "kind": "assistant",
+        "text": "",
+        "tool_round_id": "f210718d-6249-4be8-b680-e359a5323dcf:52bb6a41:round:0",
+        "tool_calls": [
+          {
+            "index": 0,
+            "call_id": "call_69dc57f50a8547c0a72c408b671352b8",
+            "name": "Shell",
+            "arguments": {
+              "block_until_ms": 1000,
+              "command": "python3 -u probe.py notify",
+              "notify_on_output": {
+                "debounce_ms": 5000,
+                "pattern": "PROBE_DONE",
+                "reason": "probe completion"
+              },
+              "working_directory": "/private/tmp/cursor-byok-issue155-gate-20261016/workspace-enabled"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "role": "assistant",
+      "origin": "assistant",
+      "runtime_event_id": null,
+      "created_at_ms": 1792086594775,
+      "content": {
+        "kind": "assistant",
+        "text": "CASE_E_STARTED",
+        "tool_calls": []
+      }
+    }
+  ],
+  "events": {
+    "workspace/notify-events.jsonl": [
+      {
+        "case": "notify",
+        "event": "PROBE_START",
+        "wall_time": 1792086373.972843,
+        "elapsed_s": 0.0,
+        "pid": 6226
+      },
+      {
+        "case": "notify",
+        "event": "PROBE_DONE",
+        "wall_time": 1792086418.979383,
+        "elapsed_s": 45.007,
+        "pid": 6226
+      }
+    ],
+    "workspace-enabled/notify-events.jsonl": [
+      {
+        "case": "notify",
+        "event": "PROBE_START",
+        "wall_time": 1792086594.789592,
+        "elapsed_s": 0.0,
+        "pid": 7958
+      },
+      {
+        "case": "notify",
+        "event": "PROBE_DONE",
+        "wall_time": 1792086639.7949061,
+        "elapsed_s": 45.005,
+        "pid": 7958
+      }
+    ]
+  },
+  "script": "import json, os, sys, time\nfrom pathlib import Path\ncase = sys.argv[1]\nassert case in [\"default\", \"notify\", \"foreground\"]\nout = Path(__file__).with_name(case + \"-events.jsonl\")\nstart = time.monotonic()\ndef emit(event):\n    row = {\"case\": case, \"event\": event, \"wall_time\": time.time(), \"elapsed_s\": round(time.monotonic() - start, 3), \"pid\": os.getpid()}\n    with out.open(\"a\") as f:\n        f.write(json.dumps(row) + \"\\n\")\n    print(json.dumps(row), flush=True)\nemit(\"PROBE_START\")\ntime.sleep(45)\nemit(\"PROBE_DONE\")\n",
+  "client_resume_error": {
+    "title": "Error resuming chat",
+    "message": "A background task finished, but the chat couldn't resume. Try again in a moment.",
+    "requestId": "2ad5b773-dd31-4533-ad35-975ae7986694",
+    "stackTrace": "RetriableError: [invalid_argument] background task notification contains no finished task\n    at yB1 (vscode-file://vscode-app/Applications/Cursor.app/Contents/Resources/app/out/vs/workbench/workbench.glass.main.js:8062:23147)\n    at WB1 (vscode-file://vscode-app/Applications/Cursor.app/Contents/Resources/app/out/vs/workbench/workbench.glass.main.js:8062:40900)\n    at Object.classify (vscode-file://vscode-app/Applications/Cursor.app/Contents/Resources/app/out/vs/workbench/workbench.glass.main.js:8063:17946)\n    at QB1 (vscode-file://vscode-app/Applications/Cursor.app/Contents/Resources/app/out/vs/workbench/workbench.glass.main.js:8063:6555)\n    at async yUa.run (vscode-file://vscode-app/Applications/Cursor.app/Contents/Resources/app/out/vs/workbench/workbench.glass.main.js:8063:17160)\n    at async Xbe.runAgentLoop (vscode-file://vscode-app/Applications/Cursor.app/Contents/Resources/app/out/vs/workbench/workbench.glass.main.js:9507:76846)\n    at async pNc._runWakeupAction (vscode-file://vscode-app/Applications/Cursor.app/Contents/Resources/app/out/vs/workbench/workbench.glass.main.js:23441:27874)\n    at async pNc._maybeDispatchBackgroundCompletions (vscode-file://vscode-app/Applications/Cursor.app/Contents/Resources/app/out/vs/workbench/workbench.glass.main.js:23441:35935)",
+    "isRetryable": false,
+    "extraButtons": [
+      {
+        "id": "retry-background-completion",
+        "label": "Resume",
+        "variant": "primary"
+      }
+    ]
+  },
+  "gates": {
+    "gates-enabled": {
+      "timestamp": "2026-10-15T17:38:52.088Z",
+      "gates": {
+        "background_nudge_2": {
+          "name": "background_nudge_2",
+          "hasOverride": false,
+          "isClient": true,
+          "default": true,
+          "enabled": false
+        },
+        "long_running_jobs": {
+          "name": "long_running_jobs",
+          "hasOverride": false,
+          "isClient": true,
+          "default": true,
+          "enabled": false
+        },
+        "nal_agent_retries": {
+          "name": "nal_agent_retries",
+          "hasOverride": false,
+          "isClient": true,
+          "default": true,
+          "enabled": false
+        },
+        "terminal_execution_service_2": {
+          "name": "terminal_execution_service_2",
+          "hasOverride": false,
+          "isClient": true,
+          "default": true,
+          "enabled": false
+        }
+      }
+    },
+    "gates-enabled-reloaded": {
+      "timestamp": "2026-10-15T17:39:56.201Z",
+      "gates": {
+        "background_nudge_2": {
+          "name": "background_nudge_2",
+          "hasOverride": false,
+          "isClient": true,
+          "default": true,
+          "enabled": false
+        },
+        "long_running_jobs": {
+          "name": "long_running_jobs",
+          "hasOverride": false,
+          "isClient": true,
+          "default": true,
+          "enabled": false
+        },
+        "nal_agent_retries": {
+          "name": "nal_agent_retries",
+          "hasOverride": false,
+          "isClient": true,
+          "default": true,
+          "enabled": false
+        },
+        "terminal_execution_service_2": {
+          "name": "terminal_execution_service_2",
+          "hasOverride": false,
+          "isClient": true,
+          "default": true,
+          "enabled": false
+        }
+      }
+    },
+    "gates-before": {
+      "timestamp": "2026-10-15T17:35:20.839Z",
+      "gates": {
+        "nal_agent_retries": {
+          "name": "nal_agent_retries",
+          "hasOverride": false,
+          "isClient": true,
+          "default": true,
+          "enabled": true
+        },
+        "background_nudge_2": {
+          "name": "background_nudge_2",
+          "hasOverride": false,
+          "isClient": true,
+          "default": true,
+          "enabled": false
+        },
+        "long_running_jobs": {
+          "name": "long_running_jobs",
+          "hasOverride": false,
+          "isClient": true,
+          "default": true,
+          "enabled": false
+        },
+        "terminal_execution_service_2": {
+          "name": "terminal_execution_service_2",
+          "hasOverride": false,
+          "isClient": true,
+          "default": true,
+          "enabled": false
+        }
+      }
+    },
+    "gates-case-d": {
+      "timestamp": "2026-10-15T17:46:46.608Z",
+      "gates": {
+        "nal_agent_retries": {
+          "name": "nal_agent_retries",
+          "hasOverride": false,
+          "isClient": true,
+          "default": true,
+          "enabled": true
+        },
+        "background_nudge_2": {
+          "name": "background_nudge_2",
+          "hasOverride": false,
+          "isClient": true,
+          "default": true,
+          "enabled": false
+        },
+        "long_running_jobs": {
+          "name": "long_running_jobs",
+          "hasOverride": false,
+          "isClient": true,
+          "default": true,
+          "enabled": false
+        },
+        "terminal_execution_service_2": {
+          "name": "terminal_execution_service_2",
+          "hasOverride": false,
+          "isClient": true,
+          "default": true,
+          "enabled": false
+        }
+      }
+    },
+    "gates-case-e": {
+      "timestamp": "2026-10-15T17:50:28.711Z",
+      "gates": {
+        "long_running_jobs": {
+          "name": "long_running_jobs",
+          "hasOverride": false,
+          "isClient": true,
+          "default": true,
+          "enabled": true
+        },
+        "nal_agent_retries": {
+          "name": "nal_agent_retries",
+          "hasOverride": false,
+          "isClient": true,
+          "default": true,
+          "enabled": true
+        },
+        "background_nudge_2": {
+          "name": "background_nudge_2",
+          "hasOverride": false,
+          "isClient": true,
+          "default": true,
+          "enabled": false
+        },
+        "terminal_execution_service_2": {
+          "name": "terminal_execution_service_2",
+          "hasOverride": false,
+          "isClient": true,
+          "default": true,
+          "enabled": false
+        }
+      }
+    }
+  },
+  "identity_mismatch": {
+    "auth_subject_present": true,
+    "bootstrap_user_matches_auth_subject": false,
+    "bootstrap_hash_used": "none",
+    "configured_gate_values": {
+      "nal_agent_retries": true,
+      "long_running_jobs": true
+    }
+  },
+  "experiment_patch": "--- baseline/analytics.rs\n+++ experiment/analytics.rs\n@@ -58,12 +58,15 @@\n \n fn local_response() -> Result<Response<Body>> {\n     let generated_at_ms = chrono::Utc::now().timestamp_millis() as u64;\n+    let test_user_id = std::env::var(\"ISSUE155_BOOTSTRAP_USER_ID_FILE\").ok()\n+        .and_then(|path| std::fs::read_to_string(path).ok())\n+        .unwrap_or_else(|| \"local_ultra\".into());\n     let mut config = json!({\n         \"feature_gates\": {},\n         \"dynamic_configs\": {},\n         \"layer_configs\": {},\n         \"user\": {\n-            \"userID\": \"local_ultra\",\n+            \"userID\": test_user_id,\n             \"customIDs\": { \"localUserID\": \"local_ultra\" }\n         },\n         \"has_updates\": true,\n@@ -107,6 +110,10 @@\n         .as_object_mut()\n         .ok_or_else(|| Error::Protocol(\"Statsig feature_gates must be an object\".into()))?;\n     gates.insert(gate_key.clone(), enabled_gate(&gate_key));\n+    if std::env::var(\"ISSUE155_GATE_FILE\").ok()\n+        .and_then(|path| std::fs::read_to_string(path).ok()).as_deref() == Some(\"true\") {\n+        gates.insert(\"long_running_jobs\".into(), enabled_gate(\"long_running_jobs\"));\n+    }\n     Ok(())\n }\n \n",
+  "case_d_observed_after_exit_s": 69.664,
+  "ui_observations": {
+    "case_d": "CASE_D_STARTED, no further response",
+    "case_e": "CASE_E_STARTED followed by Error resuming chat; Resume button present",
+    "manual_resume_attempt": "CUA rejected before click because Mac locked; no manual follow-up sent"
+  },
+  "client_logs": [
+    {
+      "path": "window1_wb2/renderer.log",
+      "line": "2026-10-16 01:49:40.146 [info] [buildRequestedModel] composerId=7970ada5-d50d-4d43-9ea1-064f8628ee69 catalogModelId=df862e8a9cc595ec idSource=selectedModels[0] experimentalOverrideApplied=false hasAssistantTurn=false composerModelName=df862e8a9cc595ec selectedModelIds=df862e8a9cc595ec matchingSelectedModel=true maxMode=false resolvedParams=3"
+    },
+    {
+      "path": "window1_wb2/renderer.log",
+      "line": "2026-10-16 01:50:39.858 [info] [buildRequestedModel] composerId=7970ada5-d50d-4d43-9ea1-064f8628ee69 catalogModelId=df862e8a9cc595ec idSource=selectedModels[0] experimentalOverrideApplied=false hasAssistantTurn=true composerModelName=df862e8a9cc595ec selectedModelIds=df862e8a9cc595ec matchingSelectedModel=true maxMode=false resolvedParams=3"
+    },
+    {
+      "path": "window1_wb2/exthost/anysphere.cursor-agent-exec/Cursor Agent Exec.workspaceId-6c866dc7eca5acfad8f4ebac714c6807.20261016T014542_2406b083.log",
+      "line": "2026-10-16 01:46:58.991 [info] agent.shell_output_notification_match {\"event\":\"agent.shell_output_notification_match\",\"outcome\":\"matched\",\"shell_id\":943627,\"conversation_id\":\"local\",\"tool_call_id\":\"call_d801cae66cce42568324caa116623bd8\",\"limit\":100,\"first_match_ms\":45688}"
+    },
+    {
+      "path": "window1_wb2/exthost/anysphere.cursor-agent-exec/Cursor Agent Exec.workspaceId-5b4cdb5759141f14daddb49632042f7c.20261016T014920_780f561e.log",
+      "line": "2026-10-16 01:50:39.803 [info] agent.shell_output_notification_match {\"event\":\"agent.shell_output_notification_match\",\"outcome\":\"matched\",\"shell_id\":939970,\"conversation_id\":\"local\",\"tool_call_id\":\"call_69dc57f50a8547c0a72c408b671352b8\",\"limit\":100,\"first_match_ms\":47982}"
+    }
+  ],
+  "server_auto_resume_log": [
+    "2026-10-15T17:50:55.743556Z  INFO cursor_server::api::cursor::handlers: routing Cursor Run to BYOK provider request_id=\"2ad5b773-dd31-4533-ad35-975ae7986694\" model_id=\"df862e8a9cc595ec\""
+  ],
+  "terminal_results": [
+    {
+      "case": "workspace-enabled",
+      "shell_id": 939970,
+      "text": "---\ncwd: \"/private/tmp/cursor-byok-issue155-gate-20261016/workspace-enabled\"\ncommand: \"python3 -u probe.py notify\"\nstatus: succeeded\nstarted_at: 2026-10-15T17:49:49.151Z\nrunning_for_ms: 50762    \n---\n{\"case\": \"notify\", \"event\": \"PROBE_START\", \"wall_time\": 1792086594.789592, \"elapsed_s\": 0.0, \"pid\": 7958}\n{\"case\": \"notify\", \"event\": \"PROBE_DONE\", \"wall_time\": 1792086639.7949061, \"elapsed_s\": 45.005, \"pid\": 7958}\n\n---\nexit_code: 0\nelapsed_ms: 50762\nended_at: 2026-10-15T17:50:39.913Z\n---\n"
+    }
+  ],
+  "limitations": [
+    "No protocol artifact was recorded for the automatic resume because detailed logging had not been enabled in this new test DB. The client persisted the precise invalid_argument error.",
+    "The exact incoming notification reason remains to be captured; source filters non-TaskFinished reasons before this error.",
+    "Gate dumps were generated from IDE diagnostic windows in the same installation; E additionally proves the Agent window dispatched a background resume for its own conversation.",
+    "Only temporary archived source and test configuration changed; this is a reproduction experiment, not a production fix."
+  ],
+  "summary": {
+    "case_d": {
+      "script_elapsed_s": 45.007,
+      "observed_after_script_exit_s": 69.664,
+      "automatic_resume": false,
+      "terminal_exit_code_retained": false
+    },
+    "case_e": {
+      "script_elapsed_s": 45.005,
+      "terminal_exit_code": 0,
+      "automatic_resume_attempt": true,
+      "automatic_resume_request_id": "2ad5b773-dd31-4533-ad35-975ae7986694",
+      "same_conversation": true,
+      "provider_calls_for_resume": 0,
+      "error": "background task notification contains no finished task"
+    },
+    "manual_resume_clicked": false
+  },
+  "cleanup": {
+    "at": "2026-10-16T02:00:55.882773+08:00",
+    "server_exited": true,
+    "ports_free": true,
+    "proxy_keys_restored": true,
+    "unrelated_settings_preserved": true,
+    "formal_db_unchanged": true,
+    "baseline_binary_unchanged": true,
+    "bootstrap_cache_restored": true,
+    "method": "Restored only Statsig bootstrap cache via SQLite transaction using original-binary response; screen locked, live-window refresh not verified.",
+    "live_window_refresh_verified": false,
+    "temporary_root_removed": true,
+    "generated_gate_dumps_removed": true,
+    "experiment_executables_removed": true
+  }
+}

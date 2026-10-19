@@ -1,0 +1,314 @@
+{
+  "issue": 155,
+  "baseline": "a7ae78ab1d064206fdbb5aeb0659bd48e3dadb7d",
+  "observed_at": "2026-10-15T16:44:57.625939+08:00",
+  "binary_sha256": "6a484fc392724a92904bc32b995c4081da8d31e040662fe0a46fe151ebda1dbc",
+  "cursor_version": "3.24.18",
+  "run_mode": "Run Everything",
+  "protocol_tests": {
+    "passed": 2,
+    "failed": 0,
+    "elapsed_s": 37.17,
+    "cases": [
+      {
+        "block_until_ms": 3000,
+        "client_silence_ms": 35000,
+        "execution_requests": 1,
+        "late_result": "success",
+        "premature_completion": false,
+        "provider_calls": 2,
+        "sent_start": false
+      },
+      {
+        "block_until_ms": 3000,
+        "client_silence_ms": 35000,
+        "execution_requests": 1,
+        "late_result": "success",
+        "premature_completion": false,
+        "provider_calls": 2,
+        "sent_start": true
+      }
+    ],
+    "type": "FakeProvider and synthetic client"
+  },
+  "real_cursor": {
+    "runs": [
+      {
+        "run_id": "a6198380-ff1b-4f1c-af86-3ef3338b81ff:e872069f",
+        "conversation_id": "65c24e25-3f72-478c-940d-520eb6f33094",
+        "status": "completed",
+        "provider_call_index": 1,
+        "created_at_ms": 1792052429914,
+        "updated_at_ms": 1792052483368,
+        "failure_category": null
+      }
+    ],
+    "llm_calls": [
+      {
+        "call_id": "a6198380-ff1b-4f1c-af86-3ef3338b81ff:e872069f:0",
+        "run_id": "a6198380-ff1b-4f1c-af86-3ef3338b81ff:e872069f",
+        "provider_call_index": 0,
+        "model_id": "gpt-6-astra",
+        "status": "completed",
+        "created_at_ms": 1792052430225,
+        "request_started_at_ms": 1792052430225,
+        "first_event_at_ms": 1792052441162,
+        "finished_at_ms": 1792052463783,
+        "http_status": 200,
+        "error_kind": null
+      },
+      {
+        "call_id": "a6198380-ff1b-4f1c-af86-3ef3338b81ff:e872069f:1",
+        "run_id": "a6198380-ff1b-4f1c-af86-3ef3338b81ff:e872069f",
+        "provider_call_index": 1,
+        "model_id": "gpt-6-astra",
+        "status": "completed",
+        "created_at_ms": 1792052469069,
+        "request_started_at_ms": 1792052469069,
+        "first_event_at_ms": 1792052480925,
+        "finished_at_ms": 1792052483177,
+        "http_status": 200,
+        "error_kind": null
+      }
+    ],
+    "tool_calls": [
+      {
+        "run_id": "a6198380-ff1b-4f1c-af86-3ef3338b81ff:e872069f",
+        "call_id": "call_9821f7a2b24f47db8b20e60dcb9e7455",
+        "name": "Shell",
+        "arguments_json": "{\"block_until_ms\":3000,\"command\":\"python3 -u long_probe.py\",\"description\":\"Run the long probe exactly once\",\"working_directory\":\"/private/tmp/cursor-byok-issue155-20261015/workspace\"}",
+        "status": "completed",
+        "result_content": "shell running in background shell_id=371872 pid=87935 terminals_folder=/Users/renhao/.cursor/projects/private-tmp-cursor-byok-issue155-20261015-workspace/terminals\n{\"event\": \"START\", \"wall_time\": 1792052467.888263, \"elapsed_s\": 0.0, \"pid\": 87986}\n",
+        "result_is_error": 0,
+        "completed_at_ms": 1792052468831
+      }
+    ],
+    "request_actions": [
+      {
+        "request_id": "a6198380-ff1b-4f1c-af86-3ef3338b81ff",
+        "created_at_ms": 1792052429946,
+        "action_type": "user_message",
+        "route_outcome": "local",
+        "conversation_id": "65c24e25-3f72-478c-940d-520eb6f33094",
+        "model_id": "df862e8a9cc595ec",
+        "accepted": true
+      }
+    ],
+    "messages": [
+      {
+        "role": "assistant",
+        "origin": "assistant",
+        "runtime_event_id": null,
+        "created_at_ms": 1792052468831,
+        "content": {
+          "kind": "assistant",
+          "text": "",
+          "tool_round_id": "a6198380-ff1b-4f1c-af86-3ef3338b81ff:e872069f:round:0",
+          "tool_calls": [
+            {
+              "index": 0,
+              "call_id": "call_9821f7a2b24f47db8b20e60dcb9e7455",
+              "name": "Shell",
+              "arguments": {
+                "block_until_ms": 3000,
+                "command": "python3 -u long_probe.py",
+                "description": "Run the long probe exactly once",
+                "working_directory": "/private/tmp/cursor-byok-issue155-20261015/workspace"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "role": "assistant",
+        "origin": "assistant",
+        "runtime_event_id": null,
+        "created_at_ms": 1792052483191,
+        "content": {
+          "kind": "assistant",
+          "text": "Started `python3 -u long_probe.py` once with `block_until_ms=3000`; it is now running in the background. I will not poll or restart it. On its automatic completion notification, I’ll read `long-events.jsonl` and report DONE, elapsed time, and exit status.",
+          "tool_calls": []
+        }
+      }
+    ],
+    "process_events": [
+      {
+        "event": "START",
+        "wall_time": 1792052467.888263,
+        "elapsed_s": 0.0,
+        "pid": 87986
+      },
+      {
+        "event": "MINUTE_1",
+        "wall_time": 1792052527.895481,
+        "elapsed_s": 60.005,
+        "pid": 87986
+      },
+      {
+        "event": "MINUTE_2",
+        "wall_time": 1792052587.895162,
+        "elapsed_s": 120.005,
+        "pid": 87986
+      },
+      {
+        "event": "MINUTE_3",
+        "wall_time": 1792052647.890657,
+        "elapsed_s": 180.001,
+        "pid": 87986
+      },
+      {
+        "event": "MINUTE_4",
+        "wall_time": 1792052707.8937678,
+        "elapsed_s": 240.004,
+        "pid": 87986
+      },
+      {
+        "event": "MINUTE_5",
+        "wall_time": 1792052767.892572,
+        "elapsed_s": 300.003,
+        "pid": 87986
+      },
+      {
+        "event": "MINUTE_6",
+        "wall_time": 1792052827.895075,
+        "elapsed_s": 360.005,
+        "pid": 87986
+      },
+      {
+        "event": "MINUTE_7",
+        "wall_time": 1792052887.895103,
+        "elapsed_s": 420.005,
+        "pid": 87986
+      },
+      {
+        "event": "MINUTE_8",
+        "wall_time": 1792052947.895199,
+        "elapsed_s": 480.005,
+        "pid": 87986
+      },
+      {
+        "event": "MINUTE_9",
+        "wall_time": 1792053007.8952792,
+        "elapsed_s": 540.005,
+        "pid": 87986
+      },
+      {
+        "event": "MINUTE_10",
+        "wall_time": 1792053067.892992,
+        "elapsed_s": 600.003,
+        "pid": 87986
+      },
+      {
+        "event": "MINUTE_11",
+        "wall_time": 1792053127.893166,
+        "elapsed_s": 660.003,
+        "pid": 87986
+      },
+      {
+        "event": "MINUTE_12",
+        "wall_time": 1792053187.895145,
+        "elapsed_s": 720.005,
+        "pid": 87986
+      },
+      {
+        "event": "MINUTE_13",
+        "wall_time": 1792053247.8953578,
+        "elapsed_s": 780.005,
+        "pid": 87986
+      },
+      {
+        "event": "MINUTE_14",
+        "wall_time": 1792053307.895042,
+        "elapsed_s": 840.005,
+        "pid": 87986
+      },
+      {
+        "event": "MINUTE_15",
+        "wall_time": 1792053367.894359,
+        "elapsed_s": 900.004,
+        "pid": 87986
+      },
+      {
+        "event": "MINUTE_16",
+        "wall_time": 1792053427.895626,
+        "elapsed_s": 960.005,
+        "pid": 87986
+      },
+      {
+        "event": "MINUTE_17",
+        "wall_time": 1792053487.8980448,
+        "elapsed_s": 1020.005,
+        "pid": 87986
+      },
+      {
+        "event": "MINUTE_18",
+        "wall_time": 1792053547.896124,
+        "elapsed_s": 1080.004,
+        "pid": 87986
+      },
+      {
+        "event": "MINUTE_19",
+        "wall_time": 1792053607.898012,
+        "elapsed_s": 1140.005,
+        "pid": 87986
+      },
+      {
+        "event": "MINUTE_20",
+        "wall_time": 1792053667.8954391,
+        "elapsed_s": 1200.003,
+        "pid": 87986
+      },
+      {
+        "event": "MINUTE_21",
+        "wall_time": 1792053727.897275,
+        "elapsed_s": 1260.005,
+        "pid": 87986
+      },
+      {
+        "event": "DONE",
+        "wall_time": 1792053727.8998559,
+        "elapsed_s": 1260.007,
+        "pid": 87986
+      }
+    ],
+    "terminal_output": "---\npid: 87935\ncwd: \"/private/tmp/cursor-byok-issue155-20261015/workspace\"\ncommand: \"python3 -u long_probe.py\"\ntitle: \"Run the long probe exactly once\"\nstatus: succeeded\nstarted_at: 2026-10-15T08:21:03.836Z\nrunning_for_ms: 1264172  \n---\n{\"event\": \"START\", \"wall_time\": 1792052467.888263, \"elapsed_s\": 0.0, \"pid\": 87986}\n{\"event\": \"MINUTE_1\", \"wall_time\": 1792052527.895481, \"elapsed_s\": 60.005, \"pid\": 87986}\n{\"event\": \"MINUTE_2\", \"wall_time\": 1792052587.895162, \"elapsed_s\": 120.005, \"pid\": 87986}\n{\"event\": \"MINUTE_3\", \"wall_time\": 1792052647.890657, \"elapsed_s\": 180.001, \"pid\": 87986}\n{\"event\": \"MINUTE_4\", \"wall_time\": 1792052707.8937678, \"elapsed_s\": 240.004, \"pid\": 87986}\n{\"event\": \"MINUTE_5\", \"wall_time\": 1792052767.892572, \"elapsed_s\": 300.003, \"pid\": 87986}\n{\"event\": \"MINUTE_6\", \"wall_time\": 1792052827.895075, \"elapsed_s\": 360.005, \"pid\": 87986}\n{\"event\": \"MINUTE_7\", \"wall_time\": 1792052887.895103, \"elapsed_s\": 420.005, \"pid\": 87986}\n{\"event\": \"MINUTE_8\", \"wall_time\": 1792052947.895199, \"elapsed_s\": 480.005, \"pid\": 87986}\n{\"event\": \"MINUTE_9\", \"wall_time\": 1792053007.8952792, \"elapsed_s\": 540.005, \"pid\": 87986}\n{\"event\": \"MINUTE_10\", \"wall_time\": 1792053067.892992, \"elapsed_s\": 600.003, \"pid\": 87986}\n{\"event\": \"MINUTE_11\", \"wall_time\": 1792053127.893166, \"elapsed_s\": 660.003, \"pid\": 87986}\n{\"event\": \"MINUTE_12\", \"wall_time\": 1792053187.895145, \"elapsed_s\": 720.005, \"pid\": 87986}\n{\"event\": \"MINUTE_13\", \"wall_time\": 1792053247.8953578, \"elapsed_s\": 780.005, \"pid\": 87986}\n{\"event\": \"MINUTE_14\", \"wall_time\": 1792053307.895042, \"elapsed_s\": 840.005, \"pid\": 87986}\n{\"event\": \"MINUTE_15\", \"wall_time\": 1792053367.894359, \"elapsed_s\": 900.004, \"pid\": 87986}\n{\"event\": \"MINUTE_16\", \"wall_time\": 1792053427.895626, \"elapsed_s\": 960.005, \"pid\": 87986}\n{\"event\": \"MINUTE_17\", \"wall_time\": 1792053487.8980448, \"elapsed_s\": 1020.005, \"pid\": 87986}\n{\"event\": \"MINUTE_18\", \"wall_time\": 1792053547.896124, \"elapsed_s\": 1080.004, \"pid\": 87986}\n{\"event\": \"MINUTE_19\", \"wall_time\": 1792053607.898012, \"elapsed_s\": 1140.005, \"pid\": 87986}\n{\"event\": \"MINUTE_20\", \"wall_time\": 1792053667.8954391, \"elapsed_s\": 1200.003, \"pid\": 87986}\n{\"event\": \"MINUTE_21\", \"wall_time\": 1792053727.897275, \"elapsed_s\": 1260.005, \"pid\": 87986}\n{\"event\": \"DONE\", \"wall_time\": 1792053727.8998559, \"elapsed_s\": 1260.007, \"pid\": 87986}\n\n---\nexit_code: 0\nelapsed_ms: 1264171\nended_at: 2026-10-15T08:42:08.007Z\n---\n",
+    "terminal_exit_code": 0,
+    "terminal_elapsed_ms": 1264171,
+    "observed_seconds_after_exit": 169.643,
+    "automatic_completion_observed": false,
+    "ui_observation": {
+      "initial_background_ack_visible": true,
+      "open_terminal_count_badge_removed": true,
+      "completion_reply_visible": false,
+      "source": "Cursor accessibility tree via cua_repl"
+    }
+  },
+  "limitations": [
+    "Real approval waiting not tested: existing Run Everything mode skips approval.",
+    "The real process emits output once per minute; 20 minutes without output is not covered.",
+    "No short-task control or notify_on_output comparison was run. Missing automatic follow-up alone does not prove a 20-minute timeout or a BYOK server defect."
+  ],
+  "probe_sources": {
+    "long_probe.py": "import json, os, time\nfrom pathlib import Path\nout = Path(__file__).with_name(\"long-events.jsonl\")\nstart = time.monotonic()\ndef emit(event):\n    row = {\"event\": event, \"wall_time\": time.time(), \"elapsed_s\": round(time.monotonic()-start, 3), \"pid\": os.getpid()}\n    with out.open(\"a\") as f:\n        f.write(json.dumps(row)+\"\\n\")\n    print(json.dumps(row), flush=True)\nemit(\"START\")\nfor minute in range(1, 22):\n    time.sleep(max(0, start + minute * 60 - time.monotonic()))\n    emit(\"MINUTE_\"+str(minute))\nemit(\"DONE\")\n",
+    "approval_probe.py": "import json, os, time\nfrom pathlib import Path\nrow = {\"event\": \"APPROVED_COMMAND_RAN\", \"wall_time\": time.time(), \"pid\": os.getpid()}\np = Path(__file__).with_name(\"approval-events.jsonl\")\nwith p.open(\"a\") as f:\n    f.write(json.dumps(row)+\"\\n\")\nprint(json.dumps(row), flush=True)\n"
+  },
+  "outcome": "21-minute background process exited successfully; no completion action or automatic follow-up observed before ending the attempt. Whether default completion notification is expected in this client version remains unconfirmed.",
+  "cleanup": {
+    "test_server_stopped": true,
+    "proxy_keys_restored": [
+      "http.proxy",
+      "http.proxyKerberosServicePrincipal",
+      "http.proxySupport",
+      "cursor.general.disableHttp2",
+      "http.experimental.systemCertificatesV2",
+      "http.noProxy"
+    ],
+    "unrelated_settings_preserved": true,
+    "formal_database_unchanged": true,
+    "credential_copy_removed": true,
+    "raw_logs_removed": true,
+    "temporary_workspace_removed": true,
+    "temporary_probe_removed": true,
+    "temporary_worktree_build_config_removed": true
+  }
+}

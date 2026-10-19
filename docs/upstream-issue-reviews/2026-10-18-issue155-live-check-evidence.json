@@ -1,0 +1,275 @@
+{
+  "date": "2026-10-18",
+  "issue": 155,
+  "source_head": "b541d696e71943550e38135191d77cf05ddbda94",
+  "cursor_version": "3.25.6",
+  "live_gate_dump": {
+    "timestamp": "2026-10-18T05:59:04.572Z",
+    "surface": "Cursor IDE diagnostic window in the same installation",
+    "gates": {
+      "cursor_agent_host": {
+        "enabled": true,
+        "name": "cursor_agent_host",
+        "hasOverride": false,
+        "isClient": true,
+        "default": false
+      },
+      "long_running_jobs": {
+        "enabled": true,
+        "name": "long_running_jobs",
+        "hasOverride": false,
+        "isClient": true,
+        "default": true
+      },
+      "nal_agent_retries": {
+        "enabled": true,
+        "name": "nal_agent_retries",
+        "hasOverride": false,
+        "isClient": true,
+        "default": true
+      }
+    },
+    "agent_test_window_verified": false
+  },
+  "test_service": {
+    "binary_sha256": "c6cecf746e8eb36d437ada9c7dd78f02ce83523e284a63afa1c478bd1317af3a",
+    "service_port": 57573,
+    "proxy_port": 57584,
+    "database_copied_with_sqlite_backup": true,
+    "detailed_logging_enabled_before_first_request": true,
+    "temporary_bootstrap_identity_matched": true,
+    "temporary_long_running_jobs": true,
+    "temporary_source_plugin_baseline": "b541d696e71943550e38135191d77cf05ddbda94; concurrent plugin work excluded",
+    "production_analytics_modified": false,
+    "runs_created": 0,
+    "traces_created": 0
+  },
+  "obstruction": {
+    "first": "Cursor showed Log In after restart; existing token expired 2026-07-01, GetMe returned 401",
+    "official_browser_login": "Official browser page reports All set; desktop token has not refreshed yet, so desktop login recovery is not verified",
+    "current_token_unexpired": false,
+    "current_token_expiry": "2026-07-01T21:14:16+08:00",
+    "latest": "CUA explicitly reports Mac locked before returning to test UI",
+    "probe_sent": false
+  },
+  "cleanup": {
+    "temporary_server_stopped": true,
+    "test_ports_released": true,
+    "formal_service_restored": "127.0.0.1:49588",
+    "formal_proxy_restored": "127.0.0.1:49642",
+    "six_proxy_keys_restored": true,
+    "bootstrap_cache_restored_before_official_login": true,
+    "formal_database_same_at_first_restore": true,
+    "temporary_private_root_retained_for_resume": "/private/tmp/cursor-byok-issue155-stream-20261018",
+    "credentials_in_evidence": false
+  },
+  "status": "protocol fix verified; both 3.25.9 Agent Host background cases failed automatic continuation; no notification request reached isolated BYOK; runtime gate and client forwarding remain to distinguish",
+  "resumed_test": {
+    "cursor_version": "3.25.9",
+    "runtime": "agent_host",
+    "runtime_evidence": "MainThreadCursorAgentHost created host session; selected turn runtime connect; agent.turn.outcome runtime agent_host retries_attempted 0",
+    "plain": {
+      "traces": [
+        {
+          "request_id": "2ca978bf-95cb-4b59-9fed-1c8505f76e6f",
+          "conversation_id": "8ff0a6c9-d254-443d-bccb-419fe2afd118",
+          "route": "local_byok",
+          "status": "completed",
+          "response_event_count": 68,
+          "response_bytes": 45321,
+          "received_at_ms": 1792306520536,
+          "finished_at_ms": 1792306534538,
+          "error_message": null
+        }
+      ],
+      "probe_events": [
+        {
+          "case": "plain",
+          "event": "PROBE_START",
+          "pid": 26669,
+          "wall_time": 1792306528.787405,
+          "elapsed_s": 0.0
+        },
+        {
+          "case": "plain",
+          "event": "PROBE_MATCH",
+          "pid": 26669,
+          "wall_time": 1792306538.788863,
+          "elapsed_s": 10.001
+        },
+        {
+          "case": "plain",
+          "event": "PROBE_EXIT",
+          "pid": 26669,
+          "wall_time": 1792306553.795899,
+          "elapsed_s": 25.008
+        }
+      ],
+      "shell_id": 108048,
+      "shell_tool_call_id": "call_10d9c28448794b03ab5495fa1fe1fc86",
+      "shell_backgrounded": true,
+      "block_until_ms": 1000,
+      "hard_timeout_ms": 86400000,
+      "shell_args_conversation_id_present": true,
+      "exit_code": 0,
+      "initial_response": "CASE_PLAIN_STARTED",
+      "automatic_completion_response_observed": false,
+      "background_notification_request_count": 0,
+      "observed_until_ms": 1792307857070,
+      "wait_after_exit_seconds": 1303.274,
+      "process_start_count": 1
+    },
+    "notify": {
+      "prompt_sent": true,
+      "traces": [
+        {
+          "request_id": "4226d57a-83ed-48cb-883b-2328858d4657",
+          "conversation_id": "2b5f0656-6bb1-4bb8-b910-e11cae3f672a",
+          "route": "local_byok",
+          "status": "completed",
+          "response_event_count": 103,
+          "response_bytes": 50149,
+          "received_at_ms": 1792309173217,
+          "finished_at_ms": 1792309190980,
+          "error_message": null
+        }
+      ],
+      "probe_events": [
+        {
+          "case": "notify",
+          "event": "PROBE_START",
+          "pid": 29303,
+          "wall_time": 1792309182.0409448,
+          "elapsed_s": 0.0
+        },
+        {
+          "case": "notify",
+          "event": "PROBE_MATCH",
+          "pid": 29303,
+          "wall_time": 1792309192.046282,
+          "elapsed_s": 10.005
+        },
+        {
+          "case": "notify",
+          "event": "PROBE_EXIT",
+          "pid": 29303,
+          "wall_time": 1792309207.050255,
+          "elapsed_s": 25.009
+        }
+      ],
+      "shell_id": 114831,
+      "shell_tool_call_id": "call_3e8f1757f2f041daa64578c09a36eefc",
+      "shell_backgrounded": true,
+      "block_until_ms": 1000,
+      "hard_timeout_ms": 86400000,
+      "shell_args_conversation_id_present": true,
+      "output_notification": {
+        "pattern": "MATCH",
+        "debounce_ms": 5000
+      },
+      "exit_code": 0,
+      "initial_response": "NOTIFYSTARTED",
+      "automatic_completion_response_observed": false,
+      "background_notification_request_count": 0,
+      "observed_until_ms": 1792310202427,
+      "wait_after_exit_seconds": 995.377,
+      "process_start_count": 1,
+      "client_match_log_observed": false
+    },
+    "gate_limit": "long_running_jobs true in current bootstrap cache; no current-window runtime dump available; do not treat cache as effective runtime proof",
+    "stream_guard_3_25_9": {
+      "bundle_sha256": "a7fd1d4c60239dbe5527117d94d7181664525c49a7a294508c59a5082e423014",
+      "guard_sha256": "3231bfb164cca639e87a1996fb8d7d242516d8ec765727f9f6858daa8954cbd2",
+      "empty_success_rejected": true,
+      "checkpoint_only_rejected": true,
+      "turn_ended_accepted": true,
+      "scope": "original installed guard with mocked IO; not automatic notification UI test"
+    },
+    "cleanup": {
+      "temporary_server_stopped": true,
+      "formal_service_port": 49588,
+      "formal_proxy_port": 49642,
+      "formal_database_sha256_matches_baseline": true,
+      "test_trace_in_formal_database": false,
+      "six_proxy_keys_restored": true,
+      "bootstrap_cache_restored_while_cursor_stopped": true,
+      "credentials_modified": false,
+      "test_ports_released": true
+    },
+    "ui_obstructions": [
+      "Transient capture errors -3811/-3812; reconnect did not help until Cursor restarted",
+      "IDE opened; invoking command palette did not expose diagnostic command, so no runtime gate dump was obtained",
+      "After user confirmed Cursor was foreground, menu access worked but selecting Command Palette again failed with ScreenCaptureKit -3811; no current runtime gate dump obtained. Formal service remains restored."
+    ]
+  },
+  "runtime_gate_followup": {
+    "gate_dump_timestamp": "2026-10-18T08:12:35.164Z",
+    "surface": "user-invoked IDE Developer: Dump Feature Gates",
+    "gates": {
+      "background_nudge_2": {
+        "enabled": true,
+        "name": "background_nudge_2",
+        "hasOverride": false,
+        "isClient": true,
+        "default": true
+      },
+      "cursor_agent_host": {
+        "enabled": true,
+        "name": "cursor_agent_host",
+        "hasOverride": false,
+        "isClient": true,
+        "default": false
+      },
+      "long_running_jobs": {
+        "enabled": true,
+        "name": "long_running_jobs",
+        "hasOverride": false,
+        "isClient": true,
+        "default": true
+      },
+      "nal_agent_retries": {
+        "enabled": true,
+        "name": "nal_agent_retries",
+        "hasOverride": false,
+        "isClient": true,
+        "default": true
+      },
+      "terminal_execution_service_2": {
+        "enabled": true,
+        "name": "terminal_execution_service_2",
+        "hasOverride": false,
+        "isClient": true,
+        "default": true
+      }
+    },
+    "new_test_started": false,
+    "new_trace_count": 0,
+    "probe_event_file_created": false,
+    "original_cursor_pid": 30162,
+    "cursor_pid_after_interruption": 34380,
+    "same_process_comparison_invalidated_by_restart": true,
+    "reason_not_executed": "UI capture failed; user temporarily unable to perform new-process diagnostic and test",
+    "isolation": {
+      "service_port": 57573,
+      "proxy_port": 49642,
+      "reason_for_proxy_port_reuse": "formal process stopped; retain current Cursor proxy setting to avoid intentional restart",
+      "separate_database": true
+    },
+    "cleanup": {
+      "test_service_stopped": true,
+      "formal_service_port": 49588,
+      "formal_proxy_port": 49642,
+      "settings_and_persisted_bootstrap_restored": true,
+      "runtime_cache_reload_not_verified": true,
+      "formal_database_sha256_matches_original_baseline": true,
+      "cursor_absent_when_formal_service_was_restored": true,
+      "cursor_reopened_via_cua": true,
+      "cursor_pid_after_reopening": 53439,
+      "formal_service_pid": 53165,
+      "formal_integration_status": "enabled",
+      "formal_settings_applied": true,
+      "test_service_port_released": true,
+      "verified_at": "2026-10-18T08:29:14.592096+00:00"
+    }
+  }
+}

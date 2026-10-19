@@ -1,0 +1,192 @@
+{
+  "issue": 155,
+  "observed_at": "2026-10-16T21:30:46.924172+08:00",
+  "baseline": {
+    "source_head": "b541d696e71943550e38135191d77cf05ddbda94",
+    "cursor_version": "3.25.6",
+    "temporary_binary_sha256": "1a1522befbe1ef3ee948f767169cdfb5326b0f5f8007ac6f0fdf9b2c8c2ab0a0",
+    "formal_database_sha256": "8999d8398d1541e4c372307cfc61dcdead4988b91f1e3ad0f6c46ef6f63cc826",
+    "ports": [
+      57573,
+      57584
+    ]
+  },
+  "probe": {
+    "workspace": "isolated Cursor workspace",
+    "command": "python3 -u probe.py",
+    "block_until_ms": 1000,
+    "notify_pattern": "FIX_PROBE_DONE",
+    "script_elapsed_s": 20.005,
+    "exit_code": 0,
+    "executed_once": true
+  },
+  "server_evidence": {
+    "conversation_id": "424be3a5-8af6-4e45-a7dc-e5f39f7bf8a4",
+    "initial_run_count": 1,
+    "initial_run_statuses": [
+      "completed"
+    ],
+    "provider_call_count": 2,
+    "provider_call_statuses": [
+      "completed"
+    ],
+    "shell_call_count": 1,
+    "shell_call_statuses": [
+      "completed"
+    ],
+    "trace_count": 12,
+    "notification_trace_count": 11,
+    "notification_traces": [
+      {
+        "status": "completed",
+        "request_bytes": 2558,
+        "response_bytes": 7,
+        "response_event_count": 1,
+        "http_status": 200,
+        "error_message": null,
+        "received_at": "2026-10-16T21:09:27.459000+08:00",
+        "finished_at": "2026-10-16T21:09:27.461000+08:00"
+      },
+      {
+        "status": "completed",
+        "request_bytes": 2558,
+        "response_bytes": 7,
+        "response_event_count": 1,
+        "http_status": 200,
+        "error_message": null,
+        "received_at": "2026-10-16T21:09:29.641000+08:00",
+        "finished_at": "2026-10-16T21:09:29.645000+08:00"
+      },
+      {
+        "status": "completed",
+        "request_bytes": 2558,
+        "response_bytes": 7,
+        "response_event_count": 1,
+        "http_status": 200,
+        "error_message": null,
+        "received_at": "2026-10-16T21:09:33.799000+08:00",
+        "finished_at": "2026-10-16T21:09:33.804000+08:00"
+      },
+      {
+        "status": "completed",
+        "request_bytes": 2558,
+        "response_bytes": 7,
+        "response_event_count": 1,
+        "http_status": 200,
+        "error_message": null,
+        "received_at": "2026-10-16T21:09:43.331000+08:00",
+        "finished_at": "2026-10-16T21:09:43.336000+08:00"
+      },
+      {
+        "status": "completed",
+        "request_bytes": 2558,
+        "response_bytes": 7,
+        "response_event_count": 1,
+        "http_status": 200,
+        "error_message": null,
+        "received_at": "2026-10-16T21:10:00.828000+08:00",
+        "finished_at": "2026-10-16T21:10:00.832000+08:00"
+      },
+      {
+        "status": "completed",
+        "request_bytes": 2558,
+        "response_bytes": 7,
+        "response_event_count": 1,
+        "http_status": 200,
+        "error_message": null,
+        "received_at": "2026-10-16T21:10:33.825000+08:00",
+        "finished_at": "2026-10-16T21:10:33.829000+08:00"
+      },
+      {
+        "status": "completed",
+        "request_bytes": 2558,
+        "response_bytes": 7,
+        "response_event_count": 1,
+        "http_status": 200,
+        "error_message": null,
+        "received_at": "2026-10-16T21:11:38.821000+08:00",
+        "finished_at": "2026-10-16T21:11:38.825000+08:00"
+      },
+      {
+        "status": "completed",
+        "request_bytes": 2558,
+        "response_bytes": 7,
+        "response_event_count": 1,
+        "http_status": 200,
+        "error_message": null,
+        "received_at": "2026-10-16T21:12:48.834000+08:00",
+        "finished_at": "2026-10-16T21:12:48.837000+08:00"
+      },
+      {
+        "status": "completed",
+        "request_bytes": 2558,
+        "response_bytes": 7,
+        "response_event_count": 1,
+        "http_status": 200,
+        "error_message": null,
+        "received_at": "2026-10-16T21:13:52.829000+08:00",
+        "finished_at": "2026-10-16T21:13:52.833000+08:00"
+      },
+      {
+        "status": "completed",
+        "request_bytes": 2558,
+        "response_bytes": 7,
+        "response_event_count": 1,
+        "http_status": 200,
+        "error_message": null,
+        "received_at": "2026-10-16T21:14:56.828000+08:00",
+        "finished_at": "2026-10-16T21:14:56.832000+08:00"
+      },
+      {
+        "status": "completed",
+        "request_bytes": 2558,
+        "response_bytes": 7,
+        "response_event_count": 1,
+        "http_status": 200,
+        "error_message": null,
+        "received_at": "2026-10-16T21:16:05.827000+08:00",
+        "finished_at": "2026-10-16T21:16:05.831000+08:00"
+      }
+    ],
+    "trace_error_count": 0,
+    "response_frame_hex": "02000000027B7D",
+    "response_frame_meaning": "Successful Connect end-stream trailer only; lacks Agent InteractionUpdate.TurnEnded. This is not a complete client-accepted success response."
+  },
+  "ui_observation": {
+    "cursor_window": "Cursor Agents",
+    "conversation": "Issue 155 fix validation",
+    "visible_completion": "FIX_STARTED",
+    "error_resuming_chat_visible": false,
+    "automatic_task_finished_continuation_observed": false,
+    "note": "Cursor emitted repeated TaskProgress notifications but did not emit TaskFinished automatically; the fix specifically verifies progress-only requests no longer surface the former protocol error."
+  },
+  "limitations": [
+    "This run validates the pure TaskProgress error path. Cursor did not send a TaskFinished item automatically, so automatic model continuation after process exit remains a separate client behavior.",
+    "Approval waiting and a silent 20-minute command were not retested in this pass."
+  ],
+  "cleanup_pending": false,
+  "cleanup": {
+    "temporary_root_removed": true,
+    "temporary_workspace_removed": true,
+    "dedicated_terminal_cache_removed": true,
+    "formal_service_port": 49588,
+    "formal_proxy_port": 49642,
+    "formal_service_process": "target/debug/cursor-server",
+    "formal_database_sha256_after_cleanup": "8999d8398d1541e4c372307cfc61dcdead4988b91f1e3ad0f6c46ef6f63cc826",
+    "formal_database_matches_baseline": true,
+    "cursor_settings_restored": {
+      "http.proxy": "http://127.0.0.1:49642",
+      "http.proxyKerberosServicePrincipal": "http://127.0.0.1:49642",
+      "http.proxySupport": "on",
+      "cursor.general.disableHttp2": true,
+      "http.experimental.systemCertificatesV2": true,
+      "http.noProxy": "absent"
+    }
+  },
+  "audit_correction_2026_10_18": {
+    "original_invalid_argument_removed": true,
+    "client_acceptance_proven": false,
+    "discovered_gap": "Cursor treats a successful EOF without TurnEnded as a retryable transport failure. Repeated HTTP 200 responses were not evidence of successful client acceptance.",
+    "followup": "2026-10-18-issue155-stream-end-fix.md"
+  }
+}

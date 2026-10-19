@@ -1,0 +1,369 @@
+{
+  "baseline": {
+    "baseline": "a7ae78ab1d064206fdbb5aeb0659bd48e3dadb7d",
+    "created_at_ms": 1792081040058,
+    "formal_db_sha256": "8999d8398d1541e4c372307cfc61dcdead4988b91f1e3ad0f6c46ef6f63cc826",
+    "binary_sha256": "6a484fc392724a92904bc32b995c4081da8d31e040662fe0a46fe151ebda1dbc",
+    "cursor_version": "3.24.18",
+    "ports": [
+      57573,
+      57584
+    ]
+  },
+  "observed_at": "2026-10-16T00:29:52.223404+08:00",
+  "runs": [
+    {
+      "run_id": "3e728ca6-3ce9-4859-8790-5c6372691e1a:ece42743",
+      "conversation_id": "72b5cb8f-7966-4eea-a6dc-47e452965012",
+      "status": "completed",
+      "provider_call_index": 1,
+      "created_at_ms": 1792081310278,
+      "updated_at_ms": 1792081321316,
+      "failure_category": null,
+      "failure_summary": null
+    },
+    {
+      "run_id": "23c6f21c-0b3c-4974-b0c4-7a5f30e937c2:f0c2d517",
+      "conversation_id": "3fb43cc2-8a3c-433d-a4ce-807f7ee67a70",
+      "status": "completed",
+      "provider_call_index": 1,
+      "created_at_ms": 1792081362728,
+      "updated_at_ms": 1792081375151,
+      "failure_category": null,
+      "failure_summary": null
+    }
+  ],
+  "llm_calls": [
+    {
+      "call_id": "3e728ca6-3ce9-4859-8790-5c6372691e1a:ece42743:0",
+      "run_id": "3e728ca6-3ce9-4859-8790-5c6372691e1a:ece42743",
+      "provider_call_index": 0,
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "created_at_ms": 1792081310604,
+      "request_started_at_ms": 1792081310604,
+      "first_event_at_ms": 1792081314047,
+      "finished_at_ms": 1792081315667,
+      "http_status": 200,
+      "error_kind": null
+    },
+    {
+      "call_id": "3e728ca6-3ce9-4859-8790-5c6372691e1a:ece42743:1",
+      "run_id": "3e728ca6-3ce9-4859-8790-5c6372691e1a:ece42743",
+      "provider_call_index": 1,
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "created_at_ms": 1792081318626,
+      "request_started_at_ms": 1792081318626,
+      "first_event_at_ms": 1792081320919,
+      "finished_at_ms": 1792081321097,
+      "http_status": 200,
+      "error_kind": null
+    },
+    {
+      "call_id": "23c6f21c-0b3c-4974-b0c4-7a5f30e937c2:f0c2d517:0",
+      "run_id": "23c6f21c-0b3c-4974-b0c4-7a5f30e937c2:f0c2d517",
+      "provider_call_index": 0,
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "created_at_ms": 1792081363035,
+      "request_started_at_ms": 1792081363035,
+      "first_event_at_ms": 1792081366788,
+      "finished_at_ms": 1792081368883,
+      "http_status": 200,
+      "error_kind": null
+    },
+    {
+      "call_id": "23c6f21c-0b3c-4974-b0c4-7a5f30e937c2:f0c2d517:1",
+      "run_id": "23c6f21c-0b3c-4974-b0c4-7a5f30e937c2:f0c2d517",
+      "provider_call_index": 1,
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "created_at_ms": 1792081372209,
+      "request_started_at_ms": 1792081372209,
+      "first_event_at_ms": 1792081374748,
+      "finished_at_ms": 1792081374945,
+      "http_status": 200,
+      "error_kind": null
+    }
+  ],
+  "tools": [
+    {
+      "run_id": "3e728ca6-3ce9-4859-8790-5c6372691e1a:ece42743",
+      "call_id": "call_ce4b366c998c4f82a3031014934011bd",
+      "name": "Shell",
+      "arguments_json": "{\"block_until_ms\":1000,\"command\":\"python3 -u probe.py default\",\"description\":\"Run case A notification comparison once\",\"working_directory\":\"/private/tmp/cursor-byok-issue155-20261016/workspace\"}",
+      "status": "completed",
+      "result_content": "shell running in background shell_id=68227 pid=97772 terminals_folder=/Users/renhao/.cursor/projects/private-tmp-cursor-byok-issue155-20261016-workspace/terminals",
+      "result_is_error": 0,
+      "completed_at_ms": 1792081318359
+    },
+    {
+      "run_id": "23c6f21c-0b3c-4974-b0c4-7a5f30e937c2:f0c2d517",
+      "call_id": "call_f3fa6ce120684508aa55ed68b9c0d3b6",
+      "name": "Shell",
+      "arguments_json": "{\"block_until_ms\":1000,\"command\":\"python3 -u probe.py notify\",\"description\":\"Runs the requested 45-second notification probe\",\"notify_on_output\":{\"debounce_ms\":5000,\"pattern\":\"PROBE_DONE\",\"reason\":\"probe completion\"},\"working_directory\":\"/private/tmp/cursor-byok-issue155-20261016/workspace\"}",
+      "status": "completed",
+      "result_content": "shell running in background shell_id=325158 pid=97894 terminals_folder=/Users/renhao/.cursor/projects/private-tmp-cursor-byok-issue155-20261016-workspace/terminals",
+      "result_is_error": 0,
+      "completed_at_ms": 1792081371941
+    }
+  ],
+  "actions": [
+    {
+      "request_id": "3e728ca6-3ce9-4859-8790-5c6372691e1a",
+      "created_at_ms": 1792081310326,
+      "action_type": "user_message",
+      "route_outcome": "local",
+      "conversation_id": "72b5cb8f-7966-4eea-a6dc-47e452965012",
+      "model_id": "df862e8a9cc595ec",
+      "accepted": true
+    },
+    {
+      "request_id": "23c6f21c-0b3c-4974-b0c4-7a5f30e937c2",
+      "created_at_ms": 1792081362783,
+      "action_type": "user_message",
+      "route_outcome": "local",
+      "conversation_id": "3fb43cc2-8a3c-433d-a4ce-807f7ee67a70",
+      "model_id": "df862e8a9cc595ec",
+      "accepted": true
+    }
+  ],
+  "messages": [
+    {
+      "role": "user",
+      "origin": "runtime",
+      "runtime_event_id": "cursor:user:92d8ba37-8171-46ec-a2aa-d350dc840bfb:PxLvLj0VQJM9nTBb41qgo/MDkUz/jNbX+g6pdqVa5qc=",
+      "created_at_ms": 1792081310297,
+      "content": {
+        "kind": "parts",
+        "parts": [
+          {
+            "type": "text",
+            "text": "<system_reminder>\nYou are now in Agent mode. You have EXITED your previous mode. Continue with the task in the new mode.\n</system_reminder>\n<system_reminder>\nYou are still in **Agent Mode**\n</system_reminder>\n<timestamp>Friday, Oct 16, 2026, 12:21 AM (UTC+8)</timestamp>\n<user_query>\nNotification comparison, case A. Run python3 -u probe.py default exactly once in this workspace using Shell with block_until_ms=1000 and omit notify_on_output. This is an intentional 45-second test. Do not edit, shorten, duplicate, or poll the command. After it backgrounds, end this initial turn with CASE_A_STARTED. If Cursor automatically notifies you of completion, read default-events.jsonl and report CASE_A_COMPLETED with elapsed time. Do not continue without that automatic notification.\n</user_query>"
+          }
+        ]
+      }
+    },
+    {
+      "role": "assistant",
+      "origin": "assistant",
+      "runtime_event_id": null,
+      "created_at_ms": 1792081318359,
+      "content": {
+        "kind": "assistant",
+        "text": "",
+        "tool_round_id": "3e728ca6-3ce9-4859-8790-5c6372691e1a:ece42743:round:0",
+        "tool_calls": [
+          {
+            "index": 0,
+            "call_id": "call_ce4b366c998c4f82a3031014934011bd",
+            "name": "Shell",
+            "arguments": {
+              "block_until_ms": 1000,
+              "command": "python3 -u probe.py default",
+              "description": "Run case A notification comparison once",
+              "working_directory": "/private/tmp/cursor-byok-issue155-20261016/workspace"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "role": "assistant",
+      "origin": "assistant",
+      "runtime_event_id": null,
+      "created_at_ms": 1792081321114,
+      "content": {
+        "kind": "assistant",
+        "text": "CASE_A_STARTED",
+        "tool_calls": []
+      }
+    },
+    {
+      "role": "user",
+      "origin": "runtime",
+      "runtime_event_id": "cursor:user:856d0357-6007-49e2-ba35-e598e16410cd:7lWfS0mDBkdQ9UHCxFdc2Dodud6EpQbEn4f+MKqCWlk=",
+      "created_at_ms": 1792081362746,
+      "content": {
+        "kind": "parts",
+        "parts": [
+          {
+            "type": "text",
+            "text": "<system_reminder>\nYou are now in Agent mode. You have EXITED your previous mode. Continue with the task in the new mode.\n</system_reminder>\n<system_reminder>\nYou are still in **Agent Mode**\n</system_reminder>\n<timestamp>Friday, Oct 16, 2026, 12:22 AM (UTC+8)</timestamp>\n<user_query>\nNotification comparison, case B. I explicitly request monitoring the final output. Run python3 -u probe.py notify exactly once in this workspace using Shell with block_until_ms=1000 and notify_on_output={\"pattern\":\"PROBE_DONE\",\"reason\":\"probe completion\",\"debounce_ms\":5000}. This is an intentional 45-second test. Do not edit, shorten, duplicate, or poll the command. After it backgrounds, end this initial turn with CASE_B_STARTED. On the automatic output or completion notification, read notify-events.jsonl and report CASE_B_COMPLETED with elapsed time. Do not continue without that automatic notification.\n</user_query>"
+          }
+        ]
+      }
+    },
+    {
+      "role": "assistant",
+      "origin": "assistant",
+      "runtime_event_id": null,
+      "created_at_ms": 1792081371939,
+      "content": {
+        "kind": "assistant",
+        "text": "",
+        "tool_round_id": "23c6f21c-0b3c-4974-b0c4-7a5f30e937c2:f0c2d517:round:0",
+        "tool_calls": [
+          {
+            "index": 0,
+            "call_id": "call_f3fa6ce120684508aa55ed68b9c0d3b6",
+            "name": "Shell",
+            "arguments": {
+              "block_until_ms": 1000,
+              "command": "python3 -u probe.py notify",
+              "description": "Runs the requested 45-second notification probe",
+              "notify_on_output": {
+                "debounce_ms": 5000,
+                "pattern": "PROBE_DONE",
+                "reason": "probe completion"
+              },
+              "working_directory": "/private/tmp/cursor-byok-issue155-20261016/workspace"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "role": "assistant",
+      "origin": "assistant",
+      "runtime_event_id": null,
+      "created_at_ms": 1792081374961,
+      "content": {
+        "kind": "assistant",
+        "text": "CASE_B_STARTED",
+        "tool_calls": []
+      }
+    }
+  ],
+  "events": {
+    "default": [
+      {
+        "case": "default",
+        "event": "PROBE_START",
+        "wall_time": 1792081319.410325,
+        "elapsed_s": 0.0,
+        "pid": 97788
+      },
+      {
+        "case": "default",
+        "event": "PROBE_DONE",
+        "wall_time": 1792081364.415849,
+        "elapsed_s": 45.006,
+        "pid": 97788
+      }
+    ],
+    "notify": [
+      {
+        "case": "notify",
+        "event": "PROBE_START",
+        "wall_time": 1792081372.237638,
+        "elapsed_s": 0.0,
+        "pid": 97908
+      },
+      {
+        "case": "notify",
+        "event": "PROBE_DONE",
+        "wall_time": 1792081417.2425961,
+        "elapsed_s": 45.005,
+        "pid": 97908
+      }
+    ],
+    "foreground": []
+  },
+  "script": "import json, os, sys, time\nfrom pathlib import Path\ncase = sys.argv[1]\nassert case in [\"default\", \"notify\", \"foreground\"]\nout = Path(__file__).with_name(case + \"-events.jsonl\")\nstart = time.monotonic()\ndef emit(event):\n    row = {\"case\": case, \"event\": event, \"wall_time\": time.time(), \"elapsed_s\": round(time.monotonic() - start, 3), \"pid\": os.getpid()}\n    with out.open(\"a\") as f:\n        f.write(json.dumps(row) + \"\\n\")\n    print(json.dumps(row), flush=True)\nemit(\"PROBE_START\")\ntime.sleep(45)\nemit(\"PROBE_DONE\")\n",
+  "wire_shell_requests": [
+    {
+      "request_id": "23c6f21c-0b3c-4974-b0c4-7a5f30e937c2",
+      "decoded_shell_request": "exec_server_message {\n  id: 1\n  shell_stream_args {\n    command: \"python3 -u probe.py notify\"\n    working_directory: \"/private/tmp/cursor-byok-issue155-20261016/workspace\"\n    timeout: 1000\n    tool_call_id: \"call_f3fa6ce120684508aa55ed68b9c0d3b6\"\n    simple_commands: \"python3 -u probe.py notify\"\n    parsing_result {\n      executable_commands {\n        name: \"python3\"\n        args {\n          type: \"word\"\n          value: \"-u\"\n        }\n        args {\n          type: \"word\"\n          value: \"probe.py\"\n        }\n        args {\n          type: \"word\"\n          value: \"notify\"\n        }\n        full_text: \"python3 -u probe.py notify\"\n      }\n    }\n    file_output_threshold_bytes: 40000\n    timeout_behavior: TIMEOUT_BEHAVIOR_BACKGROUND\n    hard_timeout: 86400000\n    description: \"Runs the requested 45-second notification probe\"\n    close_stdin: true\n    output_notification {\n      pattern: \"PROBE_DONE\"\n      reason: \"probe completion\"\n      debounce: 5000\n    }\n    conversation_id: \"3fb43cc2-8a3c-433d-a4ce-807f7ee67a70\"\n  }\n  exec_id: \"call_f3fa6ce120684508aa55ed68b9c0d3b6\"\n  accept_hook_additional_contexts: true\n}\n"
+    },
+    {
+      "request_id": "3e728ca6-3ce9-4859-8790-5c6372691e1a",
+      "decoded_shell_request": "exec_server_message {\n  id: 1\n  shell_stream_args {\n    command: \"python3 -u probe.py default\"\n    working_directory: \"/private/tmp/cursor-byok-issue155-20261016/workspace\"\n    timeout: 1000\n    tool_call_id: \"call_ce4b366c998c4f82a3031014934011bd\"\n    simple_commands: \"python3 -u probe.py default\"\n    parsing_result {\n      executable_commands {\n        name: \"python3\"\n        args {\n          type: \"word\"\n          value: \"-u\"\n        }\n        args {\n          type: \"word\"\n          value: \"probe.py\"\n        }\n        args {\n          type: \"word\"\n          value: \"default\"\n        }\n        full_text: \"python3 -u probe.py default\"\n      }\n    }\n    file_output_threshold_bytes: 40000\n    timeout_behavior: TIMEOUT_BEHAVIOR_BACKGROUND\n    hard_timeout: 86400000\n    description: \"Run case A notification comparison once\"\n    close_stdin: true\n    conversation_id: \"72b5cb8f-7966-4eea-a6dc-47e452965012\"\n  }\n  exec_id: \"call_ce4b366c998c4f82a3031014934011bd\"\n  accept_hook_additional_contexts: true\n}\n"
+    }
+  ],
+  "client_observations": {
+    "client_version": "3.24.18",
+    "client_bundle_sha256": "fa2c81cdcb4457eff4e9c3c42ca7ee89ac4438881279c3b6f58a252d6885e159",
+    "notification_match_log": [
+      "2026-10-16 00:23:37.247 [info] agent.shell_output_notification_match {\"event\":\"agent.shell_output_notification_match\",\"outcome\":\"matched\",\"shell_id\":325158,\"conversation_id\":\"local\",\"tool_call_id\":\"call_f3fa6ce120684508aa55ed68b9c0d3b6\",\"limit\":100,\"first_match_ms\":45365}"
+    ],
+    "source_excerpts": {
+      "background_notification_gate": {
+        "offset": 8972857,
+        "excerpt": "async getLongRunningJobsEnabled(){return void 0!==this.longRunningJobsEnabled?this.longRunningJobsEnabled:(this.longRunningJobsEnabledPromise||(this.longRunningJobsEnabledPromise=Promise.resolve(H.cursor.checkFeatureGate(\"long_running_jobs\")).then(e=>(this.longRunningJobsEnabled=e,e),()=>(this.longRunningJobsEnabled=!1,!1))),this.longRunningJobsEnabledPromise)}enqueueShellCompletion(e,t,r){if(this.completionPublishedShellIds.has(e))return;const n=this.trackedWork.get(e);n&&n.composerId&&(this.completionPublishedShellIds.add(e),this.shellWorkNotificationQueue.queue(()=>this.getLongRunningJobsEnabled().then(s=>{if(s)return this.notifyBackgroundTaskCompletion(function(e){const t=ol(e.projectDir,e.shellId);return{composerId:e.composerId,taskId:String(e.shellId),...void 0!==e.toolCallId?{toolCallId:e.toolCallId}:{},kind:\"shell\",status:e.status,title:e.title,...e.detail?{detail:e.detail}:{},...t?{outputPath:t}:{},reason:\"task_finished\"}}({projectDir:this.projectDir,shellId:e,composerId:n.composerId,toolCallId:n.toolCallId,title:n.title,status:t,...r?{detail:r}:{}}))})))}forwardShellOutputCompletion(e,t,r,n){this.shellWorkNotificationQueue.queue(()=>this.getLongRunningJobsEnabled().then(s=>{if(!s)return;const o=n.outputPath??ol(this.proj"
+      },
+      "background_completion_dispatch": {
+        "offset": 8973220,
+        "excerpt": "enqueueShellCompletion(e,t,r){if(this.completionPublishedShellIds.has(e))return;const n=this.trackedWork.get(e);n&&n.composerId&&(this.completionPublishedShellIds.add(e),this.shellWorkNotificationQueue.queue(()=>this.getLongRunningJobsEnabled().then(s=>{if(s)return this.notifyBackgroundTaskCompletion(function(e){const t=ol(e.projectDir,e.shellId);return{composerId:e.composerId,taskId:String(e.shellId),...void 0!==e.toolCallId?{toolCallId:e.toolCallId}:{},kind:\"shell\",status:e.status,title:e.title,...e.detail?{detail:e.detail}:{},...t?{outputPath:t}:{},reason:\"task_finished\"}}({projectDir:this.projectDir,shellId:e,composerId:n.composerId,toolCallId:n.toolCallId,title:n.title,status:t,...r?{detail:r}:{}}))})))}forwardShellOutputCompletion(e,t,r,n){this.shellWorkNotificationQueue.queue(()=>this.getLongRunningJobsEnabled().then(s=>{if(!s)return;const o=n.outputPath??ol(this.projectDir,e);return this.notifyBackgroundTaskCompletion({composerId:t,taskId:n.taskId,...void 0!==r?{toolCallId:r}:{},kind:n.kind,status:n.status,title:n.title,...n.detail?{detail:n.detail}:{},...o?{outputPath:o}:{},...n.reason?{reason:n.reason}:{}})}))}getShellIdFromCompletionTaskId(e){const t=e.trim().split(\":\",1)[0];if(!t)return;const r=Number(t);return Number."
+      },
+      "output_notification_dispatch": {
+        "offset": 8973938,
+        "excerpt": "forwardShellOutputCompletion(e,t,r,n){this.shellWorkNotificationQueue.queue(()=>this.getLongRunningJobsEnabled().then(s=>{if(!s)return;const o=n.outputPath??ol(this.projectDir,e);return this.notifyBackgroundTaskCompletion({composerId:t,taskId:n.taskId,...void 0!==r?{toolCallId:r}:{},kind:n.kind,status:n.status,title:n.title,...n.detail?{detail:n.detail}:{},...o?{outputPath:o}:{},...n.reason?{reason:n.reason}:{}})}))}getShellIdFromCompletionTaskId(e){const t=e.trim().split(\":\",1)[0];if(!t)return;const r=Number(t);return Number.isInteger(r)?r:void 0}cleanupShell(e,t){const r=t?.disposePty??!0;this.terminals.delete(e),r&&(this.pseudoTerminals.get(e)?.dispose(),this.pseudoTerminals.delete(e)),this.abortFunctions.delete(e),this.headlessShells.get(e)?.(),this.headlessShells.delete(e),this.disposeCloseListener(e),this.trackedWork.has(e)&&(this.trackedWork.delete(e),this.shellWorkNotificationQueue.queue(()=>this.notifyShellCleared(e)))}disposeCloseListener(e){const t=this.closeListeners.get(e);t&&(t.dispose(),this.closeListeners.delete(e))}async listBackgroundShellWork(e){const t=[...this.trackedWork.values()];return e?t.filter(t=>t.composerId===e):t}async killBackgroundShell(e){const t=Number(e);if(!Number.isInteger(t))return!1;const r=t"
+      },
+      "conversation_binding_dispatch": {
+        "offset": 8971379,
+        "excerpt": "enqueueShellOutputCompletion(e){if(\"shell\"!==e.kind)return;const t=this.getShellIdFromCompletionTaskId(e.taskId);if(void 0===t)return;const r=this.trackedWork.get(t);if(\"task_finished\"===e.reason)return this.completionPublishedShellIds.has(t)||!r?.composerId||(this.completionPublishedShellIds.add(t),this.forwardShellOutputCompletion(t,r.composerId,e.toolCallId??r.toolCallId,e)),void this.backupDisposeShellTerminal(t);r?.composerId&&this.forwardShellOutputCompletion(t,r.composerId,e.toolCallId??r.toolCallId,e)}backupDisposeShellTerminal(e){if(this.headlessShells.has(e))return void this.cleanupShell(e);const t=this.pseudoTerminals.get(e);t?.hasExitOccurred()||(t?.acknowledgeExternalTeardown(),this.disposeShellTerminal(e))}disposeShellTerminal(e){const "
+      }
+    },
+    "interpretation": [
+      "The output marker was matched by the real client; the notification did not arrive at BYOK.",
+      "The client forwarding code checks the long_running_jobs feature gate; its runtime value was not measured.",
+      "The log conversation_id=local is not by itself proof of bad routing: adapters can map it to the owning conversation.",
+      "BYOK encodes debounce_ms=5000 as wire debounce=5000, while the bundled agent tool builder converts milliseconds to seconds; this independent discrepancy does not explain the missing first match, which emits immediately."
+    ]
+  },
+  "terminals": {
+    "default": {
+      "shell_id": "68227",
+      "exit_code": 0,
+      "elapsed_ms": 48797,
+      "ended_at": "2026-10-15T16:22:44.511Z",
+      "observed_seconds_after_exit": 427.751,
+      "output": "---\npid: 97772\ncwd: \"/private/tmp/cursor-byok-issue155-20261016/workspace\"\ncommand: \"python3 -u probe.py default\"\ntitle: \"Run case A notification comparison once\"\nstatus: succeeded\nstarted_at: 2026-10-15T16:21:55.714Z\nrunning_for_ms: 48798    \n---\n{\"case\": \"default\", \"event\": \"PROBE_START\", \"wall_time\": 1792081319.410325, \"elapsed_s\": 0.0, \"pid\": 97788}\n{\"case\": \"default\", \"event\": \"PROBE_DONE\", \"wall_time\": 1792081364.415849, \"elapsed_s\": 45.006, \"pid\": 97788}\n\n---\nexit_code: 0\nelapsed_ms: 48797\nended_at: 2026-10-15T16:22:44.511Z\n---\n"
+    },
+    "notify": {
+      "shell_id": "325158",
+      "exit_code": 0,
+      "elapsed_ms": 48424,
+      "ended_at": "2026-10-15T16:23:37.348Z",
+      "observed_seconds_after_exit": 374.914,
+      "output": "---\npid: 97894\ncwd: \"/private/tmp/cursor-byok-issue155-20261016/workspace\"\ncommand: \"python3 -u probe.py notify\"\ntitle: \"Runs the requested 45-second notification probe\"\nstatus: succeeded\nstarted_at: 2026-10-15T16:22:48.924Z\nrunning_for_ms: 48424    \n---\n{\"case\": \"notify\", \"event\": \"PROBE_START\", \"wall_time\": 1792081372.237638, \"elapsed_s\": 0.0, \"pid\": 97908}\n{\"case\": \"notify\", \"event\": \"PROBE_DONE\", \"wall_time\": 1792081417.2425961, \"elapsed_s\": 45.005, \"pid\": 97908}\n\n---\nexit_code: 0\nelapsed_ms: 48424\nended_at: 2026-10-15T16:23:37.348Z\n---\n"
+    }
+  },
+  "summary": {
+    "real_cursor_runs": 2,
+    "real_provider_calls": 4,
+    "shell_calls": 2,
+    "automatic_completion_actions": 0,
+    "duplicate_executions": false,
+    "case_a": "background execution successful; no automatic follow-up",
+    "case_b": "output marker matched by Cursor; no automatic follow-up",
+    "foreground_control": "not started: Mac locked before sending prompt",
+    "production_code_changed": false,
+    "root_cause": "not yet established; client dispatch gate and conversation binding remain candidates"
+  },
+  "ui_observations": {
+    "case_a_initial_reply": "CASE_A_STARTED",
+    "case_b_initial_reply": "CASE_B_STARTED",
+    "case_b_completion_reply_observed": false,
+    "foreground_attempt_error": "The Mac is locked and automatic unlock could not unlock it."
+  },
+  "limitations": [
+    "Only two 45-second background cases completed in this round.",
+    "No foreground control, real approval-wait test or 20-minute explicit-notification case was run.",
+    "The long_running_jobs runtime gate value and trackedWork composer binding were not inspected.",
+    "No production or Cursor application code was changed, and no notifications were injected."
+  ],
+  "cleanup": {
+    "test_server_stopped": true,
+    "test_ports_released": true,
+    "six_proxy_keys_restored": true,
+    "unrelated_settings_preserved": true,
+    "formal_database_unchanged": true,
+    "credential_copy_removed": true,
+    "raw_logs_removed": true,
+    "temporary_workspace_removed": true,
+    "cursor_application_unchanged": true
+  }
+}

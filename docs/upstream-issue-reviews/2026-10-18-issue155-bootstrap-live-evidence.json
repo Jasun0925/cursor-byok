@@ -1,0 +1,421 @@
+{
+  "issue": 155,
+  "recorded_at": "2026-10-18T09:35:26.283153+00:00",
+  "status": "short notify_on_output live acceptance passed after bootstrap, stream-end and pending history fixes; original long-duration issue remains unverified",
+  "cursor_version": "3.25.9",
+  "cursor_pid_during_both_live_tests": 53439,
+  "isolated_service_port": 57573,
+  "isolated_proxy_port": 49642,
+  "test_only_lifecycle_change": "skip automatic Cursor termination during local proxy activation",
+  "bootstrap_cache": {
+    "observed_at": "2026-10-18T09:03:56.814923+00:00",
+    "hash_used": "djb2",
+    "upstream_config_time": 1792313325102,
+    "gates": {
+      "long_running_jobs": {
+        "enabled": true,
+        "rule_id": "local_enabled"
+      },
+      "nal_agent_retries": {
+        "enabled": true,
+        "rule_id": "local_enabled"
+      }
+    },
+    "source": "Cursor persisted Statsig bootstrap; not a runtime dump",
+    "nonempty_upstream_dynamic_configs_preserved": true
+  },
+  "before_history_fix_binary_sha256": "d27935d07737a283e16fc4cf53f18cfe3b42827ac6dbb575686451d4c5a98dee",
+  "after_history_fix_binary_sha256": "4e5caa9b971993116256fd347d165ab2df3831b990045cdeea0a4b86a844a82b",
+  "failure": {
+    "conversation_id": "05352ec4-94c8-4e9b-84a0-20a98f35b758",
+    "initial_route": "cursor_official",
+    "completion_route": "local_byok",
+    "incoming_and_hydrated_roots": 6,
+    "erroneous_projected_roots": 2,
+    "cause": "pending messages unconditionally replaced the imported checkpoint with the empty local current head",
+    "no_provider_call_started": true
+  },
+  "acceptance": {
+    "conversation_id": "f0fde35a-20b4-4a8f-82d5-291178dbbed0",
+    "initial_route": "local_byok",
+    "completion_route": "local_byok",
+    "shell_executions": 1,
+    "exit_code": 0,
+    "process_duration_s": 25.02,
+    "progress_requests": 1,
+    "progress_provider_calls": 0,
+    "completion_requests": 1,
+    "completion_provider_calls": 1,
+    "completion_response": "HISTORY_FIXED_COMPLETED",
+    "ui_confirmation": true,
+    "human_followup_between_start_and_completion": false,
+    "process_exit_to_completion_request_ms": 247,
+    "completion_request_to_response_end_ms": 4088
+  },
+  "traces": [
+    {
+      "request_id": "5c5b8be8-443b-4867-a8c2-0cc4e1276f37",
+      "conversation_id": "05352ec4-94c8-4e9b-84a0-20a98f35b758",
+      "route": "cursor_official",
+      "model_id": "default",
+      "status": "completed",
+      "http_status": 200,
+      "received_at_ms": 1792315097516,
+      "finished_at_ms": 1792315104505,
+      "response_bytes": 41715,
+      "response_event_count": 37,
+      "error_message": null,
+      "actions": [
+        "user_message"
+      ],
+      "notifications": [],
+      "shell_requests": null,
+      "shell_results": [
+        {
+          "shell_id": 338030,
+          "command": "python3 -u /private/tmp/cursor-byok-issue155-stream-20261018/bootstrap-live/workspace/probe.py notify",
+          "pid": 64786,
+          "ms_to_wait": 1000,
+          "exit_code": 0
+        }
+      ],
+      "response_text": null,
+      "turn_ended_count": null,
+      "incoming_roots": 0,
+      "local_model_calls": 0,
+      "response_decode_note": "Upstream response stream not decoded; shell result recorded from Bidi and terminal file."
+    },
+    {
+      "request_id": "5937ca8f-4e9e-4b41-acc3-820b45ad2891",
+      "conversation_id": "05352ec4-94c8-4e9b-84a0-20a98f35b758",
+      "route": "local_byok",
+      "model_id": "df862e8a9cc595ec",
+      "status": "completed",
+      "http_status": 200,
+      "received_at_ms": 1792315113057,
+      "finished_at_ms": 1792315113067,
+      "response_bytes": 16,
+      "response_event_count": 2,
+      "error_message": null,
+      "actions": [
+        "background_task_completion"
+      ],
+      "notifications": [
+        {
+          "task_id": "338030:task_progress:1",
+          "kind": 1,
+          "status": 1,
+          "output_path": "/Users/renhao/.cursor/projects/private-tmp-cursor-byok-issue155-stream-20261018-bootstrap-live-workspace/terminals/338030.txt",
+          "reason": 2,
+          "tool_call_id": "call-9afb4f4d-5e2c-4658-94bd-10032ddc961b-0\nfc_p5hkNTg-3LYxF7-c53a0e23-aws_ue1_0"
+        }
+      ],
+      "shell_requests": [],
+      "shell_results": [],
+      "response_text": "",
+      "turn_ended_count": 1,
+      "incoming_roots": 6,
+      "trailer": {},
+      "local_model_calls": 0
+    },
+    {
+      "request_id": "9c20aa4b-5e03-44ce-ace6-72ae8016b083",
+      "conversation_id": "05352ec4-94c8-4e9b-84a0-20a98f35b758",
+      "route": "local_byok",
+      "model_id": "df862e8a9cc595ec",
+      "status": "error",
+      "http_status": 200,
+      "received_at_ms": 1792315128112,
+      "finished_at_ms": 1792315128285,
+      "response_bytes": 4344,
+      "response_event_count": 9,
+      "error_message": "invalid_argument: protocol error: Cursor stable history shrank from 6 to 2 roots",
+      "actions": [
+        "background_task_completion"
+      ],
+      "notifications": [
+        {
+          "task_id": "338030",
+          "kind": 1,
+          "status": 1,
+          "output_path": "/Users/renhao/.cursor/projects/private-tmp-cursor-byok-issue155-stream-20261018-bootstrap-live-workspace/terminals/338030.txt",
+          "reason": 1,
+          "tool_call_id": "call-9afb4f4d-5e2c-4658-94bd-10032ddc961b-0\nfc_p5hkNTg-3LYxF7-c53a0e23-aws_ue1_0"
+        }
+      ],
+      "shell_requests": [],
+      "shell_results": [],
+      "response_text": "",
+      "turn_ended_count": 0,
+      "incoming_roots": 6,
+      "history_projection": {
+        "checkpoint_root_count": 6,
+        "checkpoint_turn_count": 1,
+        "conversation_history_message_count": 0,
+        "hydrated_image_count": 0,
+        "hydrated_message_count": 6,
+        "selected_source": "root_prompt_messages_json"
+      },
+      "trailer": {
+        "error": {
+          "code": "invalid_argument",
+          "message": "protocol error: Cursor stable history shrank from 6 to 2 roots"
+        }
+      },
+      "local_model_calls": 0
+    },
+    {
+      "request_id": "4f073757-2cda-4ee0-ba46-7f1e21b0268f",
+      "conversation_id": "05352ec4-94c8-4e9b-84a0-20a98f35b758",
+      "route": "local_byok",
+      "model_id": "df862e8a9cc595ec",
+      "status": "completed",
+      "http_status": 200,
+      "received_at_ms": 1792315130674,
+      "finished_at_ms": 1792315130677,
+      "response_bytes": 16,
+      "response_event_count": 2,
+      "error_message": null,
+      "actions": [
+        "background_task_completion"
+      ],
+      "notifications": [
+        {
+          "task_id": "338030",
+          "kind": 1,
+          "status": 1,
+          "output_path": "/Users/renhao/.cursor/projects/private-tmp-cursor-byok-issue155-stream-20261018-bootstrap-live-workspace/terminals/338030.txt",
+          "reason": 1,
+          "tool_call_id": "call-9afb4f4d-5e2c-4658-94bd-10032ddc961b-0\nfc_p5hkNTg-3LYxF7-c53a0e23-aws_ue1_0"
+        }
+      ],
+      "shell_requests": [],
+      "shell_results": [],
+      "response_text": "",
+      "turn_ended_count": 1,
+      "incoming_roots": 6,
+      "trailer": {},
+      "local_model_calls": 0
+    },
+    {
+      "request_id": "32ddb521-0f82-4328-9df9-c664f28f3255",
+      "conversation_id": "f0fde35a-20b4-4a8f-82d5-291178dbbed0",
+      "route": "local_byok",
+      "model_id": "df862e8a9cc595ec",
+      "status": "completed",
+      "http_status": 200,
+      "received_at_ms": 1792315788411,
+      "finished_at_ms": 1792315798037,
+      "response_bytes": 59114,
+      "response_event_count": 105,
+      "error_message": null,
+      "actions": [
+        "user_message"
+      ],
+      "notifications": [],
+      "shell_requests": [
+        {
+          "command": "python3 -u /private/tmp/cursor-byok-issue155-stream-20261018/bootstrap-live/workspace/history-fixed/probe.py notify",
+          "timeout_ms": 1000,
+          "tool_call_id": "call_3278f9f41c5246ef86f5be83f67fbddf",
+          "conversation_id": "f0fde35a-20b4-4a8f-82d5-291178dbbed0",
+          "output_notification": {
+            "pattern": "MATCH",
+            "debounce": 5000.0
+          }
+        }
+      ],
+      "shell_results": [
+        {
+          "shell_id": 326156,
+          "command": "python3 -u /private/tmp/cursor-byok-issue155-stream-20261018/bootstrap-live/workspace/history-fixed/probe.py notify",
+          "pid": 66205,
+          "ms_to_wait": 1000,
+          "exit_code": 0
+        }
+      ],
+      "response_text": "HISTORY_FIXED_STARTED",
+      "turn_ended_count": 1,
+      "incoming_roots": 0,
+      "history_projection": {
+        "checkpoint_root_count": 0,
+        "checkpoint_turn_count": 0,
+        "conversation_history_message_count": 0,
+        "hydrated_image_count": 0,
+        "hydrated_message_count": 0,
+        "selected_source": "root_prompt_messages_json"
+      },
+      "trailer": {},
+      "local_model_calls": 2
+    },
+    {
+      "request_id": "9842c7ef-7ef8-4b1d-8007-fe1c0bb5a10f",
+      "conversation_id": "f0fde35a-20b4-4a8f-82d5-291178dbbed0",
+      "route": "local_byok",
+      "model_id": "df862e8a9cc595ec",
+      "status": "completed",
+      "http_status": 200,
+      "received_at_ms": 1792315803990,
+      "finished_at_ms": 1792315803994,
+      "response_bytes": 16,
+      "response_event_count": 2,
+      "error_message": null,
+      "actions": [
+        "background_task_completion"
+      ],
+      "notifications": [
+        {
+          "task_id": "326156:task_progress:1",
+          "kind": 1,
+          "status": 1,
+          "output_path": "/Users/renhao/.cursor/projects/private-tmp-cursor-byok-issue155-stream-20261018-bootstrap-live-workspace/terminals/326156.txt",
+          "reason": 2,
+          "tool_call_id": "call_3278f9f41c5246ef86f5be83f67fbddf"
+        }
+      ],
+      "shell_requests": [],
+      "shell_results": [],
+      "response_text": "",
+      "turn_ended_count": 1,
+      "incoming_roots": 6,
+      "trailer": {},
+      "local_model_calls": 0
+    },
+    {
+      "request_id": "31f3d7d6-ccff-4dc2-bc42-10749cff321e",
+      "conversation_id": "f0fde35a-20b4-4a8f-82d5-291178dbbed0",
+      "route": "local_byok",
+      "model_id": "df862e8a9cc595ec",
+      "status": "completed",
+      "http_status": 200,
+      "received_at_ms": 1792315819145,
+      "finished_at_ms": 1792315823233,
+      "response_bytes": 5365,
+      "response_event_count": 19,
+      "error_message": null,
+      "actions": [
+        "background_task_completion"
+      ],
+      "notifications": [
+        {
+          "task_id": "326156",
+          "kind": 1,
+          "status": 1,
+          "output_path": "/Users/renhao/.cursor/projects/private-tmp-cursor-byok-issue155-stream-20261018-bootstrap-live-workspace/terminals/326156.txt",
+          "reason": 1,
+          "tool_call_id": "call_3278f9f41c5246ef86f5be83f67fbddf"
+        }
+      ],
+      "shell_requests": [],
+      "shell_results": [],
+      "response_text": "HISTORY_FIXED_COMPLETED",
+      "turn_ended_count": 1,
+      "incoming_roots": 6,
+      "history_projection": {
+        "checkpoint_root_count": 6,
+        "checkpoint_turn_count": 1,
+        "conversation_history_message_count": 0,
+        "hydrated_image_count": 0,
+        "hydrated_message_count": 6,
+        "selected_source": "root_prompt_messages_json"
+      },
+      "trailer": {},
+      "local_model_calls": 1
+    }
+  ],
+  "probe_events": {
+    "before": [
+      {
+        "case": "notify",
+        "event": "PROBE_START",
+        "pid": 64800,
+        "wall_time": 1792315102.9529579,
+        "elapsed_s": 0.0
+      },
+      {
+        "case": "notify",
+        "event": "PROBE_MATCH",
+        "pid": 64800,
+        "wall_time": 1792315112.958422,
+        "elapsed_s": 10.005
+      },
+      {
+        "case": "notify",
+        "event": "PROBE_EXIT",
+        "pid": 64800,
+        "wall_time": 1792315127.967792,
+        "elapsed_s": 25.015
+      }
+    ],
+    "after": [
+      {
+        "case": "notify",
+        "event": "PROBE_START",
+        "pid": 66219,
+        "wall_time": 1792315793.8777611,
+        "elapsed_s": 0.0
+      },
+      {
+        "case": "notify",
+        "event": "PROBE_MATCH",
+        "pid": 66219,
+        "wall_time": 1792315803.883073,
+        "elapsed_s": 10.005
+      },
+      {
+        "case": "notify",
+        "event": "PROBE_EXIT",
+        "pid": 66219,
+        "wall_time": 1792315818.897708,
+        "elapsed_s": 25.02
+      }
+    ]
+  },
+  "tests": {
+    "red_before_fix": "first_background_completion_preserves_imported_history fails: stable history shrank from 3 to 2 roots",
+    "new_regressions": [
+      "first_background_completion_preserves_imported_history",
+      "background_completion_preserves_history_newer_than_the_local_head"
+    ],
+    "focused_suites": {
+      "conversation_delivery": 13,
+      "prefix_stability": 13,
+      "checkpoint_recovery": 4,
+      "compaction": 6
+    },
+    "integration_suites": 24,
+    "integration_passed": 178,
+    "integration_failed": 0,
+    "lib_passed": 191,
+    "lib_failed": 1,
+    "preexisting_lib_failure": "provider::attempt::tests::request_transport_failure_is_one_failed_attempt; expected Error::Http",
+    "clippy": "passed",
+    "changed_file_rustfmt": "passed",
+    "git_diff_check": "passed",
+    "cargo_fmt_all": "passed"
+  },
+  "limitations": [
+    "Fixed live run started and resumed through BYOK; exact upstream-to-BYOK transition regression is automated, not repeated in UI.",
+    "Ordinary background command followup prompt was opened but not sent; no new plain probe or request exists.",
+    "No new runtime feature-gate dump; observed automatic notifications establish this test path worked.",
+    "No 20-minute command/approval-timeout verification; no production deployment or release."
+  ],
+  "restoration": {
+    "recorded_at": "2026-10-18T09:35:26.283153+00:00",
+    "formal_service_pid": 67871,
+    "formal_harness": {
+      "integration": "enabled",
+      "settings_applied": true,
+      "proxy_url": "http://127.0.0.1:49642"
+    },
+    "test_service_stopped": true,
+    "cursor_restarted_by_formal_harness": true,
+    "cursor_pid_after_restore": [
+      "68009"
+    ],
+    "bootstrap_backup_restored_before_reopening": true,
+    "formal_database_unchanged": true,
+    "cursor_settings_unchanged": true
+  },
+  "test_root": "/private/tmp/cursor-byok-issue155-stream-20261018/bootstrap-live"
+}

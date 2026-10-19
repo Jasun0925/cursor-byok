@@ -1,0 +1,508 @@
+{
+  "baseline": {
+    "baseline": "a7ae78ab1d064206fdbb5aeb0659bd48e3dadb7d",
+    "created_at_ms": 1792120183210,
+    "formal_db_sha256": "8999d8398d1541e4c372307cfc61dcdead4988b91f1e3ad0f6c46ef6f63cc826",
+    "baseline_binary_sha256": "6a484fc392724a92904bc32b995c4081da8d31e040662fe0a46fe151ebda1dbc",
+    "cursor_version": "3.25.6",
+    "ports": [
+      57573,
+      57584
+    ],
+    "cursor_version_before_harness_restart": "3.24.18",
+    "version_change": "Cursor applied its pending update on harness restart; the test ran on 3.25.6 as verified by main.log updateURL.",
+    "experiment_binary_sha256": "28769118e32ecbce643fcea05ad524d87135dc291efef9db04142782e72701ff"
+  },
+  "runs": [
+    {
+      "run_id": "57679450-65f8-4bd7-ac71-bca5ef0deea0:1a29a7d5",
+      "conversation_id": "b3d5aaa6-654d-42a1-a6ae-20637425ab4d",
+      "status": "completed",
+      "provider_call_index": 1,
+      "created_at_ms": 1792120511503,
+      "updated_at_ms": 1792120525721,
+      "failure_category": null,
+      "failure_summary": null
+    },
+    {
+      "run_id": "d0c5623d-a519-4fb8-b6a5-31f38f2ccd3c:27cbdad4",
+      "conversation_id": "b3d5aaa6-654d-42a1-a6ae-20637425ab4d",
+      "status": "completed",
+      "provider_call_index": 0,
+      "created_at_ms": 1792120596267,
+      "updated_at_ms": 1792120608019,
+      "failure_category": null,
+      "failure_summary": null
+    }
+  ],
+  "calls": [
+    {
+      "call_id": "d0c5623d-a519-4fb8-b6a5-31f38f2ccd3c:27cbdad4:0",
+      "run_id": "d0c5623d-a519-4fb8-b6a5-31f38f2ccd3c:27cbdad4",
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "created_at_ms": 1792120598793,
+      "finished_at_ms": 1792120607433,
+      "http_status": 200,
+      "error_kind": null
+    },
+    {
+      "call_id": "57679450-65f8-4bd7-ac71-bca5ef0deea0:1a29a7d5:1",
+      "run_id": "57679450-65f8-4bd7-ac71-bca5ef0deea0:1a29a7d5",
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "created_at_ms": 1792120520436,
+      "finished_at_ms": 1792120525509,
+      "http_status": 200,
+      "error_kind": null
+    },
+    {
+      "call_id": "57679450-65f8-4bd7-ac71-bca5ef0deea0:1a29a7d5:0",
+      "run_id": "57679450-65f8-4bd7-ac71-bca5ef0deea0:1a29a7d5",
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "created_at_ms": 1792120511839,
+      "finished_at_ms": 1792120516905,
+      "http_status": 200,
+      "error_kind": null
+    }
+  ],
+  "traces": [
+    {
+      "request_id": "d0c5623d-a519-4fb8-b6a5-31f38f2ccd3c",
+      "conversation_id": "b3d5aaa6-654d-42a1-a6ae-20637425ab4d",
+      "route": "local_byok",
+      "model_id": "df862e8a9cc595ec",
+      "status": "completed",
+      "request_bytes": 2856733,
+      "response_bytes": 6501,
+      "response_event_count": 57,
+      "http_status": 200,
+      "received_at_ms": 1792120595544,
+      "first_response_at_ms": 1792120595546,
+      "finished_at_ms": 1792120610025,
+      "error_message": null
+    },
+    {
+      "request_id": "23f0722b-cc97-488b-b41b-eb09371f37de",
+      "conversation_id": "b3d5aaa6-654d-42a1-a6ae-20637425ab4d",
+      "route": "local_byok",
+      "model_id": "df862e8a9cc595ec",
+      "status": "error",
+      "request_bytes": 2534,
+      "response_bytes": 109,
+      "response_event_count": 1,
+      "http_status": 200,
+      "received_at_ms": 1792120583806,
+      "first_response_at_ms": 1792120583809,
+      "finished_at_ms": 1792120583813,
+      "error_message": "invalid_argument: background task notification contains no finished task"
+    },
+    {
+      "request_id": "66815f67-2184-440f-a24b-991c2c34fbd0",
+      "conversation_id": "b3d5aaa6-654d-42a1-a6ae-20637425ab4d",
+      "route": "local_byok",
+      "model_id": "df862e8a9cc595ec",
+      "status": "error",
+      "request_bytes": 2534,
+      "response_bytes": 109,
+      "response_event_count": 1,
+      "http_status": 200,
+      "received_at_ms": 1792120573823,
+      "first_response_at_ms": 1792120573824,
+      "finished_at_ms": 1792120573825,
+      "error_message": "invalid_argument: background task notification contains no finished task"
+    },
+    {
+      "request_id": "7238cd27-34eb-45d0-a5ad-e563cd446ff6",
+      "conversation_id": "b3d5aaa6-654d-42a1-a6ae-20637425ab4d",
+      "route": "local_byok",
+      "model_id": "df862e8a9cc595ec",
+      "status": "error",
+      "request_bytes": 2534,
+      "response_bytes": 109,
+      "response_event_count": 1,
+      "http_status": 200,
+      "received_at_ms": 1792120568833,
+      "first_response_at_ms": 1792120568835,
+      "finished_at_ms": 1792120568836,
+      "error_message": "invalid_argument: background task notification contains no finished task"
+    },
+    {
+      "request_id": "1c98f18d-35f1-4f6d-aee8-bc4451a2b818",
+      "conversation_id": "b3d5aaa6-654d-42a1-a6ae-20637425ab4d",
+      "route": "local_byok",
+      "model_id": "df862e8a9cc595ec",
+      "status": "error",
+      "request_bytes": 2534,
+      "response_bytes": 109,
+      "response_event_count": 1,
+      "http_status": 200,
+      "received_at_ms": 1792120565848,
+      "first_response_at_ms": 1792120565850,
+      "finished_at_ms": 1792120565851,
+      "error_message": "invalid_argument: background task notification contains no finished task"
+    },
+    {
+      "request_id": "57679450-65f8-4bd7-ac71-bca5ef0deea0",
+      "conversation_id": "b3d5aaa6-654d-42a1-a6ae-20637425ab4d",
+      "route": "local_byok",
+      "model_id": "df862e8a9cc595ec",
+      "status": "completed",
+      "request_bytes": 2857647,
+      "response_bytes": 50429,
+      "response_event_count": 105,
+      "http_status": 200,
+      "received_at_ms": 1792120511467,
+      "first_response_at_ms": 1792120511469,
+      "finished_at_ms": 1792120528262,
+      "error_message": null
+    }
+  ],
+  "notifications": [
+    {
+      "request_id": "1c98f18d-35f1-4f6d-aee8-bc4451a2b818",
+      "created_at_ms": 1792120565849,
+      "conversation_id": "b3d5aaa6-654d-42a1-a6ae-20637425ab4d",
+      "metadata": {
+        "accepted": true,
+        "action_type": "background_task_completion",
+        "append_seqno": 0,
+        "conversation_history_images": 0,
+        "conversation_history_messages": 0,
+        "conversation_id": "b3d5aaa6-654d-42a1-a6ae-20637425ab4d",
+        "message_type": "run_request",
+        "model_id": "df862e8a9cc595ec",
+        "prefetched_blob_count": 0,
+        "root_message_count": 6,
+        "route_outcome": "local",
+        "turn_count": 1
+      },
+      "action_sha256": "e7f8d5789eca1f580eebd99b71ba8daafde702c45b02a83d947760c82990b1c8",
+      "completions": [
+        {
+          "task_id": "684965:task_progress:1",
+          "kind": 1,
+          "status": 1,
+          "title": "probe completion",
+          "detail": "Shell output has pattern /PROBE_DONE/. This is occurrence number 1. Matched text: PROBE_DONE. The title message is being displayed to the user.",
+          "output_path": "/Users/renhao/.cursor/projects/private-tmp-cursor-byok-issue155-resume-20261016-cursor-workspace/terminals/684965.txt",
+          "reason": 2,
+          "tool_call_id": "call_4580b87ce76540a4bf2963c83388942e",
+          "reason_enum": "TASK_PROGRESS",
+          "kind_enum": "SHELL",
+          "status_enum": "SUCCESS"
+        }
+      ]
+    },
+    {
+      "request_id": "7238cd27-34eb-45d0-a5ad-e563cd446ff6",
+      "created_at_ms": 1792120568834,
+      "conversation_id": "b3d5aaa6-654d-42a1-a6ae-20637425ab4d",
+      "metadata": {
+        "accepted": true,
+        "action_type": "background_task_completion",
+        "append_seqno": 0,
+        "conversation_history_images": 0,
+        "conversation_history_messages": 0,
+        "conversation_id": "b3d5aaa6-654d-42a1-a6ae-20637425ab4d",
+        "message_type": "run_request",
+        "model_id": "df862e8a9cc595ec",
+        "prefetched_blob_count": 0,
+        "root_message_count": 6,
+        "route_outcome": "local",
+        "turn_count": 1
+      },
+      "action_sha256": "e7f8d5789eca1f580eebd99b71ba8daafde702c45b02a83d947760c82990b1c8",
+      "completions": [
+        {
+          "task_id": "684965:task_progress:1",
+          "kind": 1,
+          "status": 1,
+          "title": "probe completion",
+          "detail": "Shell output has pattern /PROBE_DONE/. This is occurrence number 1. Matched text: PROBE_DONE. The title message is being displayed to the user.",
+          "output_path": "/Users/renhao/.cursor/projects/private-tmp-cursor-byok-issue155-resume-20261016-cursor-workspace/terminals/684965.txt",
+          "reason": 2,
+          "tool_call_id": "call_4580b87ce76540a4bf2963c83388942e",
+          "reason_enum": "TASK_PROGRESS",
+          "kind_enum": "SHELL",
+          "status_enum": "SUCCESS"
+        }
+      ]
+    },
+    {
+      "request_id": "66815f67-2184-440f-a24b-991c2c34fbd0",
+      "created_at_ms": 1792120573824,
+      "conversation_id": "b3d5aaa6-654d-42a1-a6ae-20637425ab4d",
+      "metadata": {
+        "accepted": true,
+        "action_type": "background_task_completion",
+        "append_seqno": 0,
+        "conversation_history_images": 0,
+        "conversation_history_messages": 0,
+        "conversation_id": "b3d5aaa6-654d-42a1-a6ae-20637425ab4d",
+        "message_type": "run_request",
+        "model_id": "df862e8a9cc595ec",
+        "prefetched_blob_count": 0,
+        "root_message_count": 6,
+        "route_outcome": "local",
+        "turn_count": 1
+      },
+      "action_sha256": "e7f8d5789eca1f580eebd99b71ba8daafde702c45b02a83d947760c82990b1c8",
+      "completions": [
+        {
+          "task_id": "684965:task_progress:1",
+          "kind": 1,
+          "status": 1,
+          "title": "probe completion",
+          "detail": "Shell output has pattern /PROBE_DONE/. This is occurrence number 1. Matched text: PROBE_DONE. The title message is being displayed to the user.",
+          "output_path": "/Users/renhao/.cursor/projects/private-tmp-cursor-byok-issue155-resume-20261016-cursor-workspace/terminals/684965.txt",
+          "reason": 2,
+          "tool_call_id": "call_4580b87ce76540a4bf2963c83388942e",
+          "reason_enum": "TASK_PROGRESS",
+          "kind_enum": "SHELL",
+          "status_enum": "SUCCESS"
+        }
+      ]
+    },
+    {
+      "request_id": "23f0722b-cc97-488b-b41b-eb09371f37de",
+      "created_at_ms": 1792120583810,
+      "conversation_id": "b3d5aaa6-654d-42a1-a6ae-20637425ab4d",
+      "metadata": {
+        "accepted": true,
+        "action_type": "background_task_completion",
+        "append_seqno": 0,
+        "conversation_history_images": 0,
+        "conversation_history_messages": 0,
+        "conversation_id": "b3d5aaa6-654d-42a1-a6ae-20637425ab4d",
+        "message_type": "run_request",
+        "model_id": "df862e8a9cc595ec",
+        "prefetched_blob_count": 0,
+        "root_message_count": 6,
+        "route_outcome": "local",
+        "turn_count": 1
+      },
+      "action_sha256": "e7f8d5789eca1f580eebd99b71ba8daafde702c45b02a83d947760c82990b1c8",
+      "completions": [
+        {
+          "task_id": "684965:task_progress:1",
+          "kind": 1,
+          "status": 1,
+          "title": "probe completion",
+          "detail": "Shell output has pattern /PROBE_DONE/. This is occurrence number 1. Matched text: PROBE_DONE. The title message is being displayed to the user.",
+          "output_path": "/Users/renhao/.cursor/projects/private-tmp-cursor-byok-issue155-resume-20261016-cursor-workspace/terminals/684965.txt",
+          "reason": 2,
+          "tool_call_id": "call_4580b87ce76540a4bf2963c83388942e",
+          "reason_enum": "TASK_PROGRESS",
+          "kind_enum": "SHELL",
+          "status_enum": "SUCCESS"
+        }
+      ]
+    },
+    {
+      "request_id": "d0c5623d-a519-4fb8-b6a5-31f38f2ccd3c",
+      "created_at_ms": 1792120595546,
+      "conversation_id": "b3d5aaa6-654d-42a1-a6ae-20637425ab4d",
+      "metadata": {
+        "accepted": true,
+        "action_type": "background_task_completion",
+        "append_seqno": 0,
+        "conversation_history_images": 0,
+        "conversation_history_messages": 0,
+        "conversation_id": "b3d5aaa6-654d-42a1-a6ae-20637425ab4d",
+        "message_type": "run_request",
+        "model_id": "df862e8a9cc595ec",
+        "prefetched_blob_count": 0,
+        "root_message_count": 6,
+        "route_outcome": "local",
+        "turn_count": 1
+      },
+      "action_sha256": "5e9182ba6d1291fa6c0230406767ff68c62e217887eab680b227283179e5f949",
+      "completions": [
+        {
+          "task_id": "684965:task_progress:1",
+          "kind": 1,
+          "status": 1,
+          "title": "probe completion",
+          "detail": "Shell output has pattern /PROBE_DONE/. This is occurrence number 1. Matched text: PROBE_DONE. The title message is being displayed to the user.",
+          "output_path": "/Users/renhao/.cursor/projects/private-tmp-cursor-byok-issue155-resume-20261016-cursor-workspace/terminals/684965.txt",
+          "reason": 2,
+          "tool_call_id": "call_4580b87ce76540a4bf2963c83388942e",
+          "reason_enum": "TASK_PROGRESS",
+          "kind_enum": "SHELL",
+          "status_enum": "SUCCESS"
+        },
+        {
+          "task_id": "684965",
+          "kind": 1,
+          "status": 1,
+          "title": "Run notification payload probe exactly once",
+          "output_path": "/Users/renhao/.cursor/projects/private-tmp-cursor-byok-issue155-resume-20261016-cursor-workspace/terminals/684965.txt",
+          "reason": 1,
+          "tool_call_id": "call_4580b87ce76540a4bf2963c83388942e",
+          "reason_enum": "TASK_FINISHED",
+          "kind_enum": "SHELL",
+          "status_enum": "SUCCESS"
+        }
+      ]
+    }
+  ],
+  "tools": [
+    {
+      "name": "Shell",
+      "call_id": "call_4580b87ce76540a4bf2963c83388942e",
+      "arguments_json": "{\"block_until_ms\":1000,\"command\":\"python3 -u probe.py notify\",\"description\":\"Run notification payload probe exactly once\",\"notify_on_output\":{\"debounce_ms\":5000,\"pattern\":\"PROBE_DONE\",\"reason\":\"probe completion\"},\"working_directory\":\"/private/tmp/cursor-byok-issue155-resume-20261016/cursor-workspace\"}",
+      "status": "completed",
+      "result_content": "shell running in background shell_id=684965 pid=13476 terminals_folder=/Users/renhao/.cursor/projects/private-tmp-cursor-byok-issue155-resume-20261016-cursor-workspace/terminals",
+      "completed_at_ms": 1792120520162
+    }
+  ],
+  "script_events": [
+    {
+      "case": "notify",
+      "event": "PROBE_START",
+      "wall_time": 1792120520.776663,
+      "elapsed_s": 0.0,
+      "pid": 13493
+    },
+    {
+      "case": "notify",
+      "event": "PROBE_DONE",
+      "wall_time": 1792120565.786349,
+      "elapsed_s": 45.01,
+      "pid": 13493
+    }
+  ],
+  "experiment_patch": "--- baseline/analytics.rs\n+++ experiment/analytics.rs\n@@ -58,12 +58,15 @@\n \n fn local_response() -> Result<Response<Body>> {\n     let generated_at_ms = chrono::Utc::now().timestamp_millis() as u64;\n+    let test_user_id = std::env::var(\"ISSUE155_BOOTSTRAP_USER_ID_FILE\").ok()\n+        .and_then(|path| std::fs::read_to_string(path).ok())\n+        .unwrap_or_else(|| \"local_ultra\".into());\n     let mut config = json!({\n         \"feature_gates\": {},\n         \"dynamic_configs\": {},\n         \"layer_configs\": {},\n         \"user\": {\n-            \"userID\": \"local_ultra\",\n+            \"userID\": test_user_id,\n             \"customIDs\": { \"localUserID\": \"local_ultra\" }\n         },\n         \"has_updates\": true,\n@@ -107,6 +110,10 @@\n         .as_object_mut()\n         .ok_or_else(|| Error::Protocol(\"Statsig feature_gates must be an object\".into()))?;\n     gates.insert(gate_key.clone(), enabled_gate(&gate_key));\n+    if std::env::var(\"ISSUE155_GATE_FILE\").ok()\n+        .and_then(|path| std::fs::read_to_string(path).ok()).as_deref() == Some(\"true\") {\n+        gates.insert(\"long_running_jobs\".into(), enabled_gate(\"long_running_jobs\"));\n+    }\n     Ok(())\n }\n \n",
+  "manual_resume": {
+    "clicked_at": "2026-10-16T03:16:35.416Z",
+    "click_count": 1,
+    "request_id": "d0c5623d-a519-4fb8-b6a5-31f38f2ccd3c",
+    "click_observation": "Post-click screenshot returned macOS -3812; the request was received 130ms after clicking and the next AX snapshot confirmed the successful reply.",
+    "ui_final_text": "CASE_F_AUTO_COMPLETED\n\nThe automatic completion notification reports that the probe task (`684965`) finished successfully. It includes an output-file path, but no captured stdout or `PROBE_DONE` payload.",
+    "automatic_success": false,
+    "explanation": "Final label comes from the supplied prompt; this reply happened only after manual Resume."
+  },
+  "terminal": "---\npid: 13476\ncwd: \"/private/tmp/cursor-byok-issue155-resume-20261016/cursor-workspace\"\ncommand: \"python3 -u probe.py notify\"\ntitle: \"Run notification payload probe exactly once\"\nstatus: succeeded\nstarted_at: 2026-10-16T03:15:16.959Z\nrunning_for_ms: 48946    \n---\n{\"case\": \"notify\", \"event\": \"PROBE_START\", \"wall_time\": 1792120520.776663, \"elapsed_s\": 0.0, \"pid\": 13493}\n{\"case\": \"notify\", \"event\": \"PROBE_DONE\", \"wall_time\": 1792120565.786349, \"elapsed_s\": 45.01, \"pid\": 13493}\n\n---\nexit_code: 0\nelapsed_ms: 48946\nended_at: 2026-10-16T03:16:05.905Z\n---\n",
+  "script_source": "import json, os, sys, time\nfrom pathlib import Path\ncase = sys.argv[1]\nassert case in [\"default\", \"notify\", \"foreground\"]\nout = Path(__file__).with_name(case + \"-events.jsonl\")\nstart = time.monotonic()\ndef emit(event):\n    row = {\"case\": case, \"event\": event, \"wall_time\": time.time(), \"elapsed_s\": round(time.monotonic() - start, 3), \"pid\": os.getpid()}\n    with out.open(\"a\") as f: f.write(json.dumps(row) + \"\\n\")\n    print(json.dumps(row), flush=True)\nemit(\"PROBE_START\")\ntime.sleep(45)\nemit(\"PROBE_DONE\")\n",
+  "automatic_error": {
+    "ui_request_id": "23f0722b-cc97-488b-b41b-eb09371f37de",
+    "ui_title": "Error resuming chat",
+    "ui_text": "A background task finished, but the chat couldn't resume. Try again in a moment.",
+    "attempts": 4
+  },
+  "projected_runtime_messages": [
+    {
+      "created_at_ms": 1792120596276,
+      "payload": {
+        "message_id": "runtime:background-completed:[\"BACKGROUND_TASK_KIND_SHELL\",\"684965\",null,\"call_4580b87ce76540a4bf2963c83388942e\"]",
+        "role": "user",
+        "origin": "runtime",
+        "content": {
+          "kind": "parts",
+          "parts": [
+            {
+              "type": "text",
+              "text": "<timestamp>Friday, Oct 16, 2026, 11:16 AM (UTC+8)</timestamp>\n<system_notification>\nThe following task has finished. If you were already aware, ignore this notification and do not restate prior responses.\n\n<task>\nkind: shell\nstatus: success\ntask_id: 684965\ntitle: Run notification payload probe exactly once\ntool_call_id: call_4580b87ce76540a4bf2963c83388942e\noutput_path: /Users/renhao/.cursor/projects/private-tmp-cursor-byok-issue155-resume-20261016-cursor-workspace/terminals/684965.txt\n</task>\n</system_notification>\n<user_query>Briefly inform the user about the task result and perform any follow-up actions (if needed). If there's no follow-ups needed, don't explicitly say that.</user_query>"
+            }
+          ]
+        },
+        "runtime_event_id": "background-completed:[\"BACKGROUND_TASK_KIND_SHELL\",\"684965\",null,\"call_4580b87ce76540a4bf2963c83388942e\"]"
+      }
+    }
+  ],
+  "bootstrap_cached": {
+    "identity_matches": true,
+    "long_running_jobs": true,
+    "nal_agent_retries": true,
+    "live_behavior": "Automatic background notifications were received; no feature-gate dump was taken this run."
+  },
+  "client_log_excerpts": [
+    {
+      "file": "window1_wb2/renderer.log",
+      "line": "2026-10-16 11:15:08.931 [info] [ComposerWakelockManager] Disabled background throttling id=1 reason=\"agent-loop\" composerId=b3d5aaa6-654d-42a1-a6ae-20637425ab4d"
+    },
+    {
+      "file": "window1_wb2/renderer.log",
+      "line": "2026-10-16 11:15:11.237 [info] [buildRequestedModel] composerId=b3d5aaa6-654d-42a1-a6ae-20637425ab4d catalogModelId=df862e8a9cc595ec idSource=selectedModels[0] experimentalOverrideApplied=false hasAssistantTurn=false composerModelName=df862e8a9cc595ec selectedModelIds=df862e8a9cc595ec matchingSelectedModel=true maxMode=false resolvedParams=3"
+    },
+    {
+      "file": "window1_wb2/renderer.log",
+      "line": "2026-10-16 11:15:28.275 [info] [ComposerWakelockManager] Restored background throttling id=1 reason=\"generation-ended\" composerId=b3d5aaa6-654d-42a1-a6ae-20637425ab4d"
+    },
+    {
+      "file": "window1_wb2/renderer.log",
+      "line": "2026-10-16 11:16:05.835 [info] [buildRequestedModel] composerId=b3d5aaa6-654d-42a1-a6ae-20637425ab4d catalogModelId=df862e8a9cc595ec idSource=selectedModels[0] experimentalOverrideApplied=false hasAssistantTurn=true composerModelName=df862e8a9cc595ec selectedModelIds=df862e8a9cc595ec matchingSelectedModel=true maxMode=false resolvedParams=3"
+    },
+    {
+      "file": "window1_wb2/renderer.log",
+      "line": "2026-10-16 11:16:35.535 [info] [buildRequestedModel] composerId=b3d5aaa6-654d-42a1-a6ae-20637425ab4d catalogModelId=df862e8a9cc595ec idSource=selectedModels[0] experimentalOverrideApplied=false hasAssistantTurn=true composerModelName=df862e8a9cc595ec selectedModelIds=df862e8a9cc595ec matchingSelectedModel=true maxMode=false resolvedParams=3"
+    }
+  ],
+  "summary": {
+    "script_elapsed_seconds": 45.01,
+    "terminal_elapsed_ms": 48946,
+    "exit_code": 0,
+    "automatic_attempt_count": 4,
+    "automatic_reason": "TASK_PROGRESS",
+    "manual_reasons": [
+      "TASK_PROGRESS",
+      "TASK_FINISHED"
+    ],
+    "shell_execution_count": 1,
+    "provider_call_count_before_manual": 2,
+    "provider_call_count_after_manual": 3,
+    "diagnosis": "Progress-only wakeup is rejected by insert_messages::project, which filters out every reason except TaskFinished. Manual Resume includes the later finish and succeeds, while dropping the progress payload.",
+    "scope": "Real Cursor 3.25.6 and real provider gpt-6-astra with test-only identity/gate bootstrap changes on baseline a7ae78a. Original approval wait and 20-minute timeout remain unproven."
+  },
+  "cleanup": {
+    "original_binary_restarted_cursor": true,
+    "bootstrap_cache_restored": true,
+    "bootstrap_identity_local_ultra": true,
+    "long_running_jobs_absent_in_cache": true,
+    "live_ide_feature_gate_dump": {
+      "timestamp": "2026-10-16T03:20:38.928Z",
+      "evaluations": {
+        "long_running_jobs": false,
+        "nal_agent_retries": false
+      }
+    },
+    "agent_window_restarted": true,
+    "experiment_gate_removed": true,
+    "completed_at": "2026-10-16T11:22:21.283031+08:00",
+    "server_exited": true,
+    "ports_free": true,
+    "proxy_keys_restored": true,
+    "unrelated_settings_preserved": true,
+    "formal_db_unchanged": true,
+    "baseline_binary_unchanged": true,
+    "temporary_root_removed": true,
+    "named_experiment_artifacts_removed": [
+      "target/debug/issue155-resume-probe",
+      "target/debug/issue155-resume-probe.d",
+      "target/debug/deps/issue155_resume_probe-167e5e1b2a3bd4e3.d",
+      "target/debug/deps/issue155_resume_probe-167e5e1b2a3bd4e3.issue155_resume_probe.793b7efdf3235d40-cgu.11.rcgu.o",
+      "target/debug/deps/issue155_resume_probe-167e5e1b2a3bd4e3.issue155_resume_probe.793b7efdf3235d40-cgu.03.rcgu.o",
+      "target/debug/deps/issue155_resume_probe-167e5e1b2a3bd4e3",
+      "target/debug/deps/issue155_resume_probe-167e5e1b2a3bd4e3.issue155_resume_probe.793b7efdf3235d40-cgu.01.rcgu.o",
+      "target/debug/deps/issue155_resume_probe-167e5e1b2a3bd4e3.issue155_resume_probe.793b7efdf3235d40-cgu.13.rcgu.o",
+      "target/debug/deps/issue155_resume_probe-167e5e1b2a3bd4e3.issue155_resume_probe.793b7efdf3235d40-cgu.09.rcgu.o",
+      "target/debug/deps/issue155_resume_probe-167e5e1b2a3bd4e3.issue155_resume_probe.793b7efdf3235d40-cgu.05.rcgu.o",
+      "target/debug/deps/issue155_resume_probe-167e5e1b2a3bd4e3.issue155_resume_probe.793b7efdf3235d40-cgu.07.rcgu.o",
+      "target/debug/deps/issue155_resume_probe-167e5e1b2a3bd4e3.issue155_resume_probe.793b7efdf3235d40-cgu.15.rcgu.o",
+      "target/debug/deps/issue155_resume_probe-167e5e1b2a3bd4e3.issue155_resume_probe.793b7efdf3235d40-cgu.10.rcgu.o",
+      "target/debug/deps/issue155_resume_probe-167e5e1b2a3bd4e3.issue155_resume_probe.793b7efdf3235d40-cgu.02.rcgu.o",
+      "target/debug/deps/issue155_resume_probe-167e5e1b2a3bd4e3.issue155_resume_probe.793b7efdf3235d40-cgu.00.rcgu.o",
+      "target/debug/deps/issue155_resume_probe-167e5e1b2a3bd4e3.issue155_resume_probe.793b7efdf3235d40-cgu.12.rcgu.o",
+      "target/debug/deps/issue155_resume_probe-167e5e1b2a3bd4e3.issue155_resume_probe.793b7efdf3235d40-cgu.08.rcgu.o",
+      "target/debug/deps/issue155_resume_probe-167e5e1b2a3bd4e3.issue155_resume_probe.793b7efdf3235d40-cgu.04.rcgu.o",
+      "target/debug/deps/issue155_resume_probe-167e5e1b2a3bd4e3.issue155_resume_probe.793b7efdf3235d40-cgu.06.rcgu.o",
+      "target/debug/deps/issue155_resume_probe-167e5e1b2a3bd4e3.issue155_resume_probe.793b7efdf3235d40-cgu.14.rcgu.o",
+      "/Users/renhao/.cursor/feature-gates/feature-gates-2026-10-16T03-20-38-931Z.json",
+      "target/debug/.fingerprint/cursor-server-167e5e1b2a3bd4e3"
+    ],
+    "shared_build_cache_preserved": true,
+    "saved_cursor_conversation_preserved": true
+  }
+}

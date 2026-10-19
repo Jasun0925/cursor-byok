@@ -1,0 +1,100 @@
+{
+  "issue": 155,
+  "recorded_at": "2026-10-18T08:50:01.531004+00:00",
+  "status": "bootstrap repair verified by automated tests; full desktop completion still pending",
+  "upstream_issue_state": "OPEN",
+  "changes": [
+    "Enable long_running_jobs alongside nal_agent_retries in patched upstream and local bootstrap",
+    "Bind locally generated bootstrap userID to request JWT sub; remove fixed local_ultra identity and stableID",
+    "Do not copy other token claims or use decoded subject for authentication/entitlements"
+  ],
+  "red_test_result": {
+    "tests": 3,
+    "passed": 0,
+    "failed": 3,
+    "failures": [
+      "upstream long_running_jobs remained false",
+      "fallback userID was local_ultra instead of request subject",
+      "missing identity invented local_ultra"
+    ]
+  },
+  "validation": {
+    "analytics_tests": {
+      "passed": 3,
+      "failed": 0,
+      "upstream_hash_formats": [
+        "none",
+        "djb2",
+        "sha256"
+      ],
+      "upstream_wire_formats": [
+        "bare protobuf",
+        "connect framed protobuf"
+      ]
+    },
+    "services_tests": {
+      "passed": 30,
+      "failed": 0
+    },
+    "conversation_delivery_tests": {
+      "passed": 11,
+      "failed": 0
+    },
+    "clippy_lib_deny_warnings": "passed",
+    "rustfmt_changed_files": "passed",
+    "git_diff_check": "passed",
+    "http_probe": {
+      "cases": [
+        {
+          "case": "http-probe-a",
+          "http_status": 200,
+          "identity_matches": true,
+          "long_running_jobs": true,
+          "nal_agent_retries": true,
+          "content_length_matches": true
+        },
+        {
+          "case": "http-probe-b",
+          "http_status": 200,
+          "identity_matches": true,
+          "long_running_jobs": true,
+          "nal_agent_retries": true,
+          "content_length_matches": true
+        },
+        {
+          "case": "anonymous",
+          "http_status": 200,
+          "identity_matches": true,
+          "long_running_jobs": true,
+          "nal_agent_retries": true,
+          "content_length_matches": true
+        }
+      ],
+      "binary_sha256": "d7d08f6e1dbc35af8f3922bf49edb7c86c549c9c2cd3b3cd90506d847f6b64d9"
+    }
+  },
+  "source_sha256": {
+    "server/src/cursor/services/analytics.rs": "b9b7df8d3c7042697ca227aac47bed5e5d3bb1997c996722a3a9777022f1b844",
+    "server/src/cursor/services/analytics/tests.rs": "9e6acecca15417ded58caf08c8574b48d8dfbf52525d29e6b628abf78ad5acdf"
+  },
+  "desktop_validation": {
+    "new_test_request_sent": false,
+    "new_background_process_started": false,
+    "observations": [
+      "Cursor Agents window readable",
+      "New Chat action failed with macOS ScreenCaptureKit -3812",
+      "Earlier Sign in action failed with ScreenCaptureKit -3811"
+    ],
+    "limitation": "No claim that the new bootstrap fixes the two earlier Agent Host runs; those used an experimental bootstrap already carrying a matching identity and long_running_jobs=true, without same-window runtime verification."
+  },
+  "cleanup": {
+    "formal_database_unchanged": true,
+    "cursor_settings_unchanged": true,
+    "probe_port_released": true,
+    "formal_integration": "enabled",
+    "formal_settings_applied": true
+  },
+  "production_binary_changed": false,
+  "committed": false,
+  "published": false
+}

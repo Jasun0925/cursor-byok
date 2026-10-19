@@ -1,0 +1,278 @@
+{
+  "issue": 155,
+  "captured_at": "2026-10-18T01:53:43.309438+08:00",
+  "baseline": {
+    "head": "b541d696e71943550e38135191d77cf05ddbda94",
+    "worktree_has_preexisting_changes": true,
+    "cursor_version": "3.25.6"
+  },
+  "finding": {
+    "previous_response_hex": "02000000027B7D",
+    "previous_response_semantics": "Connect success trailer only; no TurnEnded",
+    "client_guard_requires_turn_ended": true,
+    "historical_retries_consistent_with_gap": true,
+    "historical_retry_log_directly_captured": false
+  },
+  "client_guard_probe": {
+    "bundle_sha256": "10c4b3f6b22f6aaadb3056cb8f3a2506f1dfefed5ede844caaf00ead6cc2071c",
+    "guard_sha256": "e402ba205d19fdfb9e890103b0c97d27e0e96e2b78482c4466d3694c2641be85",
+    "scope": "Installed client guard with mocked I/O; not a live Cursor UI run",
+    "results": [
+      {
+        "name": "empty_success_stream",
+        "accepted": false,
+        "error": {
+          "message": "Stream ended without turnEnded — connection likely dropped mid-stream",
+          "isTransport": true
+        }
+      },
+      {
+        "name": "checkpoint_only",
+        "accepted": false,
+        "error": {
+          "message": "Stream ended without turnEnded — connection likely dropped mid-stream",
+          "isTransport": true
+        }
+      },
+      {
+        "name": "turn_ended_then_success",
+        "accepted": true
+      }
+    ]
+  },
+  "regression": {
+    "before_fix": "background_progress_notification_is_ignored_without_model_resume failed: expected one TurnEnded, received zero",
+    "after_fix": "conversation_delivery: 11 passed",
+    "invariants": [
+      "Exactly one TurnEnded before successful trailer",
+      "Pure TaskProgress produces no model call or Run",
+      "Pure TaskProgress emits no checkpoint or simulated user message",
+      "Later TaskFinished for the same task still starts one model call",
+      "Duplicate completions do not invoke the model again",
+      "Forwarded completion remains owned by the existing Run"
+    ]
+  },
+  "verification": {
+    "unit_tests": {
+      "passed": 184,
+      "failed": 1,
+      "failure": "provider::attempt::tests::request_transport_failure_is_one_failed_attempt",
+      "assertion": "matches!(error, Error::Http(_))",
+      "preexisting_evidence": "2026-10-16-issue155-fix.md",
+      "module_changed": false
+    },
+    "integration_tests": {
+      "suites": 24,
+      "passed": 176,
+      "failed": 0,
+      "ignored": 0,
+      "details": [
+        {
+          "suite": "anthropic_refusal.rs",
+          "status": "ok",
+          "passed": 8,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "anthropic_signature.rs",
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "chat_think_tags.rs",
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "checkpoint_recovery.rs",
+          "status": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "commit_message.rs",
+          "status": "ok",
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "compaction.rs",
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "connect_wire.rs",
+          "status": "ok",
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "conversation_delivery.rs",
+          "status": "ok",
+          "passed": 11,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "cursor_trace_queue.rs",
+          "status": "ok",
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "cursor_transport_lifecycle.rs",
+          "status": "ok",
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "error_lifecycle.rs",
+          "status": "ok",
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "external_api.rs",
+          "status": "ok",
+          "passed": 12,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "interrupt.rs",
+          "status": "ok",
+          "passed": 21,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "issue172_repro.rs",
+          "status": "ok",
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "knowledge_rules.rs",
+          "status": "ok",
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "local_rules_context.rs",
+          "status": "ok",
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "model_connectivity.rs",
+          "status": "ok",
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "prefix_stability.rs",
+          "status": "ok",
+          "passed": 13,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "responses_text.rs",
+          "status": "ok",
+          "passed": 16,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "rule_scope.rs",
+          "status": "ok",
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "subagent_admission.rs",
+          "status": "ok",
+          "passed": 8,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "subagent_model_context.rs",
+          "status": "ok",
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "tool_presentation.rs",
+          "status": "ok",
+          "passed": 9,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "suite": "tool_round.rs",
+          "status": "ok",
+          "passed": 21,
+          "failed": 0,
+          "ignored": 0
+        }
+      ]
+    },
+    "clippy_lib": "passed",
+    "cargo_fmt": "passed",
+    "git_diff_check": "passed"
+  },
+  "live_environment": {
+    "cached_at": "2026-10-18T01:39:12.826+08:00",
+    "cached_gates": {
+      "long_running_jobs": true,
+      "nal_agent_retries": true,
+      "cursor_agent_host": true
+    },
+    "live_gate_dump_obtained": false,
+    "startup_log_topology": "legacy; cursor_agent_host gate is disabled",
+    "ui_error": "macOS ScreenCaptureKit -3811; persists after CUA reset",
+    "new_live_probe_sent": false,
+    "automatic_task_finished_followup_verified": false
+  },
+  "scope": {
+    "modified_production_files": [
+      "server/src/cursor/conversation/command.rs",
+      "server/src/cursor/conversation/runtime.rs"
+    ],
+    "modified_tests": [
+      "server/tests/conversation_delivery.rs"
+    ],
+    "cursor_installation_modified": false,
+    "cursor_settings_modified": false,
+    "formal_database_modified_by_this_task": false,
+    "running_service_replaced": false,
+    "committed": false,
+    "published": false
+  },
+  "remaining": [
+    "Verify actual long_running_jobs in the active test window",
+    "In isolated service/database, capture TaskProgress response and subsequent automatic TaskFinished",
+    "Confirm automatic follow-up without repeated Shell execution",
+    "Original approval-wait and 20-minute Shell report remain unverified"
+  ]
+}

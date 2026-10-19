@@ -1,0 +1,61 @@
+{
+  "issue": 155,
+  "observed_at": "2026-10-17",
+  "cursor": {
+    "version": "3.25.6",
+    "active_topology": "legacy",
+    "logs": [
+      "CursorAgentHostEnablementService: cursor_agent_host gate is disabled",
+      "AgentHostService: using legacy implementation"
+    ],
+    "legacy_exec": {
+      "path": "/Applications/Cursor.app/Contents/Resources/app/extensions/cursor-agent-exec/dist/main.js",
+      "sha256": "8b181310e93d99e800f264a0eebcc26710afec5a5d2a4184070eae894de84b4c",
+      "completion_requires_tracked_work_composer_id": true,
+      "completion_conversation_retention": false
+    },
+    "host_bundle_not_active": {
+      "path": "/Applications/Cursor.app/Contents/Resources/app/extensions/cursor-agent-host/dist/657.js",
+      "sha256": "7fc73318adbcb8ec0db0342c36c082b60c2a99fc58dd59eb145f96d84af663ba",
+      "retains_completion_conversation_id": true
+    }
+  },
+  "real_tests": {
+    "short_background_shells": {
+      "shell_ids": ["179169", "179170"],
+      "task_finished": true,
+      "automatic_model_continuation": true,
+      "error_resuming_chat": false
+    },
+    "long_progress_only_fix_validation": {
+      "task_progress_requests": 11,
+      "task_finished_requests": 0,
+      "http_statuses": [200],
+      "protocol_error": false,
+      "automatic_model_continuation": false
+    },
+    "forty_five_second_background_comparison": {
+      "process_exit_code": 0,
+      "automatic_model_continuation": false,
+      "task_finished_observed": false
+    }
+  },
+  "conclusion": {
+    "server_pure_progress_path": "verified",
+    "legacy_long_task_completion": "unresolved",
+    "provider_connectivity": "not implicated",
+    "production_code_changed_in_this_check": false
+  },
+  "cleanup": {
+    "formal_test_conversation_removed": "7adba622-8ca1-4e59-a9b5-a35c674f1eaa",
+    "removed_messages": 20,
+    "removed_runs": 4,
+    "removed_llm_calls": 6,
+    "removed_checkpoints": 15,
+    "foreign_key_violations_after_cleanup": 0,
+    "temporary_database_backup_removed": true,
+    "formal_service_port": 49588,
+    "formal_proxy_port": 49642,
+    "integration_status": "enabled"
+  }
+}

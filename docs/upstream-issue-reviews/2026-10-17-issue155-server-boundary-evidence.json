@@ -1,0 +1,51 @@
+{
+  "issue": 155,
+  "observed_at": "2026-10-17",
+  "repository": {
+    "head": "b541d69",
+    "branch": "codex/issue341-rollback-verification",
+    "production_code_changed_in_this_check": false
+  },
+  "server_boundaries": {
+    "shell_timeout_behavior": "BACKGROUND",
+    "shell_hard_timeout_ms": 86400000,
+    "shell_conversation_id_forwarded": true,
+    "provider_request_timeout_seconds_default": 3600,
+    "provider_stream_idle_timeout_seconds_default": 1800,
+    "twenty_minute_local_shell_server_cutoff_found": false
+  },
+  "client_static_evidence": {
+    "cursor_version": "3.25.6",
+    "active_topology": "legacy",
+    "logs": [
+      "cursor_agent_host gate is disabled",
+      "using legacy implementation"
+    ],
+    "legacy_completion_requires_tracked_work_composer_id": true,
+    "inactive_agent_host_retains_completion_conversation_id": true
+  },
+  "focused_tests": [
+    {
+      "name": "background_progress_notification_is_ignored_without_model_resume",
+      "command": "cargo test -p cursor-server --test conversation_delivery background_progress_notification_is_ignored_without_model_resume -- --exact",
+      "result": "passed"
+    },
+    {
+      "name": "shell_uses_background_timeout_and_preserves_stream_identity",
+      "command": "cargo test -p cursor-server --test tool_round shell_uses_background_timeout_and_preserves_stream_identity -- --exact",
+      "result": "passed"
+    },
+    {
+      "name": "provider_timeout_defaults_match_runtime_boundaries",
+      "command": "cargo test -p cursor-server config::tests::provider_timeout_defaults_match_runtime_boundaries --lib -- --exact",
+      "result": "passed"
+    }
+  ],
+  "conclusion": {
+    "server_progress_path": "verified",
+    "server_twenty_minute_cutoff": "not_found",
+    "legacy_long_task_completion": "unresolved",
+    "provider_connectivity_implicated": false
+  },
+  "next_discriminating_test": "Run a real legacy Cursor Shell with notify_on_output for 15–20 seconds after the first match, then capture both TaskProgress and TaskFinished; repeat with Agent Host enabled if available."
+}

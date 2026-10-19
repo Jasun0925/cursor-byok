@@ -1,0 +1,106 @@
+{
+  "issue": 155,
+  "captured_at": "2026-10-17T22:46:55+08:00",
+  "cursor": {
+    "version": "3.25.6",
+    "topology": "legacy Agent Exec",
+    "gate_log": "cursor_agent_host gate is disabled",
+    "implementation_log": "using legacy implementation",
+    "agent_exec_log": "/Users/renhao/Library/Application Support/Cursor/logs/20261017T204100/window1_wb1/exthost/anysphere.cursor-agent-exec/Cursor Agent Exec.20261017T204104_533a7c0e.log"
+  },
+  "server": {
+    "listen_addr": "127.0.0.1:49588",
+    "database": "/Users/renhao/.cursor-byok-v3/cursor-byok.db",
+    "production_code_changed": false
+  },
+  "tests": [
+    {
+      "case": "match_then_exit",
+      "shell_id": "658689",
+      "tool_call_id": "call_a009e928896049328dfc16c34134c887",
+      "command": "python3 -u -c 'import time; print(\"PROBE_START\", flush=True); time.sleep(15); print(\"PROBE_DONE\", flush=True)'",
+      "parameters": {
+        "block_until_ms": 1000,
+        "notify_on_output": {
+          "pattern": "PROBE_DONE",
+          "debounce_ms": 5000
+        }
+      },
+      "started_at": "2026-10-17T21:36:32.228+08:00",
+      "matched_at": "2026-10-17T21:36:50.190+08:00",
+      "ended_at": "2026-10-17T21:36:50.296+08:00",
+      "status": "succeeded",
+      "exit_code": 0,
+      "elapsed_ms": 18068,
+      "first_match_ms": 15324,
+      "root_run_id": "63a2d922-0d0c-49be-bb14-3c7803d082e2:1a07ec00",
+      "background_completion_run_created": false,
+      "ui_auto_follow_up": false,
+      "terminal_output": [
+        "PROBE_START",
+        "PROBE_DONE"
+      ]
+    },
+    {
+      "case": "match_then_continue_20s",
+      "shell_id": "658690",
+      "tool_call_id": "call_940aeeb5a74f416aad1df6bd2bba6c6c",
+      "command": "python3 -u -c 'import time; print(\"PROBE_START\", flush=True); time.sleep(5); print(\"PROBE_DONE\", flush=True); time.sleep(20); print(\"PROBE_EXIT\", flush=True)'",
+      "parameters": {
+        "block_until_ms": 1000,
+        "notify_on_output": {
+          "pattern": "PROBE_DONE",
+          "debounce_ms": 5000
+        }
+      },
+      "started_at": "2026-10-17T22:43:44.469+08:00",
+      "matched_at": "2026-10-17T22:43:53.584+08:00",
+      "ended_at": "2026-10-17T22:44:13.700+08:00",
+      "status": "succeeded",
+      "exit_code": 0,
+      "elapsed_ms": 29231,
+      "first_match_ms": 5141,
+      "root_run_id": "bf023410-1bba-4816-a236-23bdb8166455:ae43e935",
+      "background_completion_run_created": false,
+      "ui_auto_follow_up": false,
+      "terminal_output": [
+        "PROBE_START",
+        "PROBE_DONE",
+        "PROBE_EXIT"
+      ]
+    }
+  ],
+  "database_observation": {
+    "root_runs_created": 2,
+    "background_completion_runs_created": 0,
+    "interpretation": "The three cursor-root messages reimport the original Shell call, running-in-background tool result, and initial assistant reply. They are not TaskFinished events or completion projections.",
+    "history_reimport_observed_at": "2026-10-17T22:43:27.899+08:00",
+    "history_reimport_message_ids": [
+      "cursor-root:6r17IYfJqxzIecai7fkhqIfUGsKrtWy3CLbcdFj+X8U=:3",
+      "cursor-root:eoz0WcRq3YF9YgVrN2IiJE7QdeXFO6QyIEgmD6nTv9o=:4",
+      "cursor-root:uHKqcp/82acMY9ANU0uKNo10OYs5A6PNFGaPcB075mg=:5"
+    ],
+    "background_completion_runtime_messages": 0,
+    "cursor_run_trace_rows": 0
+  },
+  "source_log_matches": [
+    {
+      "shell_id": "658689",
+      "first_match_ms": 15324
+    },
+    {
+      "shell_id": "658690",
+      "first_match_ms": 5141
+    }
+  ],
+  "audit_correction": {
+    "date": "2026-10-18",
+    "proven": "Both processes exited successfully; no automatic model follow-up was observed.",
+    "not_proven": [
+      "TaskFinished was never transmitted",
+      "trackedWork cleanup caused the failure",
+      "Agent Host fixes this failure"
+    ],
+    "next_check": "Verify live long_running_jobs and bootstrap identity, then capture complete notification requests/responses in an isolated environment."
+  }
+}
