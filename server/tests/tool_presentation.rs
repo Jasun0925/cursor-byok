@@ -10,7 +10,7 @@ use cursor_server::{
         protocol::{connect, proto::agent::v1 as pb},
         TransportCommand, TransportRegistry,
     },
-    model::{ConversationId, MessageContent},
+    model::{ConversationId, MessageContent, ProjectedContent},
     provider::{FinishReason, ModelEvent},
     store::BlobId,
 };
@@ -53,7 +53,28 @@ async fn reversed_parallel_results_settle_every_card_before_text() {
     exercise("out_of_order", 2).await;
 }
 
+#[tokio::test]
+async fn issue301_single_line_cjk_json_survives_live_card_and_replay() {
+    for repetitions in [500, 3000] {
+        let text = format!(
+            "{{\"head\":\"ISSUE301_HEAD\",\"body\":\"{}\",\"tail\":\"ISSUE301_TAIL\"}}\n",
+            "中文终端测试🙂".repeat(repetitions)
+        );
+        assert_eq!(text.lines().count(), 1);
+        assert!(text.len() > 8192);
+        assert!((8192..text.len())
+            .step_by(8192)
+            .any(|i| !text.is_char_boundary(i)));
+        exercise_with_stdout("success", 1, Some(&text)).await;
+        println!("issue301 bytes={} live_delta=complete final_card=nonempty replay=matching provider=nonempty", text.len());
+    }
+}
+
 async fn exercise(outcome: &str, count: usize) {
+    exercise_with_stdout(outcome, count, None).await;
+}
+
+async fn exercise_with_stdout(outcome: &str, count: usize, stdout: Option<&str>) {
     let (_dir, store) = fixtures::temp_store().await;
     let provider = fake_provider::FakeProvider::default();
     let mut events = vec![
@@ -135,6 +156,8 @@ async fn exercise(outcome: &str, count: usize) {
     let mut transcript = Vec::new();
     let mut checkpoint = None;
     let mut exec_ids = Vec::new();
+    let mut live_stdout = String::new();
+    let mut final_stdout = None;
     loop {
         let frame = tokio::time::timeout(Duration::from_secs(10), output.recv())
             .await
@@ -170,6 +193,46 @@ async fn exercise(outcome: &str, count: usize) {
                     exec.message,
                     Some(pb::exec_server_message::Message::ShellStreamArgs(_))
                 ));
+                if let Some(text) = stdout {
+                    // Cursor sends protobuf strings: split only on valid UTF-8 boundaries.
+                    // This fixture does not test Cursor's raw byte decoding.
+                    let mut offset = 0;
+                    while offset < text.len() {
+                        let mut end = (offset + 8192).min(text.len());
+                        while !text.is_char_boundary(end) {
+                            end -= 1;
+                        }
+                        let message = pb::AgentClientMessage {
+                            message: Some(pb::agent_client_message::Message::ExecClientMessage(
+                                pb::ExecClientMessage {
+                                    id: exec.id,
+                                    message: Some(pb::exec_client_message::Message::ShellStream(
+                                        pb::ShellStream {
+                                            event: Some(pb::shell_stream::Event::Stdout(
+                                                pb::ShellStreamStdout {
+                                                    data: text[offset..end].into(),
+                                                },
+                                            )),
+                                        },
+                                    )),
+                                    ..Default::default()
+                                },
+                            )),
+                        };
+                        let message =
+                            pb::AgentClientMessage::decode(message.encode_to_vec().as_slice())
+                                .unwrap();
+                        handle
+                            .command(TransportCommand::Append {
+                                seqno,
+                                message: Box::new(message),
+                            })
+                            .await
+                            .unwrap();
+                        seqno += 1;
+                        offset = end;
+                    }
+                }
                 if outcome == "out_of_order" {
                     exec_ids.push(exec.id);
                     if exec_ids.len() < count {
@@ -207,6 +270,17 @@ async fn exercise(outcome: &str, count: usize) {
             }
             Some(pb::agent_server_message::Message::InteractionUpdate(update)) => {
                 match update.message {
+                    Some(pb::interaction_update::Message::ToolCallDelta(delta)) => {
+                        if let Some(pb::tool_call_delta::Delta::ShellToolCallDelta(shell)) =
+                            delta.tool_call_delta.and_then(|d| d.delta)
+                        {
+                            if let Some(pb::shell_tool_call_delta::Delta::Stdout(chunk)) =
+                                shell.delta
+                            {
+                                live_stdout.push_str(&chunk.content);
+                            }
+                        }
+                    }
                     Some(pb::interaction_update::Message::PartialToolCall(call)) => {
                         unfinished.insert(call.call_id);
                     }
@@ -227,6 +301,19 @@ async fn exercise(outcome: &str, count: usize) {
                                 panic!("expected Shell");
                             };
                             let result = shell.result.unwrap();
+                            if let Some(text) = stdout {
+                                let Some(pb::shell_result::Result::Success(success)) =
+                                    &result.result
+                                else {
+                                    panic!("expected successful Shell result")
+                                };
+                                assert_shell_stdout(text, &success.stdout);
+                                assert_shell_stdout(
+                                    text,
+                                    success.interleaved_output.as_deref().unwrap(),
+                                );
+                                final_stdout = Some(success.stdout.clone());
+                            }
                             match outcome {
                                 "failure" => assert!(matches!(
                                     result.result,
@@ -286,6 +373,12 @@ async fn exercise(outcome: &str, count: usize) {
         }
     }
     assert_eq!(completed, count);
+    if let Some(text) = stdout {
+        assert_eq!(
+            live_stdout, text,
+            "live wire output must preserve every character"
+        );
+    }
     let mut expected = vec!["text:before".to_string()];
     if outcome == "out_of_order" {
         expected.extend((0..count).rev().map(|i| format!("tool:shell-{i}")));
@@ -326,6 +419,17 @@ async fn exercise(outcome: &str, count: usize) {
                         replay.push(format!("thinking:{}", m.text))
                     }
                     pb::conversation_step::Message::ToolCall(t) => {
+                        if stdout.is_some() {
+                            let Some(pb::tool_call::Tool::ShellToolCall(shell)) = &t.tool else {
+                                panic!("expected replay Shell card")
+                            };
+                            let Some(pb::shell_result::Result::Success(success)) =
+                                shell.result.as_ref().and_then(|r| r.result.as_ref())
+                            else {
+                                panic!("expected replay stdout")
+                            };
+                            assert_eq!(Some(&success.stdout), final_stdout.as_ref());
+                        }
                         replay.push(format!("tool:{}", t.tool_call_id.unwrap()))
                     }
                 }
@@ -337,6 +441,17 @@ async fn exercise(outcome: &str, count: usize) {
     assert_eq!(requests.len(), if outcome == "cancel" { 1 } else { 2 });
     if outcome != "cancel" {
         assert!(requests[1].history.starts_with(&requests[0].history));
+        if let Some(text) = stdout {
+            let result = requests[1]
+                .history
+                .iter()
+                .find_map(|m| match &m.content {
+                    ProjectedContent::ToolResult(result) => Some(result),
+                    _ => None,
+                })
+                .expect("provider must receive Shell result");
+            assert_shell_stdout(text, &result.content);
+        }
     }
     let messages = store
         .load_current_messages(&ConversationId::new("presentation-conversation"))
@@ -353,6 +468,19 @@ async fn exercise(outcome: &str, count: usize) {
         has_attempt_text,
         "interrupted text must remain in canonical history"
     );
+}
+
+fn assert_shell_stdout(original: &str, displayed: &str) {
+    assert!(displayed.contains("ISSUE301_HEAD"));
+    assert!(displayed.contains("ISSUE301_TAIL"));
+    assert!(displayed.contains("中文终端测试🙂"));
+    assert!(!displayed.contains('\u{fffd}'));
+    if original.len() <= 16 * 1024 {
+        assert_eq!(displayed, original);
+    } else {
+        assert!(displayed.contains("[truncated:"));
+        assert!(displayed.contains("omitted middle"));
+    }
 }
 
 fn shell_result(id: u32, outcome: &str) -> pb::AgentClientMessage {

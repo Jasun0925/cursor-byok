@@ -454,6 +454,48 @@ async fn invalid_tool_arguments_complete_as_tool_errors() {
 }
 
 #[tokio::test]
+async fn issue300_retired_await_shell_returns_immediately_for_both_id_types() {
+    for shell_id in [json!(340173), json!("340173")] {
+        let runtime = CursorToolRuntime::default();
+        let dispatcher = ToolDispatcher::new(runtime.clone());
+        let mut invocation = call("issue300-await", "AwaitShell");
+        invocation.arguments = json!({"shell_id": shell_id, "block_until_ms": 15000});
+        let started_at = std::time::Instant::now();
+        let dispatched = tokio::time::timeout(
+            std::time::Duration::from_secs(1),
+            dispatcher.start_batch(
+                &[invocation],
+                ToolBatchState {
+                    completed: &HashSet::new(),
+                    started: &HashSet::new(),
+                    response_text: "",
+                    response_thinking: "",
+                },
+                &[],
+                &BTreeMap::new(),
+                &exec_context(),
+            ),
+        )
+        .await
+        .expect("retired AwaitShell must not wait for block_until_ms")
+        .unwrap();
+        let elapsed = started_at.elapsed();
+        let completion = dispatched[0].completion.as_ref().expect("immediate result");
+        assert!(completion.result().is_error);
+        assert!(completion.result().content.contains("no longer available"));
+        assert!(dispatched[0].messages.iter().all(|message| !matches!(
+            message.message,
+            Some(pb::agent_server_message::Message::ExecServerMessage(_))
+        )));
+        assert!(runtime.drain_running().await.is_empty());
+        println!(
+            "issue300 retired AwaitShell shell_id={shell_id} elapsed_us={}",
+            elapsed.as_micros()
+        );
+    }
+}
+
+#[tokio::test]
 async fn shell_uses_background_timeout_and_preserves_stream_identity() {
     let mut shell = call("call-shell", "Shell");
     shell.arguments = json!({
