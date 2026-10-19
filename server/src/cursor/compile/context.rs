@@ -556,7 +556,94 @@ fn normalize_mcp_parameters(tool_name: &str, mut parameters: Value) -> Result<Va
     if schema.get("required").is_some_and(Value::is_null) {
         schema.insert("required".into(), Value::Array(Vec::new()));
     }
+    normalize_json_schema_integer_constraints(&mut parameters);
     Ok(parameters)
+}
+
+fn normalize_json_schema_integer_constraints(schema: &mut Value) {
+    const INTEGER_KEYWORDS: [&str; 8] = [
+        "maxContains",
+        "maxItems",
+        "maxLength",
+        "maxProperties",
+        "minContains",
+        "minItems",
+        "minLength",
+        "minProperties",
+    ];
+    const SCHEMA_KEYWORDS: [&str; 12] = [
+        "additionalItems",
+        "additionalProperties",
+        "contains",
+        "contentSchema",
+        "else",
+        "if",
+        "items",
+        "not",
+        "propertyNames",
+        "then",
+        "unevaluatedItems",
+        "unevaluatedProperties",
+    ];
+    const SCHEMA_ARRAY_KEYWORDS: [&str; 4] = ["allOf", "anyOf", "oneOf", "prefixItems"];
+    const SCHEMA_MAP_KEYWORDS: [&str; 6] = [
+        "$defs",
+        "definitions",
+        "dependencies",
+        "dependentSchemas",
+        "patternProperties",
+        "properties",
+    ];
+
+    let Some(object) = schema.as_object_mut() else {
+        return;
+    };
+    for keyword in INTEGER_KEYWORDS {
+        let Some(value) = object.get_mut(keyword) else {
+            continue;
+        };
+        let Some(number) = value.as_number() else {
+            continue;
+        };
+        // Already-integer JSON numbers must not lose precision through f64.
+        if !number.is_f64() {
+            continue;
+        }
+        let Some(number) = number.as_f64() else {
+            continue;
+        };
+        // u64::MAX rounds up to 2^64 as f64, so the upper bound is exclusive.
+        // Cast the exact integral value, not its rounded decimal display string.
+        if (0.0..(u64::MAX as f64)).contains(&number) && number.fract() == 0.0 {
+            *value = Value::Number((number as u64).into());
+        }
+    }
+    for keyword in SCHEMA_KEYWORDS {
+        if let Some(child) = object.get_mut(keyword) {
+            match child {
+                Value::Array(children) => {
+                    for child in children {
+                        normalize_json_schema_integer_constraints(child);
+                    }
+                }
+                _ => normalize_json_schema_integer_constraints(child),
+            }
+        }
+    }
+    for keyword in SCHEMA_ARRAY_KEYWORDS {
+        if let Some(children) = object.get_mut(keyword).and_then(Value::as_array_mut) {
+            for child in children {
+                normalize_json_schema_integer_constraints(child);
+            }
+        }
+    }
+    for keyword in SCHEMA_MAP_KEYWORDS {
+        if let Some(children) = object.get_mut(keyword).and_then(Value::as_object_mut) {
+            for child in children.values_mut() {
+                normalize_json_schema_integer_constraints(child);
+            }
+        }
+    }
 }
 
 fn invalid_mcp_parameters(tool_name: &str) -> Error {
@@ -641,5 +728,311 @@ mod tests {
         let mut context = pb::RequestContext::default();
         merge_local_rules(&mut context, &directory.path().join("nested/rules"));
         assert!(context.non_file_rules.is_empty());
+    }
+
+    #[test]
+    fn normalize_mcp_parameters_canonicalizes_app_control_integer_constraints() {
+        let parameters = serde_json::json!({
+            "anyOf": [
+                {
+                    "type": "object",
+                    "properties": {"rootPath": {"type": "string"}}
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "rootPaths": {
+                            "type": "array",
+                            "items": {"type": "string", "minLength": 1.0},
+                            "minItems": 1.0
+                        }
+                    }
+                }
+            ]
+        });
+
+        let normalized =
+            normalize_mcp_parameters("cursor-app-control-move_agent_to_cloned_root", parameters)
+                .unwrap();
+
+        assert_eq!(normalized["type"], "object");
+        assert_eq!(
+            normalized.pointer("/anyOf/1/properties/rootPaths/minItems"),
+            Some(&serde_json::json!(1))
+        );
+        assert_eq!(
+            normalized.pointer("/anyOf/1/properties/rootPaths/items/minLength"),
+            Some(&serde_json::json!(1))
+        );
+        assert!(!normalized.to_string().contains("\"minItems\":1.0"));
+    }
+
+    #[test]
+    fn normalize_mcp_parameters_preserves_non_integer_schema_numbers() {
+        let parameters = serde_json::json!({
+            "type": "object",
+            "properties": {
+                "values": {
+                    "type": "array",
+                    "minItems": 1.5,
+                    "items": {"type": "number", "minimum": 1.0}
+                }
+            }
+        });
+
+        let normalized = normalize_mcp_parameters("fractional-schema", parameters).unwrap();
+
+        assert_eq!(
+            normalized.pointer("/properties/values/minItems"),
+            Some(&serde_json::json!(1.5))
+        );
+        assert_eq!(
+            normalized
+                .pointer("/properties/values/items/minimum")
+                .unwrap()
+                .to_string(),
+            "1.0"
+        );
+    }
+}
+
+#[cfg(test)]
+mod pr420_validation {
+    use super::*;
+    use serde_json::json;
+
+    #[test]
+    fn integer_normalization_preserves_existing_root_schema_repairs() {
+        assert_eq!(
+            normalize_mcp_parameters("empty", json!({})).unwrap(),
+            json!({"type": "object", "properties": {}})
+        );
+        let normalized = normalize_mcp_parameters(
+            "root-repairs",
+            json!({
+                "anyOf": [{"type": "object", "minProperties": 1.0}],
+                "required": null,
+                "maxProperties": 2.0,
+                "additionalProperties": false
+            }),
+        )
+        .unwrap();
+        assert_eq!(normalized["type"], "object");
+        assert_eq!(normalized["properties"], json!({}));
+        assert_eq!(normalized["required"], json!([]));
+        assert_eq!(normalized["maxProperties"], json!(2));
+        assert_eq!(normalized["anyOf"][0]["minProperties"], json!(1));
+        assert_eq!(normalized["additionalProperties"], false);
+        assert!(normalize_mcp_parameters(
+            "invalid-properties",
+            json!({"type": "object", "properties": [], "maxProperties": 2.0})
+        )
+        .is_err());
+    }
+
+    fn wire_value(value: &Value) -> prost_types::Value {
+        use prost_types::value::Kind;
+        prost_types::Value {
+            kind: Some(match value {
+                Value::Null => Kind::NullValue(0),
+                Value::Bool(v) => Kind::BoolValue(*v),
+                Value::Number(v) => Kind::NumberValue(v.as_f64().unwrap()),
+                Value::String(v) => Kind::StringValue(v.clone()),
+                Value::Array(v) => Kind::ListValue(prost_types::ListValue {
+                    values: v.iter().map(wire_value).collect(),
+                }),
+                Value::Object(v) => Kind::StructValue(prost_types::Struct {
+                    fields: v.iter().map(|(k, v)| (k.clone(), wire_value(v))).collect(),
+                }),
+            }),
+        }
+    }
+
+    #[test]
+    fn protobuf_schema_becomes_integer_without_mutating_wire_descriptor() {
+        let wire = pb::McpToolDefinition {
+            name: "schema-probe".into(),
+            input_schema: Some(wire_value(
+                &json!({"type":"object","properties":{"paths":{"type":"array","minItems":1,"items":{"type":"string","minLength":2}}}}),
+            )),
+            ..Default::default()
+        };
+        let context = pb::RequestContext {
+            tools: vec![wire.clone()],
+            ..Default::default()
+        };
+        let request = pb::AgentRunRequest::default();
+        let first = dynamic_mcp(&request, &context).unwrap();
+        let second = dynamic_mcp(&request, &context).unwrap();
+        let (captured, definition) = first.values().next().unwrap();
+        assert_eq!(captured, &wire);
+        assert_eq!(
+            definition.parameters["properties"]["paths"]["minItems"].to_string(),
+            "1"
+        );
+        assert_eq!(
+            definition.parameters["properties"]["paths"]["items"]["minLength"].to_string(),
+            "2"
+        );
+        assert_eq!(
+            serde_json::to_string(&definition.parameters).unwrap(),
+            serde_json::to_string(&second.values().next().unwrap().1.parameters).unwrap()
+        );
+    }
+
+    #[test]
+    fn json_schema_large_integers_survive_exactly() {
+        for integer in [
+            9_007_199_254_740_993_u64,
+            9_223_372_036_854_775_807,
+            18_446_744_073_709_551_615,
+        ] {
+            let schema = json!({"type":"object","maxProperties":integer});
+            let context = pb::RequestContext {
+                tools: vec![pb::McpToolDefinition {
+                    name: "large-integer".into(),
+                    input_schema_json: Some(schema.to_string()),
+                    ..Default::default()
+                }],
+                ..Default::default()
+            };
+            let definitions = dynamic_mcp(&pb::AgentRunRequest::default(), &context).unwrap();
+            assert_eq!(
+                definitions.values().next().unwrap().1.parameters["maxProperties"],
+                json!(integer),
+                "integer {integer} must remain exact"
+            );
+        }
+    }
+
+    #[test]
+    fn integer_keywords_are_canonical_in_all_schema_containers() {
+        let leaf = json!({"maxContains":2.0,"maxItems":2.0,"maxLength":2.0,"maxProperties":2.0,"minContains":2.0,"minItems":2.0,"minLength":2.0,"minProperties":2.0});
+        let expected = json!({"maxContains":2,"maxItems":2,"maxLength":2,"maxProperties":2,"minContains":2,"minItems":2,"minLength":2,"minProperties":2});
+        for keyword in [
+            "additionalItems",
+            "additionalProperties",
+            "contains",
+            "contentSchema",
+            "else",
+            "if",
+            "items",
+            "not",
+            "propertyNames",
+            "then",
+            "unevaluatedItems",
+            "unevaluatedProperties",
+        ] {
+            let output = normalize_mcp_parameters(
+                "containers",
+                json!({"type":"object",keyword:leaf.clone()}),
+            )
+            .unwrap();
+            assert_eq!(output[keyword], expected, "{keyword}");
+        }
+        for keyword in ["allOf", "anyOf", "oneOf", "prefixItems", "items"] {
+            let output = normalize_mcp_parameters(
+                "arrays",
+                json!({"type":"object",keyword:[leaf.clone(),true]}),
+            )
+            .unwrap();
+            assert_eq!(output[keyword][0], expected, "{keyword}");
+            assert_eq!(output[keyword][1], true);
+        }
+        for keyword in [
+            "$defs",
+            "definitions",
+            "dependencies",
+            "dependentSchemas",
+            "patternProperties",
+            "properties",
+        ] {
+            let output = normalize_mcp_parameters(
+                "maps",
+                json!({"type":"object",keyword:{"nested":leaf.clone()}}),
+            )
+            .unwrap();
+            assert_eq!(output[keyword]["nested"], expected, "{keyword}");
+        }
+    }
+
+    #[test]
+    fn integral_floats_convert_to_their_exact_integer_value() {
+        for (float, integer) in [
+            (-0.0, 0_u64),
+            (0.0, 0),
+            (1.0, 1),
+            (9_007_199_254_740_992.0, 9_007_199_254_740_992),
+            (9_223_372_036_854_775_808.0, 9_223_372_036_854_775_808),
+            (18_446_744_073_709_549_568.0, 18_446_744_073_709_549_568),
+        ] {
+            let output = normalize_mcp_parameters(
+                "integral-float",
+                json!({"type":"object","maxProperties":float}),
+            )
+            .unwrap();
+            assert_eq!(output["maxProperties"], json!(integer), "float {float}");
+        }
+    }
+
+    #[test]
+    fn annotations_and_numeric_validation_values_are_untouched() {
+        let schema = json!({"type":"object","properties":{},"default":{"minItems":1.0},"examples":[{"maxItems":2.0}],"const":{"minLength":3.0},"enum":[{"maxLength":4.0}],"x-custom":{"minItems":5.0},"minimum":1.0,"maximum":2.0,"exclusiveMinimum":3.0,"exclusiveMaximum":4.0,"multipleOf":0.5,"dependencies":{"legacy":["minItems"]}});
+        assert_eq!(
+            normalize_mcp_parameters("annotations", schema.clone()).unwrap(),
+            schema
+        );
+    }
+
+    #[test]
+    fn invalid_and_out_of_range_constraints_are_not_clamped() {
+        for value in [
+            json!(-1),
+            json!(i64::MIN),
+            json!(-1.0),
+            json!(-0.5),
+            json!(1.5),
+            // u64::MAX rounds up to 2^64 as f64; casting it would saturate.
+            json!(u64::MAX as f64),
+            json!(18_446_744_073_709_555_712.0),
+            json!(1e30),
+            json!("1"),
+            json!(null),
+            json!(true),
+        ] {
+            let schema = json!({"type":"object","properties":{},"minItems":value});
+            assert_eq!(
+                normalize_mcp_parameters("invalid", schema.clone()).unwrap(),
+                schema
+            );
+        }
+    }
+
+    #[test]
+    fn valid_root_union_is_repaired_and_invalid_roots_still_fail() {
+        let output = normalize_mcp_parameters(
+            "union",
+            json!({"anyOf":[{"type":"object","minProperties":1.0}]}),
+        )
+        .unwrap();
+        assert_eq!(output["type"], "object");
+        assert_eq!(output["anyOf"][0]["minProperties"].to_string(), "1");
+        for schema in [
+            json!({"type":"array"}),
+            json!({"anyOf":[{"type":"object"},{"type":"string"}]}),
+            json!(true),
+            json!({"anyOf":[]}),
+        ] {
+            assert!(normalize_mcp_parameters("invalid-root", schema).is_err());
+        }
+    }
+
+    #[test]
+    fn normalization_is_idempotent() {
+        let first=normalize_mcp_parameters("idempotent",json!({"type":"object","properties":{"v":{"type":"array","minItems":0.0,"maxItems":42.0}}})).unwrap();
+        assert_eq!(
+            normalize_mcp_parameters("idempotent", first.clone()).unwrap(),
+            first
+        );
     }
 }

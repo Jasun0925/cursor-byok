@@ -1,0 +1,49 @@
+{
+  "base_commit": "8daa330c248e1f6d4ed56982e5949b838c926342",
+  "pr": 420,
+  "pr_head": "4d51f9714057f83c347877e436ebc5c7190f4da6",
+  "branch": "codex/verify-pr420",
+  "baseline_boundary": {
+    "passed": 4,
+    "failed": 3
+  },
+  "pr_boundary": {
+    "passed": 6,
+    "failed": 1
+  },
+  "confirmed_regression": {
+    "input_schema_json": {
+      "type": "object",
+      "maxProperties": 9007199254740993
+    },
+    "expected": 9007199254740993,
+    "actual": 9007199254740992,
+    "path": "AgentRunRequest/RequestContext -> dynamic_mcp -> normalize_mcp_parameters -> normalize_json_schema_integer_constraints",
+    "cause": "An existing exact u64 JSON number is converted to f64 before being rewritten as u64."
+  },
+  "live_provider_test": false,
+  "cursor_ui_test": false,
+  "merged": false,
+  "published": false,
+  "clippy": "passed",
+  "fmt": "passed",
+  "diff_check": "passed",
+  "original_pr_regression": {
+    "passed": 295,
+    "known_failure_filtered": 1,
+    "filter": "pr420_validation::json_schema_large_integers_survive_exactly",
+    "all_green": false
+  },
+  "fixed_boundary": {
+    "passed": 8,
+    "failed": 0
+  },
+  "regression": {
+    "passed": 297,
+    "failed": 0,
+    "ignored": 0,
+    "filtered": 0,
+    "all_green": true
+  },
+  "fix": "Preserve integer JSON representations; cast only integral floats in [0, 2^64) directly to u64, without decimal display round-tripping."
+}
