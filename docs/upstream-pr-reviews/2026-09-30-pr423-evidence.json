@@ -1,0 +1,78 @@
+{
+  "date": "2026-09-30",
+  "pr": "https://github.com/leookun/cursor-byok/pull/423",
+  "pr_head": "ba7bf466b3855c26b7c0afa84a5030f97c005a6d",
+  "fork_base": "0119cb44699a6657862cb81fd209456ea138055c",
+  "branch": "codex/verify-pr423",
+  "method": "loopback HTTP/SSE -> real AnthropicProvider -> model cycle -> real Cursor transport with simulated wire client; no actual Cursor UI or external provider",
+  "baseline": {
+    "passed": 4,
+    "failed": 3,
+    "executed_wire_tool_id": "refusal-tool",
+    "evidence_present": true
+  },
+  "patched": {
+    "passed": 7,
+    "failed": 0,
+    "http_requests": 9,
+    "cursor_exec_messages": 0,
+    "test_seconds": 40.21,
+    "evidence_present": true
+  },
+  "regression": {
+    "lib": 159,
+    "error_lifecycle": 7,
+    "external_api": 12,
+    "interrupt": 21,
+    "tool_round": 18,
+    "total": 217,
+    "failed": 0
+  },
+  "checks": {
+    "fmt": "passed",
+    "server_all_target_clippy": "passed",
+    "diff_check": "passed"
+  },
+  "verdict": "blocks refused tool execution; do not merge unchanged until refusal is excluded from generic protocol-error retry",
+  "main_modified": false,
+  "published": false,
+  "remediation": {
+    "commit": "89d90c68e45fa2c04fa6812082139e8b47837e08",
+    "branch": "codex/verify-pr423",
+    "http_requests": 1,
+    "cursor_exec_messages": 0,
+    "cursor_is_retryable": false,
+    "cursor_should_show_immediate_error": true,
+    "server_tests_passed": 270,
+    "server_tests_failed": 0,
+    "workspace_clippy": "passed",
+    "merged": false,
+    "published": false,
+    "report": "/Users/renhao/.codex/worktrees/task-result-delivery/cursor-byok/docs/upstream-pr-reviews/2026-09-30-pr423-fix-result.md"
+  },
+  "real_cursor_ui": {
+    "refusal_tools": "passed",
+    "observation_seconds": 203.6,
+    "request_count": 1,
+    "tool_marker_exists": false,
+    "provider": "local simulated Anthropic SSE",
+    "plain_refusal": "passed: one request, completed, no UI error",
+    "normal_tool": "passed: one Shell execution, marker created, tool_result returned, two completed model requests",
+    "production_restored": true,
+    "record": "/Users/renhao/.codex/worktrees/task-result-delivery/cursor-byok/docs/upstream-pr-reviews/2026-09-30-pr423-ui-evidence.json"
+  },
+  "merge": {
+    "date": "2026-09-30",
+    "target": "main",
+    "branch": "codex/verify-pr423",
+    "branch_head": "6402ef7",
+    "method": "fast-forward",
+    "released": true
+  },
+  "release": {
+    "version": "1.0.5",
+    "url": "https://github.com/haohaomin/cursor-byok/releases/tag/v1.0.5",
+    "workflow": "https://github.com/haohaomin/cursor-byok/actions/runs/36699430053",
+    "signature_verification": "7 packages passed"
+  }
+}

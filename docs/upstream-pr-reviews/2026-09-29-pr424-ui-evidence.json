@@ -1,0 +1,65 @@
+{
+  "parent_conversation": "c0e36f26-ae83-453d-b896-9edf9fbf5e64",
+  "child_conversation": "75838769-f830-48a1-9fae-f5308f43a34d",
+  "parent_run": "dca49258-3509-4b77-a2ef-002a61cd916c:9009d395",
+  "child_run": "6fa248ba-af84-48a5-bce7-ee57f0ad286c:994b42b0",
+  "pr_sha": "9def2906ee87baa3c127662c560044bb40e480d7",
+  "binary_sha256": "96c16077c2dfedfd8da7f1b47c50437ddffb7df05a00a74705107c595a9b9ff0",
+  "new_messages_mode": "Steer",
+  "injection_received_at_ms": 1790668669586,
+  "task_success_received_at_ms": 1790668671739,
+  "task_success_agent_id": "75838769-f830-48a1-9fae-f5308f43a34d",
+  "task_success_final_message": "PR424_TASK_COMPLETED_ba5860594ea59b31",
+  "task_success_exec_id": 1,
+  "result": "FAIL: successful existing Task result did not reach parent history",
+  "tools": [
+    {
+      "round_id": "dca49258-3509-4b77-a2ef-002a61cd916c:9009d395:round:0",
+      "call_id": "call_2FbrK6ELd9BZMaH2PjtlKtoD",
+      "name": "Task",
+      "arguments_json": "{\"description\":\"Run PR424 task probe\",\"environment\":\"local\",\"model\":\"inherit\",\"prompt\":\"在工作区 /private/tmp/cursor-byok-pr424-20260929/cursor-workspace 中只执行一次以下命令：python3 /tmp/cursor-byok-pr424-20260929/cursor-workspace/task_probe_short.py。必须使用 Shell，且 block_until_ms 必须精确设为 30000。不要修改任何文件，不要读取任何其他文件，也绝对不要再次执行该脚本。如果命令意外转入后台，允许读取该命令已有的终端输出并等待它完成，但禁止重跑。完成后，只把脚本输出中的 `PR424_TASK_COMPLETED_` 随机标记原样返回给主代理，不要附加解释。\",\"run_in_background\":false,\"subagent_type\":\"generalPurpose\"}",
+      "status": "completed",
+      "result_content": "Tool execution was interrupted by a newer user message.",
+      "result_is_error": 1,
+      "completed_at_ms": 1790668669585
+    },
+    {
+      "round_id": "6fa248ba-af84-48a5-bce7-ee57f0ad286c:994b42b0:round:0",
+      "call_id": "call_11coIgY6ozVfO7eEovJS4DL1",
+      "name": "Shell",
+      "arguments_json": "{\"block_until_ms\":30000,\"command\":\"python3 /tmp/cursor-byok-pr424-20260929/cursor-workspace/task_probe_short.py\",\"description\":\"Runs the requested probe script exactly once\",\"working_directory\":\"/private/tmp/cursor-byok-pr424-20260929/cursor-workspace\"}",
+      "status": "completed",
+      "result_content": "PR424_STARTED pid=54063\nPR424_TASK_COMPLETED_ba5860594ea59b31\n",
+      "result_is_error": 0,
+      "completed_at_ms": 1790668664954
+    },
+    {
+      "round_id": "6fa248ba-af84-48a5-bce7-ee57f0ad286c:994b42b0:round:0",
+      "call_id": "call_jdFHvTWHnBQG85rPfWFgf4ND",
+      "name": "UpdateCurrentStep",
+      "arguments_json": "{\"current_step\":\"运行指定探针脚本\"}",
+      "status": "completed",
+      "result_content": "{\"success\":{\"current_step\":\"运行指定探针脚本\",\"message_index\":3}}",
+      "result_is_error": 0,
+      "completed_at_ms": 1790668638285
+    }
+  ],
+  "assistant_texts": [
+    {
+      "conversation_id": "75838769-f830-48a1-9fae-f5308f43a34d",
+      "text": "PR424_TASK_COMPLETED_ba5860594ea59b31",
+      "created_at_ms": 1790668669403
+    },
+    {
+      "conversation_id": "c0e36f26-ae83-453d-b896-9edf9fbf5e64",
+      "text": "已收到补充",
+      "created_at_ms": 1790668675622
+    }
+  ],
+  "restored": {
+    "official_byok_integration": "enabled",
+    "settings_applied": true,
+    "new_messages_mode": "Queue",
+    "original_database_call_count": 201
+  }
+}
