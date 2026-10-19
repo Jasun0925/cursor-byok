@@ -1,0 +1,45 @@
+{
+  "date": "2026-10-02",
+  "issue": 410,
+  "issue_url": "https://github.com/leookun/cursor-byok/issues/410",
+  "github_state": "OPEN",
+  "commit": "8daa330c248e1f6d4ed56982e5949b838c926342",
+  "release": "v1.0.6",
+  "existing_tests": {
+    "responses_text": 9,
+    "tool_presentation": 8,
+    "passed": 17,
+    "failed": 0
+  },
+  "additional_probe": {
+    "passed": 1,
+    "failed": 2,
+    "cases": [
+      {
+        "name": "completed_snapshot_only_keeps_final_review_text",
+        "expected": "Review complete.",
+        "actual": "",
+        "status": "failed"
+      },
+      {
+        "name": "completed_snapshot_repairs_a_missing_review_suffix",
+        "expected": "Review complete.",
+        "actual": "Review ",
+        "status": "failed"
+      },
+      {
+        "name": "normal_item_events_plus_snapshot_do_not_repeat_review_text",
+        "expected": "Review complete.",
+        "actual": "Review complete.",
+        "status": "passed"
+      }
+    ]
+  },
+  "original_report_root_cause_confirmed": false,
+  "tool_detail_expansion_verified": false,
+  "live_cursor_test_this_check": false,
+  "production_code_changed": false,
+  "temporary_test_removed": true,
+  "completed": false,
+  "probe_source": "2026-10-02-issue410-probe.rs"
+}

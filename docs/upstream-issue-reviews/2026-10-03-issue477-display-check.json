@@ -1,0 +1,14 @@
+[
+  {
+    "request_id": "107e0efb-ef16-47ba-97ea-a6351649e903",
+    "answer_chars": 671,
+    "thinking_chars": 87,
+    "cursor_wire_matches_provider": true
+  },
+  {
+    "request_id": "17aa89cc-6d30-4d6c-a531-6d6584c8f806",
+    "answer_chars": 1229,
+    "thinking_chars": 204,
+    "cursor_wire_matches_provider": true
+  }
+]

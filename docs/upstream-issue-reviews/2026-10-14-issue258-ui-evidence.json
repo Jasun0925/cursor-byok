@@ -1,0 +1,431 @@
+{
+  "date": "2026-10-14",
+  "baseline": "a7ae78ab1d064206fdbb5aeb0659bd48e3dadb7d",
+  "cursor_version": "3.24.18",
+  "ui_model": "gpt-6 High",
+  "model": "gpt-6-astra",
+  "original_issue_model_available": false,
+  "conversation_id": "d15c42b9-b1ca-46f9-ae7a-70ec0129dd3b",
+  "test_ports": [
+    57473,
+    57484
+  ],
+  "context": {
+    "rules_block_present": false,
+    "han_characters": 1287,
+    "source_of_chinese_context": "Available skill descriptions; no project or user rules block in the actual initial provider request.",
+    "forced_response_language_rule_added": false
+  },
+  "runs": [
+    {
+      "run_id": "7c66682b-32b8-46ae-b1ba-d05759ce7027:6d27ea50",
+      "status": "completed",
+      "created_at_ms": 1791976969764,
+      "updated_at_ms": 1791977005733,
+      "failure_category": null,
+      "failure_summary": null,
+      "elapsed_ms": 35969,
+      "calls": [
+        {
+          "call_id": "7c66682b-32b8-46ae-b1ba-d05759ce7027:6d27ea50:0",
+          "provider_call_index": 0,
+          "model_id": "gpt-6-astra",
+          "reasoning_effort": "high",
+          "status": "completed",
+          "finish_reason": "stop",
+          "http_status": 200,
+          "duration_ms": 35431,
+          "ttfb_ms": 33504,
+          "ttft_ms": 33508,
+          "request_bytes": 150488,
+          "body_sha256": "4e3409785af9dad2488e278b34eca2caf1f94220eff67e70520430bc63508d07",
+          "tool_messages_sent": []
+        }
+      ],
+      "assistant_messages": [
+        {
+          "text": "A **web browser** is an application used to access and display websites, such as Chrome, Safari, or Firefox.\n\nA **search engine** is a website or service used to find information on the internet, such as Google, Bing, or DuckDuckGo.\n\nYou open a search engine **with a browser** to search for websites and information.",
+          "han_characters": 0,
+          "tool_calls": []
+        }
+      ],
+      "tool_results": [],
+      "query": "Hi! What is the difference between a web browser and a search engine? Please give a brief explanation without using tools."
+    },
+    {
+      "run_id": "9c0cf499-03df-4091-afa5-c80c28f4d8cf:b95ab112",
+      "status": "completed",
+      "created_at_ms": 1791977129186,
+      "updated_at_ms": 1791977161256,
+      "failure_category": null,
+      "failure_summary": null,
+      "elapsed_ms": 32070,
+      "calls": [
+        {
+          "call_id": "9c0cf499-03df-4091-afa5-c80c28f4d8cf:b95ab112:0",
+          "provider_call_index": 0,
+          "model_id": "gpt-6-astra",
+          "reasoning_effort": "high",
+          "status": "completed",
+          "finish_reason": "tool_use",
+          "http_status": 200,
+          "duration_ms": 15642,
+          "ttfb_ms": 15028,
+          "ttft_ms": null,
+          "request_bytes": 151290,
+          "body_sha256": "c510e44cf5a99402d6a7bba02b8c1d39427973144da1826978bf21190b59db4f",
+          "tool_messages_sent": []
+        },
+        {
+          "call_id": "9c0cf499-03df-4091-afa5-c80c28f4d8cf:b95ab112:1",
+          "provider_call_index": 1,
+          "model_id": "gpt-6-astra",
+          "reasoning_effort": "high",
+          "status": "completed",
+          "finish_reason": "stop",
+          "http_status": 200,
+          "duration_ms": 13579,
+          "ttfb_ms": 13157,
+          "ttft_ms": 13160,
+          "request_bytes": 153897,
+          "body_sha256": "c90da056b3454d6de7c38e65abe702efb9ff84d27eb81af9d2d80268d542b38e",
+          "tool_messages_sent": [
+            {
+              "call_id": "call_354891477c034421ae4abb649d01ca4f",
+              "han_characters": 86
+            }
+          ]
+        }
+      ],
+      "assistant_messages": [
+        {
+          "text": "",
+          "han_characters": 0,
+          "tool_calls": [
+            {
+              "index": 0,
+              "call_id": "call_354891477c034421ae4abb649d01ca4f",
+              "name": "cursor-ide-browser-browser_navigate",
+              "arguments": {
+                "position": "active",
+                "take_screenshot_afterwards": false,
+                "url": "https://www.google.com"
+              }
+            }
+          ]
+        },
+        {
+          "text": "The page title is **Google**.",
+          "han_characters": 0,
+          "tool_calls": []
+        }
+      ],
+      "tool_results": [
+        {
+          "call_id": "call_354891477c034421ae4abb649d01ca4f",
+          "name": "cursor-ide-browser-browser_navigate",
+          "is_error": false,
+          "characters": 1868,
+          "han_characters": 86,
+          "sha256": "fe657ab50a4aa174d316ec2cbb708ebc70abbcafa91acd561688700a8a4778cc",
+          "page_title": [
+            "Google"
+          ],
+          "chinese_labels_present": [
+            "搜索图片",
+            "登录",
+            "搜索",
+            "Google 搜索",
+            "手气不错",
+            "设置"
+          ]
+        }
+      ],
+      "query": "Open https//www.google.com and tell me the page title.Open https://www.google.com and tell me the page title."
+    },
+    {
+      "run_id": "42a91f92-d3c7-4a81-9e41-eb32da9f8cb9:7f94dedd",
+      "status": "completed",
+      "created_at_ms": 1791977196544,
+      "updated_at_ms": 1791977235017,
+      "failure_category": null,
+      "failure_summary": null,
+      "elapsed_ms": 38473,
+      "calls": [
+        {
+          "call_id": "42a91f92-d3c7-4a81-9e41-eb32da9f8cb9:7f94dedd:0",
+          "provider_call_index": 0,
+          "model_id": "gpt-6-astra",
+          "reasoning_effort": "high",
+          "status": "completed",
+          "finish_reason": "tool_use",
+          "http_status": 200,
+          "duration_ms": 17322,
+          "ttfb_ms": 16446,
+          "ttft_ms": null,
+          "request_bytes": 154440,
+          "body_sha256": "01893abd4673fc1564bdee075951174a4f9039aaa8c018d46a27d6f56af7060f",
+          "tool_messages_sent": [
+            {
+              "call_id": "call_354891477c034421ae4abb649d01ca4f",
+              "han_characters": 86
+            }
+          ]
+        },
+        {
+          "call_id": "42a91f92-d3c7-4a81-9e41-eb32da9f8cb9:7f94dedd:1",
+          "provider_call_index": 1,
+          "model_id": "gpt-6-astra",
+          "reasoning_effort": "high",
+          "status": "completed",
+          "finish_reason": "stop",
+          "http_status": 200,
+          "duration_ms": 19558,
+          "ttfb_ms": 17764,
+          "ttft_ms": 17766,
+          "request_bytes": 157030,
+          "body_sha256": "346da2d97f7b8d314a60af3a269cf9f98374b262bae9a39f6a2ab8c33e31ffc7",
+          "tool_messages_sent": [
+            {
+              "call_id": "call_354891477c034421ae4abb649d01ca4f",
+              "han_characters": 86
+            },
+            {
+              "call_id": "call_de3598549c68489a81fe2fd55aa98f2f",
+              "han_characters": 86
+            }
+          ]
+        }
+      ],
+      "assistant_messages": [
+        {
+          "text": "",
+          "han_characters": 0,
+          "tool_calls": [
+            {
+              "index": 0,
+              "call_id": "call_de3598549c68489a81fe2fd55aa98f2f",
+              "name": "cursor-ide-browser-browser_snapshot",
+              "arguments": {
+                "compact": true,
+                "maxDepth": 5,
+                "viewId": "248302"
+              }
+            }
+          ]
+        },
+        {
+          "text": "You can enter a query to search the web using Google.  \nYou can also search by voice or image, try Google’s AI mode, and use “I’m Feeling Lucky.”  \nThe page also provides links to Gmail, Google Images, language options, settings, and account sign-in.",
+          "han_characters": 0,
+          "tool_calls": []
+        }
+      ],
+      "tool_results": [
+        {
+          "call_id": "call_de3598549c68489a81fe2fd55aa98f2f",
+          "name": "cursor-ide-browser-browser_snapshot",
+          "is_error": false,
+          "characters": 1891,
+          "han_characters": 86,
+          "sha256": "8c20c1e9f50904bb3cb9fb67216ffd7c7ab3df2a4a8624a10bf9232930a219a0",
+          "page_title": [
+            "Google"
+          ],
+          "chinese_labels_present": [
+            "搜索图片",
+            "登录",
+            "搜索",
+            "Google 搜索",
+            "手气不错",
+            "设置"
+          ]
+        }
+      ],
+      "query": "Look at the page that is open and describe what I can do on it in three sentences."
+    },
+    {
+      "run_id": "8648aba1-131e-4f6c-b3d5-1c95d4438abd:d03e1e6c",
+      "status": "completed",
+      "created_at_ms": 1791977265445,
+      "updated_at_ms": 1791977310888,
+      "failure_category": null,
+      "failure_summary": null,
+      "elapsed_ms": 45443,
+      "calls": [
+        {
+          "call_id": "8648aba1-131e-4f6c-b3d5-1c95d4438abd:d03e1e6c:0",
+          "provider_call_index": 0,
+          "model_id": "gpt-6-astra",
+          "reasoning_effort": "high",
+          "status": "completed",
+          "finish_reason": "tool_use",
+          "http_status": 200,
+          "duration_ms": 13670,
+          "ttfb_ms": 13009,
+          "ttft_ms": null,
+          "request_bytes": 157829,
+          "body_sha256": "19736723cf4219736d0b63ebda91c8bd5db8935942012ba704ee872d3dd98a96",
+          "tool_messages_sent": [
+            {
+              "call_id": "call_354891477c034421ae4abb649d01ca4f",
+              "han_characters": 86
+            },
+            {
+              "call_id": "call_de3598549c68489a81fe2fd55aa98f2f",
+              "han_characters": 86
+            }
+          ]
+        },
+        {
+          "call_id": "8648aba1-131e-4f6c-b3d5-1c95d4438abd:d03e1e6c:1",
+          "provider_call_index": 1,
+          "model_id": "gpt-6-astra",
+          "reasoning_effort": "high",
+          "status": "completed",
+          "finish_reason": "tool_use",
+          "http_status": 200,
+          "duration_ms": 13935,
+          "ttfb_ms": 13523,
+          "ttft_ms": null,
+          "request_bytes": 158423,
+          "body_sha256": "be7004c0df2f70b274181f9bb670725d38a7a859e4e14c25eec5a37af7f94837",
+          "tool_messages_sent": [
+            {
+              "call_id": "call_354891477c034421ae4abb649d01ca4f",
+              "han_characters": 86
+            },
+            {
+              "call_id": "call_de3598549c68489a81fe2fd55aa98f2f",
+              "han_characters": 86
+            },
+            {
+              "call_id": "call_cff6727bdf734e61b845e608fe132c37",
+              "han_characters": 0
+            }
+          ]
+        },
+        {
+          "call_id": "8648aba1-131e-4f6c-b3d5-1c95d4438abd:d03e1e6c:2",
+          "provider_call_index": 2,
+          "model_id": "gpt-6-astra",
+          "reasoning_effort": "high",
+          "status": "completed",
+          "finish_reason": "stop",
+          "http_status": 200,
+          "duration_ms": 13330,
+          "ttfb_ms": 11788,
+          "ttft_ms": 11790,
+          "request_bytes": 161666,
+          "body_sha256": "8bd4d4e7f630af194f01d0a4d671b289e8a5a25c1271d53d0303a25e37599d95",
+          "tool_messages_sent": [
+            {
+              "call_id": "call_354891477c034421ae4abb649d01ca4f",
+              "han_characters": 86
+            },
+            {
+              "call_id": "call_de3598549c68489a81fe2fd55aa98f2f",
+              "han_characters": 86
+            },
+            {
+              "call_id": "call_cff6727bdf734e61b845e608fe132c37",
+              "han_characters": 0
+            },
+            {
+              "call_id": "call_465fa2f24be748f2ae77c83ed99bc058",
+              "han_characters": 43
+            }
+          ]
+        }
+      ],
+      "assistant_messages": [
+        {
+          "text": "",
+          "han_characters": 0,
+          "tool_calls": [
+            {
+              "index": 0,
+              "call_id": "call_cff6727bdf734e61b845e608fe132c37",
+              "name": "user-playwright-browser_navigate",
+              "arguments": {
+                "url": "https://www.google.com"
+              }
+            }
+          ]
+        },
+        {
+          "text": "",
+          "han_characters": 0,
+          "tool_calls": [
+            {
+              "index": 0,
+              "call_id": "call_465fa2f24be748f2ae77c83ed99bc058",
+              "name": "user-playwright-browser_snapshot",
+              "arguments": {
+                "depth": 4
+              }
+            }
+          ]
+        },
+        {
+          "text": "The Google homepage is open in Chinese. It has a central search box with buttons for Google Search and “I’m Feeling Lucky,” plus links to Gmail, Google Images, account sign-in, language options, settings, and other Google information.",
+          "han_characters": 0,
+          "tool_calls": []
+        }
+      ],
+      "tool_results": [
+        {
+          "call_id": "call_cff6727bdf734e61b845e608fe132c37",
+          "name": "user-playwright-browser_navigate",
+          "is_error": false,
+          "characters": 219,
+          "han_characters": 0,
+          "sha256": "44cb985363c48f7373e3bf33f0a2a0514e7c91fb89de8834a3d263094cd1d348",
+          "page_title": [
+            "Google"
+          ],
+          "chinese_labels_present": []
+        },
+        {
+          "call_id": "call_465fa2f24be748f2ae77c83ed99bc058",
+          "name": "user-playwright-browser_snapshot",
+          "is_error": false,
+          "characters": 2774,
+          "han_characters": 43,
+          "sha256": "10d078cc5b58ce54df373f75fed3d922f71189b8efd50dcf5ee3af1d5f9ee981",
+          "page_title": [
+            "Google"
+          ],
+          "chinese_labels_present": [
+            "搜索图片",
+            "登录",
+            "搜索",
+            "Google 搜索",
+            "手气不错",
+            "设置"
+          ]
+        }
+      ],
+      "query": "Now use the Playwright MCP browser to open https://www.google.com and briefly describe the page."
+    }
+  ],
+  "ui_verified": {
+    "four_final_responses_displayed": true,
+    "google_page_rendered": true,
+    "google_ui_language": "Chinese",
+    "intermittent_capture_error": "ScreenCaptureKit -3812; reconnecting restored access"
+  },
+  "input_note": "Round 2 contains duplicated English text and a missing colon in its first URL caused during UI input. The exact provider query is retained; actual navigation used https://www.google.com successfully. Rounds 3 and 4 were entered once and verified before submission.",
+  "conclusion": "Not reproduced with current Cursor and gpt-6-astra. Real IDE browser and Playwright returned Chinese page contents, but all four final responses remained English. Not a fix or verification of original GPT-5.6 Luna.",
+  "production_code_changed": false,
+  "cleanup": {
+    "server_stopped": true,
+    "ports_closed": true,
+    "proxy_keys_restored": true,
+    "unrelated_settings_preserved": true,
+    "formal_database_hash_unchanged": true,
+    "temporary_db_and_log_removed": true,
+    "temporary_build_config_removed": true,
+    "workspace_retained": true,
+    "formal_byok_was_running_before_test": false
+  }
+}

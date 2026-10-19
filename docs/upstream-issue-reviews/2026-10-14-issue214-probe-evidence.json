@@ -1,0 +1,88 @@
+{
+  "baseline": "b541d696e71943550e38135191d77cf05ddbda94",
+  "scope": "FakeProvider plus simulated Cursor client; not a real provider or UI test",
+  "command": "cargo test --locked -p cursor-server --test issue214_probe -- --nocapture",
+  "passed": 4,
+  "cases": [
+    {
+      "case": "pending-length",
+      "checkpoint_todos": [
+        {
+          "id": "one",
+          "status": "TODO_STATUS_COMPLETED"
+        },
+        {
+          "id": "two",
+          "status": "TODO_STATUS_PENDING"
+        }
+      ],
+      "elapsed_ms": 266,
+      "end_stream_error": true,
+      "failure_summary": "model stopped before completing the response",
+      "provider_calls": 2,
+      "run_status": "failed",
+      "todo_cards": 1,
+      "turn_ended": false
+    },
+    {
+      "case": "pending-stop",
+      "checkpoint_todos": [
+        {
+          "id": "one",
+          "status": "TODO_STATUS_COMPLETED"
+        },
+        {
+          "id": "two",
+          "status": "TODO_STATUS_PENDING"
+        }
+      ],
+      "elapsed_ms": 2268,
+      "end_stream_error": false,
+      "failure_summary": null,
+      "provider_calls": 2,
+      "run_status": "completed",
+      "todo_cards": 1,
+      "turn_ended": true
+    },
+    {
+      "case": "completed-stop",
+      "checkpoint_todos": [
+        {
+          "id": "one",
+          "status": "TODO_STATUS_COMPLETED"
+        },
+        {
+          "id": "two",
+          "status": "TODO_STATUS_COMPLETED"
+        }
+      ],
+      "elapsed_ms": 2274,
+      "end_stream_error": false,
+      "failure_summary": null,
+      "provider_calls": 3,
+      "run_status": "completed",
+      "todo_cards": 2,
+      "turn_ended": true
+    },
+    {
+      "case": "pending-eof",
+      "checkpoint_todos": [
+        {
+          "id": "one",
+          "status": "TODO_STATUS_COMPLETED"
+        },
+        {
+          "id": "two",
+          "status": "TODO_STATUS_PENDING"
+        }
+      ],
+      "elapsed_ms": 40370,
+      "end_stream_error": true,
+      "failure_summary": "provider stream reached EOF before Done",
+      "provider_calls": 10,
+      "run_status": "failed",
+      "todo_cards": 1,
+      "turn_ended": false
+    }
+  ]
+}

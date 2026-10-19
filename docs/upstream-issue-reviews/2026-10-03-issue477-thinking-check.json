@@ -1,0 +1,19 @@
+{
+  "date": "2026-10-03",
+  "commit": "b49ae95",
+  "call_id": "107e0efb-ef16-47ba-97ea-a6351649e903:cc30e664:1",
+  "provider_protocol": "openai-chat",
+  "provider_reasoning_content": "**Formulating concise summary with citations**",
+  "caption_in_answer_content": false,
+  "cursor_thinking_delta_frame": 43,
+  "cursor_thinking_completed_frame": 44,
+  "cursor_thinking_duration_ms": 17,
+  "first_provider_chunk_received_offset_ms": 5984,
+  "last_provider_chunk_received_offset_ms": 14706,
+  "conclusion": "Caption is forwarded unchanged from provider reasoning_content into Cursor ThinkingDelta; duration measures local reasoning-stream interval, not actual model reasoning time.",
+  "limits": [
+    "Time until first chunk includes upstream processing and network latency; cannot attribute all 5984 ms to reasoning.",
+    "Source provider service may itself transform reasoning; no evidence of its internal behavior."
+  ],
+  "production_code_changed": false
+}

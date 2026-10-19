@@ -1,0 +1,302 @@
+{
+  "date": "2026-10-14",
+  "baseline": "b541d696e71943550e38135191d77cf05ddbda94",
+  "cursor_version": "3.24.12",
+  "ui_model": "gpt-6 High",
+  "model_id": "gpt-6-astra",
+  "conversation_id": "52524c1c-d4ae-4c58-bc2f-ee6cd6c6cb2d",
+  "workspace": "/tmp/cursor-byok-issue214-20261014/workspace",
+  "prompt": "这是一个小型 Python 订单统计项目，请完成以下五项，并先用 TodoWrite 建立待办、执行中更新状态：\n1. 阅读 data/orders.csv，建立 orders.py，用 Decimal 处理金额，只统计 status=paid 的订单。\n2. 实现命令行：python3 orders.py --input data/orders.csv --output report.json。JSON 包含 paid_count、total_amount（两位小数字符串）、customers（按名字排序，每项含 name、count、total_amount）。\n3. 补齐 unittest，覆盖正常数据、空文件（只有表头）、非法金额、缺少必需列。非法输入应给出清晰错误和非零退出码。\n4. 运行单元测试和上述命令，检查 report.json；修复发现的问题。\n5. 更新 README.md，说明用法和错误行为，最后汇报实际测试结果。\n所有文件只放在当前测试工作区，不需要安装第三方依赖。",
+  "input_csv": "order_id,customer,amount,status\nA01,Alice,12.50,paid\nA02,Bob,20.00,paid\nA03,Alice,7.50,paid\nA04,Carol,99.00,cancelled\nA05,Bob,5.25,paid\nA06,Dan,0.10,paid\nA07,Dan,0.20,paid\nA08,Eve,15.00,pending\nA09,Carol,8.00,paid\nA10,Alice,1.25,paid\nA11,Eve,3.00,paid\nA12,Frank,4.00,paid\n",
+  "runs": [
+    {
+      "run_id": "070ef6d3-ca15-4539-809d-20e83b2f347b:fe55f886",
+      "status": "completed",
+      "created_at_ms": 1791945475730,
+      "updated_at_ms": 1791945709299,
+      "provider_call_index": 12,
+      "failure_category": null,
+      "failure_summary": null
+    }
+  ],
+  "server_elapsed_ms": 233569,
+  "calls": [
+    {
+      "provider_call_index": 0,
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "finish_reason": "tool_use",
+      "duration_ms": 8048
+    },
+    {
+      "provider_call_index": 1,
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "finish_reason": "tool_use",
+      "duration_ms": 3546
+    },
+    {
+      "provider_call_index": 2,
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "finish_reason": "tool_use",
+      "duration_ms": 5088
+    },
+    {
+      "provider_call_index": 3,
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "finish_reason": "tool_use",
+      "duration_ms": 18957
+    },
+    {
+      "provider_call_index": 4,
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "finish_reason": "tool_use",
+      "duration_ms": 41458
+    },
+    {
+      "provider_call_index": 5,
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "finish_reason": "tool_use",
+      "duration_ms": 56960
+    },
+    {
+      "provider_call_index": 6,
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "finish_reason": "tool_use",
+      "duration_ms": 6366
+    },
+    {
+      "provider_call_index": 7,
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "finish_reason": "tool_use",
+      "duration_ms": 6891
+    },
+    {
+      "provider_call_index": 8,
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "finish_reason": "tool_use",
+      "duration_ms": 4727
+    },
+    {
+      "provider_call_index": 9,
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "finish_reason": "tool_use",
+      "duration_ms": 10263
+    },
+    {
+      "provider_call_index": 10,
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "finish_reason": "tool_use",
+      "duration_ms": 42228
+    },
+    {
+      "provider_call_index": 11,
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "finish_reason": "tool_use",
+      "duration_ms": 4659
+    },
+    {
+      "provider_call_index": 12,
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "finish_reason": "stop",
+      "duration_ms": 13444
+    }
+  ],
+  "user_query_messages": 1,
+  "sent_continue": false,
+  "todo_updates": [
+    {
+      "merge": false,
+      "todos": [
+        {
+          "content": "检查工作区、订单 CSV 和现有项目文件。",
+          "id": "inspect",
+          "status": "in_progress"
+        },
+        {
+          "content": "实现 Decimal 订单统计和命令行，补齐 unittest。",
+          "id": "implement",
+          "status": "pending"
+        },
+        {
+          "content": "运行测试和指定命令，检查 report.json 并修复问题。",
+          "id": "validate",
+          "status": "pending"
+        },
+        {
+          "content": "更新 README.md 并汇报实际验证结果。",
+          "id": "document",
+          "status": "pending"
+        }
+      ]
+    },
+    {
+      "merge": true,
+      "todos": [
+        {
+          "id": "inspect",
+          "status": "completed"
+        },
+        {
+          "id": "implement",
+          "status": "in_progress"
+        }
+      ]
+    },
+    {
+      "merge": true,
+      "todos": [
+        {
+          "id": "implement",
+          "status": "completed"
+        },
+        {
+          "id": "validate",
+          "status": "in_progress"
+        }
+      ]
+    },
+    {
+      "merge": true,
+      "todos": [
+        {
+          "id": "validate",
+          "status": "completed"
+        },
+        {
+          "id": "document",
+          "status": "in_progress"
+        }
+      ]
+    },
+    {
+      "merge": true,
+      "todos": [
+        {
+          "id": "validate",
+          "status": "completed"
+        },
+        {
+          "id": "document",
+          "status": "completed"
+        }
+      ]
+    }
+  ],
+  "final_todos": [
+    {
+      "content": "检查工作区、订单 CSV 和现有项目文件。",
+      "id": "inspect",
+      "status": "completed"
+    },
+    {
+      "content": "实现 Decimal 订单统计和命令行，补齐 unittest。",
+      "id": "implement",
+      "status": "completed"
+    },
+    {
+      "content": "运行测试和指定命令，检查 report.json 并修复问题。",
+      "id": "validate",
+      "status": "completed"
+    },
+    {
+      "content": "更新 README.md 并汇报实际验证结果。",
+      "id": "document",
+      "status": "completed"
+    }
+  ],
+  "cursor_ui": {
+    "summary": "4 of 4 To-dos Completed",
+    "elapsed_display": "Worked for 3m 36s",
+    "final_response": "已完成全部五项，并按要求先建立待办、执行中更新状态，现已全部完成。"
+  },
+  "commands": [
+    {
+      "block_until_ms": 10000,
+      "command": "python3 -m unittest -v && python3 orders.py --input data/orders.csv --output report.json",
+      "description": "Run unit tests and generate order report",
+      "working_directory": "/private/tmp/cursor-byok-issue214-20261014/workspace"
+    }
+  ],
+  "independent_validation": {
+    "unittest": "18 passed; exit 0",
+    "report_equals_full_expected": true
+  },
+  "report": {
+    "paid_count": 10,
+    "total_amount": "61.80",
+    "customers": [
+      {
+        "name": "Alice",
+        "count": 3,
+        "total_amount": "21.25"
+      },
+      {
+        "name": "Bob",
+        "count": 2,
+        "total_amount": "25.25"
+      },
+      {
+        "name": "Carol",
+        "count": 1,
+        "total_amount": "8.00"
+      },
+      {
+        "name": "Dan",
+        "count": 2,
+        "total_amount": "0.30"
+      },
+      {
+        "name": "Eve",
+        "count": 1,
+        "total_amount": "3.00"
+      },
+      {
+        "name": "Frank",
+        "count": 1,
+        "total_amount": "4.00"
+      }
+    ]
+  },
+  "files": {
+    "report.json": {
+      "bytes": 565,
+      "sha256": "5c6ee199d203c22411c47ebf2b2cedf85bc91605da04676c153f11e6ed90f47f"
+    },
+    "orders.py": {
+      "bytes": 4083,
+      "sha256": "bedc12a2b83e3d6e33440b626ba508a581c87d52e60c598ff85f3798fd50eabd"
+    },
+    "README.md": {
+      "bytes": 3923,
+      "sha256": "242e2ac56b3a1a9f91ab1c6f73630e13078635c3b2a5790f6b90554d753ce0fc"
+    },
+    "test_orders.py": {
+      "bytes": 7818,
+      "sha256": "f847d860a1f8f0eecfc49ba695ec4890c2d211d384dffca513716dd47cd357d2"
+    },
+    "data/orders.csv": {
+      "bytes": 272,
+      "sha256": "6367edef4818010ff9aa322648c8672f3c29255a1ddb9abec045797a9a6a9339"
+    }
+  },
+  "limitation": "One gpt-6-astra run; original opencode-mimo-v2.5 was not configured or tested.",
+  "cleanup": {
+    "test_server_stopped": true,
+    "test_ports_closed": true,
+    "original_proxy_keys_restored": true,
+    "unrelated_settings_preserved": true,
+    "formal_db_sha256_unchanged": true
+  }
+}

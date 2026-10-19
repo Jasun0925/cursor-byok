@@ -1,0 +1,71 @@
+{
+  "date": "2026-10-14",
+  "baseline": "b541d696e71943550e38135191d77cf05ddbda94",
+  "upstream_issue": 174,
+  "upstream_state": "OPEN",
+  "scope": "Local HTTP server plus real OpenAI Chat adapter and run loop; simulated Cursor client. Resume checks use FakeProvider. No actual Cursor failure/Resume UI test.",
+  "command": "cargo test --locked -p cursor-server --test issue174_probe --test issue172_repro -- --nocapture",
+  "passed": 5,
+  "http_retry": {
+    "elapsed_ms": 12117,
+    "http_statuses": [
+      503,
+      503,
+      200
+    ],
+    "mode_reminder_blocks_per_request": [
+      2,
+      2,
+      2
+    ],
+    "request_bodies_byte_identical": true,
+    "request_body_bytes": [
+      45657,
+      45657,
+      45657
+    ],
+    "requests": 3,
+    "run_status": "completed",
+    "stored_mode_reminder_blocks": 2,
+    "streamed_text": "RECOVERED_174"
+  },
+  "resume_regressions": [
+    {
+      "calls_before_resume": 2,
+      "completed_result_preserved": true,
+      "completed_text_preserved": true,
+      "interrupted_cycle_text_preserved": true,
+      "replayed_tools": 0,
+      "scenario": "ManualPendingTool",
+      "visible_text_emitted": true
+    },
+    {
+      "calls_before_resume": 2,
+      "completed_result_preserved": true,
+      "completed_text_preserved": true,
+      "interrupted_cycle_text_preserved": true,
+      "replayed_tools": 0,
+      "scenario": "ManualMixedTools",
+      "visible_text_emitted": true
+    },
+    {
+      "calls_before_resume": 2,
+      "completed_result_preserved": true,
+      "completed_text_preserved": true,
+      "interrupted_cycle_text_preserved": true,
+      "replayed_tools": 0,
+      "scenario": "ManualPartial",
+      "visible_text_emitted": true
+    },
+    {
+      "calls_before_resume": 10,
+      "completed_result_preserved": true,
+      "completed_text_preserved": true,
+      "interrupted_cycle_text_preserved": true,
+      "replayed_tools": 0,
+      "scenario": "ProviderFailure",
+      "visible_text_emitted": true
+    }
+  ],
+  "production_code_changed": false
+}

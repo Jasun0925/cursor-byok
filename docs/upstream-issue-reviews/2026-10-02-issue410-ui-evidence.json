@@ -1,0 +1,190 @@
+{
+  "date": "2026-10-02",
+  "commit": "7037431",
+  "operator": "user",
+  "provider": "controlled local Responses SSE mock",
+  "real_cursor_ui": true,
+  "live_remote_provider": false,
+  "same_conversation": true,
+  "screenshot": "assets/2026-10-02-issue410-ui-complete.png",
+  "scenarios": {
+    "completed_snapshot_only": "passed",
+    "missing_suffix": "passed",
+    "no_duplicate_text": "passed",
+    "shell_review_roundtrip": "passed",
+    "tool_details_expansion": "passed"
+  },
+  "ui_tool_status": "Ran",
+  "additional_snapshot_retest_request": false,
+  "original_issue_root_cause_confirmed": false,
+  "backend": {
+    "calls": [
+      {
+        "call_id": "729d4de5-287f-426f-a37c-ab8d6fced77b:bc9300ea:0",
+        "conversation_id": "d5c392ce-f0c2-471b-be2e-636ce1788594",
+        "model_id": "issue410-snapshot",
+        "status": "completed",
+        "finish_reason": "stop",
+        "http_status": 200,
+        "error_message": null
+      },
+      {
+        "call_id": "62757dd7-bccc-48e8-b713-4a6c79881624:dd2f8be8:0",
+        "conversation_id": "d5c392ce-f0c2-471b-be2e-636ce1788594",
+        "model_id": "issue410-suffix",
+        "status": "completed",
+        "finish_reason": "stop",
+        "http_status": 200,
+        "error_message": null
+      },
+      {
+        "call_id": "0a6ad032-8dd4-4ac8-88d5-9f82358abe17:d060c25a:0",
+        "conversation_id": "d5c392ce-f0c2-471b-be2e-636ce1788594",
+        "model_id": "issue410-normal",
+        "status": "completed",
+        "finish_reason": "stop",
+        "http_status": 200,
+        "error_message": null
+      },
+      {
+        "call_id": "80dca806-1347-43c9-9b1e-3bb616bc1a76:c1fe2137:0",
+        "conversation_id": "d5c392ce-f0c2-471b-be2e-636ce1788594",
+        "model_id": "issue410-tool",
+        "status": "completed",
+        "finish_reason": "tool_use",
+        "http_status": 200,
+        "error_message": null
+      },
+      {
+        "call_id": "80dca806-1347-43c9-9b1e-3bb616bc1a76:c1fe2137:1",
+        "conversation_id": "d5c392ce-f0c2-471b-be2e-636ce1788594",
+        "model_id": "issue410-tool",
+        "status": "completed",
+        "finish_reason": "stop",
+        "http_status": 200,
+        "error_message": null
+      }
+    ],
+    "tools": [
+      {
+        "call_id": "call_review_8fd462eed3f4",
+        "name": "Shell",
+        "status": "completed",
+        "result_content": "# Review fixture\n\n- UI marker: ISSUE410_REVIEW_FILE_READ\n- Requirement: final review text must be visible exactly once.\n",
+        "result_is_error": 0
+      }
+    ],
+    "runs": [
+      {
+        "run_id": "729d4de5-287f-426f-a37c-ab8d6fced77b:bc9300ea",
+        "conversation_id": "d5c392ce-f0c2-471b-be2e-636ce1788594",
+        "status": "completed",
+        "provider_call_index": 0,
+        "failure_summary": null
+      },
+      {
+        "run_id": "62757dd7-bccc-48e8-b713-4a6c79881624:dd2f8be8",
+        "conversation_id": "d5c392ce-f0c2-471b-be2e-636ce1788594",
+        "status": "completed",
+        "provider_call_index": 0,
+        "failure_summary": null
+      },
+      {
+        "run_id": "0a6ad032-8dd4-4ac8-88d5-9f82358abe17:d060c25a",
+        "conversation_id": "d5c392ce-f0c2-471b-be2e-636ce1788594",
+        "status": "completed",
+        "provider_call_index": 0,
+        "failure_summary": null
+      },
+      {
+        "run_id": "80dca806-1347-43c9-9b1e-3bb616bc1a76:c1fe2137",
+        "conversation_id": "d5c392ce-f0c2-471b-be2e-636ce1788594",
+        "status": "completed",
+        "provider_call_index": 1,
+        "failure_summary": null
+      }
+    ],
+    "marker_lines": [
+      "ISSUE410_EXECUTED"
+    ],
+    "mock_requests": [
+      {
+        "time": 1790933093.623507,
+        "model": "issue410-snapshot",
+        "scenario": "snapshot",
+        "tool_results": 0,
+        "file_marker_in_result": false,
+        "event_types": [
+          "response.completed"
+        ]
+      },
+      {
+        "time": 1790933100.3647249,
+        "model": "issue410-suffix",
+        "scenario": "suffix",
+        "tool_results": 0,
+        "file_marker_in_result": false,
+        "event_types": [
+          "response.output_text.delta",
+          "response.completed"
+        ]
+      },
+      {
+        "time": 1790933105.895106,
+        "model": "issue410-normal",
+        "scenario": "normal",
+        "tool_results": 0,
+        "file_marker_in_result": false,
+        "event_types": [
+          "response.output_text.delta",
+          "response.output_text.done",
+          "response.output_item.done",
+          "response.completed"
+        ]
+      },
+      {
+        "time": 1790933120.325139,
+        "model": "issue410-tool",
+        "scenario": "tool",
+        "tool_results": 0,
+        "file_marker_in_result": false,
+        "event_types": [
+          "response.output_item.done",
+          "response.completed"
+        ]
+      },
+      {
+        "time": 1790933123.6277812,
+        "model": "issue410-tool",
+        "scenario": "tool",
+        "tool_results": 1,
+        "file_marker_in_result": true,
+        "event_types": [
+          "response.completed"
+        ]
+      }
+    ]
+  },
+  "restoration": {
+    "status": {
+      "integration": "enabled",
+      "configured_models": 4,
+      "settings_applied": true,
+      "proxy_url": "http://127.0.0.1:49642"
+    },
+    "settings_byte_identical": true,
+    "unrelated_settings_unchanged": true,
+    "ports": {
+      "49588": true,
+      "49642": true,
+      "53221": false,
+      "53222": false,
+      "52931": false
+    }
+  },
+  "merged": true,
+  "released": true,
+  "merge_date": "2026-10-02",
+  "release_version": "v1.0.7",
+  "release_url": "https://github.com/haohaomin/cursor-byok/releases/tag/v1.0.7"
+}

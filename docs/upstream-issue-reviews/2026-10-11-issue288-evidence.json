@@ -1,0 +1,279 @@
+{
+  "checkedAt": "2026-10-11T09:27:01.067424+00:00",
+  "issue": {
+    "number": 288,
+    "url": "https://github.com/leookun/cursor-byok/issues/288",
+    "title": "切模型的问题",
+    "state": "OPEN",
+    "comments": 0,
+    "reportedBehavior": "MCP works with one model; after switching in the same conversation, another model says it cannot call MCP."
+  },
+  "baseCommit": "fd3f66f2495e249c0f9f125ed13fae510f90bcab",
+  "baseVersion": "1.0.14",
+  "productionCodeChanged": false,
+  "runtime": "Real TransportRegistry, context hydration, SQLite Store, checkpoint serialization and tool dispatch; FakeProvider with synthetic Cursor MCP/context responses.",
+  "modelSelection": [
+    "claude-opus-4.8",
+    "claude-opus-4.6",
+    "claude-opus-4.8"
+  ],
+  "modelSelectionIsSimulated": true,
+  "mcpCases": [
+    {
+      "source": "AgentRunRequest.mcp_tools",
+      "turns": 3,
+      "clientMcpExecs": 3,
+      "modelRequests": 6,
+      "contextReloads": [
+        0,
+        0,
+        0
+      ],
+      "registryRecreatedBeforeFinalTurn": true,
+      "result": "passed"
+    },
+    {
+      "source": "UserMessageAction.request_context.tools",
+      "turns": 3,
+      "clientMcpExecs": 3,
+      "modelRequests": 6,
+      "contextReloads": [
+        0,
+        0,
+        0
+      ],
+      "registryRecreatedBeforeFinalTurn": true,
+      "result": "passed"
+    },
+    {
+      "source": "RequestContextMcpsPart.tools",
+      "turns": 3,
+      "clientMcpExecs": 3,
+      "modelRequests": 6,
+      "contextReloads": [
+        1,
+        0,
+        0
+      ],
+      "registryRecreatedBeforeFinalTurn": true,
+      "result": "passed"
+    },
+    {
+      "source": "RequestContextMcpsPart.mcp_meta_tool_options + CallMcpTool",
+      "turns": 3,
+      "clientMcpExecs": 3,
+      "modelRequests": 6,
+      "contextReloads": [
+        1,
+        0,
+        0
+      ],
+      "registryRecreatedBeforeFinalTurn": true,
+      "result": "passed"
+    }
+  ],
+  "mcpTestResult": {
+    "passed": 4,
+    "failed": 0,
+    "filteredOut": 1,
+    "exitCode": 0
+  },
+  "independentIdentityProbe": {
+    "test": "checkpoint_roundtrip_preserves_ids_without_model_switch",
+    "result": "failed",
+    "exitCode": 101,
+    "observedChangedMessageIds": 2,
+    "preserved": [
+      "history roles",
+      "history content",
+      "tool call IDs",
+      "tool arguments",
+      "MCP results",
+      "request-context message IDs",
+      "runtime message IDs"
+    ],
+    "difference": "Assistant/tool-result internal IDs become cursor-root:* after checkpoint hydration, including when model remains the same.",
+    "relevance": "Not evidence of model-switch MCP failure; production consequence and wire serialization impact not established."
+  },
+  "limitations": [
+    "No real Cursor UI model switch, live model inference, MCP server execution or provider HTTP serialization was exercised.",
+    "MCP calls were produced by FakeProvider; tests cannot prove a real model will choose the tool.",
+    "Covered direct/inline/blob/meta declaration shapes; no assertion about all client-specific declaration changes on model switch.",
+    "Registry was recreated with the same Store; this is not a real process restart."
+  ],
+  "manualTest": {
+    "status": "user_accepted_current_A_to_B_result; checked_not_reproduced_for_tested_models",
+    "configuredMcpCandidate": "playwright",
+    "operation": "browser_tabs action=list",
+    "steps": [
+      "New Agent conversation, choose usable model A and list tabs using Playwright MCP.",
+      "In the same conversation choose usable model B and repeat the identical tool call.",
+      "Switch back to model A and repeat."
+    ],
+    "passCriteria": "All three requests invoke the actual MCP tool and receive results. An empty tab list is a valid result.",
+    "verifiedModelSequence": [
+      "gpt-6-astra",
+      "gpt-5.6-sol"
+    ],
+    "returnSwitch": "Not performed; user explicitly accepted existing results and requested moving on."
+  },
+  "liveAttempts": [
+    {
+      "observedAt": "2026-10-11T09:34:23.088368+00:00",
+      "composerId": "056c23d3-7202-4329-abf8-b58a0531ccc4",
+      "reusedEarlierRollbackConversation": true,
+      "modelId": "gpt-6-astra",
+      "modelHash": "df862e8a9cc595ec",
+      "byokRunId": "c45dbd14-2342-49f7-af4b-6bbbef5ffc69:4e873aaf",
+      "byokCompletedProviderCalls": 3,
+      "screenshot": "/var/folders/94/7x3w4znd6fl1k54t41jbw46m0000gn/T/codex-clipboard-96ecf65c-7e1d-4dc5-b1d1-ddd29b07bbd5.png",
+      "toolEvidence": [
+        {
+          "bubbleId": "1d9e3278-3b9b-4406-a9fa-348fd4b10b18",
+          "createdAt": "2026-10-11T09:28:10.681Z",
+          "tool": {
+            "name": "get_mcp_tools",
+            "toolCallId": "call_6b99721802794330850210093291734c",
+            "status": "completed",
+            "params": "{\"server\":\"user-playwright\",\"toolName\":\"browser_tabs\"}",
+            "result": "{\"content\":\"{\\n  \\\"tools\\\": [\\n    {\\n      \\\"description\\\": \\\"List, create, close, or select a browser tab.\\\",\\n      \\\"inputSchema\\\": {\\n        \\\"$schema\\\": \\\"https://json-schema.org/draft/2020-12/schema\\\",\\n        \\\"additionalProperties\\\": false,\\n        \\\"properties\\\": {\\n          \\\"action\\\": {\\n            \\\"description\\\": \\\"Operation to perform\\\",\\n            \\\"enum\\\": [\\n              \\\"list\\\",\\n              \\\"new\\\",\\n              \\\"close\\\",\\n              \\\"select\\\"\\n            ],\\n            \\\"type\\\": \\\"string\\\"\\n          },\\n          \\\"index\\\": {\\n            \\\"description\\\": \\\"Tab index, used for close/select. If omitted for close, current tab is closed.\\\",\\n            \\\"type\\\": \\\"number\\\"\\n          },\\n          \\\"url\\\": {\\n            \\\"description\\\": \\\"URL to navigate to in the new tab, used for new.\\\",\\n            \\\"type\\\": \\\"string\\\"\\n          }\\n        },\\n        \\\"required\\\": [\\n          \\\"action\\\"\\n        ],\\n        \\\"type\\\": \\\"object\\\"\\n      },\\n      \\\"server\\\": \\\"user-playwright\\\",\\n      \\\"serverName\\\": \\\"playwright\\\",\\n      \\\"serverStatus\\\": \\\"connected\\\",\\n      \\\"toolName\\\": \\\"browser_tabs\\\"\\n    }\\n  ]\\n}\"}",
+            "rawArgs": "{\"server\":\"user-playwright\",\"toolName\":\"browser_tabs\",\"toolCallId\":\"call_6b99721802794330850210093291734c\"}"
+          }
+        },
+        {
+          "bubbleId": "0ae13c7e-52e0-4330-829f-f97b57ca7a6d",
+          "createdAt": "2026-10-11T09:28:15.457Z",
+          "tool": {
+            "name": "mcp--browser_tabs",
+            "toolCallId": "call_f6ea10997cbe47dbbe1fc9ccb69ad2bb",
+            "status": "error",
+            "params": "{\"tools\":[{\"name\":\"browser_tabs\",\"parameters\":\"{\\\"action\\\":\\\"list\\\"}\"}]}",
+            "result": "{\"result\":\"{\\\"content\\\":[{\\\"type\\\":\\\"text\\\",\\\"text\\\":\\\"### Error\\\\nError: Browser \\\\\\\"chrome-for-testing\\\\\\\" is not installed; expected executable at /Users/renhao/Library/Caches/ms-playwright/chromium-1247/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing. Run `npx @playwright/mcp install-browser chrome-for-testing` to install\\\"}]}\"}",
+            "rawArgs": "{\"name\":\"browser_tabs\",\"args\":{\"action\":\"list\"},\"toolCallId\":\"call_f6ea10997cbe47dbbe1fc9ccb69ad2bb\",\"providerIdentifier\":\"\",\"toolName\":\"browser_tabs\",\"smartModeApprovalOnly\":false,\"skipApproval\":false,\"serverIdentifier\":\"user-playwright\",\"symbolicPathArguments\":[]}"
+          }
+        }
+      ],
+      "result": "MCP discovery succeeded, server reported connected, browser_tabs action=list reached MCP and returned missing-browser error.",
+      "environment": {
+        "mcpVersion": "0.0.83",
+        "playwrightVersion": "1.64.0-alpha-1790635538000",
+        "browserRevisionRequired": "1247",
+        "browserRevisionsAlreadyPresent": [
+          "1223",
+          "1228",
+          "1229",
+          "1243"
+        ],
+        "browserLaunchArgument": "--browser=chromium"
+      },
+      "interpretation": "Environment failure before a successful baseline. Not evidence that switching models removes MCP.",
+      "repairStatus": "Chrome for Testing 155.0.8059.12 (chromium revision 1247) installed successfully with --no-shell --no-remove. Cursor MCP configuration unchanged."
+    },
+    {
+      "observedAt": "2026-10-11T09:48:06.346884+00:00",
+      "composerId": "056c23d3-7202-4329-abf8-b58a0531ccc4",
+      "userBubbleId": "8bbc860a-b21d-4570-b8ad-e6f09b237863",
+      "toolBubbleId": "9dc651b3-fa7b-4cf6-ade3-573a90416e4a",
+      "modelId": "gpt-6-astra",
+      "byokRunId": "86d3299b-93c2-4c75-94d3-f9ac80218f8e:2f11b09d",
+      "byokCalls": [
+        {
+          "call_id": "86d3299b-93c2-4c75-94d3-f9ac80218f8e:2f11b09d:0",
+          "model_id": "gpt-6-astra",
+          "model_hash": "df862e8a9cc595ec",
+          "reasoning_effort": "high",
+          "status": "completed",
+          "created_at_ms": 1791711950516,
+          "finished_at_ms": 1791711955942
+        },
+        {
+          "call_id": "86d3299b-93c2-4c75-94d3-f9ac80218f8e:2f11b09d:1",
+          "model_id": "gpt-6-astra",
+          "model_hash": "df862e8a9cc595ec",
+          "reasoning_effort": "high",
+          "status": "completed",
+          "created_at_ms": 1791711957904,
+          "finished_at_ms": 1791711961200
+        }
+      ],
+      "toolEvidence": {
+        "name": "mcp--browser_tabs",
+        "toolCallId": "call_5ed24e15ef4842d79dbe0e3b96f0a6b4",
+        "status": "completed",
+        "params": "{\"tools\":[{\"name\":\"browser_tabs\",\"parameters\":\"{\\\"action\\\":\\\"list\\\"}\"}]}",
+        "result": "{\"result\":\"{\\\"content\\\":[{\\\"type\\\":\\\"text\\\",\\\"text\\\":\\\"### Result\\\\n- 0: (current) [](about:blank)\\\"}]}\"}"
+      },
+      "result": "Actual Cursor browser_tabs(action=list) completed and returned one about:blank tab.",
+      "screenshot": "/var/folders/94/7x3w4znd6fl1k54t41jbw46m0000gn/T/codex-clipboard-14aa4d20-83f6-41d0-aa15-f696f79dff0d.png"
+    },
+    {
+      "observedAt": "2026-10-11T09:48:06.347149+00:00",
+      "composerId": "056c23d3-7202-4329-abf8-b58a0531ccc4",
+      "userBubbleId": "7f7bdfd5-1e09-4e18-b93e-8890357296cc",
+      "toolBubbleId": "83306221-8e28-4ce0-bf43-07edb0b5c934",
+      "modelId": "gpt-5.6-sol",
+      "byokRunId": "81465a03-37e0-4792-b8b4-1e348246b3d4:ab4192c6",
+      "byokCalls": [
+        {
+          "call_id": "81465a03-37e0-4792-b8b4-1e348246b3d4:ab4192c6:0",
+          "model_id": "gpt-5.6-sol",
+          "model_hash": "73d05fb9f0e2928a",
+          "reasoning_effort": "high",
+          "status": "completed",
+          "created_at_ms": 1791712001235,
+          "finished_at_ms": 1791712004046
+        },
+        {
+          "call_id": "81465a03-37e0-4792-b8b4-1e348246b3d4:ab4192c6:1",
+          "model_id": "gpt-5.6-sol",
+          "model_hash": "73d05fb9f0e2928a",
+          "reasoning_effort": "high",
+          "status": "completed",
+          "created_at_ms": 1791712004246,
+          "finished_at_ms": 1791712006555
+        }
+      ],
+      "toolEvidence": {
+        "name": "mcp--browser_tabs",
+        "toolCallId": "call_44fa0ff4cf7b46948646865ae2b73420",
+        "status": "completed",
+        "params": "{\"tools\":[{\"name\":\"browser_tabs\",\"parameters\":\"{\\\"action\\\":\\\"list\\\"}\"}]}",
+        "result": "{\"result\":\"{\\\"content\\\":[{\\\"type\\\":\\\"text\\\",\\\"text\\\":\\\"### Result\\\\n- 0: (current) [](about:blank)\\\"}]}\"}"
+      },
+      "result": "Actual Cursor browser_tabs(action=list) completed and returned one about:blank tab.",
+      "screenshot": "/var/folders/94/7x3w4znd6fl1k54t41jbw46m0000gn/T/codex-clipboard-14aa4d20-83f6-41d0-aa15-f696f79dff0d.png"
+    }
+  ],
+  "environmentRepair": {
+    "completedAt": "2026-10-11T09:35:44.383088+00:00",
+    "browserVersion": "155.0.8059.12",
+    "browserRevision": "1247",
+    "mcpSmoke": {
+      "serverInfo": {
+        "name": "Playwright",
+        "version": "1.64.0-alpha-1790635538000"
+      },
+      "tool": "browser_tabs",
+      "arguments": {
+        "action": "list"
+      },
+      "result": {
+        "content": [
+          {
+            "type": "text",
+            "text": "### Result\n- 0: (current) [](about:blank)"
+          }
+        ]
+      },
+      "scope": "Direct local MCP smoke, isolated headless browser. Not a Cursor UI retest or model-switch test."
+    },
+    "cursorRetest": "passed: both tested models successfully executed browser_tabs in Cursor"
+  },
+  "reviewOutcome": {
+    "status": "checked_not_reproduced",
+    "acceptedByUser": true,
+    "acceptedAt": "2026-10-11T09:49:34.570697+00:00",
+    "productionFix": false,
+    "upstreamIssueClosed": false
+  }
+}
