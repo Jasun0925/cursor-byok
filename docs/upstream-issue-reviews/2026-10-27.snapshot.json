@@ -76,8 +76,9 @@
       "labels": [],
       "triage": {
         "priority": "A",
-        "status": "静态确认拒绝路径，待复现修复",
-        "next_step": "当前 decode_assistant 仍拒绝第二个签名；需有序块回放及 checkpoint 往返测试。"
+        "status": "checkpoint 拒绝已复现，原网关路径待取证，未修复",
+        "next_step": "两个合成 checkpoint 失败；30 项原生签名/恢复等对照通过。需出错 checkpoint 与前一响应，区分完整快照、增量块及不透明 Cursor 状态。",
+        "evidence": "2026-10-27-issue505-check.md"
       }
     },
     {

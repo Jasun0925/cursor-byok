@@ -247,7 +247,9 @@ async fn foreign_provider_reasoning_is_not_sent_as_unsigned_anthropic_thinking()
 
 #[tokio::test]
 async fn signed_thinking_is_preserved_before_tools_and_across_followup_turns() {
-    let mut mock = mock(finish(thinking(0, "reasoning", &["sig"]), true)).await;
+    let mut events = thinking(0, "first", &["sig-1"]);
+    events.extend(thinking(1, "second", &["sig-2"]));
+    let mut mock = mock(finish(events, true)).await;
     let (cycle, _) = call(&mut mock, &[]).await;
     let mut message = assistant(cycle.replay_state, &cycle.reasoning);
     if let MessageContent::Assistant { tool_calls, .. } = &mut message.content {
@@ -279,10 +281,13 @@ async fn signed_thinking_is_preserved_before_tools_and_across_followup_turns() {
     ];
     let (_, first) = call(&mut mock, &history).await;
     assert_eq!(
-        first["messages"][0]["content"][0],
-        json!({"type":"thinking","thinking":"reasoning","signature":"sig"})
+        first["messages"][0]["content"].as_array().unwrap()[..2],
+        [
+            json!({"type":"thinking","thinking":"first","signature":"sig-1"}),
+            json!({"type":"thinking","thinking":"second","signature":"sig-2"}),
+        ]
     );
-    assert_eq!(first["messages"][0]["content"][2]["type"], "tool_use");
+    assert_eq!(first["messages"][0]["content"][3]["type"], "tool_use");
     assert_eq!(first["messages"][1]["content"][0]["tool_use_id"], "tool-1");
     let mut next_assistant = assistant(None, "");
     next_assistant.message_id = "assistant-next".into();

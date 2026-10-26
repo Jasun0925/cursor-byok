@@ -4,7 +4,11 @@ use std::time::Duration;
 use axum::{routing::post, Router};
 use cursor_server::{
     config::{ProviderConfig, ProviderKind},
-    model::{ModelInvocation, ModelRequest, ModelSpec, PromptSpec},
+    cursor::checkpoint::messages::{decode, stable_messages},
+    model::{
+        CanonicalMessage, MessageContent, ModelInvocation, ModelRequest, ModelSpec, Origin,
+        PromptSpec, Role,
+    },
     provider::{FinishReason, OpenAiChatProvider, Provider},
     run::{consume_model_cycle, ModelCycleFailure, ModelCycleResult, RunEvent, RunFailure},
 };
@@ -151,6 +155,51 @@ async fn structured_reasoning_and_literal_tags_use_separate_channels() {
         RunEvent::TextDelta(text),
         RunEvent::TextEnd,
     ] if reasoning == "structured reasoning" && tag == "<think>literal text</think>" && text == "正文。"));
+}
+
+#[tokio::test]
+async fn multiple_reasoning_chunks_have_one_complete_checkpoint_replay_state() {
+    let (result, _) = cycle(
+        vec![
+            json!({"reasoning_content":"first"}),
+            json!({"content":"between"}),
+            json!({"reasoning_content":"second"}),
+            json!({"content":"answer"}),
+        ],
+        true,
+    )
+    .await;
+    let result = result.unwrap();
+    assert_eq!(result.reasoning, "firstsecond");
+    let state = result.replay_state.as_ref().unwrap();
+    assert_eq!(state.provider_kind, "openai_chat");
+    assert_eq!(state.value, json!({"reasoning_content":"firstsecond"}));
+    let message = CanonicalMessage {
+        message_id: "chat-multi-reasoning".into(),
+        role: Role::Assistant,
+        origin: Origin::Assistant,
+        runtime_event_id: None,
+        content: MessageContent::Assistant {
+            text: result.text,
+            thinking: result.reasoning,
+            tool_round_id: None,
+            replay_state: result.replay_state,
+            tool_calls: vec![],
+        },
+    };
+    let checkpoint = stable_messages("", std::slice::from_ref(&message), "model").unwrap();
+    let wire: Value = serde_json::from_slice(&checkpoint[0]).unwrap();
+    assert_eq!(
+        wire["content"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .filter(|part| part.get("signature").is_some())
+            .count(),
+        1
+    );
+    let recovered = decode(&checkpoint[0], message.message_id.clone()).unwrap();
+    assert_eq!(recovered, message);
 }
 
 #[tokio::test]
