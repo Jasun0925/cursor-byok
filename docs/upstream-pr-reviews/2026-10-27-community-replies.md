@@ -45,3 +45,9 @@
 感谢这个故障报告。我维护的 [fork](https://github.com/haohaomin/cursor-byok) 中复现了 SQLite 自动回滚后 SQLx 保留事务深度、后续 Store 写入报 InvalidSavePointStatement 的问题。修复放在 SQLx 连接池归还检查中：先等待排队回滚，仍有残留事务状态则关闭连接；正常回滚的健康连接继续复用，没有导入整个 WriteSession 或重复改动子代理入口。
 
 7 项故障恢复测试通过，包括临时数据库实际 SQLITE_FULL、提交/回滚失败、取消及健康连接复用；全工作区 446 项测试通过。原机器未实测，源码补丁尚未发布安装包。[完整证据](https://github.com/haohaomin/cursor-byok/blob/main/docs/upstream-pr-reviews/2026-10-27-pr513-recovery.md)。由于原仓库归档只读，本段仅保存为草稿，没有发送。
+
+### Issue #508 / PR #474：代理缓存修复（未发送）
+
+感谢 GGboya 对代理缓存失效的定位。我维护的 [fork](https://github.com/haohaomin/cursor-byok) 已参考该 PR 的指纹与检查间隔方案，独立补齐三种 HTTP 客户端的缓存更新，并覆盖环境变量、macOS 系统设置和 Windows 注册表读取。没有采用 PR 中无关的规则删除及正文日志。
+
+隔离测试先复现了请求继续走旧代理与旧认证，修复后 A→B→直连→A、现有流不中断、读取失败保留缓存、代理仍启用但已停止时不直连等检查通过；本机全工作区 451 项测试通过。这里是本地 HTTP/进程环境及 macOS 配置读取验证，尚未进行 Windows/macOS 系统 UI 切换或真实供应商 CONNECT 验收。**仅源码修复，v1.0.17 安装包不包含。** [复现、实现与验证边界](https://github.com/haohaomin/cursor-byok/blob/main/docs/upstream-issue-reviews/2026-10-27-issue508-fix.md)。原仓库归档只读，因此本段只是草稿，没有发送。

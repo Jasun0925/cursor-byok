@@ -68,4 +68,8 @@ tempfile = "3"
 tower = { version = "0.5", features = ["util"] }
 
 [target.'cfg(windows)'.dependencies]
+windows-registry = "0.6"
 windows-sys = { version = "0.61", features = ["Win32_Foundation", "Win32_Security_Cryptography"] }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+system-configuration = "0.7"

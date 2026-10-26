@@ -1,0 +1,83 @@
+{
+  "date": "2026-10-27",
+  "issue": "https://github.com/leookun/cursor-byok/issues/508",
+  "source_pr": {
+    "url": "https://github.com/leookun/cursor-byok/pull/474",
+    "author": "GGboya",
+    "head_sha": "24316e9642a8e6c3e048bb70a255c8200fe4f130",
+    "adoption": "Independent network implementation based on the fingerprint/check-interval approach; no knowledge rule changes adopted"
+  },
+  "baseline": "c437c5d",
+  "status": "source_fixed_not_released",
+  "released_version_does_not_include_fix": "v1.0.17",
+  "baseline_tests": {
+    "passed": 0,
+    "failed": 2,
+    "exit_code": 101,
+    "failures": [
+      "cached route remains A after environment changes to B",
+      "cached custom proxy credentials remain unchanged after persisted password update"
+    ]
+  },
+  "focused_tests": {
+    "network_filtered_lib": 7,
+    "routing_child_process_tests": 2,
+    "failed": 0,
+    "note": "Initial cargo command filtered integration tests to zero; both integration tests were subsequently run unfiltered and passed; final run also covers in-flight streams and Store read failure."
+  },
+  "workspace_tests": {
+    "command": "cargo test --workspace",
+    "exit_code": 0,
+    "groups": 36,
+    "passed": 451,
+    "failed": 0,
+    "ignored": 0
+  },
+  "clippy": {
+    "command": "cargo clippy --workspace --all-targets -- -D warnings",
+    "exit_code": 0
+  },
+  "format": {
+    "command": "cargo fmt --all -- --check",
+    "exit_code": 0
+  },
+  "boundaries": [
+    "Real reqwest HTTP requests to isolated local endpoints; environment changes only within dedicated child processes",
+    "macOS CFDictionary change detection and read-only live SCDynamicStore read passed",
+    "Host system proxy settings and production database unchanged",
+    "macOS/Windows UI proxy switches and HTTPS CONNECT not tested",
+    "Read failures preserve cached clients; enabled but dead proxy does not fall back to direct",
+    "Existing response stream survives cache refresh; no replay or retry added"
+  ],
+  "logs": {
+    "before.log": {
+      "sha256": "d23b1ba4137f024627dc1b37ded8c4b19974d5aaca975aaf6a660a1c6c1a46bc",
+      "bytes": 2414
+    },
+    "after.log": {
+      "sha256": "4e5b4701143a9802a36c2d85220bca48a2303db578d1fe18af9a03a5022bcab3",
+      "bytes": 1206
+    },
+    "routes-after.log": {
+      "sha256": "9bc1342620faae5a80493f18a279a42d997a46f273855aa43a09fd4f92b1a9ff",
+      "bytes": 423
+    },
+    "routes-final.log": {
+      "sha256": "412d555d3a3688010e94fa7f8274d20f94e865de601d77a9f3d8b202ac0b7ab7",
+      "bytes": 498
+    },
+    "workspace-tests.log": {
+      "sha256": "246a6f380b715fef0e6b03e8563f9f82ed1e976c60efc53d87d8d1a8a0412c24",
+      "bytes": 44956
+    },
+    "workspace-clippy.log": {
+      "sha256": "110a7789e9eca41e6e04271f115aa972d3127fa28954965694eee8a6332fd4d6",
+      "bytes": 246
+    }
+  },
+  "log_directory": "/var/folders/94/7x3w4znd6fl1k54t41jbw46m0000gn/T/cursor-byok-issue508-20261027-kxvcisju",
+  "upstream_comment": {
+    "sent": false,
+    "reason": "upstream archived/read-only; existing verified HTTP 403 applies; draft only"
+  }
+}

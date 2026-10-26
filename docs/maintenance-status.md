@@ -23,13 +23,13 @@
 | [Issue #509](https://github.com/leookun/cursor-byok/issues/509)、[PR #420](https://github.com/leookun/cursor-byok/pull/420)：MCP schema 的 minLength 变成 1.0 | 源码已规范化整数约束，并保留大整数精度、空对象及 required 修复 | 已在 main，**v1.0.17 未包含这次合入**；[合入与回归](upstream-pr-reviews/2026-10-19-branch-integration.md)，原 Cursor 工具尚未实测 |
 | [PR #514](https://github.com/leookun/cursor-byok/pull/514)：所有会话使用固定缓存键 | 按会话生成稳定键，连通性测试省略缓存键 | 源码修复 [`fe192c8`](https://github.com/haohaomin/cursor-byok/commit/fe192c8)，**未发布**；[复现与验证记录](upstream-pr-reviews/2026-10-27-pr514-fix.md)。不承诺命中率或延迟改善 |
 | [PR #513](https://github.com/leookun/cursor-byok/pull/513)：事务失败后后续会话写入失败 | 修复 SQLite 自动回滚后残留 SQLx 事务深度的连接池污染 | 源码修复，**未发布**；[7 项故障恢复及 446 项全工作区回归](upstream-pr-reviews/2026-10-27-pr513-recovery.md)，原作者机器未现场复测 |
+| [Issue #508](https://github.com/leookun/cursor-byok/issues/508)、[PR #474](https://github.com/leookun/cursor-byok/pull/474)：切换系统代理后请求继续走旧地址 | 检测代理配置变化，重建三种缓存 HTTP 客户端，保留现有响应流 | 源码修复，**未发布**；[隔离路由和认证回归](upstream-issue-reviews/2026-10-27-issue508-fix.md)，系统设置 UI 切换待实测 |
 
 ## 尚未解决的重点
 
 - [#155](https://github.com/leookun/cursor-byok/issues/155)：保持“完成一半”。普通后台短任务自动续答已通过；真实审批等待、压缩期间完成、最终补丁的输出通知等边界仍待验收。20 分钟测试按维护者本轮范围排除。[验收记录](upstream-issue-reviews/2026-10-19-issue155-acceptance.md)
 - [#505](https://github.com/leookun/cursor-byok/issues/505)：多个 reasoning signature。两个合成 checkpoint 已复现拒绝第二个签名；原生 Anthropic 多块签名回放及 OpenAI Chat 聚合对照通过。仍未修复，原作者网关的签名数据与历史来源待取证，不能直接删除校验或覆盖签名。[复现与验证边界](upstream-issue-reviews/2026-10-27-issue505-check.md)
 - [#469](https://github.com/leookun/cursor-byok/issues/469) / [PR #498](https://github.com/leookun/cursor-byok/pull/498)：Remote SSH。候选同时改动请求路由、远程索引和 WebFetch 分页，尚未合入或完成本 fork 的远程实测。
-- [#508](https://github.com/leookun/cursor-byok/issues/508) / [PR #474](https://github.com/leookun/cursor-byok/pull/474)：系统代理切换后缓存旧代理。需要独立复现；原补丁混入规则删除和正文日志，不整体采用。
 - [#511](https://github.com/leookun/cursor-byok/issues/511)：SQLite 体积过大。先区分数据库正文、WAL、日志及保留策略，不用删除用户数据作为修复。
 
 ## 清单与公开回复

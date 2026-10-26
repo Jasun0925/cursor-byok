@@ -1,6 +1,9 @@
 //! Owns reusable outbound HTTP clients configured from persisted proxy settings.
 
-use std::{sync::Arc, time::Duration};
+use std::{
+    sync::Arc,
+    time::{Duration, Instant},
+};
 
 use tokio::sync::RwLock;
 
@@ -10,6 +13,9 @@ use crate::{
 };
 
 const LOCAL_NO_PROXY: &str = "localhost,127.0.0.0/8,::1";
+const PROXY_CHECK_INTERVAL: Duration = Duration::from_secs(2);
+
+mod proxy_fingerprint;
 
 #[derive(Clone)]
 pub struct NetworkClients {
@@ -22,6 +28,8 @@ struct ClientCache {
     default: Option<reqwest::Client>,
     cursor: Option<reqwest::Client>,
     provider: Option<(Duration, reqwest::Client)>,
+    proxy_fingerprint: Option<u64>,
+    proxy_checked_at: Option<Instant>,
 }
 
 impl NetworkClients {
@@ -33,6 +41,7 @@ impl NetworkClients {
     }
 
     pub async fn default_client(&self) -> Result<reqwest::Client> {
+        self.refresh_proxy_config().await;
         if let Some(client) = self.cache.read().await.default.clone() {
             return Ok(client);
         }
@@ -46,6 +55,7 @@ impl NetworkClients {
     }
 
     pub async fn cursor_client(&self) -> Result<reqwest::Client> {
+        self.refresh_proxy_config().await;
         if let Some(client) = self.cache.read().await.cursor.clone() {
             return Ok(client);
         }
@@ -62,6 +72,7 @@ impl NetworkClients {
     }
 
     pub async fn provider_client(&self, timeout: Duration) -> Result<reqwest::Client> {
+        self.refresh_proxy_config().await;
         if let Some((_, client)) = self
             .cache
             .read()
@@ -90,6 +101,47 @@ impl NetworkClients {
 
     pub async fn invalidate(&self) {
         *self.cache.write().await = ClientCache::default();
+    }
+
+    async fn refresh_proxy_config(&self) {
+        if self
+            .cache
+            .read()
+            .await
+            .proxy_checked_at
+            .is_some_and(|at| at.elapsed() < PROXY_CHECK_INTERVAL)
+        {
+            return;
+        }
+        // Serialize the check with invalidation and client creation. Concurrent
+        // callers must not publish an older fingerprint over a newer one.
+        let mut cache = self.cache.write().await;
+        if cache
+            .proxy_checked_at
+            .is_some_and(|at| at.elapsed() < PROXY_CHECK_INTERVAL)
+        {
+            return;
+        }
+        let fingerprint = match self.store.proxy_settings_secret().await {
+            Ok(settings) => proxy_fingerprint::read(&settings),
+            Err(_) => None,
+        };
+        if let Some(fingerprint) = fingerprint {
+            if cache.proxy_fingerprint != Some(fingerprint) {
+                if cache.proxy_fingerprint.is_some() {
+                    tracing::info!("proxy configuration changed; rebuilding cached HTTP clients");
+                }
+                // Existing request clones keep their connection/stream. Only
+                // subsequent client acquisitions use the new configuration.
+                *cache = ClientCache {
+                    proxy_fingerprint: Some(fingerprint),
+                    ..ClientCache::default()
+                };
+            }
+        } else {
+            tracing::warn!("could not read proxy configuration; keeping cached HTTP clients");
+        }
+        cache.proxy_checked_at = Some(Instant::now());
     }
 }
 

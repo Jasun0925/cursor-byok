@@ -790,9 +790,10 @@
       "updated_at": "2026-09-21T08:49:49Z",
       "previous_head_sha": "24316e9642a8e6c3e048bb70a255c8200fe4f130",
       "head_changed": false,
-      "review_status": "本轮采集/初筛，未逐行审计",
+      "review_status": "原补丁不整体采用；网络部分独立实现并验证，源码未发布",
       "historical_category": "C",
-      "historical_review": "2026-09-28.md"
+      "historical_review": "2026-09-28.md",
+      "review": "../upstream-issue-reviews/2026-10-27-issue508-fix.md"
     },
     {
       "number": 437,

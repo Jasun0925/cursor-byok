@@ -61,8 +61,9 @@
       "labels": [],
       "triage": {
         "priority": "A",
-        "status": "待复现",
-        "next_step": "系统代理切换后缓存旧地址；只提取 #474 网络部分，排除规则正文日志与规则删除。"
+        "status": "源码修复，未发布/系统 UI 待验",
+        "next_step": "三种缓存客户端检测系统/环境/自定义代理变化后重建；隔离 HTTP 路由已通过，macOS/Windows UI 切换待实测。",
+        "evidence": "2026-10-27-issue508-fix.md"
       }
     },
     {
