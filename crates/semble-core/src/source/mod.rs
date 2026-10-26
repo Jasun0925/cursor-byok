@@ -1,5 +1,6 @@
 //! Source discovery, ignore handling, path safety, and remote Git acquisition.
 
+mod cursor;
 mod local;
 mod remote_git;
 mod security;

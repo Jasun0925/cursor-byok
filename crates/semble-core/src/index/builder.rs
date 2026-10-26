@@ -1,13 +1,6 @@
 //! Incremental index builder that reuses unchanged chunks and embeddings.
 
-use std::{
-    collections::HashMap,
-    fs,
-    num::NonZeroUsize,
-    path::Path,
-    sync::Arc,
-    time::{Duration, Instant},
-};
+use std::{collections::HashMap, fs, num::NonZeroUsize, path::Path, sync::Arc};
 
 use lru::LruCache;
 use parking_lot::Mutex;
@@ -29,14 +22,7 @@ pub struct IndexRepository {
     config: SembleConfig,
     embedder: Arc<dyn Embedder>,
     build_lock: Mutex<()>,
-    loaded: Mutex<LruCache<std::path::PathBuf, CachedIndex>>,
-}
-
-const SEARCH_REFRESH_INTERVAL: Duration = Duration::from_secs(1);
-
-struct CachedIndex {
-    index: Arc<LoadedIndex>,
-    checked_at: Instant,
+    loaded: Mutex<LruCache<std::path::PathBuf, Arc<LoadedIndex>>>,
 }
 
 impl IndexRepository {
@@ -190,40 +176,8 @@ impl IndexRepository {
         Ok(loaded)
     }
 
-    /// Returns a recently checked in-memory index, refreshing stale entries first.
-    pub fn load_for_search(
-        &self,
-        root: &Path,
-        identity: &str,
-        content: &[ContentType],
-    ) -> Result<Arc<LoadedIndex>> {
-        let layout = CacheLayout::new(
-            &self.config.cache_dir,
-            identity,
-            self.embedder.id(),
-            content,
-            self.config.desired_chunk_bytes,
-        );
-        if let Some(index) = self
-            .loaded
-            .lock()
-            .get(&layout.snapshot)
-            .filter(|cached| cached.checked_at.elapsed() < SEARCH_REFRESH_INTERVAL)
-            .map(|cached| cached.index.clone())
-        {
-            return Ok(index);
-        }
-        self.load_or_build(root, identity, content)
-    }
-
     fn store_loaded(&self, snapshot: std::path::PathBuf, index: Arc<LoadedIndex>) {
-        self.loaded.lock().put(
-            snapshot,
-            CachedIndex {
-                index,
-                checked_at: Instant::now(),
-            },
-        );
+        self.loaded.lock().put(snapshot, index);
     }
 
     fn checked_if_unchanged(
@@ -232,10 +186,9 @@ impl IndexRepository {
         files: &[crate::source::SourceFile],
     ) -> Option<Arc<LoadedIndex>> {
         let mut loaded = self.loaded.lock();
-        let cached = loaded.get_mut(snapshot)?;
-        if unchanged_loaded(files, &cached.index.metadata.files) {
-            cached.checked_at = Instant::now();
-            Some(cached.index.clone())
+        let cached = loaded.get(snapshot)?;
+        if unchanged_loaded(files, &cached.metadata.files) {
+            Some(cached.clone())
         } else {
             None
         }
@@ -352,6 +305,48 @@ mod tests {
     }
 
     #[test]
+    fn cursor_exclusions_rebuild_persisted_indexes_without_reencoding_allowed_files() {
+        let source = tempfile::tempdir().unwrap();
+        let cache = tempfile::tempdir().unwrap();
+        for name in ["public.rs", "private.rs"] {
+            fs::write(
+                source.path().join(name),
+                format!("pub fn {}() {{}}\n", name.replace('.', "_")),
+            )
+            .unwrap();
+        }
+        let config = SembleConfig::new(cache.path());
+        IndexRepository::new(
+            config.clone(),
+            Arc::new(CountingEmbedder(AtomicUsize::new(0))),
+        )
+        .load_or_build(source.path(), "fixture", &[ContentType::Code])
+        .unwrap();
+        fs::write(source.path().join(".cursorignore"), "private.rs\n").unwrap();
+        let embedder = Arc::new(CountingEmbedder(AtomicUsize::new(0)));
+        let repository = IndexRepository::new(config.clone(), embedder.clone());
+        let index = repository
+            .load_or_build(source.path(), "fixture", &[ContentType::Code])
+            .unwrap();
+        assert_eq!(
+            index
+                .metadata
+                .files
+                .iter()
+                .map(|f| f.path.as_str())
+                .collect::<Vec<_>>(),
+            vec!["public.rs"]
+        );
+        assert_eq!(embedder.0.load(Ordering::SeqCst), 0);
+        let disk = IndexRepository::new(config, embedder.clone())
+            .load_or_build(source.path(), "fixture", &[ContentType::Code])
+            .unwrap();
+        assert_eq!(disk.metadata.files.len(), 1);
+        assert_eq!(disk.metadata.files[0].path, "public.rs");
+        assert_eq!(embedder.0.load(Ordering::SeqCst), 0);
+    }
+
+    #[test]
     fn a_new_repository_refreshes_changed_source_instead_of_using_stale_runtime_cache() {
         let source = tempfile::tempdir().unwrap();
         let cache = tempfile::tempdir().unwrap();
@@ -378,7 +373,7 @@ mod tests {
     }
 
     #[test]
-    fn search_cache_refreshes_after_the_fixed_interval() {
+    fn warm_index_rechecks_source_before_reusing_vectors() {
         let source = tempfile::tempdir().unwrap();
         let cache = tempfile::tempdir().unwrap();
         fs::write(source.path().join("lib.rs"), "pub fn before() {}\n").unwrap();
@@ -391,16 +386,8 @@ mod tests {
             .unwrap();
         fs::write(source.path().join("lib.rs"), "pub fn after() {}\n").unwrap();
 
-        let cached = repository
-            .load_for_search(source.path(), "fixture", &[ContentType::Code])
-            .unwrap();
-        assert!(cached.chunks[0].content.contains("before"));
-
-        for (_, cached) in repository.loaded.lock().iter_mut() {
-            cached.checked_at = Instant::now() - SEARCH_REFRESH_INTERVAL;
-        }
         let refreshed = repository
-            .load_for_search(source.path(), "fixture", &[ContentType::Code])
+            .load_or_build(source.path(), "fixture", &[ContentType::Code])
             .unwrap();
         assert!(refreshed.chunks[0].content.contains("after"));
     }

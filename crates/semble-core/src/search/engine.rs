@@ -85,9 +85,7 @@ impl SearchEngine {
         validate_query(&request.query, request.top_k)?;
         let (root, identity) = self.resolve_source(&request.repo)?;
         let content = normalize_content(&request.content);
-        let index = self
-            .repository
-            .load_for_search(&root, &identity, &content)?;
+        let index = self.repository.load_or_build(&root, &identity, &content)?;
         if !request.query.contains(char::is_whitespace) {
             let exact = index
                 .lexical
@@ -163,9 +161,7 @@ impl SearchEngine {
         }
         let (root, identity) = self.resolve_source(&request.repo)?;
         let content = normalize_content(&request.content);
-        let index = self
-            .repository
-            .load_for_search(&root, &identity, &content)?;
+        let index = self.repository.load_or_build(&root, &identity, &content)?;
         let normalized = request.file_path.replace('\\', "/");
         let source = index
             .chunks
@@ -587,6 +583,52 @@ mod tests {
     }
 
     #[test]
+    fn cursor_exclusions_refresh_warm_search_and_related_queries_immediately() {
+        let (source, cache, engine) = fixture();
+        let query = || SearchRequest::new("authenticate_request", source.path());
+        assert!(engine
+            .search(query())
+            .unwrap()
+            .results
+            .iter()
+            .any(|r| r.file_path == "src/auth.rs"));
+        fs::write(source.path().join(".cursorignore"), "src/auth.rs\n").unwrap();
+        assert!(engine
+            .search(query())
+            .unwrap()
+            .results
+            .iter()
+            .all(|r| r.file_path != "src/auth.rs"));
+        assert!(engine
+            .find_related(FindRelatedRequest {
+                repo: source.path().into(),
+                file_path: "src/auth.rs".into(),
+                line: 1,
+                top_k: 5,
+                max_snippet_lines: Some(10),
+                content: vec![ContentType::Code],
+            })
+            .is_err());
+        let reloaded =
+            SearchEngine::with_embedder(SembleConfig::new(cache.path()), Arc::new(KeywordEmbedder));
+        assert!(reloaded
+            .search(query())
+            .unwrap()
+            .results
+            .iter()
+            .all(|r| r.file_path != "src/auth.rs"));
+        fs::remove_file(source.path().join(".cursorignore")).unwrap();
+        assert!(engine
+            .search(query())
+            .unwrap()
+            .results
+            .iter()
+            .any(|r| r.file_path == "src/auth.rs"));
+        fs::write(source.path().join(".cursorignore"), "*\n").unwrap();
+        assert!(matches!(engine.search(query()), Err(Error::EmptyIndex(_))));
+    }
+
+    #[test]
     fn bm25_recovers_lexical_matches_when_semantic_scores_are_tied() {
         let (source, _cache, engine) = fixture();
         fs::write(
@@ -702,7 +744,7 @@ mod tests {
     }
 
     #[test]
-    fn explicit_refresh_makes_modified_files_searchable_during_the_cache_window() {
+    fn warm_search_sees_modified_files_without_an_explicit_refresh() {
         let (source, _cache, engine) = fixture();
         engine.prepare(source.path(), &[ContentType::Code]).unwrap();
         fs::write(
@@ -711,7 +753,7 @@ mod tests {
         )
         .unwrap();
 
-        let stale = engine
+        let fresh = engine
             .search(SearchRequest {
                 query: "parse_request".into(),
                 repo: source.path().into(),
@@ -720,7 +762,7 @@ mod tests {
                 content: vec![ContentType::Code],
             })
             .unwrap();
-        assert!(!stale.results[0]
+        assert!(fresh.results[0]
             .content
             .as_deref()
             .unwrap_or_default()

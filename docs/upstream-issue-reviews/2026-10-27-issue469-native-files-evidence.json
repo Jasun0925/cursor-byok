@@ -1,0 +1,242 @@
+{
+  "base": "95a9b8ff057f0f8d454101be5364598874a9e325",
+  "conversation_id": "d1eefff7-269c-4062-9561-0826b8c0b0cd",
+  "calls": [
+    {
+      "call_id": "9ce938e6-989c-4c4f-9a67-ad7c30fcdb40:3e170efb:0",
+      "run_id": "9ce938e6-989c-4c4f-9a67-ad7c30fcdb40:3e170efb",
+      "status": "completed",
+      "model": "gpt-6-astra"
+    },
+    {
+      "call_id": "9ce938e6-989c-4c4f-9a67-ad7c30fcdb40:3e170efb:1",
+      "run_id": "9ce938e6-989c-4c4f-9a67-ad7c30fcdb40:3e170efb",
+      "status": "completed",
+      "model": "gpt-6-astra"
+    },
+    {
+      "call_id": "9ce938e6-989c-4c4f-9a67-ad7c30fcdb40:3e170efb:2",
+      "run_id": "9ce938e6-989c-4c4f-9a67-ad7c30fcdb40:3e170efb",
+      "status": "completed",
+      "model": "gpt-6-astra"
+    },
+    {
+      "call_id": "9ce938e6-989c-4c4f-9a67-ad7c30fcdb40:3e170efb:3",
+      "run_id": "9ce938e6-989c-4c4f-9a67-ad7c30fcdb40:3e170efb",
+      "status": "completed",
+      "model": "gpt-6-astra"
+    },
+    {
+      "call_id": "9ce938e6-989c-4c4f-9a67-ad7c30fcdb40:3e170efb:4",
+      "run_id": "9ce938e6-989c-4c4f-9a67-ad7c30fcdb40:3e170efb",
+      "status": "completed",
+      "model": "gpt-6-astra"
+    },
+    {
+      "call_id": "9ce938e6-989c-4c4f-9a67-ad7c30fcdb40:3e170efb:5",
+      "run_id": "9ce938e6-989c-4c4f-9a67-ad7c30fcdb40:3e170efb",
+      "status": "completed",
+      "model": "gpt-6-astra"
+    },
+    {
+      "call_id": "d37803c5-0009-4ea8-96d9-0547f949f877:28fa894f:0",
+      "run_id": "d37803c5-0009-4ea8-96d9-0547f949f877:28fa894f",
+      "status": "completed",
+      "model": "gpt-6-astra"
+    },
+    {
+      "call_id": "d37803c5-0009-4ea8-96d9-0547f949f877:28fa894f:1",
+      "run_id": "d37803c5-0009-4ea8-96d9-0547f949f877:28fa894f",
+      "status": "completed",
+      "model": "gpt-6-astra"
+    },
+    {
+      "call_id": "d37803c5-0009-4ea8-96d9-0547f949f877:28fa894f:2",
+      "run_id": "d37803c5-0009-4ea8-96d9-0547f949f877:28fa894f",
+      "status": "completed",
+      "model": "gpt-6-astra"
+    },
+    {
+      "call_id": "d37803c5-0009-4ea8-96d9-0547f949f877:28fa894f:3",
+      "run_id": "d37803c5-0009-4ea8-96d9-0547f949f877:28fa894f",
+      "status": "completed",
+      "model": "gpt-6-astra"
+    },
+    {
+      "call_id": "d7100c2e-ba21-4bb1-9455-34bffa3b949d:61ae8206:0",
+      "run_id": "d7100c2e-ba21-4bb1-9455-34bffa3b949d:61ae8206",
+      "status": "completed",
+      "model": "gpt-6-astra"
+    }
+  ],
+  "messages": [
+    {
+      "content": null,
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"glob_pattern\":\"**/*\",\"target_directory\":\"/tmp/cursor-byok-native-files-h8ybjj8f\"}",
+            "name": "Glob"
+          },
+          "id": "call_fb799f0b56304c54934bb6e782ad9259",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "./.cursorignore\n./.sembleignore\n./git-hidden.py\n./nested/.sembleignore\n./nested/nested-hidden.py\n./nested/visible.py\n./semble-hidden.py\n./.gitignore\n./auth.py",
+      "role": "tool",
+      "tool_call_id": "call_fb799f0b56304c54934bb6e782ad9259"
+    },
+    {
+      "content": null,
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"head_limit\":1000,\"output_mode\":\"files_with_matches\",\"path\":\"/tmp/cursor-byok-native-files-h8ybjj8f\",\"pattern\":\"def\"}",
+            "name": "Grep"
+          },
+          "id": "call_f4fd5133549e4f65ba725ed2e24987af",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "./nested/nested-hidden.py\n./nested/visible.py\n./semble-hidden.py\n./auth.py",
+      "role": "tool",
+      "tool_call_id": "call_f4fd5133549e4f65ba725ed2e24987af"
+    },
+    {
+      "content": null,
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"limit\":100,\"offset\":1,\"path\":\"/tmp/cursor-byok-native-files-h8ybjj8f/auth.py\"}",
+            "name": "Read"
+          },
+          "id": "call_f8871270d9fc4ca7aad54401745f88a1",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "def allowed_auth():\n    return \"ALLOWED_NATIVE_TEST\"\n",
+      "role": "tool",
+      "tool_call_id": "call_f8871270d9fc4ca7aad54401745f88a1"
+    },
+    {
+      "content": null,
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"path\":\"/tmp/cursor-byok-native-files-h8ybjj8f/.sembleignore\"}",
+            "name": "Read"
+          },
+          "id": "call_82a95ba0c6b64356acd1412f4fe40ab8",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "semble-hidden.py\n",
+      "role": "tool",
+      "tool_call_id": "call_82a95ba0c6b64356acd1412f4fe40ab8"
+    },
+    {
+      "content": null,
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"path\":\"/tmp/cursor-byok-native-files-h8ybjj8f/nested/.sembleignore\"}",
+            "name": "Read"
+          },
+          "id": "call_622430c3bdf2470abe499bbb08730d42",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "nested-hidden.py\n",
+      "role": "tool",
+      "tool_call_id": "call_622430c3bdf2470abe499bbb08730d42"
+    },
+    {
+      "content": null,
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"head_limit\":4001,\"output_mode\":\"files_with_matches\",\"path\":\"/tmp/cursor-byok-native-files-h8ybjj8f\",\"pattern\":\"^\"}",
+            "name": "Grep"
+          },
+          "id": "call_b1b84dd6d134420fbee037a48a7ae2fc",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "./.ignore\n./blank.py\n./linked-dir/other.py\n./linked.py\n./multiline.py\n./.cursorignore\n./.sembleignore\n./nested/.sembleignore\n./nested/nested-hidden.py\n./nested/visible.py\n./semble-hidden.py\n./.gitignore\n./auth.py",
+      "role": "tool",
+      "tool_call_id": "call_b1b84dd6d134420fbee037a48a7ae2fc"
+    },
+    {
+      "content": null,
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"limit\":3,\"offset\":1,\"path\":\"/tmp/cursor-byok-native-files-h8ybjj8f/multiline.py\"}",
+            "name": "Read"
+          },
+          "id": "call_999dcbd254f2425d933d60b5a11b2829",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "def unicode_probe():\n    text = \"中文🙂\"\n",
+      "role": "tool",
+      "tool_call_id": "call_999dcbd254f2425d933d60b5a11b2829"
+    },
+    {
+      "content": null,
+      "role": "assistant",
+      "tool_calls": [
+        {
+          "function": {
+            "arguments": "{\"limit\":3,\"offset\":4,\"path\":\"/tmp/cursor-byok-native-files-h8ybjj8f/multiline.py\"}",
+            "name": "Read"
+          },
+          "id": "call_6601644eae6b48a8b0654d973c3596b2",
+          "type": "function"
+        }
+      ]
+    },
+    {
+      "content": "    # line four\n    return text\n# EOF",
+      "role": "tool",
+      "tool_call_id": "call_6601644eae6b48a8b0654d973c3596b2"
+    }
+  ],
+  "provider_prefix_preserved": true,
+  "tools_unchanged": true,
+  "cursor": "3.27.14",
+  "environment": "macOS BYOK -> Linux SSH, isolated backend and database; synthetic fixtures only",
+  "physical_inventory_attempt": {
+    "executed": false,
+    "reason": "Model declined Shell file enumeration under its tool instructions",
+    "completion_marker_is_not_success": true
+  },
+  "cleanup": {
+    "test_harness_stopped": true,
+    "local_settings_restored_byte_exact": true,
+    "remote_machine_settings_restored_absent": true,
+    "remote_test_directories_removed": true,
+    "temporary_example_removed": true
+  }
+}

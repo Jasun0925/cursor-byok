@@ -24,6 +24,7 @@
 | [PR #514](https://github.com/leookun/cursor-byok/pull/514)：所有会话使用固定缓存键 | 按会话生成稳定键，连通性测试省略缓存键 | 源码修复 [`fe192c8`](https://github.com/haohaomin/cursor-byok/commit/fe192c8)，**未发布**；[复现与验证记录](upstream-pr-reviews/2026-10-27-pr514-fix.md)。不承诺命中率或延迟改善 |
 | [PR #513](https://github.com/leookun/cursor-byok/pull/513)：事务失败后后续会话写入失败 | 修复 SQLite 自动回滚后残留 SQLx 事务深度的连接池污染 | 源码修复，**未发布**；[7 项故障恢复及 446 项全工作区回归](upstream-pr-reviews/2026-10-27-pr513-recovery.md)，原作者机器未现场复测 |
 | [Issue #508](https://github.com/leookun/cursor-byok/issues/508)、[PR #474](https://github.com/leookun/cursor-byok/pull/474)：切换系统代理后请求继续走旧地址 | 检测代理配置变化，重建三种缓存 HTTP 客户端，保留现有响应流 | 源码修复，**未发布**；[隔离路由和认证回归](upstream-issue-reviews/2026-10-27-issue508-fix.md)，系统设置 UI 切换待实测 |
+| Semble 共享索引层：`.cursorignore` 未生效，热缓存绕过新增规则 | 独立 Cursor 过滤；普通与相关查询先重新检查规则，保留未变向量 | 源码修复，**未发布**；[真实嵌入模型三组对照及 469 项回归](upstream-issue-reviews/2026-10-27-semble-cursorignore-fix.md)。不等同于远程 Semble 已解决 |
 
 ## 尚未解决的重点
 

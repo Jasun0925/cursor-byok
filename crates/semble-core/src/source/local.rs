@@ -84,6 +84,7 @@ pub fn discover_files(
             files.push(file);
         }
     }
+    super::cursor::retain_allowed(root, &mut files)?;
     files.sort_by(|left, right| left.relative_path.cmp(&right.relative_path));
     Ok(files)
 }
@@ -169,5 +170,82 @@ mod tests {
         assert!(discover_files(directory.path(), &[ContentType::Code], 5)
             .unwrap()
             .is_empty());
+    }
+
+    #[test]
+    fn cursor_exclusions_are_independent_of_semble_whitelists() {
+        let source = tempfile::tempdir().unwrap();
+        fs::create_dir_all(source.path().join("blocked")).unwrap();
+        for path in ["public.rs", "private.rs", "semble.rs", "blocked/hidden.rs"] {
+            fs::write(source.path().join(path), "pub fn fixture() {}\n").unwrap();
+        }
+        fs::write(
+            source.path().join(".cursorignore"),
+            "private.rs\nblocked/\n!semble.rs\n",
+        )
+        .unwrap();
+        fs::write(
+            source.path().join(".sembleignore"),
+            "!private.rs\n!blocked/\nsemble.rs\n",
+        )
+        .unwrap();
+        fs::write(source.path().join("blocked/.cursorignore"), "!hidden.rs\n").unwrap();
+        let files = discover_files(source.path(), &[ContentType::Code], 1024).unwrap();
+        assert_eq!(
+            files
+                .iter()
+                .map(|file| file.relative_path.as_str())
+                .collect::<Vec<_>>(),
+            vec!["public.rs"]
+        );
+    }
+
+    #[test]
+    fn cursor_exclusions_apply_to_parent_nested_and_non_git_sources() {
+        let parent = tempfile::tempdir().unwrap();
+        let source = parent.path().join("workspace");
+        fs::create_dir_all(source.join("nested")).unwrap();
+        for path in [
+            "parent-private.rs",
+            "public.rs",
+            "nested/public.rs",
+            "nested/private.rs",
+        ] {
+            fs::write(source.join(path), "pub fn fixture() {}\n").unwrap();
+        }
+        fs::write(
+            parent.path().join(".cursorignore"),
+            "workspace/parent-private.rs\n",
+        )
+        .unwrap();
+        fs::write(source.join(".cursorignore"), "nested/*.rs\n").unwrap();
+        fs::write(source.join("nested/.cursorignore"), "!public.rs\n").unwrap();
+        let files = discover_files(&source, &[ContentType::Code], 1024).unwrap();
+        assert_eq!(
+            files
+                .iter()
+                .map(|file| file.relative_path.as_str())
+                .collect::<Vec<_>>(),
+            vec!["nested/public.rs", "public.rs"]
+        );
+    }
+
+    #[test]
+    fn cursor_exclusions_cover_docs_config_and_invalid_rules() {
+        let source = tempfile::tempdir().unwrap();
+        for name in ["public.rs", "private.md", "private.toml"] {
+            fs::write(source.path().join(name), "fixture\n").unwrap();
+        }
+        fs::write(source.path().join(".cursorignore"), "private.*\n").unwrap();
+        let files = discover_files(
+            source.path(),
+            &[ContentType::Code, ContentType::Docs, ContentType::Config],
+            1024,
+        )
+        .unwrap();
+        assert_eq!(files.len(), 1);
+        assert_eq!(files[0].relative_path, "public.rs");
+        fs::write(source.path().join(".cursorignore"), "[z-a]\n").unwrap();
+        assert!(discover_files(source.path(), &[ContentType::Code], 1024).is_err());
     }
 }

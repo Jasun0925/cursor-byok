@@ -1,0 +1,150 @@
+{
+  "date": "2026-10-27",
+  "baseline": "95a9b8ff057f0f8d454101be5364598874a9e325",
+  "probe_sha256": "f20ae95295f269cc9fb85b15bce606298951ba6a4ff87197e41956644f4754f8",
+  "scenarios": {
+    "before": {
+      "cold_excluded": false,
+      "dimensions": 256,
+      "disk_excluded": false,
+      "excluded_body_encodings_in_cold_index": 1,
+      "final_index_files": 1001,
+      "fixture": {
+        "directories": 20,
+        "initial_files": 1001,
+        "public_files": 1000
+      },
+      "model": "minishlab/potion-code-16M-v2",
+      "related_excluded": false,
+      "rule_refresh_ms": 0.045583,
+      "scope": "real StaticEmbedder on generated local files; not Cursor or remote Semble acceptance",
+      "warm_excluded": false,
+      "warm_search_ms": {
+        "median": 6.046521,
+        "p95": 6.1355830000000005,
+        "samples": [
+          5.974042,
+          6.005791,
+          6.006832999999999,
+          6.016125,
+          6.018625,
+          6.028792,
+          6.029375,
+          6.037083,
+          6.038333,
+          6.046167,
+          6.046875,
+          6.048625,
+          6.055292000000001,
+          6.063542,
+          6.066542,
+          6.071791,
+          6.074417,
+          6.097875,
+          6.1355830000000005,
+          6.160125
+        ]
+      }
+    },
+    "filter-only": {
+      "cold_excluded": true,
+      "dimensions": 256,
+      "disk_excluded": true,
+      "excluded_body_encodings_in_cold_index": 0,
+      "final_index_files": 1000,
+      "fixture": {
+        "directories": 20,
+        "initial_files": 1001,
+        "public_files": 1000
+      },
+      "model": "minishlab/potion-code-16M-v2",
+      "related_excluded": false,
+      "rule_refresh_ms": 0.039708,
+      "scope": "real StaticEmbedder on generated local files; not Cursor or remote Semble acceptance",
+      "warm_excluded": false,
+      "warm_search_ms": {
+        "median": 6.072687500000001,
+        "p95": 6.2275,
+        "samples": [
+          6.040916999999999,
+          6.042042,
+          6.044541,
+          6.045875,
+          6.050584000000001,
+          6.066125,
+          6.06775,
+          6.0682089999999995,
+          6.071542,
+          6.071625,
+          6.07375,
+          6.075459,
+          6.077375,
+          6.077583,
+          6.079167,
+          6.131291,
+          6.140458,
+          6.1816249999999995,
+          6.2275,
+          6.286792
+        ]
+      }
+    },
+    "after": {
+      "cold_excluded": true,
+      "dimensions": 256,
+      "disk_excluded": true,
+      "excluded_body_encodings_in_cold_index": 0,
+      "final_index_files": 1000,
+      "fixture": {
+        "directories": 20,
+        "initial_files": 1001,
+        "public_files": 1000
+      },
+      "model": "minishlab/potion-code-16M-v2",
+      "related_excluded": true,
+      "rule_refresh_ms": 61.919791000000004,
+      "scope": "real StaticEmbedder on generated local files; not Cursor or remote Semble acceptance",
+      "warm_excluded": true,
+      "warm_search_ms": {
+        "median": 19.795458500000002,
+        "p95": 21.035,
+        "samples": [
+          18.425875,
+          18.576249999999998,
+          18.650084,
+          19.632792,
+          19.65225,
+          19.685291,
+          19.718415999999998,
+          19.74975,
+          19.763083,
+          19.781375,
+          19.809542,
+          19.847791,
+          19.852375,
+          19.869917,
+          19.923,
+          20.024167,
+          20.036833,
+          20.069416,
+          21.035,
+          21.090666000000002
+        ]
+      }
+    }
+  },
+  "environment": "macOS, debug build, local generated files and real pinned embedding model; workspace regression tests running concurrently",
+  "remote_semble_fixed": false,
+  "released": false,
+  "verification": {
+    "workspace_tests": {
+      "passed": 469,
+      "failed": 0,
+      "ignored": 0
+    },
+    "semble_tests": 42,
+    "real_model_test_enabled": true,
+    "clippy": "passed",
+    "fmt": "passed"
+  }
+}

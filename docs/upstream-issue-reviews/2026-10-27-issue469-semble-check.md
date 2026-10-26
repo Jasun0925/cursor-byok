@@ -2,6 +2,8 @@
 
 **远端独有路径的 Semble 搜索已复现失败，尚未修复。PR #498 的快照部分不原样采用：原命令不能启动；仅修正启动参数后，仍有忽略规则失效和跨来源索引复用问题。** 这是基础路由恢复后的独立工具缺口，不改变此前基础 Agent 与 WebFetch 的验收结果。
 
+> 后续更新：共享索引层的 `.cursorignore` 与热缓存问题已[独立修复](2026-10-27-semble-cursorignore-fix.md)，但远程采集仍未实现。本文以下结论固定于旧基线；历史探针使用的 `load_for_search` 已在后续修复中删除。
+
 ## 固定版本与验证范围
 
 - 当前源码：`3d309480d55ece3021688dd36228ad48b76cd56c`。
@@ -94,7 +96,7 @@ Semble 索引                           # 正确区分来源及快照版本，�
 
 ## 重跑探针
 
-在本仓库根目录运行下列 Python。它校验固定上游文件的 SHA-256、临时放入 Cargo example、使用已有本地模型资产，并在结束后移除本次 example。输出和合成文件保留在新建的临时目录。所需工具为 `gh`、Git、Python 3、Rust；macOS 本轮使用 `SDKROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX26.5.sdk`。
+在 `95a9b8ff057f0f8d454101be5364598874a9e325` 的独立 checkout 根目录运行下列 Python；不要在新版本 main 上直接运行这个历史缺陷探针。它校验固定上游文件的 SHA-256、临时放入 Cargo example、使用已有本地模型资产，并在结束后移除本次 example。输出和合成文件保留在新建的临时目录。所需工具为 `gh`、Git、Python 3、Rust；macOS 本轮使用 `SDKROOT=/Library/Developer/CommandLineTools/SDKs/MacOSX26.5.sdk`。
 
 默认的不存在路径只重现本机路径解析失败；如需复现 SSH 对照，应先在远端创建同样的 `auth.py`，独立确认其存在，再将 `remote` 改为对应路径。探针不会连接 SSH。
 
@@ -102,6 +104,7 @@ Semble 索引                           # 正确区分来源及快照版本，�
 import base64, hashlib, json, os, pathlib, shutil, subprocess, tempfile
 
 repo = pathlib.Path.cwd()
+assert subprocess.check_output(["git", "rev-parse", "HEAD"], text=True).strip() == "95a9b8ff057f0f8d454101be5364598874a9e325"
 parent = pathlib.Path(tempfile.mkdtemp(prefix="issue469-semble-audit-"))
 root = parent / "run"
 remote = str(parent / "not-on-byok-host")
