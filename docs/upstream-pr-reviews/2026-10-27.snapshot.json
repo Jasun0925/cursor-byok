@@ -255,7 +255,7 @@
       "updated_at": "2026-10-11T23:07:29Z",
       "previous_head_sha": null,
       "head_changed": false,
-      "review_status": "本轮采集/初筛，未逐行审计",
+      "review_status": "已独立复现并修复连接池污染，7 项定向与 446 项工作区测试通过，未发布",
       "changed_files": 17,
       "additions": 299,
       "deletions": 119,
@@ -277,7 +277,12 @@
         "server/src/store/storage.rs",
         "server/src/store/tool_rounds.rs",
         "server/src/store/writer.rs"
-      ]
+      ],
+      "fix_strategy": "SQLx after_release pool validation; original WriteSession not imported",
+      "evidence": "2026-10-27-pr513-evidence.json",
+      "checks_at_head": [],
+      "reviews_at_head": [],
+      "comments_at_read": []
     },
     {
       "number": 512,

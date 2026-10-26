@@ -39,3 +39,9 @@
 ### Issue #509：仅源码补丁，不能宣传安装包已解决
 
 当前 [fork main](https://github.com/haohaomin/cursor-byok) 已合入 #420 的完整整数约束修复，保留大整数精度和空对象/required 修复。自动化覆盖 minLength 等八个整数关键字及嵌套 schema，原 Cursor 工具场景仍待实测。**v1.0.17 安装包不包含 2026-10-19 的这次合入**，不能建议安装该版本来验证此补丁。[合入记录](https://github.com/haohaomin/cursor-byok/blob/main/docs/upstream-pr-reviews/2026-10-19-branch-integration.md)。
+
+### PR #513：数据库部分的独立修复（未发送）
+
+感谢这个故障报告。我维护的 [fork](https://github.com/haohaomin/cursor-byok) 中复现了 SQLite 自动回滚后 SQLx 保留事务深度、后续 Store 写入报 InvalidSavePointStatement 的问题。修复放在 SQLx 连接池归还检查中：先等待排队回滚，仍有残留事务状态则关闭连接；正常回滚的健康连接继续复用，没有导入整个 WriteSession 或重复改动子代理入口。
+
+7 项故障恢复测试通过，包括临时数据库实际 SQLITE_FULL、提交/回滚失败、取消及健康连接复用；全工作区 446 项测试通过。原机器未实测，源码补丁尚未发布安装包。[完整证据](https://github.com/haohaomin/cursor-byok/blob/main/docs/upstream-pr-reviews/2026-10-27-pr513-recovery.md)。由于原仓库归档只读，本段仅保存为草稿，没有发送。

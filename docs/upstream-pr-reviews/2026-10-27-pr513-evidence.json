@@ -1,0 +1,62 @@
+{
+  "date": "2026-10-27",
+  "baseline": "1b0a851edeacba24d293ba30fb0d9c55b16f742d",
+  "source_pr": 513,
+  "source_head": "87ee81dced16f0342b610e0a47d4f9b8e2515db8",
+  "source_author": "banchen21",
+  "strategy": "Independent SQLx after_release pool validation; original WriteSession patch not imported",
+  "dependency": "sqlx 0.8.6",
+  "reproduction": "Real Store checkpoint write plus SQLite RAISE(ROLLBACK); next write fails with InvalidSavePointStatement before fix",
+  "additional_failure": "Real SQLITE_FULL (13) from a page limit on a temporary database; no filesystem exhaustion",
+  "validation": {
+    "before": {
+      "sha256": "ed72f882d0e38b4e16367e197b9c3fc660d5d3bcf2509b8c0ceec1cc055af4cc",
+      "result_groups": 1,
+      "passed": 3,
+      "failed": 2,
+      "ignored": 0
+    },
+    "after": {
+      "sha256": "bffa178862c8724333f06252dd0468d7b774df0d1b949a36f82fef070d4a7ddc",
+      "result_groups": 1,
+      "passed": 5,
+      "failed": 0,
+      "ignored": 0
+    },
+    "after-expanded": {
+      "sha256": "f9f5b200ebeebe8baf93e25495866082543a7c0dbaa317688e1e833483c55cea",
+      "result_groups": 1,
+      "passed": 7,
+      "failed": 0,
+      "ignored": 0
+    },
+    "workspace-tests": {
+      "sha256": "4fbb4a68108e49e5248e2adc94243a3f81ff35072273dcb7f46b682394bb7776",
+      "result_groups": 35,
+      "passed": 446,
+      "failed": 0,
+      "ignored": 0
+    },
+    "workspace-clippy": {
+      "sha256": "f1e12508e3e2f3081b0cc6bfd8ee9b2459acf7edc3f1566cb01650681a8086a7",
+      "result_groups": 0,
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    "fmt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "result_groups": 0,
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    }
+  },
+  "log_directory": "/var/folders/94/7x3w4znd6fl1k54t41jbw46m0000gn/T/cursor-byok-pr513-20261027-m7us0qk6",
+  "schema_migration_changed": false,
+  "production_database_accessed": false,
+  "live_original_environment_verified": false,
+  "published_release": false,
+  "upstream_comment_sent": false,
+  "comment_blocker": "Repository archived; earlier POST returned HTTP 403"
+}

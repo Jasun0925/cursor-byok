@@ -22,6 +22,7 @@
 | [Issue #449](https://github.com/leookun/cursor-byok/issues/449)：子代理模型名单与设置 | 使用客户端模型信息和实际选择，保留 Cursor 设置的优先级 | v1.0.12 起；[修复及用户验收记录](upstream-issue-reviews/2026-10-08-issue449-fix.md) |
 | [Issue #509](https://github.com/leookun/cursor-byok/issues/509)、[PR #420](https://github.com/leookun/cursor-byok/pull/420)：MCP schema 的 minLength 变成 1.0 | 源码已规范化整数约束，并保留大整数精度、空对象及 required 修复 | 已在 main，**v1.0.17 未包含这次合入**；[合入与回归](upstream-pr-reviews/2026-10-19-branch-integration.md)，原 Cursor 工具尚未实测 |
 | [PR #514](https://github.com/leookun/cursor-byok/pull/514)：所有会话使用固定缓存键 | 按会话生成稳定键，连通性测试省略缓存键 | 源码修复 [`fe192c8`](https://github.com/haohaomin/cursor-byok/commit/fe192c8)，**未发布**；[复现与验证记录](upstream-pr-reviews/2026-10-27-pr514-fix.md)。不承诺命中率或延迟改善 |
+| [PR #513](https://github.com/leookun/cursor-byok/pull/513)：事务失败后后续会话写入失败 | 修复 SQLite 自动回滚后残留 SQLx 事务深度的连接池污染 | 源码修复，**未发布**；[7 项故障恢复及 446 项全工作区回归](upstream-pr-reviews/2026-10-27-pr513-recovery.md)，原作者机器未现场复测 |
 
 ## 尚未解决的重点
 
@@ -29,7 +30,6 @@
 - [#505](https://github.com/leookun/cursor-byok/issues/505)：多个 reasoning signature。当前 checkpoint 解码仍拒绝第二个签名，需要保留各块顺序的回归和修复；不能简单删除校验或只保留最后一个签名。
 - [#469](https://github.com/leookun/cursor-byok/issues/469) / [PR #498](https://github.com/leookun/cursor-byok/pull/498)：Remote SSH。候选同时改动请求路由、远程索引和 WebFetch 分页，尚未合入或完成本 fork 的远程实测。
 - [#508](https://github.com/leookun/cursor-byok/issues/508) / [PR #474](https://github.com/leookun/cursor-byok/pull/474)：系统代理切换后缓存旧代理。需要独立复现；原补丁混入规则删除和正文日志，不整体采用。
-- [PR #513](https://github.com/leookun/cursor-byok/pull/513)：事务提交失败后连接池污染。与已修复的子代理入口分开处理，先用数据库副本复现。
 - [#511](https://github.com/leookun/cursor-byok/issues/511)：SQLite 体积过大。先区分数据库正文、WAL、日志及保留策略，不用删除用户数据作为修复。
 
 ## 清单与公开回复
