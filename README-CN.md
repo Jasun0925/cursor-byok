@@ -1,12 +1,10 @@
-## 👋 受够了Cursor的性能？ ✨ **同作者新作** → [Baocode](https://github.com/baocode-dev/baocode) —— 为 Claude Code 打造的精致的桌面 GUI，超小尺寸，超低占用
-
 <div align="center">
 
 # Cursor BYOK · 无广告改版
 
 在 Cursor 中使用自己的模型 API，保留 Agent、工具调用、Skills 和 MCP 工作流。
 
-[English](./README.md) · [下载最新版本](https://github.com/haohaomin/cursor-byok/releases/latest) · [版本记录](https://github.com/haohaomin/cursor-byok/releases) · [提交改进](https://github.com/haohaomin/cursor-byok/pulls) · [上游项目](https://github.com/leookun/cursor-byok)
+[English](./README.md) · [下载最新版本](https://github.com/haohaomin/cursor-byok/releases/latest) · [版本记录](https://github.com/haohaomin/cursor-byok/releases) · [问题反馈](https://github.com/haohaomin/cursor-byok/issues) · [修复进度](./docs/maintenance-status.md) · [提交改进](https://github.com/haohaomin/cursor-byok/pulls) · [上游项目](https://github.com/leookun/cursor-byok)
 
 [![Release](https://img.shields.io/github/v/release/haohaomin/cursor-byok?style=flat-square)](https://github.com/haohaomin/cursor-byok/releases/latest)
 [![CI](https://github.com/haohaomin/cursor-byok/actions/workflows/ci.yml/badge.svg)](https://github.com/haohaomin/cursor-byok/actions/workflows/ci.yml)
@@ -26,6 +24,12 @@
 源码 `main`、测试分支与正式安装包可能处于不同进度。安装请以本仓库 [Latest Release](https://github.com/haohaomin/cursor-byok/releases/latest) 为准，具体改动以该版本的发布说明为准。
 
 > cursor-byok 免费开源，模型 API 可能收费。本项目与 Cursor 官方无隶属关系。本地网关仍会向你选择的模型服务发送请求，并不意味着模型在本机运行。
+
+## 上游归档后的维护
+
+原仓库已归档。本 fork 继续整理原有 Issue 与 PR，复现后修复并保留贡献者署名。查看[已修复内容与剩余问题](./docs/maintenance-status.md)，区分已发布版本和仅在源码中的改动。2026-10-27 清单覆盖 104 个开放 Issue、51 个开放 PR；收集完成不代表所有问题已经解决。
+
+遇到问题请到[本仓库 Issues](https://github.com/haohaomin/cursor-byok/issues)反馈，并附原问题链接。原仓库归档后无法新增评论。
 
 ## 主要功能
 
@@ -205,7 +209,7 @@ make build-docker    # 构建 Docker 镜像
 
 ## 反馈、贡献与致谢
 
-本分支当前未开启 Issues；代码改进可提交到[本仓库 Pull Requests](https://github.com/haohaomin/cursor-byok/pulls)。在未修改的上游版本也能复现的通用问题，可到[上游 Issues](https://github.com/leookun/cursor-byok/issues)反馈，并注明使用过的版本和改动。反馈请包含操作系统、Cursor 与 BYOK 版本、协议、复现步骤及脱敏后的错误信息，不要附带密钥、凭据或完整私人对话。
+问题请提交到[本仓库 Issues](https://github.com/haohaomin/cursor-byok/issues)，代码改进可提交到[本仓库 Pull Requests](https://github.com/haohaomin/cursor-byok/pulls)。原仓库已归档；与既有上游报告相同的问题，请在反馈中附原链接、使用的版本和改动。反馈请包含操作系统、Cursor 与 BYOK 版本、协议、复现步骤及脱敏后的错误信息，不要附带密钥、凭据或完整私人对话。
 
 欢迎提交范围明确的 PR。先阅读 [AGENTS.md](./AGENTS.md) 和相关目录说明，添加必要的回归测试并运行 `make check`。上游通用修复应独立于本分支的发布配置和界面定制。
 

@@ -1,0 +1,1094 @@
+{
+  "captured_date": "2026-10-27",
+  "repository": "leookun/cursor-byok",
+  "archived": true,
+  "fork_head_before_work": "818eeac823968057bef0d9f7644c95a615979875",
+  "method": "All-state issues REST pagination; remove pull_request entries; independently read all open PRs",
+  "all_state_issue_count": 336,
+  "all_state_pr_count": 169,
+  "open_issue_count": 104,
+  "open_pr_count": 51,
+  "previous_issue_changes": [
+    {
+      "number": 294,
+      "state": "closed"
+    },
+    {
+      "number": 102,
+      "state": "unavailable",
+      "http_status": 404
+    }
+  ],
+  "issues": [
+    {
+      "number": 511,
+      "title": "本地SQLite(~/.cursor-byok-v3/cursor-byok.db)占用过大空间",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/511",
+      "created_at": "2026-10-10T02:58:03Z",
+      "updated_at": "2026-10-10T02:58:03Z",
+      "comments": 0,
+      "labels": [],
+      "triage": {
+        "priority": "B",
+        "status": "待取证",
+        "next_step": "只有体积截图；区分主库、WAL、记录和保留策略，不删除正式库。"
+      }
+    },
+    {
+      "number": 509,
+      "title": "[bug]工具 cursor-app-control-move_agent_to_cloned_root 的 JSON Schema 被序列化为1.0",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/509",
+      "created_at": "2026-10-08T09:14:05Z",
+      "updated_at": "2026-10-09T01:56:30Z",
+      "comments": 2,
+      "labels": [],
+      "triage": {
+        "priority": "A",
+        "status": "源码已修复，未发布/原环境待验",
+        "next_step": "现 main 已合入 #420 完整整数约束修复；v1.0.17 未包含，见 PR 合并记录。"
+      }
+    },
+    {
+      "number": 508,
+      "title": "[Bug] 系统代理切换后所有出站请求瞬间失败（HTTP client 缓存了过期的系统代理配置）",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/508",
+      "created_at": "2026-10-08T08:54:10Z",
+      "updated_at": "2026-10-14T16:29:16Z",
+      "comments": 2,
+      "labels": [],
+      "triage": {
+        "priority": "A",
+        "status": "待复现",
+        "next_step": "系统代理切换后缓存旧地址；只提取 #474 网络部分，排除规则正文日志与规则删除。"
+      }
+    },
+    {
+      "number": 505,
+      "title": "Agent 一轮里有多段 reasoning signature 时失败：Cursor assistant has multiple reasoning signatures",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/505",
+      "created_at": "2026-10-07T16:26:36Z",
+      "updated_at": "2026-10-07T16:26:36Z",
+      "comments": 0,
+      "labels": [],
+      "triage": {
+        "priority": "A",
+        "status": "静态确认拒绝路径，待复现修复",
+        "next_step": "当前 decode_assistant 仍拒绝第二个签名；需有序块回放及 checkpoint 往返测试。"
+      }
+    },
+    {
+      "number": 504,
+      "title": "earlier user messages resent as part of new turn; agent repeats completed steps.",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/504",
+      "created_at": "2026-10-07T14:50:10Z",
+      "updated_at": "2026-10-07T14:50:10Z",
+      "comments": 0,
+      "labels": [],
+      "triage": {
+        "priority": "A",
+        "status": "待复现/缺请求证据",
+        "next_step": "用户输入重复、工具参数遗漏与错误记忆须分开，不能直接认定已被 #172 修复。"
+      }
+    },
+    {
+      "number": 503,
+      "title": "这个是不是需要代理",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/503",
+      "created_at": "2026-10-07T04:36:05Z",
+      "updated_at": "2026-10-07T04:36:05Z",
+      "comments": 0,
+      "labels": [],
+      "triage": {
+        "priority": "D",
+        "status": "待补信息",
+        "next_step": "只有是否需要代理的提问；需环境、错误阶段和供应商入口。"
+      }
+    },
+    {
+      "number": 499,
+      "title": "Connection failed. Please try again, orcontact support if the issue persists",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/499",
+      "created_at": "2026-10-01T15:17:04Z",
+      "updated_at": "2026-10-09T03:00:00Z",
+      "comments": 6,
+      "labels": []
+    },
+    {
+      "number": 486,
+      "title": "Linux RPM 无法在 Rocky Linux 9.5 安装：缺少 libwebkit2gtk-4.1.so.0",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/486",
+      "created_at": "2026-09-29T10:19:13Z",
+      "updated_at": "2026-09-29T10:19:13Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 482,
+      "title": "cursor调用lm studio openai 本地模型出错",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/482",
+      "created_at": "2026-09-28T03:11:29Z",
+      "updated_at": "2026-09-28T03:11:29Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 481,
+      "title": "GPT和Gemini账号令牌过期",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/481",
+      "created_at": "2026-09-28T01:26:33Z",
+      "updated_at": "2026-09-28T01:26:33Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 480,
+      "title": "BYOK 会话无法使用 GenerateImage；同一条 Agent 对话里「生图 + 写代码」需要混合路由",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/480",
+      "created_at": "2026-09-27T10:51:25Z",
+      "updated_at": "2026-09-27T10:51:25Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 478,
+      "title": "使用 multi model review 时候，无法选择官方模型+自定义模型",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/478",
+      "created_at": "2026-09-23T02:58:36Z",
+      "updated_at": "2026-09-23T02:58:36Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 477,
+      "title": "子代理执行的时候卡住，一直卡在Planning next moves  子代理改成官方原版 模型 就可以正常执行子代理",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/477",
+      "created_at": "2026-09-22T22:26:36Z",
+      "updated_at": "2026-10-12T09:40:52Z",
+      "comments": 5,
+      "labels": []
+    },
+    {
+      "number": 476,
+      "title": "各位大佬， 能不能支持 remote-control 中使用 api",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/476",
+      "created_at": "2026-09-22T03:56:24Z",
+      "updated_at": "2026-09-22T03:56:24Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 473,
+      "title": "内置读取文件工具不可用？",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/473",
+      "created_at": "2026-09-20T13:25:16Z",
+      "updated_at": "2026-09-20T13:25:16Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 472,
+      "title": "中断运行",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/472",
+      "created_at": "2026-09-20T11:25:13Z",
+      "updated_at": "2026-10-01T08:35:40Z",
+      "comments": 1,
+      "labels": []
+    },
+    {
+      "number": 471,
+      "title": "需求：增加一个配置备份功能",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/471",
+      "created_at": "2026-09-20T11:16:49Z",
+      "updated_at": "2026-09-20T11:16:49Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 470,
+      "title": "谷歌模型的gemini 3.1pro模型也不能用",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/470",
+      "created_at": "2026-09-20T09:51:51Z",
+      "updated_at": "2026-09-20T09:52:35Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 469,
+      "title": "v1.0.0 版本在更新 cursor 后无法在服务器上使用",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/469",
+      "created_at": "2026-09-20T03:32:44Z",
+      "updated_at": "2026-10-13T08:29:16Z",
+      "comments": 2,
+      "labels": []
+    },
+    {
+      "number": 468,
+      "title": "v1.0.0版本用不了",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/468",
+      "created_at": "2026-09-19T01:37:44Z",
+      "updated_at": "2026-09-22T01:25:23Z",
+      "comments": 2,
+      "labels": []
+    },
+    {
+      "number": 467,
+      "title": "插件代理不可用",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/467",
+      "created_at": "2026-09-18T05:27:33Z",
+      "updated_at": "2026-09-18T05:27:33Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 465,
+      "title": "The model you chose is not available",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/465",
+      "created_at": "2026-09-18T03:13:28Z",
+      "updated_at": "2026-09-20T10:54:31Z",
+      "comments": 1,
+      "labels": []
+    },
+    {
+      "number": 464,
+      "title": "revuew之后,修改的文件没发查看",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/464",
+      "created_at": "2026-09-18T02:19:43Z",
+      "updated_at": "2026-09-18T02:48:19Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 463,
+      "title": "Gemini Provider Support",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/463",
+      "created_at": "2026-09-18T01:54:26Z",
+      "updated_at": "2026-09-18T01:54:26Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 461,
+      "title": "功能无法使用",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/461",
+      "created_at": "2026-09-17T08:35:55Z",
+      "updated_at": "2026-09-17T12:00:10Z",
+      "comments": 1,
+      "labels": []
+    },
+    {
+      "number": 449,
+      "title": "[bug] Cursor tools 中的 subagent 模型列表写死而不是从用户的 Client Message 中读取",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/449",
+      "created_at": "2026-09-13T14:23:29Z",
+      "updated_at": "2026-09-26T13:29:21Z",
+      "comments": 2,
+      "labels": []
+    },
+    {
+      "number": 445,
+      "title": "[Bug] Grok 登录令牌到期后不会自动续期，已保存的 refresh_token 未使用",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/445",
+      "created_at": "2026-09-12T15:34:13Z",
+      "updated_at": "2026-09-12T15:34:13Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 444,
+      "title": "使用grok free api接入，压缩后 基本完全忘记之前的事了",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/444",
+      "created_at": "2026-09-12T10:01:13Z",
+      "updated_at": "2026-09-12T10:01:13Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 442,
+      "title": "突然不能用了",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/442",
+      "created_at": "2026-09-12T03:24:35Z",
+      "updated_at": "2026-09-12T05:37:28Z",
+      "comments": 3,
+      "labels": []
+    },
+    {
+      "number": 441,
+      "title": "新版本cursor无法使用kimi k3",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/441",
+      "created_at": "2026-09-11T18:16:53Z",
+      "updated_at": "2026-09-11T18:16:53Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 440,
+      "title": "谷歌里面的claude模型用不了",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/440",
+      "created_at": "2026-09-11T15:11:15Z",
+      "updated_at": "2026-09-20T08:15:17Z",
+      "comments": 7,
+      "labels": []
+    },
+    {
+      "number": 436,
+      "title": "Linux(fedora) 托盘右键菜单没有显示出来",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/436",
+      "created_at": "2026-09-10T05:44:13Z",
+      "updated_at": "2026-09-10T05:44:13Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 429,
+      "title": "插件配置里面的谷歌模型没有最新的gemini 3.8 flash模型，只有3.7flash",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/429",
+      "created_at": "2026-09-07T08:04:04Z",
+      "updated_at": "2026-09-10T01:45:53Z",
+      "comments": 3,
+      "labels": []
+    },
+    {
+      "number": 417,
+      "title": "增加自定义定价",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/417",
+      "created_at": "2026-09-04T06:33:31Z",
+      "updated_at": "2026-09-04T06:33:31Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 415,
+      "title": "skills显示为空的问题",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/415",
+      "created_at": "2026-09-03T07:04:53Z",
+      "updated_at": "2026-09-07T11:34:23Z",
+      "comments": 1,
+      "labels": []
+    },
+    {
+      "number": 410,
+      "title": "让agent对一个文件进行review，过程看起来貌似正常，但是cursor里没有最终的文字输出",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/410",
+      "created_at": "2026-09-03T00:42:51Z",
+      "updated_at": "2026-10-02T09:40:44Z",
+      "comments": 2,
+      "labels": []
+    },
+    {
+      "number": 389,
+      "title": "Auto review Support",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/389",
+      "created_at": "2026-08-31T07:49:58Z",
+      "updated_at": "2026-10-03T03:48:25Z",
+      "comments": 4,
+      "labels": []
+    },
+    {
+      "number": 379,
+      "title": "Grok Responses API 的后台工具任务完成回调时，BYOK 代理组装回包缺少必填的 `tool_call_id` 字段，xAI 服务端直接参数校验失败",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/379",
+      "created_at": "2026-08-29T06:19:36Z",
+      "updated_at": "2026-08-29T19:54:17Z",
+      "comments": 1,
+      "labels": []
+    },
+    {
+      "number": 373,
+      "title": "Compressed requests that encounter errors may not be able to continue",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/373",
+      "created_at": "2026-08-28T07:24:48Z",
+      "updated_at": "2026-08-28T07:24:48Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 371,
+      "title": "follow the system theme and set it as default.",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/371",
+      "created_at": "2026-08-28T06:10:58Z",
+      "updated_at": "2026-08-28T06:10:58Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 370,
+      "title": "Import modal scrollbar is not working",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/370",
+      "created_at": "2026-08-28T06:09:54Z",
+      "updated_at": "2026-08-28T06:09:54Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 352,
+      "title": "新版本必须要安装证书吗",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/352",
+      "created_at": "2026-08-26T08:02:03Z",
+      "updated_at": "2026-09-09T13:53:25Z",
+      "comments": 5,
+      "labels": []
+    },
+    {
+      "number": 348,
+      "title": "Official model did not record thought Effort and Fast",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/348",
+      "created_at": "2026-08-25T14:45:26Z",
+      "updated_at": "2026-08-25T14:45:26Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 346,
+      "title": "The thinking Effort of the child proxy should comply with the configuration.",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/346",
+      "created_at": "2026-08-25T11:29:29Z",
+      "updated_at": "2026-08-25T11:29:29Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 341,
+      "title": "回滚失效",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/341",
+      "created_at": "2026-08-25T06:46:26Z",
+      "updated_at": "2026-08-25T06:46:26Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 340,
+      "title": "(V0.1.1)Cursor Multitask模式下，子任务完成直接Stopped中断停止了，父任务也没有继续",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/340",
+      "created_at": "2026-08-25T06:43:01Z",
+      "updated_at": "2026-08-31T02:58:18Z",
+      "comments": 4,
+      "labels": []
+    },
+    {
+      "number": 339,
+      "title": "亮色模式样式问题",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/339",
+      "created_at": "2026-08-25T06:23:36Z",
+      "updated_at": "2026-08-25T06:23:36Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 337,
+      "title": "beta10还存在的一些问题 bug",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/337",
+      "created_at": "2026-08-25T03:11:53Z",
+      "updated_at": "2026-08-25T03:11:53Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 327,
+      "title": "最新版beta5 版本缺少CreateGoal 工具，无法使用目标模式",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/327",
+      "created_at": "2026-08-24T08:21:45Z",
+      "updated_at": "2026-09-02T06:20:46Z",
+      "comments": 2,
+      "labels": []
+    },
+    {
+      "number": 324,
+      "title": "使用上的一些小痛点。",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/324",
+      "created_at": "2026-08-24T05:19:07Z",
+      "updated_at": "2026-09-07T14:19:11Z",
+      "comments": 1,
+      "labels": []
+    },
+    {
+      "number": 323,
+      "title": "beta版更新所有模型配置全部丢失",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/323",
+      "created_at": "2026-08-24T04:40:52Z",
+      "updated_at": "2026-08-24T23:48:23Z",
+      "comments": 1,
+      "labels": []
+    },
+    {
+      "number": 318,
+      "title": "bug: input_image 缺少必填的 detail 字段，严格校验后端（vLLM）返回 400，且会导致整个会话永久报废",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/318",
+      "created_at": "2026-08-24T03:02:20Z",
+      "updated_at": "2026-08-24T07:23:12Z",
+      "comments": 1,
+      "labels": []
+    },
+    {
+      "number": 317,
+      "title": "新版本怎么使用呢？配置了上游deepseek但是打开cursor没有一点反应",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/317",
+      "created_at": "2026-08-24T02:54:15Z",
+      "updated_at": "2026-08-24T03:19:15Z",
+      "comments": 2,
+      "labels": []
+    },
+    {
+      "number": 314,
+      "title": "[Bug] macOS v0.0.49 首次启动后，通过菜单栏退出会导致应用卡死无响应",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/314",
+      "created_at": "2026-08-20T06:06:09Z",
+      "updated_at": "2026-08-20T06:06:09Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 311,
+      "title": "不会自动切换 便宜的模型来搜索文件吗",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/311",
+      "created_at": "2026-08-20T03:19:10Z",
+      "updated_at": "2026-08-20T03:19:10Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 310,
+      "title": "deepseek-r1 模型中，会出现 openai adapter status=400 body={\"error\":{\"message\":\"think value \\\"medium\\\" is not supported for this model\",\"type\":\"api_error\",\"param\":null,\"code\":null}}， think这个字段不兼容，可以提供一个设置不传入的配置吗",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/310",
+      "created_at": "2026-08-19T18:35:48Z",
+      "updated_at": "2026-08-19T18:54:02Z",
+      "comments": 1,
+      "labels": []
+    },
+    {
+      "number": 302,
+      "title": "模型读 terminal 输出漏 .txt 后缀：Read 找不到文件 / Model drops .txt suffix when reading shell terminal files",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/302",
+      "created_at": "2026-08-12T14:19:01Z",
+      "updated_at": "2026-08-12T14:40:50Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 301,
+      "title": "Shell 命令输出被吞 — 客户端显示空白气泡 / Shell output swallowed in local mode",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/301",
+      "created_at": "2026-08-12T13:17:13Z",
+      "updated_at": "2026-08-12T13:17:13Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 300,
+      "title": "AwaitShell 后台 Shell 完成后未立即返回 / AwaitShell waits after background shell completes",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/300",
+      "created_at": "2026-08-12T13:17:11Z",
+      "updated_at": "2026-08-12T13:17:11Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 297,
+      "title": "工具在长对话环境中的性能严重下降",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/297",
+      "created_at": "2026-08-12T08:25:56Z",
+      "updated_at": "2026-08-13T03:33:14Z",
+      "comments": 4,
+      "labels": []
+    },
+    {
+      "number": 296,
+      "title": "可能看不到历史的编辑",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/296",
+      "created_at": "2026-08-12T07:29:31Z",
+      "updated_at": "2026-08-12T09:10:51Z",
+      "comments": 1,
+      "labels": []
+    },
+    {
+      "number": 292,
+      "title": "这个工具好像被之前不少卖cursor破解的拿去二开了😢",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/292",
+      "created_at": "2026-08-11T15:42:29Z",
+      "updated_at": "2026-08-24T16:34:37Z",
+      "comments": 3,
+      "labels": []
+    },
+    {
+      "number": 290,
+      "title": "claude报错signature",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/290",
+      "created_at": "2026-08-11T09:27:48Z",
+      "updated_at": "2026-08-11T09:44:49Z",
+      "comments": 1,
+      "labels": []
+    },
+    {
+      "number": 288,
+      "title": "切模型的问题",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/288",
+      "created_at": "2026-08-11T03:39:34Z",
+      "updated_at": "2026-08-11T03:39:34Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 283,
+      "title": "与原账号切换问题",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/283",
+      "created_at": "2026-08-10T03:34:11Z",
+      "updated_at": "2026-08-14T01:26:32Z",
+      "comments": 2,
+      "labels": []
+    },
+    {
+      "number": 282,
+      "title": "CLI --endpoint 本地模式丢失 skills/rules｜CLI --endpoint local mode omits request_context skills/rules",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/282",
+      "created_at": "2026-08-08T13:04:27Z",
+      "updated_at": "2026-08-08T14:26:18Z",
+      "comments": 2,
+      "labels": []
+    },
+    {
+      "number": 258,
+      "title": "bug : getting response in chinese",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/258",
+      "created_at": "2026-08-04T15:18:13Z",
+      "updated_at": "2026-08-04T15:38:17Z",
+      "comments": 3,
+      "labels": []
+    },
+    {
+      "number": 256,
+      "title": "windows有一定概率闪退",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/256",
+      "created_at": "2026-08-04T14:45:25Z",
+      "updated_at": "2026-08-04T14:52:59Z",
+      "comments": 1,
+      "labels": []
+    },
+    {
+      "number": 254,
+      "title": "支持配置tab-server的baseurl，而不是内置一个",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/254",
+      "created_at": "2026-08-04T04:36:10Z",
+      "updated_at": "2026-08-07T09:45:35Z",
+      "comments": 1,
+      "labels": []
+    },
+    {
+      "number": 251,
+      "title": "支持在 Cursor-byok 中配置自定义系统提示词面板（prompt override）以及自定义subagent无法使用",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/251",
+      "created_at": "2026-08-03T07:01:51Z",
+      "updated_at": "2026-08-03T07:09:56Z",
+      "comments": 1,
+      "labels": []
+    },
+    {
+      "number": 244,
+      "title": "[Feature] Orchestration 工具（create-agent/AWAIT）、Projects 模式、按 Cursor 3.14.7 重同步 prompt/proto",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/244",
+      "created_at": "2026-08-01T14:25:34Z",
+      "updated_at": "2026-08-01T14:32:15Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 223,
+      "title": "[Bug]: 新会话标题不会由 AI 自动生成，NameTab RPC 返回 404",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/223",
+      "created_at": "2026-07-28T08:29:36Z",
+      "updated_at": "2026-07-28T08:29:36Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 214,
+      "title": "opencode-mimo-v2.5 中途容易没执行完所有todo就停下",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/214",
+      "created_at": "2026-07-22T08:50:13Z",
+      "updated_at": "2026-07-26T16:55:34Z",
+      "comments": 2,
+      "labels": []
+    },
+    {
+      "number": 203,
+      "title": "生成的代码块索引无法点击跳转到代码文件",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/203",
+      "created_at": "2026-07-14T09:56:28Z",
+      "updated_at": "2026-08-01T02:15:47Z",
+      "comments": 2,
+      "labels": []
+    },
+    {
+      "number": 199,
+      "title": "部分公益站grok4.5访问报错",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/199",
+      "created_at": "2026-07-13T02:16:09Z",
+      "updated_at": "2026-07-19T08:50:01Z",
+      "comments": 1,
+      "labels": []
+    },
+    {
+      "number": 192,
+      "title": "配置的文件似乎调用工具有问题",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/192",
+      "created_at": "2026-07-10T09:11:30Z",
+      "updated_at": "2026-07-26T15:45:50Z",
+      "comments": 1,
+      "labels": []
+    },
+    {
+      "number": 191,
+      "title": "额度显示",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/191",
+      "created_at": "2026-07-10T08:02:02Z",
+      "updated_at": "2026-07-10T08:02:02Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 184,
+      "title": "gemini模型不支持吗？",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/184",
+      "created_at": "2026-07-09T01:59:52Z",
+      "updated_at": "2026-09-11T02:10:17Z",
+      "comments": 3,
+      "labels": []
+    },
+    {
+      "number": 175,
+      "title": "StreamableHttp Mcp 工具在ssh 远程服务器上不工作",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/175",
+      "created_at": "2026-07-07T09:08:46Z",
+      "updated_at": "2026-09-17T11:29:16Z",
+      "comments": 4,
+      "labels": []
+    },
+    {
+      "number": 174,
+      "title": "上游异常导致重试时会重复附加system_reminder块",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/174",
+      "created_at": "2026-07-07T02:09:36Z",
+      "updated_at": "2026-07-07T02:09:36Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 172,
+      "title": "中途打断对话后，继续对话会丢失模型该轮对话模型已经输出及toolcall获取到的内容",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/172",
+      "created_at": "2026-07-06T07:15:57Z",
+      "updated_at": "2026-07-30T07:58:17Z",
+      "comments": 5,
+      "labels": []
+    },
+    {
+      "number": 155,
+      "title": "shell 超时",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/155",
+      "created_at": "2026-06-30T04:37:14Z",
+      "updated_at": "2026-07-31T06:01:08Z",
+      "comments": 3,
+      "labels": []
+    },
+    {
+      "number": 150,
+      "title": "提几个意见看看需求能否实现。",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/150",
+      "created_at": "2026-06-24T06:55:29Z",
+      "updated_at": "2026-06-24T06:55:29Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 146,
+      "title": "Docker支持",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/146",
+      "created_at": "2026-06-22T05:53:43Z",
+      "updated_at": "2026-06-22T05:53:43Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 139,
+      "title": "cursorplan模式可以直接改之前的计划",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/139",
+      "created_at": "2026-06-17T03:23:49Z",
+      "updated_at": "2026-06-17T03:23:49Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 134,
+      "title": "添加一个打开cursor 的快捷键按钮",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/134",
+      "created_at": "2026-06-12T14:07:33Z",
+      "updated_at": "2026-06-30T09:33:31Z",
+      "comments": 1,
+      "labels": []
+    },
+    {
+      "number": 133,
+      "title": "3.6版本中此功能无法使用",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/133",
+      "created_at": "2026-06-11T04:46:11Z",
+      "updated_at": "2026-06-11T04:46:11Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 126,
+      "title": "空壳mcp调用或者不积极调用",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/126",
+      "created_at": "2026-06-07T04:21:27Z",
+      "updated_at": "2026-06-07T04:21:27Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 123,
+      "title": "debug模式稳定性提升，如服务启动，日志追踪链路",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/123",
+      "created_at": "2026-06-04T06:36:53Z",
+      "updated_at": "2026-06-04T06:43:18Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 122,
+      "title": "支持同时生成多张图片",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/122",
+      "created_at": "2026-06-04T02:19:19Z",
+      "updated_at": "2026-06-04T02:34:39Z",
+      "comments": 1,
+      "labels": []
+    },
+    {
+      "number": 121,
+      "title": "能否支持和cursor本身的模型共存",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/121",
+      "created_at": "2026-06-03T04:09:36Z",
+      "updated_at": "2026-06-03T15:36:11Z",
+      "comments": 4,
+      "labels": []
+    },
+    {
+      "number": 119,
+      "title": "有个小建议，更新提示关闭之后就不要弹出来了，可以用户手动点击 版本更新",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/119",
+      "created_at": "2026-06-03T03:13:33Z",
+      "updated_at": "2026-06-03T03:13:33Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 118,
+      "title": "子代理的模型未遵守用户配置，经常选的是fast",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/118",
+      "created_at": "2026-06-02T15:42:46Z",
+      "updated_at": "2026-06-04T06:44:09Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 111,
+      "title": "search web fail",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/111",
+      "created_at": "2026-06-02T00:22:13Z",
+      "updated_at": "2026-06-19T19:47:03Z",
+      "comments": 2,
+      "labels": []
+    },
+    {
+      "number": 110,
+      "title": "minixmax3 适配问题",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/110",
+      "created_at": "2026-06-01T07:00:31Z",
+      "updated_at": "2026-06-01T07:51:27Z",
+      "comments": 1,
+      "labels": []
+    },
+    {
+      "number": 107,
+      "title": "请问能不能在用量统计时候加个模型的分类",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/107",
+      "created_at": "2026-05-31T12:58:30Z",
+      "updated_at": "2026-05-31T12:58:30Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 104,
+      "title": "cursor3的Multi Root的Set up workspace能支持吗",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/104",
+      "created_at": "2026-05-31T07:16:24Z",
+      "updated_at": "2026-05-31T07:16:24Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 99,
+      "title": "关于批量添加模型和token用量统计的一点建议",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/99",
+      "created_at": "2026-05-28T09:00:13Z",
+      "updated_at": "2026-08-06T18:45:47Z",
+      "comments": 2,
+      "labels": []
+    },
+    {
+      "number": 88,
+      "title": "配置的OpenAi模型出现Instructions are required",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/88",
+      "created_at": "2026-05-23T03:06:44Z",
+      "updated_at": "2026-05-23T03:15:54Z",
+      "comments": 2,
+      "labels": []
+    },
+    {
+      "number": 86,
+      "title": "响应出现<think>标签时出现异常中断",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/86",
+      "created_at": "2026-05-20T09:12:25Z",
+      "updated_at": "2026-05-21T10:54:19Z",
+      "comments": 3,
+      "labels": []
+    },
+    {
+      "number": 55,
+      "title": "AGENTS.md作用域问题",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/55",
+      "created_at": "2026-05-11T01:46:39Z",
+      "updated_at": "2026-05-11T01:46:39Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 53,
+      "title": "为啥总是reconnect呢，是RPM不够吗",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/53",
+      "created_at": "2026-05-10T01:23:07Z",
+      "updated_at": "2026-05-10T10:55:17Z",
+      "comments": 2,
+      "labels": []
+    },
+    {
+      "number": 45,
+      "title": "Codebase Indexing功能似乎无法使用",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/45",
+      "created_at": "2026-05-06T15:31:13Z",
+      "updated_at": "2026-05-06T15:31:13Z",
+      "comments": 0,
+      "labels": []
+    },
+    {
+      "number": 36,
+      "title": "希望能支持cursor原生的 ctrl k 功能",
+      "state": "open",
+      "html_url": "https://github.com/leookun/cursor-byok/issues/36",
+      "created_at": "2026-05-05T04:33:10Z",
+      "updated_at": "2026-07-10T08:54:26Z",
+      "comments": 1,
+      "labels": []
+    }
+  ]
+}

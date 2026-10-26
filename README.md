@@ -1,12 +1,10 @@
-## 👋Is Cursor getting too heavy?  ✨ **New from the same author** → [BaoCode](https://github.com/baocode-dev/baocode) — an awesome desktop GUI for Claude Code: polished, ultra-small, ultra-light.
-
 <div align="center">
 
 # Cursor BYOK · Ad-free Fork
 
 Use your own model APIs in Cursor with Agent, tool calling, Skills, and MCP workflows.
 
-[中文说明](./README-CN.md) · [Download](https://github.com/haohaomin/cursor-byok/releases/latest) · [Releases](https://github.com/haohaomin/cursor-byok/releases) · [Pull Requests](https://github.com/haohaomin/cursor-byok/pulls) · [Upstream](https://github.com/leookun/cursor-byok)
+[中文说明](./README-CN.md) · [Download](https://github.com/haohaomin/cursor-byok/releases/latest) · [Releases](https://github.com/haohaomin/cursor-byok/releases) · [Issues](https://github.com/haohaomin/cursor-byok/issues) · [Fix status](./docs/maintenance-status.md) · [Pull Requests](https://github.com/haohaomin/cursor-byok/pulls) · [Upstream](https://github.com/leookun/cursor-byok)
 
 [![Release](https://img.shields.io/github/v/release/haohaomin/cursor-byok?style=flat-square)](https://github.com/haohaomin/cursor-byok/releases/latest)
 [![CI](https://github.com/haohaomin/cursor-byok/actions/workflows/ci.yml/badge.svg)](https://github.com/haohaomin/cursor-byok/actions/workflows/ci.yml)
@@ -26,6 +24,12 @@ This fork removes advertising components and uses its own GitHub Releases, updat
 The `main` branch, experimental branches, and released installers may contain different changes. Install from this repository's [Latest Release](https://github.com/haohaomin/cursor-byok/releases/latest) and consult that version's release notes for its contents.
 
 > Cursor BYOK is free and open source; your model provider may charge for API usage. This project is independent of Cursor. A local gateway still sends requests to the model service you choose; it does not imply local model inference.
+
+## Maintenance after upstream archival
+
+The original repository is archived. This independent fork continues reviewing its open issues and pull requests, with credited sources and reproducible tests. See the [fix status and remaining work](./docs/maintenance-status.md), including which changes are released and which exist only in source. The 2026-10-27 inventory covers 104 open issues and 51 open pull requests; collection does not mean every report is fixed.
+
+Report reproducible problems in [this fork’s Issues](https://github.com/haohaomin/cursor-byok/issues), linking the original report when applicable. Archived upstream discussions cannot receive new comments.
 
 ## Features
 
@@ -207,7 +211,7 @@ make build-docker    # Build a Docker image
 
 ## Support, contributing, and credits
 
-Issues are currently disabled for this fork; submit code improvements through [this repository’s pull requests](https://github.com/haohaomin/cursor-byok/pulls). General problems also reproducible on unmodified upstream can be reported to [upstream Issues](https://github.com/leookun/cursor-byok/issues), identifying the versions and modifications involved. Include your OS, Cursor and BYOK versions, protocol, reproduction steps, and redacted errors. Do not attach credentials or complete private conversations.
+Report problems in [this repository’s Issues](https://github.com/haohaomin/cursor-byok/issues) and submit code improvements through [pull requests](https://github.com/haohaomin/cursor-byok/pulls). Upstream is archived; reference its existing reports instead of trying to open a new upstream discussion. Include your OS, Cursor and BYOK versions, protocol, reproduction steps, and redacted errors. Do not attach credentials or complete private conversations.
 
 Focused pull requests are welcome. Read [AGENTS.md](./AGENTS.md) and relevant directory instructions, add necessary regression coverage, and run `make check`. Keep general upstream fixes separate from this fork's release configuration and UI customizations.
 
