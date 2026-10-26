@@ -36,7 +36,6 @@ struct RegistryInner {
     route_changed: Notify,
     store: Store,
     traces: CursorTraceService,
-    web_cache: WebCache,
     plugins: Option<PluginRegistry>,
     conversations: ConversationRegistry,
 }
@@ -121,11 +120,10 @@ impl TransportRegistry {
                     store.clone(),
                     provider,
                     compiler,
-                    web_cache.clone(),
+                    web_cache,
                     local_rules_dir,
                 ),
                 store,
-                web_cache,
                 plugins,
             }),
         }
@@ -140,10 +138,6 @@ impl TransportRegistry {
         request_id: &str,
     ) -> crate::cursor::services::observability::CursorTraceRecorder {
         self.inner.traces.recorder(request_id)
-    }
-
-    pub fn web_cache(&self) -> &WebCache {
-        &self.inner.web_cache
     }
 
     pub fn plugins(&self) -> Option<&PluginRegistry> {

@@ -4699,6 +4699,18 @@
         }
       ]
     },
+    "b6a9b260bc980796": {
+      "source": "WebFetch 会分段返回长网页内容，无需在远端下载本机缓存；仓库索引等其他远程功能仍在单独验证。",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/models/CursorRemoteGuide.tsx",
+          "line": 38,
+          "column": 11
+        }
+      ]
+    },
     "b75a46aad3e7c132": {
       "source": "非缓存输入：{tokens}",
       "kind": "template",
@@ -5359,18 +5371,6 @@
           "file": "features/plugins/PluginResourcePanels.tsx",
           "line": 268,
           "column": 32
-        }
-      ]
-    },
-    "d5efb724d1b83a57": {
-      "source": "基础对话通过不代表所有远程功能都已通过；仓库索引和 WebFetch 的文件引用仍在单独验证。",
-      "kind": "text",
-      "placeholders": [],
-      "refs": [
-        {
-          "file": "features/models/CursorRemoteGuide.tsx",
-          "line": 38,
-          "column": 11
         }
       ]
     },

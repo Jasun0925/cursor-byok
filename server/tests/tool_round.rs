@@ -454,6 +454,42 @@ async fn invalid_tool_arguments_complete_as_tool_errors() {
 }
 
 #[tokio::test]
+async fn invalid_web_fetch_paging_completes_without_reserving_approval() {
+    for arguments in [
+        json!({"url": "https://example.com", "content_id": "../../secret"}),
+        json!({"url": "https://example.com", "offset": 0}),
+        json!({"url": "https://example.com", "content_id": "550e8400-e29b-41d4-a716-446655440000", "offset": -1}),
+        json!({"url": "https://example.com", "content_id": "550e8400-e29b-41d4-a716-446655440000", "limit": 0}),
+        json!({"content_id": "550e8400-e29b-41d4-a716-446655440000"}),
+    ] {
+        let runtime = CursorToolRuntime::default();
+        let dispatcher = ToolDispatcher::new(runtime.clone());
+        let mut invocation = call("invalid-web-fetch", "WebFetch");
+        invocation.arguments_text = arguments.to_string();
+        invocation.arguments = arguments;
+        let dispatched = dispatcher
+            .start_batch(
+                &[invocation],
+                ToolBatchState {
+                    completed: &HashSet::new(),
+                    started: &HashSet::new(),
+                    response_text: "",
+                    response_thinking: "",
+                },
+                &[],
+                &BTreeMap::new(),
+                &exec_context(),
+            )
+            .await
+            .expect("invalid page arguments must not terminate the model run");
+        assert_eq!(dispatched.len(), 1);
+        assert!(dispatched[0].completion.as_ref().unwrap().result().is_error);
+        assert!(dispatched[0].messages.is_empty());
+        assert!(runtime.interrupt_for_message().await.is_empty());
+    }
+}
+
+#[tokio::test]
 async fn issue300_retired_await_shell_returns_immediately_for_both_id_types() {
     for shell_id in [json!(340173), json!("340173")] {
         let runtime = CursorToolRuntime::default();
@@ -656,7 +692,7 @@ async fn exec_ids_are_monotonic_and_released_ids_are_not_reused() {
     assert_eq!(second, 2, "released Exec ids must not be reused in one Run");
 
     let interaction = pending
-        .reserve_interaction(&call("call-3", "AskQuestion"))
+        .reserve_interaction(&call("call-3", "AskQuestion"), &exec_context())
         .await
         .unwrap();
     assert_eq!(

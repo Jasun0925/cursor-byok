@@ -241,8 +241,8 @@
       "updated_at": "2026-10-13T08:29:16Z",
       "comments": 2,
       "labels": [],
-      "review_status": "真实 SSH 基础路由配置通过；WebFetch 缓存引用不可达；远程索引等未完成；未整体采用 PR",
-      "evidence": "docs/upstream-issue-reviews/2026-10-27-issue469-check.md"
+      "review_status": "基础路由及 WebFetch 分页/续读/会话隔离真实 SSH 验收通过；WebFetch 源码修复未发布；其他远程能力待验；PR 未整体采用",
+      "evidence": "docs/upstream-issue-reviews/2026-10-27-issue469-webfetch-fix.md"
     },
     {
       "number": 468,

@@ -1,0 +1,257 @@
+{
+  "conversation_id": "822a38a6-6398-4025-91a9-f664f274a934",
+  "calls": [
+    {
+      "call_id": "4065da56-0772-4d54-ba27-540a2414de6b:71d8d572:0",
+      "conversation_id": "822a38a6-6398-4025-91a9-f664f274a934",
+      "run_id": "4065da56-0772-4d54-ba27-540a2414de6b:71d8d572",
+      "status": "completed",
+      "model_id": "gpt-6-astra",
+      "created_at_ms": 1793053026279,
+      "finished_at_ms": 1793053030004,
+      "message_count": 3
+    },
+    {
+      "call_id": "4065da56-0772-4d54-ba27-540a2414de6b:71d8d572:1",
+      "conversation_id": "822a38a6-6398-4025-91a9-f664f274a934",
+      "run_id": "4065da56-0772-4d54-ba27-540a2414de6b:71d8d572",
+      "status": "completed",
+      "model_id": "gpt-6-astra",
+      "created_at_ms": 1793053030624,
+      "finished_at_ms": 1793053033750,
+      "message_count": 5,
+      "history_prefix_unchanged": true,
+      "tool_schema_unchanged": true
+    },
+    {
+      "call_id": "4065da56-0772-4d54-ba27-540a2414de6b:71d8d572:2",
+      "conversation_id": "822a38a6-6398-4025-91a9-f664f274a934",
+      "run_id": "4065da56-0772-4d54-ba27-540a2414de6b:71d8d572",
+      "status": "completed",
+      "model_id": "gpt-6-astra",
+      "created_at_ms": 1793053035006,
+      "finished_at_ms": 1793053038937,
+      "message_count": 7,
+      "history_prefix_unchanged": true,
+      "tool_schema_unchanged": true
+    },
+    {
+      "call_id": "4065da56-0772-4d54-ba27-540a2414de6b:71d8d572:3",
+      "conversation_id": "822a38a6-6398-4025-91a9-f664f274a934",
+      "run_id": "4065da56-0772-4d54-ba27-540a2414de6b:71d8d572",
+      "status": "completed",
+      "model_id": "gpt-6-astra",
+      "created_at_ms": 1793053039407,
+      "finished_at_ms": 1793053043123,
+      "message_count": 9,
+      "history_prefix_unchanged": true,
+      "tool_schema_unchanged": true
+    },
+    {
+      "call_id": "4065da56-0772-4d54-ba27-540a2414de6b:71d8d572:4",
+      "conversation_id": "822a38a6-6398-4025-91a9-f664f274a934",
+      "run_id": "4065da56-0772-4d54-ba27-540a2414de6b:71d8d572",
+      "status": "completed",
+      "model_id": "gpt-6-astra",
+      "created_at_ms": 1793053043602,
+      "finished_at_ms": 1793053049315,
+      "message_count": 11,
+      "history_prefix_unchanged": true,
+      "tool_schema_unchanged": true
+    },
+    {
+      "call_id": "fe9f3e16-3745-4832-a88a-4fa53e2d29ef:2d37f75d:0",
+      "conversation_id": "822a38a6-6398-4025-91a9-f664f274a934",
+      "run_id": "fe9f3e16-3745-4832-a88a-4fa53e2d29ef:2d37f75d",
+      "status": "completed",
+      "model_id": "gpt-6-astra",
+      "created_at_ms": 1793053130039,
+      "finished_at_ms": 1793053139252,
+      "message_count": 13,
+      "history_prefix_unchanged": true,
+      "tool_schema_unchanged": true
+    },
+    {
+      "call_id": "fe9f3e16-3745-4832-a88a-4fa53e2d29ef:2d37f75d:1",
+      "conversation_id": "822a38a6-6398-4025-91a9-f664f274a934",
+      "run_id": "fe9f3e16-3745-4832-a88a-4fa53e2d29ef:2d37f75d",
+      "status": "completed",
+      "model_id": "gpt-6-astra",
+      "created_at_ms": 1793053139671,
+      "finished_at_ms": 1793053144231,
+      "message_count": 15,
+      "history_prefix_unchanged": true,
+      "tool_schema_unchanged": true
+    }
+  ],
+  "tool_calls": [
+    {
+      "id": "call_0603841e8d0b429f94b43c50c6d512a4",
+      "name": "Read",
+      "arguments": {
+        "path": "/tmp/cursor-byok-webfetch-y_s0g0pd/marker.txt"
+      }
+    },
+    {
+      "id": "call_5e8887ceaa854187b9950c744255cc54",
+      "name": "WebFetch",
+      "arguments": {
+        "url": "https://www.rfc-editor.org/rfc/rfc9457.txt"
+      }
+    },
+    {
+      "id": "call_e62e870a35144d438ea8d4b0149a980a",
+      "name": "WebFetch",
+      "arguments": {
+        "content_id": "dae9b58c-8d3e-4e92-9073-79c9e9e2ad58",
+        "limit": 16384,
+        "offset": 16384,
+        "url": "https://www.rfc-editor.org/rfc/rfc9457.txt"
+      }
+    },
+    {
+      "id": "call_a0d5b969da6a41699cab95976a2a70a7",
+      "name": "WebFetch",
+      "arguments": {
+        "content_id": "dae9b58c-8d3e-4e92-9073-79c9e9e2ad58",
+        "limit": 16384,
+        "offset": 32768,
+        "url": "https://www.rfc-editor.org/rfc/rfc9457.txt"
+      }
+    }
+  ],
+  "pages": [
+    {
+      "call_id": "call_5e8887ceaa854187b9950c744255cc54",
+      "metadata": "<system_reminder>WebFetch cached content_id: dae9b58c-8d3e-4e92-9073-79c9e9e2ad58. UTF-8 bytes 0..16384 of 34103. Next page: call WebFetch with {\"content_id\":\"dae9b58c-8d3e-4e92-9073-79c9e9e2ad58\",\"limit\":16384,\"offset\":16384,\"url\":\"https://www.rfc-editor.org/rfc/rfc9457.txt\"}. Cached content is private to this conversation and retained for up to 24 hours, subject to cache capacity; fetch the original URL again if expired.</system_reminder>",
+      "page_bytes": 16384,
+      "sha256": "4c3aff036875e1953b112d00ba523282b061b5af98e41da3bee4725cf0f1eb35"
+    },
+    {
+      "call_id": "call_e62e870a35144d438ea8d4b0149a980a",
+      "metadata": "<system_reminder>WebFetch cached content_id: dae9b58c-8d3e-4e92-9073-79c9e9e2ad58. UTF-8 bytes 16384..32768 of 34103. Next page: call WebFetch with {\"content_id\":\"dae9b58c-8d3e-4e92-9073-79c9e9e2ad58\",\"limit\":16384,\"offset\":32768,\"url\":\"https://www.rfc-editor.org/rfc/rfc9457.txt\"}. Cached content is private to this conversation and retained for up to 24 hours, subject to cache capacity; fetch the original URL again if expired.</system_reminder>",
+      "page_bytes": 16384,
+      "sha256": "adc048d86ec18fe3b1cf9ba50a87bcbf29b1e7302dcbc99e88cd228e18bf6f1c"
+    },
+    {
+      "call_id": "call_a0d5b969da6a41699cab95976a2a70a7",
+      "metadata": "<system_reminder>WebFetch cached content_id: dae9b58c-8d3e-4e92-9073-79c9e9e2ad58. UTF-8 bytes 32768..34103 of 34103. End of cached content. Source URL: https://www.rfc-editor.org/rfc/rfc9457.txt. Cached content is private to this conversation and retained for up to 24 hours, subject to cache capacity; fetch the original URL again if expired.</system_reminder>",
+      "page_bytes": 1335,
+      "sha256": "a9e57e5bc746519b11a1151f38c0a5d1a56b86da9c8b84e589bd38291d9e273f"
+    }
+  ],
+  "source_url": "https://www.rfc-editor.org/rfc/rfc9457.txt",
+  "content_id": "dae9b58c-8d3e-4e92-9073-79c9e9e2ad58",
+  "content_bytes": 34103,
+  "content_sha256": "fef64b6bd5681239ca0a63e4174d9e0f4113c90ee32040d48b20ca205cab774b",
+  "source_utf8_bom_removed": true,
+  "last_nonempty_line": "   URI:   https://github.com/sdatspun2",
+  "all_history_prefixes_unchanged": true,
+  "all_tool_schemas_unchanged": true,
+  "model_used_shell_or_local_cache_url": false,
+  "exact_reconstructed_content_matches_source": true,
+  "followup": {
+    "result": "CACHE_FOLLOWUP_OK",
+    "arguments": {
+      "content_id": "dae9b58c-8d3e-4e92-9073-79c9e9e2ad58",
+      "limit": 4096,
+      "offset": 32768,
+      "url": "https://www.rfc-editor.org/rfc/rfc9457.txt"
+    },
+    "page_bytes": 1335,
+    "same_conversation": true,
+    "refetched_url": false
+  },
+  "cross_conversation": {
+    "result": "CACHE_ISOLATION_OK",
+    "calls": [
+      {
+        "call_id": "13308616-829e-4351-9f28-9f9f39df15df:4a1bf326:0",
+        "conversation_id": "7a564679-349f-44e0-99a3-4788ab2341f2",
+        "run_id": "13308616-829e-4351-9f28-9f9f39df15df:4a1bf326",
+        "status": "completed",
+        "model_id": "gpt-6-astra",
+        "created_at_ms": 1793053213029,
+        "finished_at_ms": 1793053216619
+      },
+      {
+        "call_id": "13308616-829e-4351-9f28-9f9f39df15df:4a1bf326:1",
+        "conversation_id": "7a564679-349f-44e0-99a3-4788ab2341f2",
+        "run_id": "13308616-829e-4351-9f28-9f9f39df15df:4a1bf326",
+        "status": "completed",
+        "model_id": "gpt-6-astra",
+        "created_at_ms": 1793053217166,
+        "finished_at_ms": 1793053220641
+      }
+    ],
+    "tool_error": "web fetch failed: protocol error: cached content is unavailable or expired; fetch the original URL again",
+    "content_returned": false
+  },
+  "environment": {
+    "cursor_version": "3.27.14",
+    "backend": "current source in isolated database/cache, not installed v1.0.17",
+    "local": "macOS",
+    "remote": "Linux SSH",
+    "provider_protocol": "openai-chat",
+    "model": "gpt-6-astra",
+    "route": "always",
+    "manual_approval_wait_tested": false
+  },
+  "test_assembly": "Production ProviderRouter + TransportRegistry + Cursor HTTP router + CursorHarness; SQLite backup and WebCache::at under a private temporary directory.",
+  "binary_sha256": "8cc1ad2cb21e5f1b66c413dd680b54e0d8596ca10d7b82514d556181517c97a6",
+  "date": "2026-10-27",
+  "source_baseline": "45744732700020e09a9686457e9fb1a3e62d0d32",
+  "upstream_pr": 498,
+  "upstream_author": "sunrisegm",
+  "upstream_head": "c7114878c33076340c0c2f1e77ce4e7512d1960e",
+  "adoption": "Selected WebFetch paging implementation and tests, adapted and extended; not the entire PR.",
+  "baseline_regression": {
+    "name": "web_fetch_remote_client_needs_no_host_local_reference",
+    "before": "failed: remote tool continuation must not depend on desktop loopback",
+    "after": "passed"
+  },
+  "automated": {
+    "web_fetch": 9,
+    "cache": 5,
+    "tool_round": 22,
+    "workspace_passed": 464,
+    "workspace_failed": 0,
+    "workspace_ignored": 0,
+    "clippy": "passed",
+    "http_fixture_bytes": 91011,
+    "http_fixture_requests": 2,
+    "cache_restart_scope": "new WebCache instance from persisted records, not live Cursor service restart",
+    "frontend_check": "passed",
+    "tauri_debug_no_bundle": "passed",
+    "cargo_fmt": "passed",
+    "git_diff_check": "passed"
+  },
+  "restoration": {
+    "test_backend_stopped": true,
+    "cursor_settings_restored_byte_for_byte": true,
+    "production_backend_health_status": 204,
+    "production_proxy_listening": true,
+    "remote_settings_restored_to_absent": true,
+    "remote_fixture_removed_after_marker_check": true,
+    "remote_connection_closed": true,
+    "cursor_window_reloaded": true,
+    "credential_bearing_test_database_removed": true
+  },
+  "limits": [
+    "No live service-process restart test",
+    "Manual approval waiting/refusal only covered by automation",
+    "Other platforms and provider protocols not tested",
+    "Semble, MCP, Skills, Tab, commit generation remain unverified"
+  ],
+  "released": false,
+  "upstream_comment": "not sent; repository remains archived and read-only",
+  "local_log_sha256": {
+    "web-fetch-tests.log": "d20587a8d5d7ca9941cffc4f2e381782f78028bef2af528b061c6844190abf53",
+    "cache-tests.log": "5452c8d16f245f462e0e286d5b0fb62a195cd8a194a58d57f442a29315e112ac",
+    "tool-round-tests.log": "2b7b5825e5c4567fe62c9a6961019e77bf976523724c5a73a2b8c7c6f179e991",
+    "workspace-tests-final.log": "7de3cdc1e291bc196f6bce17e88fd55d2eee0a22cad71bd5686eda35a94899e0",
+    "clippy-final.log": "d5ce6ec8a0fea51de29e7b02456e7c5c792001b00b09a7059840ef6f148bf371",
+    "frontend-check.log": "af52f56804f238bad46d6b30176c7c05d1069ad182dd474f22653dd586d92c18",
+    "desktop-build.log": "e7f2d9b42b9fcd9e8965ddb3c6ef44f79b67dfc98848c9cbaaba6b54d9e4a285"
+  }
+}

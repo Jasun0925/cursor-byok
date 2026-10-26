@@ -828,7 +828,7 @@
       "type": "function",
       "function": {
         "name": "WebFetch",
-        "description": "Fetch content from a specified URL and return its contents in a readable markdown format. Use this tool when you need to retrieve and analyze web content.",
+        "description": "Fetch a public HTTP(S) URL as readable markdown, or read a bounded page of previously fetched content. Results include a conversation-private content_id and next byte offset; call WebFetch again with the returned source URL, content_id and offset to read remaining pages. Cached reads make no network request and require the URL to match the cached source. Content is retained for up to 24 hours subject to capacity; fetch the original URL again if unavailable. Both operations follow the normal URL approval flow. Do not use Shell or Read to access this cache.",
         "parameters": {
           "type": "object",
           "properties": {
@@ -841,8 +841,23 @@
               "type": "string"
             },
             "url": {
-              "description": "The URL to fetch. The content will be converted to a readable markdown format.",
+              "description": "The public HTTP(S) URL to fetch. For cached reads, use the exact source URL from the prior WebFetch result; it is required for native approval.",
               "type": "string"
+            },
+            "content_id": {
+              "description": "Opaque UUID returned by WebFetch in this conversation. Reads cached content without another network fetch.",
+              "type": "string"
+            },
+            "offset": {
+              "description": "Zero-based UTF-8 byte offset for cached content, default 0. Use the exact next offset returned by WebFetch.",
+              "type": "integer",
+              "minimum": 0
+            },
+            "limit": {
+              "description": "Maximum bytes in a cached page, default 16384. Pages end at UTF-8 character boundaries. Applies only with content_id.",
+              "type": "integer",
+              "minimum": 4,
+              "maximum": 16384
             }
           },
           "required": [

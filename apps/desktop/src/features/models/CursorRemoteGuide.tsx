@@ -35,7 +35,7 @@ export function CursorRemoteGuide({ open, onClose }: { open: boolean; onClose: (
         <li>{t("新建 Agent 对话，明确选择带供应商标记的 BYOK 模型，并用远端临时文件验证读取和 Shell 执行。")}</li>
       </ol>
       <p>{t("always 让远程 Agent 的模型请求经过本机 Cursor，再交给本机 BYOK。文件和终端工具仍在远程工作区执行。")}</p>
-      <p>{t("基础对话通过不代表所有远程功能都已通过；仓库索引和 WebFetch 的文件引用仍在单独验证。")}</p>
+      <p>{t("WebFetch 会分段返回长网页内容，无需在远端下载本机缓存；仓库索引等其他远程功能仍在单独验证。")}</p>
     </div>
   </Modal>;
 }

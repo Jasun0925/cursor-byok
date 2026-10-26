@@ -52,8 +52,8 @@
 
 隔离测试先复现了请求继续走旧代理与旧认证，修复后 A→B→直连→A、现有流不中断、读取失败保留缓存、代理仍启用但已停止时不直连等检查通过；本机全工作区 451 项测试通过。这里是本地 HTTP/进程环境及 macOS 配置读取验证，尚未进行 Windows/macOS 系统 UI 切换或真实供应商 CONNECT 验收。**仅源码修复，v1.0.17 安装包不包含。** [复现、实现与验证边界](https://github.com/haohaomin/cursor-byok/blob/main/docs/upstream-issue-reviews/2026-10-27-issue508-fix.md)。原仓库归档只读，因此本段只是草稿，没有发送。
 
-### Issue #469 / PR #498：仅确认基础路由配置（未发送）
+### Issue #469 / PR #498：基础路由及 WebFetch 分页（未发送）
 
 感谢 sunrisegm 的候选方案。我维护的 fork 已用 Cursor 3.27.14、BYOK v1.0.17、macOS → Linux SSH、OpenAI Chat 模型独立复现了 `PROXY 127.0.0.1` 连接错误。按 Cursor 官方提供的设置，在目标主机的 **远程 [SSH: 主机]** 中把 `cursorAgentHost.remoteInferenceRoute` 改成 `always`，再 Reload Window、新建 BYOK 对话后，基础回复、远端 Read/Shell、文件编辑、续聊、取消后继续和窗口重载测试通过。
 
-[配置步骤与证据](https://github.com/haohaomin/cursor-byok/blob/main/docs/remote-ssh.md)。这项配置可用于现有 v1.0.17；新增应用内指南尚未发布。WebFetch 的本机缓存引用仍不能在远端访问，Semble 等功能也未完成验收，因此没有把 PR 整体标成已解决。证书错误与其他模型协议仍需独立复测。上游已归档，本段保存为草稿，没有发送。
+[配置步骤与证据](https://github.com/haohaomin/cursor-byok/blob/main/docs/remote-ssh.md)。这项配置可用于现有 v1.0.17；新增应用内指南尚未发布。另已选择性移植并补齐该 PR 的 WebFetch 分页：同一真实 SSH 环境中，模型自动读取 3 页、完整还原 34,103 字节，同会话续读和跨会话拒绝也通过；9 次供应商调用全部 completed，源码全工作区 464 项测试通过。[分页修复证据](https://github.com/haohaomin/cursor-byok/blob/main/docs/upstream-issue-reviews/2026-10-27-issue469-webfetch-fix.md)。此修复尚未发布，v1.0.17 不包含。Semble 等功能仍未完成验收，因此没有把 PR 整体标成已解决。证书错误与其他模型协议仍需独立复测。上游已归档，本段保存为草稿，没有发送。

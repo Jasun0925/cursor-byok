@@ -31,7 +31,7 @@
 
 遇到问题请到[本仓库 Issues](https://github.com/haohaomin/cursor-byok/issues)反馈，并附原问题链接。原仓库归档后无法新增评论。
 
-在 Remote SSH 中使用 Agent，请按[远程主机配置指南](./docs/remote-ssh.md)设置路由。基础 Agent 已实测可经本机 BYOK 使用；WebFetch 缓存引用仍有远程访问问题。
+在 Remote SSH 中使用 Agent，请按[远程主机配置指南](./docs/remote-ssh.md)设置路由。基础 Agent 已实测可经本机 BYOK 使用；WebFetch 分页已在源码修复并实测，v1.0.17 安装包尚未包含。
 
 ## 主要功能
 
