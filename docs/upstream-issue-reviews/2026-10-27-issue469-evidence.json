@@ -1,0 +1,232 @@
+{
+  "date": "2026-10-27",
+  "source_baseline": "e0fc76eb6ef3bf40121f6314c966fdf57b7970b0",
+  "issue": 469,
+  "pull_request": 498,
+  "pr_head": "c7114878c33076340c0c2f1e77ce4e7512d1960e",
+  "pr_author": "sunrisegm",
+  "environment": {
+    "cursor": "3.27.14",
+    "byok_installed": "1.0.17",
+    "local_os": "macOS",
+    "remote_os": "Linux",
+    "provider_type": "openai-chat",
+    "model_id": "gpt-6-astra",
+    "auto_model_selection": false,
+    "production_configuration_changed": false,
+    "temporary_remote_setting_restored": true,
+    "temporary_remote_workspace_removed": true
+  },
+  "baseline": {
+    "remote_route": "auto",
+    "new_byok_calls": 0,
+    "structured_errors": [
+      {
+        "timestamp_local": "2026-10-27 05:21:00.250",
+        "message": "[nal_agent_retries] Error not retryable",
+        "runtime": "agent_host",
+        "request_id": "7bbdfed5-369a-487d-bb16-c344e2ecc91e",
+        "original_request_id": "abbff92c-95d1-46e5-baa1-4f4e74f31594",
+        "error": "Failed to establish a socket connection to proxies: PROXY 127.0.0.1:49642"
+      }
+    ]
+  },
+  "always": {
+    "remote_settings_confirmed_on_disk": true,
+    "window_reloaded": true,
+    "marker": "ISSUE469_REMOTE_34789a05a84c4bbeb60f7cc8b90f3dca",
+    "local_fixture_path_absent": true,
+    "read_and_shell": "REMOTE_ALWAYS_OK",
+    "system": "Linux",
+    "followup": "REMOTE_FOLLOWUP_OK",
+    "remote_written_content": "REMOTE_EDIT_OK",
+    "after_cancel": "REMOTE_AFTER_CANCEL_OK",
+    "after_window_reload": "REMOTE_RELOAD_OK"
+  },
+  "calls": [
+    {
+      "call_id": "dc9a99d6-8f46-4fe2-88e6-c77f5c2a7090:393c51ae:2",
+      "conversation_id": "c79e00a8-fb87-49a5-8ab8-01ee0337004f",
+      "run_id": "dc9a99d6-8f46-4fe2-88e6-c77f5c2a7090:393c51ae",
+      "created_at_ms": 1793050658779,
+      "status": "completed",
+      "error_message": null,
+      "model_id": "gpt-6-astra",
+      "provider_type": "openai-chat",
+      "first_text_at_ms": 1793050660627,
+      "finished_at_ms": 1793050662312
+    },
+    {
+      "call_id": "dc9a99d6-8f46-4fe2-88e6-c77f5c2a7090:393c51ae:1",
+      "conversation_id": "c79e00a8-fb87-49a5-8ab8-01ee0337004f",
+      "run_id": "dc9a99d6-8f46-4fe2-88e6-c77f5c2a7090:393c51ae",
+      "created_at_ms": 1793050654145,
+      "status": "completed",
+      "error_message": null,
+      "model_id": "gpt-6-astra",
+      "provider_type": "openai-chat",
+      "first_text_at_ms": null,
+      "finished_at_ms": 1793050658241
+    },
+    {
+      "call_id": "dc9a99d6-8f46-4fe2-88e6-c77f5c2a7090:393c51ae:0",
+      "conversation_id": "c79e00a8-fb87-49a5-8ab8-01ee0337004f",
+      "run_id": "dc9a99d6-8f46-4fe2-88e6-c77f5c2a7090:393c51ae",
+      "created_at_ms": 1793050650424,
+      "status": "completed",
+      "error_message": null,
+      "model_id": "gpt-6-astra",
+      "provider_type": "openai-chat",
+      "first_text_at_ms": null,
+      "finished_at_ms": 1793050653086
+    },
+    {
+      "call_id": "c8084dbd-2252-4efb-bda3-7ff7eccca9cc:67a3ea39:1",
+      "conversation_id": "c79e00a8-fb87-49a5-8ab8-01ee0337004f",
+      "run_id": "c8084dbd-2252-4efb-bda3-7ff7eccca9cc:67a3ea39",
+      "created_at_ms": 1793050598863,
+      "status": "completed",
+      "error_message": null,
+      "model_id": "gpt-6-astra",
+      "provider_type": "openai-chat",
+      "first_text_at_ms": 1793050603712,
+      "finished_at_ms": 1793050603840
+    },
+    {
+      "call_id": "c8084dbd-2252-4efb-bda3-7ff7eccca9cc:67a3ea39:0",
+      "conversation_id": "c79e00a8-fb87-49a5-8ab8-01ee0337004f",
+      "run_id": "c8084dbd-2252-4efb-bda3-7ff7eccca9cc:67a3ea39",
+      "created_at_ms": 1793050589539,
+      "status": "completed",
+      "error_message": null,
+      "model_id": "gpt-6-astra",
+      "provider_type": "openai-chat",
+      "first_text_at_ms": null,
+      "finished_at_ms": 1793050598144
+    },
+    {
+      "call_id": "bb51cb25-0d1e-4503-b219-76a8eb3d0443:b3d4d4e0:0",
+      "conversation_id": "0fac67bb-bb45-473f-b151-28e5ed664686",
+      "run_id": "bb51cb25-0d1e-4503-b219-76a8eb3d0443:b3d4d4e0",
+      "created_at_ms": 1793050425065,
+      "status": "completed",
+      "error_message": null,
+      "model_id": "gpt-6-astra",
+      "provider_type": "openai-chat",
+      "first_text_at_ms": 1793050428956,
+      "finished_at_ms": 1793050429510
+    },
+    {
+      "call_id": "5f60c746-a831-4799-8bee-b6677d6f205c:3cb26350:0",
+      "conversation_id": "0fac67bb-bb45-473f-b151-28e5ed664686",
+      "run_id": "5f60c746-a831-4799-8bee-b6677d6f205c:3cb26350",
+      "created_at_ms": 1793050373340,
+      "status": "cancelled",
+      "error_message": null,
+      "model_id": "gpt-6-astra",
+      "provider_type": "openai-chat",
+      "first_text_at_ms": 1793050377999,
+      "finished_at_ms": 1793050388711
+    },
+    {
+      "call_id": "12702bef-3839-4a5b-9f4f-cd8911250d97:ac55bd7d:1",
+      "conversation_id": "0fac67bb-bb45-473f-b151-28e5ed664686",
+      "run_id": "12702bef-3839-4a5b-9f4f-cd8911250d97:ac55bd7d",
+      "created_at_ms": 1793050218962,
+      "status": "completed",
+      "error_message": null,
+      "model_id": "gpt-6-astra",
+      "provider_type": "openai-chat",
+      "first_text_at_ms": 1793050221742,
+      "finished_at_ms": 1793050222479
+    },
+    {
+      "call_id": "12702bef-3839-4a5b-9f4f-cd8911250d97:ac55bd7d:0",
+      "conversation_id": "0fac67bb-bb45-473f-b151-28e5ed664686",
+      "run_id": "12702bef-3839-4a5b-9f4f-cd8911250d97:ac55bd7d",
+      "created_at_ms": 1793050211310,
+      "status": "completed",
+      "error_message": null,
+      "model_id": "gpt-6-astra",
+      "provider_type": "openai-chat",
+      "first_text_at_ms": null,
+      "finished_at_ms": 1793050218412
+    },
+    {
+      "call_id": "6569b496-84ae-4319-a768-eae9cfe29d21:e36ddab2:2",
+      "conversation_id": "0fac67bb-bb45-473f-b151-28e5ed664686",
+      "run_id": "6569b496-84ae-4319-a768-eae9cfe29d21:e36ddab2",
+      "created_at_ms": 1793050148071,
+      "status": "completed",
+      "error_message": null,
+      "model_id": "gpt-6-astra",
+      "provider_type": "openai-chat",
+      "first_text_at_ms": 1793050155874,
+      "finished_at_ms": 1793050156145
+    },
+    {
+      "call_id": "6569b496-84ae-4319-a768-eae9cfe29d21:e36ddab2:1",
+      "conversation_id": "0fac67bb-bb45-473f-b151-28e5ed664686",
+      "run_id": "6569b496-84ae-4319-a768-eae9cfe29d21:e36ddab2",
+      "created_at_ms": 1793050139687,
+      "status": "completed",
+      "error_message": null,
+      "model_id": "gpt-6-astra",
+      "provider_type": "openai-chat",
+      "first_text_at_ms": null,
+      "finished_at_ms": 1793050147082
+    },
+    {
+      "call_id": "6569b496-84ae-4319-a768-eae9cfe29d21:e36ddab2:0",
+      "conversation_id": "0fac67bb-bb45-473f-b151-28e5ed664686",
+      "run_id": "6569b496-84ae-4319-a768-eae9cfe29d21:e36ddab2",
+      "created_at_ms": 1793050133307,
+      "status": "completed",
+      "error_message": null,
+      "model_id": "gpt-6-astra",
+      "provider_type": "openai-chat",
+      "first_text_at_ms": null,
+      "finished_at_ms": 1793050139147
+    }
+  ],
+  "webfetch": {
+    "source_url": "https://example.com",
+    "local_cache_http_status": 200,
+    "local_cache_bytes": 176,
+    "local_cache_contains": "Example Domain",
+    "remote_cache_direct_error": "[Errno 111] Connection refused",
+    "cursor_followup": "WEBFETCH_REMOTE_FAILED",
+    "read_attempt": "Model treated HTTP cache URL as a remote file path; Read returned file not found. Separate direct remote HTTP probe also failed.",
+    "status": "cache reference unresolved; short inline content is not proven unusable",
+    "long_content_tested": false
+  },
+  "validation": {
+    "frontend_check": "passed",
+    "tauri_debug_build": "passed",
+    "browser_ui": [
+      "zh-CN dark",
+      "en-US light",
+      "820x558 layout and scroll",
+      "Tab focus trap",
+      "Escape and focus return",
+      "guide available without local integration",
+      "clipboard refusal shows manual-copy message"
+    ],
+    "desktop_clipboard_success_tested": false,
+    "browser_fixture_limit": "Demo bootstrap has missing API endpoints; UI checked with no models and integration unavailable.",
+    "raw_request_payload_recording": false
+  },
+  "unverified": [
+    "certificate failure",
+    "separate SSH disconnect/reconnect",
+    "other client OS and provider protocols",
+    "Semble remote indexing",
+    "long WebFetch paging",
+    "MCP",
+    "Skills",
+    "Tab",
+    "commit generation"
+  ],
+  "upstream_comment": "not sent; repository archived and read-only",
+  "release": "no new release; configuration works on tested v1.0.17"
+}

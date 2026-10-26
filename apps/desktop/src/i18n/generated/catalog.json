@@ -163,7 +163,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 153,
+          "line": 155,
           "column": 27
         }
       ]
@@ -232,7 +232,7 @@
         },
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 388,
+          "line": 394,
           "column": 73
         }
       ]
@@ -271,7 +271,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 399,
+          "line": 405,
           "column": 89
         }
       ]
@@ -318,6 +318,18 @@
           "file": "features/plugins/PluginResourcePanels.tsx",
           "line": 328,
           "column": 72
+        }
+      ]
+    },
+    "0c6575684cb4a1b3": {
+      "source": "本机未接管",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/models/CursorSettingsPage.tsx",
+          "line": 308,
+          "column": 81
         }
       ]
     },
@@ -532,7 +544,7 @@
         },
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 398,
+          "line": 404,
           "column": 36
         }
       ]
@@ -544,7 +556,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 322,
+          "line": 324,
           "column": 213
         }
       ]
@@ -631,17 +643,17 @@
         },
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 326,
-          "column": 51
+          "line": 330,
+          "column": 40
         },
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 326,
-          "column": 130
+          "line": 330,
+          "column": 119
         },
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 341,
+          "line": 347,
           "column": 74
         }
       ]
@@ -705,6 +717,18 @@
           "file": "features/settings/AppLifecycleSettingsCard.tsx",
           "line": 158,
           "column": 27
+        }
+      ]
+    },
+    "198daa5270ec4794": {
+      "source": "先在本机开启 Cursor 接管，并确认所选 BYOK 模型可用。本页的接管状态只表示本机配置，远程主机需要单独设置。",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/models/CursorRemoteGuide.tsx",
+          "line": 26,
+          "column": 11
         }
       ]
     },
@@ -793,7 +817,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 362,
+          "line": 368,
           "column": 52
         }
       ]
@@ -807,6 +831,18 @@
           "file": "features/settings/SettingsPage.tsx",
           "line": 283,
           "column": 131
+        }
+      ]
+    },
+    "1c4c128970fd9a84": {
+      "source": "使用 Cursor 3.21.16 或更新版本，通过 Remote SSH 连接目标主机。",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/models/CursorRemoteGuide.tsx",
+          "line": 28,
+          "column": 14
         }
       ]
     },
@@ -928,7 +964,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 392,
+          "line": 398,
           "column": 89
         }
       ]
@@ -976,7 +1012,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 320,
+          "line": 322,
           "column": 136
         }
       ]
@@ -1066,7 +1102,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 48,
+          "line": 50,
           "column": 43
         }
       ]
@@ -1095,7 +1131,7 @@
         },
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 391,
+          "line": 397,
           "column": 186
         }
       ]
@@ -1124,12 +1160,12 @@
         },
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 331,
+          "line": 337,
           "column": 20
         },
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 362,
+          "line": 368,
           "column": 76
         },
         {
@@ -1201,7 +1237,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 330,
+          "line": 336,
           "column": 14
         }
       ]
@@ -1258,7 +1294,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 405,
+          "line": 411,
           "column": 70
         }
       ]
@@ -1328,7 +1364,7 @@
         },
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 362,
+          "line": 368,
           "column": 99
         },
         {
@@ -1398,12 +1434,12 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 355,
+          "line": 361,
           "column": 35
         },
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 358,
+          "line": 364,
           "column": 41
         }
       ]
@@ -1417,6 +1453,18 @@
           "file": "features/plugins/PluginResourcePanels.tsx",
           "line": 143,
           "column": 64
+        }
+      ]
+    },
+    "32cc3d89013df557": {
+      "source": "也可以将下方配置项合入该主机的远程 settings.json，保留原有的其他配置。",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/models/CursorRemoteGuide.tsx",
+          "line": 30,
+          "column": 14
         }
       ]
     },
@@ -1456,7 +1504,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 390,
+          "line": 396,
           "column": 123
         }
       ]
@@ -1490,6 +1538,18 @@
           "file": "features/home/metrics/HomeMetrics.tsx",
           "line": 146,
           "column": 46
+        }
+      ]
+    },
+    "37db3df523f4a362": {
+      "source": "执行 Developer: Reload Window，重新加载远程窗口。",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/models/CursorRemoteGuide.tsx",
+          "line": 34,
+          "column": 14
         }
       ]
     },
@@ -1690,7 +1750,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 322,
+          "line": 324,
           "column": 199
         }
       ]
@@ -1701,8 +1761,13 @@
       "placeholders": [],
       "refs": [
         {
+          "file": "features/models/CursorRemoteGuide.tsx",
+          "line": 24,
+          "column": 70
+        },
+        {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 346,
+          "line": 352,
           "column": 80
         },
         {
@@ -1820,7 +1885,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 162,
+          "line": 164,
           "column": 27
         }
       ]
@@ -1966,7 +2031,7 @@
         },
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 391,
+          "line": 397,
           "column": 34
         }
       ]
@@ -1993,7 +2058,7 @@
         },
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 341,
+          "line": 347,
           "column": 703
         }
       ]
@@ -2152,7 +2217,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 199,
+          "line": 201,
           "column": 13
         }
       ]
@@ -2169,16 +2234,23 @@
         }
       ]
     },
+    "52b465a48c4f9646": {
+      "source": "远程 settings.json 配置示例",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/models/CursorRemoteGuide.tsx",
+          "line": 32,
+          "column": 63
+        }
+      ]
+    },
     "5319e7374f78fb38": {
       "source": "已接管",
       "kind": "text",
       "placeholders": [],
       "refs": [
-        {
-          "file": "features/models/CursorSettingsPage.tsx",
-          "line": 306,
-          "column": 68
-        },
         {
           "file": "shell/AppLayout.tsx",
           "line": 106,
@@ -2246,7 +2318,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 257,
+          "line": 259,
           "column": 47
         }
       ]
@@ -2270,8 +2342,8 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 326,
-          "column": 63
+          "line": 330,
+          "column": 52
         }
       ]
     },
@@ -2304,7 +2376,7 @@
         },
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 391,
+          "line": 397,
           "column": 83
         }
       ]
@@ -2417,7 +2489,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 321,
+          "line": 323,
           "column": 124
         }
       ]
@@ -2457,6 +2529,18 @@
           "file": "shell/AppHeader.tsx",
           "line": 34,
           "column": 18
+        }
+      ]
+    },
+    "5e65b1856f89461d": {
+      "source": "always 让远程 Agent 的模型请求经过本机 Cursor，再交给本机 BYOK。文件和终端工具仍在远程工作区执行。",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/models/CursorRemoteGuide.tsx",
+          "line": 37,
+          "column": 11
         }
       ]
     },
@@ -2925,7 +3009,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 319,
+          "line": 321,
           "column": 105
         }
       ]
@@ -2937,12 +3021,12 @@
       "refs": [
         {
           "file": "shared/store/appStore.ts",
-          "line": 243,
+          "line": 246,
           "column": 23
         },
         {
           "file": "shared/store/appStore.ts",
-          "line": 250,
+          "line": 253,
           "column": 25
         }
       ]
@@ -3067,7 +3151,7 @@
         },
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 386,
+          "line": 392,
           "column": 67
         }
       ]
@@ -3197,6 +3281,18 @@
         }
       ]
     },
+    "835fea04879ef7c3": {
+      "source": "远程配置已复制",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/models/CursorRemoteGuide.tsx",
+          "line": 16,
+          "column": 15
+        }
+      ]
+    },
     "83c4efccd9a6bf69": {
       "source": "连通性测试已取消：成功 {successful}，失败 {failed}",
       "kind": "template",
@@ -3207,7 +3303,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 197,
+          "line": 199,
           "column": 11
         }
       ]
@@ -3504,7 +3600,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 406,
+          "line": 412,
           "column": 87
         }
       ]
@@ -3577,11 +3673,6 @@
       "placeholders": [],
       "refs": [
         {
-          "file": "features/models/CursorSettingsPage.tsx",
-          "line": 306,
-          "column": 79
-        },
-        {
           "file": "shell/AppLayout.tsx",
           "line": 106,
           "column": 62
@@ -3619,7 +3710,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 362,
+          "line": 368,
           "column": 250
         }
       ]
@@ -3665,7 +3756,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 48,
+          "line": 50,
           "column": 61
         }
       ]
@@ -3974,7 +4065,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 208,
+          "line": 210,
           "column": 22
         }
       ]
@@ -4027,12 +4118,12 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 341,
+          "line": 347,
           "column": 432
         },
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 349,
+          "line": 355,
           "column": 193
         },
         {
@@ -4136,7 +4227,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 136,
+          "line": 138,
           "column": 15
         }
       ]
@@ -4191,7 +4282,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 341,
+          "line": 347,
           "column": 715
         }
       ]
@@ -4514,7 +4605,7 @@
         },
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 349,
+          "line": 355,
           "column": 49
         }
       ]
@@ -4653,7 +4744,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 346,
+          "line": 352,
           "column": 103
         }
       ]
@@ -4743,7 +4834,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 200,
+          "line": 202,
           "column": 13
         }
       ]
@@ -4792,6 +4883,18 @@
         }
       ]
     },
+    "bb98759a6c4712f5": {
+      "source": "复制远程配置",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/models/CursorRemoteGuide.tsx",
+          "line": 24,
+          "column": 139
+        }
+      ]
+    },
     "bda74b5674b6a57d": {
       "source": "初始化插件",
       "kind": "text",
@@ -4811,12 +4914,12 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 354,
+          "line": 360,
           "column": 45
         },
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 357,
+          "line": 363,
           "column": 42
         }
       ]
@@ -4921,7 +5024,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 341,
+          "line": 347,
           "column": 62
         }
       ]
@@ -5037,6 +5140,18 @@
         }
       ]
     },
+    "cdab55040495108c": {
+      "source": "新建 Agent 对话，明确选择带供应商标记的 BYOK 模型，并用远端临时文件验证读取和 Shell 执行。",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/models/CursorRemoteGuide.tsx",
+          "line": 35,
+          "column": 14
+        }
+      ]
+    },
     "cea1aafe9416de7b": {
       "source": "请求头",
       "kind": "text",
@@ -5080,6 +5195,23 @@
           "file": "features/settings/SettingsPage.tsx",
           "line": 202,
           "column": 21
+        }
+      ]
+    },
+    "d036b6c60893d968": {
+      "source": "Remote SSH 指南",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/models/CursorSettingsPage.tsx",
+          "line": 329,
+          "column": 30
+        },
+        {
+          "file": "features/models/CursorSettingsPage.tsx",
+          "line": 329,
+          "column": 115
         }
       ]
     },
@@ -5172,7 +5304,7 @@
         },
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 354,
+          "line": 360,
           "column": 27
         }
       ]
@@ -5184,7 +5316,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 341,
+          "line": 347,
           "column": 675
         },
         {
@@ -5230,6 +5362,18 @@
         }
       ]
     },
+    "d5efb724d1b83a57": {
+      "source": "基础对话通过不代表所有远程功能都已通过；仓库索引和 WebFetch 的文件引用仍在单独验证。",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/models/CursorRemoteGuide.tsx",
+          "line": 38,
+          "column": 11
+        }
+      ]
+    },
     "d60669bb26a22f5d": {
       "source": "留空使用默认值",
       "kind": "text",
@@ -5271,7 +5415,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 339,
+          "line": 345,
           "column": 11
         }
       ]
@@ -5297,7 +5441,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 351,
+          "line": 357,
           "column": 27
         }
       ]
@@ -5347,7 +5491,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 347,
+          "line": 353,
           "column": 47
         }
       ]
@@ -5602,7 +5746,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 220,
+          "line": 222,
           "column": 26
         }
       ]
@@ -5683,6 +5827,18 @@
           "file": "features/settings/CommitSettingsCard.tsx",
           "line": 197,
           "column": 24
+        }
+      ]
+    },
+    "e39d8093a3e5e55b": {
+      "source": "Remote SSH 使用指南",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/models/CursorRemoteGuide.tsx",
+          "line": 24,
+          "column": 36
         }
       ]
     },
@@ -5776,6 +5932,18 @@
         {
           "file": "features/calls/CallTable.tsx",
           "line": 82,
+          "column": 15
+        }
+      ]
+    },
+    "e7ea9f1572d2369a": {
+      "source": "无法复制，请手动选中并复制下方配置。",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/models/CursorRemoteGuide.tsx",
+          "line": 18,
           "column": 15
         }
       ]
@@ -5876,7 +6044,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 351,
+          "line": 357,
           "column": 44
         }
       ]
@@ -5888,7 +6056,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 347,
+          "line": 353,
           "column": 77
         }
       ]
@@ -5902,6 +6070,18 @@
           "file": "features/plugins/PluginManagementPage.tsx",
           "line": 276,
           "column": 20
+        }
+      ]
+    },
+    "ec03b304283b1ba9": {
+      "source": "本机已接管",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/models/CursorSettingsPage.tsx",
+          "line": 308,
+          "column": 68
         }
       ]
     },
@@ -5931,7 +6111,7 @@
         },
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 318,
+          "line": 320,
           "column": 98
         }
       ]
@@ -5943,7 +6123,7 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 346,
+          "line": 352,
           "column": 53
         }
       ]
@@ -6316,8 +6496,20 @@
       "refs": [
         {
           "file": "features/models/CursorSettingsPage.tsx",
-          "line": 332,
+          "line": 338,
           "column": 21
+        }
+      ]
+    },
+    "fc6b160dbf6a189b": {
+      "source": "打开编辑器设置，选择“远程 [SSH: 主机]”，搜索 cursorAgentHost.remoteInferenceRoute，并将值设为 always。",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/models/CursorRemoteGuide.tsx",
+          "line": 29,
+          "column": 14
         }
       ]
     },

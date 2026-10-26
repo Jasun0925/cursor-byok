@@ -1,0 +1,24 @@
+@use "../../styles/typography" as type;
+
+.guide {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  font-size: type.$font-size-base;
+  line-height: 1.6;
+
+  p, ol { margin: 0; }
+  ol { padding-inline-start: 22px; }
+  li + li { margin-top: 8px; }
+}
+
+.config {
+  margin: 0;
+  padding: 12px;
+  color: var(--vscode-textLink-foreground);
+  background: var(--vscode-textCodeBlock-background);
+  border-radius: 4px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  user-select: text;
+}

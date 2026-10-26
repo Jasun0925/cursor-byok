@@ -31,6 +31,8 @@ The original repository is archived. This independent fork continues reviewing i
 
 Report reproducible problems in [this fork’s Issues](https://github.com/haohaomin/cursor-byok/issues), linking the original report when applicable. Archived upstream discussions cannot receive new comments.
 
+Using Agent over Remote SSH? See the [per-host routing guide and verified limits](./docs/remote-ssh.md). Basic Agent requests can route through local BYOK; remote WebFetch cache references remain unresolved.
+
 ## Features
 
 - **Your own model services:** Configure endpoints, API keys, model IDs, context limits, and generation parameters.

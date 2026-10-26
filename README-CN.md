@@ -31,6 +31,8 @@
 
 遇到问题请到[本仓库 Issues](https://github.com/haohaomin/cursor-byok/issues)反馈，并附原问题链接。原仓库归档后无法新增评论。
 
+在 Remote SSH 中使用 Agent，请按[远程主机配置指南](./docs/remote-ssh.md)设置路由。基础 Agent 已实测可经本机 BYOK 使用；WebFetch 缓存引用仍有远程访问问题。
+
 ## 主要功能
 
 - **自带模型服务**：配置接口地址、API Key、模型 ID、上下文容量和生成参数。

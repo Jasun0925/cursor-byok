@@ -5,6 +5,7 @@ import { CursorCaGate, CursorCaProvider, CursorModelGate, CursorModelProvider } 
 import { CursorModelCards, cursorModelGroups, type CursorModelGroup, type CursorModelGrouping } from "./CursorModelCards";
 import { CursorModelEditor, emptyCursorModelDraft, type CursorModelDraft } from "./CursorModelEditor";
 import { CursorModelTestResult, type CursorModelTestState } from "./CursorModelTestResult";
+import { CursorRemoteGuide } from "./CursorRemoteGuide";
 import styles from "./CursorSettings.module.scss";
 import { PageContent } from "../../shell/layout/PageContent";
 import { LegacyModelImport } from "./LegacyModelImport";
@@ -32,6 +33,7 @@ export function CursorSettingsPage() {
   const [waitingForCaRefresh, setWaitingForCaRefresh] = useState(false);
   const [deleting, setDeleting] = useState<Model | null>(null);
   const [confirmDisableTakeover, setConfirmDisableTakeover] = useState(false);
+  const [remoteGuideOpen, setRemoteGuideOpen] = useState(false);
   const [testingModelHashes, setTestingModelHashes] = useState<Set<string>>(() => new Set());
   const [modelTestResults, setModelTestResults] = useState<Map<string, CursorModelTestState>>(() => new Map());
   const [savingAndTesting, setSavingAndTesting] = useState(false);
@@ -303,7 +305,7 @@ export function CursorSettingsPage() {
   return <>
     <PageActions position="left">
       <div className={styles.takeoverActions}>
-        <span className={styles.takeoverStatus}>{cursorTakenOver ? t("已接管") : t("未接管")}</span>
+        <span className={styles.takeoverStatus}>{cursorTakenOver ? t("本机已接管") : t("本机未接管")}</span>
         <TooltipTrigger label={takeoverLabel}>
           <Switch
             checked={cursorTakenOver}
@@ -323,8 +325,12 @@ export function CursorSettingsPage() {
         </div>}
       </div>
     </PageActions>
-    <PageActions><TooltipTrigger label={caReady ? t("添加模型") : t("请先初始化 CA")}><button className={controls.iconButton} aria-label={t("添加模型")} disabled={!caReady || cursorBusy} onClick={openNew}><Icon icon={addIcon} size="1.1em" /></button></TooltipTrigger></PageActions>
+    <PageActions>
+      <TooltipTrigger label={t("Remote SSH 指南")}><button type="button" className={controls.secondary} aria-label={t("Remote SSH 指南")} onClick={() => setRemoteGuideOpen(true)}>SSH</button></TooltipTrigger>
+      <TooltipTrigger label={caReady ? t("添加模型") : t("请先初始化 CA")}><button className={controls.iconButton} aria-label={t("添加模型")} disabled={!caReady || cursorBusy} onClick={openNew}><Icon icon={addIcon} size="1.1em" /></button></TooltipTrigger>
+    </PageActions>
     <PageContent title="Cursor" sections={[{ key: "cursor-settings", estimatedHeight: estimatedModelHeight, content }]} />
+    <CursorRemoteGuide open={remoteGuideOpen} onClose={() => setRemoteGuideOpen(false)} />
     <ConfirmDialog
       open={confirmDisableTakeover}
       title={t("关闭接管Cursor？")}

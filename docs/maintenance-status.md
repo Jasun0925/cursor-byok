@@ -29,7 +29,7 @@
 
 - [#155](https://github.com/leookun/cursor-byok/issues/155)：保持“完成一半”。普通后台短任务自动续答已通过；真实审批等待、压缩期间完成、最终补丁的输出通知等边界仍待验收。20 分钟测试按维护者本轮范围排除。[验收记录](upstream-issue-reviews/2026-10-19-issue155-acceptance.md)
 - [#505](https://github.com/leookun/cursor-byok/issues/505)：多个 reasoning signature。两个合成 checkpoint 已复现拒绝第二个签名；原生 Anthropic 多块签名回放及 OpenAI Chat 聚合对照通过。仍未修复，原作者网关的签名数据与历史来源待取证，不能直接删除校验或覆盖签名。[复现与验证边界](upstream-issue-reviews/2026-10-27-issue505-check.md)
-- [#469](https://github.com/leookun/cursor-byok/issues/469) / [PR #498](https://github.com/leookun/cursor-byok/pull/498)：Remote SSH。候选同时改动请求路由、远程索引和 WebFetch 分页，尚未合入或完成本 fork 的远程实测。
+- [#469](https://github.com/leookun/cursor-byok/issues/469) / [PR #498](https://github.com/leookun/cursor-byok/pull/498)：Remote SSH。真实 `auto` 代理连接失败已复现；远端设为 `always` 后，基础 Agent、Read/Shell、编辑、续聊、取消与窗口重载通过，v1.0.17 可使用这个[配置办法](remote-ssh.md)。WebFetch 本机缓存引用在远端不可达；远程索引等功能待验，PR 未整体采用。新增桌面指南仅在源码、未发布。[实测与未完成项](upstream-issue-reviews/2026-10-27-issue469-check.md)
 - [#511](https://github.com/leookun/cursor-byok/issues/511)：SQLite 体积过大。先区分数据库正文、WAL、日志及保留策略，不用删除用户数据作为修复。
 
 ## 清单与公开回复
