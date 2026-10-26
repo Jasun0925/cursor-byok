@@ -28,6 +28,8 @@ Cursor 3.21.16 起提供远程 Agent 推理路由选项。若本地 Agent 正常
 
 **源码中的 WebFetch 分页已通过真实 SSH 验收。** 长网页通过同一 WebFetch 工具逐页返回，同会话续读及跨会话隔离也通过。[修复与验收证据](upstream-issue-reviews/2026-10-27-issue469-webfetch-fix.md)。**v1.0.17 安装包仍使用旧缓存引用，不包含此修复。**
 
-仓库索引、MCP、Skills、Tab、提交信息和其他模型协议尚未完成本轮远程验收，不能据此宣称所有远程能力均已支持。
+**远程 Semble 仓库索引仍待修复。** 当前源码在 BYOK 本机读取仓库路径，远端独有路径已复现 `source does not exist`；候选快照补丁存在启动、忽略规则和索引来源问题，尚未采用。[定位与候选审查](upstream-issue-reviews/2026-10-27-issue469-semble-check.md)
+
+MCP、Skills、Tab、提交信息和其他模型协议尚未完成本轮远程验收，不能据此宣称所有远程能力均已支持。
 
 源码中的 Cursor 页面新增 **SSH** 指南按钮，使用相同配置步骤；该界面尚未发布安装包。v1.0.17 用户现在即可在 Cursor 中手动设置并按上述范围复测。

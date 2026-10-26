@@ -1,0 +1,101 @@
+{
+  "base": "3d309480d55ece3021688dd36228ad48b76cd56c",
+  "baseline": {
+    "cursor_exec_messages": 0,
+    "error": "source does not exist: /tmp/cursor-byok-semble-eza2p1hj",
+    "local_control": {
+      "query": "remote_semble_probe",
+      "results": [
+        {
+          "content": "def remote_semble_probe():\n    return \"REMOTE_SEMBLE_FIXTURE_20261027\"",
+          "end_line": 2,
+          "file_path": "auth.py",
+          "score": 1.0,
+          "start_line": 1
+        }
+      ]
+    },
+    "remote_exists_on_byok_host": false
+  },
+  "candidate": "c7114878c33076340c0c2f1e77ce4e7512d1960e",
+  "identity": {
+    "host_a_files": [
+      "alpha.py"
+    ],
+    "host_b_cached_files": [
+      "alpha.py"
+    ],
+    "host_b_refreshed_files": [
+      "beta.py"
+    ],
+    "second_call_ms": 0,
+    "second_reused_first_index": true,
+    "source_identity": "cursor-host:e3af8a7251583e76fee1fc45993af40a380512ed7b704d61e7869aa9b57391ad"
+  },
+  "scope": "real core embedder and native dispatcher; synthetic files; no live Cursor UI or provider; candidate source extraction plus current core APIs; transfer and index findings require correcting the separate launcher argument defect",
+  "snapshot_after_argument_correction_only": {
+    "ignored_search_result": {
+      "query": "gitignored_probe",
+      "results": [
+        {
+          "content": "def gitignored_probe():\n    return \"GITIGNORE_TEST_ONLY\"",
+          "end_line": 2,
+          "file_path": "ignored.py",
+          "score": 1.0,
+          "start_line": 1
+        }
+      ]
+    },
+    "materialized_discovery": [
+      "ignored.py",
+      "private.py",
+      "visible.py"
+    ],
+    "original_discovery": [
+      "private.py",
+      "visible.py"
+    ],
+    "serialized": [
+      ".cursorignore",
+      "visible.py",
+      "semble-private.py",
+      "ignored.py",
+      ".gitignore",
+      ".sembleignore",
+      "private.py"
+    ]
+  },
+  "unmodified_snapshot_command": {
+    "exit_code": 2,
+    "stdout": "{\"v\": 1, \"ok\": false, \"error\": \"not a directory\"}\n"
+  },
+  "verification": {
+    "date": "2026-10-27",
+    "upstream_source_blob": "db52774199f7bcec1c9810bcca028fe0677f3e48",
+    "upstream_source_sha256": "d5e9041ed16f07a27c96d9c283bedc80a85a3fe63761426fec7a674779bd293e",
+    "upstream_source_exact_head_match": true,
+    "probe_sha256": "5606ed6e713cf7a54c74b23f5408f5d34685023fd80550b8ae18a539a4930e55",
+    "probe_exit_code": 0,
+    "embedder": "minishlab/potion-code-16M-v2",
+    "model_assets_copied_to_isolated_cache": true,
+    "model_sha256": "75cf7a6c2171b230ad19b1e7d8e0b1aee86da5a02af8e7cacedd9921d227623c",
+    "git_check_ignore_result": ".gitignore:1:ignored.py ignored.py",
+    "independent_ssh_fixture_exists": true,
+    "ssh_fixture_marker": "REMOTE_SEMBLE_FIXTURE_20261027",
+    "live_cursor_test": false,
+    "provider_request": false,
+    "full_candidate_pr_executed": false,
+    "documented_reproduction_replayed": true,
+    "documented_reproduction_exit_code": 0,
+    "remote_fixture_removed_after_exact_content_check": true,
+    "temporary_cargo_examples_removed": true
+  },
+  "decision": {
+    "remote_semble": "reproduced, unresolved",
+    "candidate_snapshot": "do not adopt unchanged",
+    "production_code_changed": false,
+    "released": false,
+    "public_comment_sent": false,
+    "upstream_archived": true
+  }
+}
