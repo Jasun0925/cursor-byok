@@ -54,6 +54,7 @@ async fn cycle(
         call_id: "think-tag-call".into(),
         run_id: "think-tag-run".into(),
         conversation_id: "think-tag-conversation".into(),
+        prompt_cache_enabled: true,
         provider_call_index: 0,
         request: ModelRequest {
             prompt: PromptSpec {

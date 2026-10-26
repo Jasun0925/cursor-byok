@@ -1,0 +1,59 @@
+{
+  "date": "2026-10-27",
+  "baseline": "818eeac823968057bef0d9f7644c95a615979875",
+  "source_pr": 514,
+  "source_head": "bf4fab373aaee7cb86c900788cf841f85af09a42",
+  "source_author": "MaiJiantian",
+  "validation": {
+    "pr514-before": {
+      "sha256": "9e3f01cd131d1fcee5f6be0c0d6418cad2a01b9f7d8fcde2e4e0a61fd2357057",
+      "test_targets": 2,
+      "passed": 2,
+      "failed": 2,
+      "ignored": 0
+    },
+    "pr514-after": {
+      "sha256": "d0a4a2879f1b813732c818adb1f3f2a509b2577a67082a8101c5ba1db7f466a5",
+      "test_targets": 2,
+      "passed": 4,
+      "failed": 0,
+      "ignored": 0
+    },
+    "server-all": {
+      "sha256": "779d9ebe605583e862e37d218ff980a97a747ffada3364deaf43ca6691654b6c",
+      "test_targets": 27,
+      "passed": 389,
+      "failed": 0,
+      "ignored": 0
+    },
+    "clippy": {
+      "sha256": "d143e1cbae73b46ccbd727c5b30abfc0d15ab665e16e43125d5292279e759eb2",
+      "test_targets": 0,
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    },
+    "fmt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "test_targets": 0,
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0
+    }
+  },
+  "log_directory": "/var/folders/94/7x3w4znd6fl1k54t41jbw46m0000gn/T/cursor-byok-upstream-audit-20261027-2hjmfb87",
+  "upstream_repository_archived": true,
+  "comment_attempt": {
+    "target_pr": 423,
+    "http_status": 403,
+    "message": "Repository was archived so is read-only.",
+    "published": false
+  },
+  "fork_issues_enabled": true,
+  "released": false,
+  "limitations": [
+    "No new Cursor UI acceptance",
+    "No live provider cache hit or latency measurement",
+    "Retries represented by invocation identities in direct HTTP contract tests"
+  ]
+}

@@ -121,6 +121,7 @@ async fn cycle(events: Vec<Value>) -> Result<ModelCycleResult, Box<ModelCycleFai
         call_id: "pr423-call".into(),
         run_id: "pr423-run".into(),
         conversation_id: "pr423-conversation".into(),
+        prompt_cache_enabled: true,
         provider_call_index: 0,
         request: ModelRequest {
             prompt: PromptSpec {

@@ -143,6 +143,7 @@ async fn assert_openai_accepts(schema: Value, expected: Value, chat: bool) {
         call_id: "schema-call".into(),
         run_id: "schema-run".into(),
         conversation_id: "schema-conversation".into(),
+        prompt_cache_enabled: true,
         provider_call_index: 0,
         request: ModelRequest {
             prompt,

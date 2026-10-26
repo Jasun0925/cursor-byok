@@ -98,6 +98,7 @@ async fn call(mock: &mut Mock, messages: &[CanonicalMessage]) -> (ModelCycleResu
         call_id: "signature-call".into(),
         run_id: "signature-run".into(),
         conversation_id: "signature-conversation".into(),
+        prompt_cache_enabled: true,
         provider_call_index: 0,
         request: ModelRequest {
             prompt: PromptSpec {

@@ -45,6 +45,7 @@ async fn cycle(mut events: Vec<Value>, completed: bool) -> ModelCycleResult {
         call_id: "text-call".into(),
         run_id: "text-run".into(),
         conversation_id: "text-conversation".into(),
+        prompt_cache_enabled: true,
         provider_call_index: 0,
         request: ModelRequest {
             prompt: PromptSpec {
