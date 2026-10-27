@@ -994,25 +994,40 @@ async fn injected_user_context_aborts_pending_tools_and_ignores_late_results() {
 
 #[tokio::test]
 async fn injected_user_context_detaches_subagents_without_cancelling_them() {
-    detached_task_result_case(false, false, false).await;
+    detached_task_result_case(false, false, false, false).await;
 }
 
 #[tokio::test]
 async fn detached_task_result_after_parent_ends_survives_idle_timeout() {
-    detached_task_result_case(true, false, false).await;
+    detached_task_result_case(true, false, false, false).await;
 }
 
 #[tokio::test]
 async fn cancelled_detached_task_does_not_restart_parent() {
-    detached_task_result_case(true, true, false).await;
+    detached_task_result_case(true, true, false, false).await;
 }
 
 #[tokio::test]
 async fn steer_preserves_task_and_aborts_read_in_the_same_round() {
-    detached_task_result_case(false, false, true).await;
+    detached_task_result_case(false, false, true, false).await;
 }
 
-async fn detached_task_result_case(after_parent: bool, cancel: bool, mixed: bool) {
+#[tokio::test]
+async fn queued_user_message_continues_while_subagent_runs() {
+    detached_task_result_case(false, false, false, true).await;
+}
+
+#[tokio::test]
+async fn queued_user_message_keeps_the_later_subagent_result_after_parent_finishes() {
+    detached_task_result_case(true, false, false, true).await;
+}
+
+async fn detached_task_result_case(
+    after_parent: bool,
+    cancel: bool,
+    mixed: bool,
+    queued_user_message: bool,
+) {
     let (_directory, store) = fixtures::temp_store().await;
     let provider = fake_provider::FakeProvider::default();
     let mut first_response = tool_response(
@@ -1083,10 +1098,11 @@ async fn detached_task_result_case(after_parent: bool, cancel: bool, mixed: bool
     handle
         .command(TransportCommand::Append {
             seqno: append_seqno,
-            message: Box::new(runtime_injection_for(
-                "subagent-injection",
-                "detach-subagent-request",
-            )),
+            message: Box::new(if queued_user_message {
+                runtime_user_message()
+            } else {
+                runtime_injection_for("subagent-injection", "detach-subagent-request")
+            }),
         })
         .await
         .unwrap();
@@ -1390,7 +1406,12 @@ async fn detached_task_result_case(after_parent: bool, cancel: bool, mixed: bool
         final_history.matches("DETACHED_TASK_RESULT_MARKER").count(),
         1
     );
-    assert!(history.contains("injected follow-up"));
+    assert!(history.contains(if queued_user_message {
+        "queued follow-up"
+    } else {
+        "injected follow-up"
+    }));
+    registry.shutdown().await;
 }
 
 #[tokio::test]
