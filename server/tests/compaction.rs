@@ -3,6 +3,8 @@
 mod fake_provider;
 #[path = "support/fixtures.rs"]
 mod fixtures;
+#[path = "compaction/recovery.rs"]
+mod recovery;
 
 use std::{collections::HashMap, sync::Arc, time::Duration};
 
@@ -680,6 +682,7 @@ async fn assistant_terminated_history_is_sent_with_a_user_tail() {
 
 #[derive(Default)]
 struct Output {
+    end_error: Option<String>,
     checkpoints: Vec<pb::ConversationStateStructure>,
     blobs: HashMap<Vec<u8>, Vec<u8>>,
     summary: String,
@@ -713,6 +716,8 @@ async fn run(
             .unwrap();
         let (flags, payload) = connect::decode_frames(&frame).unwrap().pop().unwrap();
         if flags & connect::END_STREAM_FLAG != 0 {
+            let end: serde_json::Value = serde_json::from_slice(&payload).unwrap();
+            output.end_error = end["error"]["message"].as_str().map(str::to_owned);
             return output;
         }
         let server = pb::AgentServerMessage::decode(payload).unwrap();
