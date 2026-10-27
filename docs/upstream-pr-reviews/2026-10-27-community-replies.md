@@ -64,6 +64,6 @@
 
 我维护的 fork 中复现了两种统计清理删除记录却不收缩 SQLite 文件的独立问题。现补丁在删除事务提交后回收主库与 WAL 空间，保留既有清理范围；调用者断开后继续完成，其他读连接阻止截断时明确报告部分完成。
 
-真实临时数据库从约 12.23 MiB 缩至 228 KiB，WAL 归零；历史、模型配置、共享 blob、并发读写、断开和失败重试均有覆盖。本机及 Linux 全工作区 475 项通过，Windows/macOS 各 6 项原生回归通过。[PR #1 与源码](https://github.com/haohaomin/cursor-byok/pull/1)、[详细边界](https://github.com/haohaomin/cursor-byok/blob/main/docs/upstream-issue-reviews/2026-10-27-issue511-storage-fix.md)。安装包尚未包含此补丁。
+真实临时数据库从约 12.23 MiB 缩至 228 KiB，WAL 归零；历史、模型配置、共享 blob、并发读写、断开和失败重试均有覆盖。本机全工作区 475 项、Linux 473 项通过，Windows/macOS 各 6 项原生回归通过。[PR #1 与源码](https://github.com/haohaomin/cursor-byok/pull/1)、[详细边界](https://github.com/haohaomin/cursor-byok/blob/main/docs/upstream-issue-reviews/2026-10-27-issue511-storage-fix.md)。安装包尚未包含此补丁。
 
 原截图的 19.09 GB 主库中有效会话、日志及空闲页各占多少尚未知，不能据此宣称所有增长原因已解决；没有清理正式数据。上游已归档只读，本段只保存为草稿，没有发送，也没有关闭原 Issue。

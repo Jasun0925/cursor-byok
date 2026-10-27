@@ -74,7 +74,7 @@ server/
 
 六项初轮验证通过；清理后主库 **233,472 字节（228 KiB）**、WAL **0**、空闲页 **0**，完整性和外键检查通过。加入模型配置保留及恢复后续写的最终版本，全工作区 `cargo test --workspace --all-targets` **475 通过、0 失败、0 忽略**；日志 `/tmp/cursor-byok-issue511-workspace-final.log`。
 
-补丁提交 `ae6d8f3` 的[四组 CI](https://github.com/haohaomin/cursor-byok/actions/runs/40448321156)全部成功：Linux 全工作区 475 项，Windows/macOS 各 6 项原生存储测试，以及前端检查。CI 原始公开日志保存在 `/tmp/cursor-byok-issue511-ci.log`。本地合成库、跨平台原生库测试与原作者 19 GB 环境验收分别计入，后者仍未覆盖。
+补丁提交 `ae6d8f3` 的[四组 CI](https://github.com/haohaomin/cursor-byok/actions/runs/40448321156)全部成功：Linux 全工作区 473 项，Windows/macOS 各 6 项原生存储测试，以及前端检查。本机的 475 项和 Linux 的 473 项分别按实际日志计数。CI 原始公开日志保存在 `/tmp/cursor-byok-issue511-ci.log`。本地合成库、跨平台原生库测试与原作者 19 GB 环境验收分别计入，后者仍未覆盖。
 
 全工作区 Clippy（`-D warnings`）、格式和差异检查通过；Clippy 日志 `/tmp/cursor-byok-issue511-clippy.log`。复跑入口：
 
