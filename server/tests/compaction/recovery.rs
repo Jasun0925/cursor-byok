@@ -1,6 +1,43 @@
 //! #373: a failed summary or post-summary call must not wedge later runs.
 use super::*;
 
+#[test]
+fn end_stream_without_error_text_is_still_a_failure() {
+    let success = connect::encode_end_stream();
+    let (_, payload) = connect::decode_frames(&success).unwrap().pop().unwrap();
+    assert!(matches!(
+        serde_json::from_slice::<EndStream>(&payload).unwrap(),
+        EndStream::Success {}
+    ));
+
+    let failure = connect::encode_error_end_stream(&connect::ConnectStreamError {
+        code: connect::ConnectCode::Internal,
+        message: String::new(),
+        details: vec![],
+    })
+    .unwrap();
+    let (_, payload) = connect::decode_frames(&failure).unwrap().pop().unwrap();
+    assert!(matches!(
+        serde_json::from_slice::<EndStream>(&payload).unwrap(),
+        EndStream::Failure { error } if error.code == "internal" && error.message.is_empty()
+    ));
+    for invalid in [
+        "null",
+        "[]",
+        r#"{"error":null}"#,
+        r#"{"error":{}}"#,
+        r#"{"error":{"message":"failed"}}"#,
+        r#"{"error":{"code":42}}"#,
+        r#"{"error":{"code":"internal","message":42}}"#,
+        r#"{"unexpected":true}"#,
+    ] {
+        assert!(
+            serde_json::from_str::<EndStream>(invalid).is_err(),
+            "{invalid}"
+        );
+    }
+}
+
 fn new_registry(
     store: cursor_server::store::Store,
     provider: &fake_provider::FakeProvider,
@@ -65,12 +102,10 @@ async fn failed_manual_summary_preserves_history_and_can_be_retried() {
     )
     .await;
     assert!(
-        failed
-            .end_error
-            .as_ref()
-            .is_some_and(|error| error.contains("401")),
+        matches!(&failed.end_stream, EndStream::Failure { error }
+            if !error.code.is_empty() && error.message.contains("401")),
         "{:?}",
-        failed.end_error
+        failed.end_stream
     );
     assert_eq!(failed.summary_started, 1);
     assert_eq!(failed.summary_completed, 0);
@@ -110,7 +145,11 @@ async fn failed_manual_summary_preserves_history_and_can_be_retried() {
         summary_request("summary-retry", &model.model_hash, state),
     )
     .await;
-    assert!(compacted.end_error.is_none(), "{:?}", compacted.end_error);
+    assert!(
+        matches!(compacted.end_stream, EndStream::Success {}),
+        "{:?}",
+        compacted.end_stream
+    );
     assert_eq!(compacted.summary_completed, 1);
     assert_eq!(compacted.summary, "complete durable summary");
     assert_eq!(compacted.checkpoints.last().unwrap().self_summary_count, 1);
@@ -126,7 +165,11 @@ async fn failed_manual_summary_preserves_history_and_can_be_retried() {
         ),
     )
     .await;
-    assert!(after.end_error.is_none(), "{:?}", after.end_error);
+    assert!(
+        matches!(after.end_stream, EndStream::Success {}),
+        "{:?}",
+        after.end_stream
+    );
     assert_eq!(after.turn_ended, 1);
     let requests = provider.requests();
     assert_eq!(requests.len(), 4);
@@ -187,12 +230,10 @@ async fn post_auto_compaction_failure_resumes_from_persisted_checkpoint() {
         assert_eq!(failed.summary_started, 1);
         assert_eq!(failed.summary_completed, 1);
         assert!(
-            failed
-                .end_error
-                .as_ref()
-                .is_some_and(|error| error.contains("401")),
+            matches!(&failed.end_stream, EndStream::Failure { error }
+                if !error.code.is_empty() && error.message.contains("401")),
             "{:?}",
-            failed.end_error
+            failed.end_stream
         );
         let state = failed.checkpoints.last().unwrap().clone();
         assert_eq!(state.self_summary_count, 1);
@@ -220,7 +261,11 @@ async fn post_auto_compaction_failure_resumes_from_persisted_checkpoint() {
             ),
         )
         .await;
-        assert!(resumed.end_error.is_none(), "{:?}", resumed.end_error);
+        assert!(
+            matches!(resumed.end_stream, EndStream::Success {}),
+            "{:?}",
+            resumed.end_stream
+        );
         assert_eq!(resumed.summary_started, 0);
         assert_eq!(resumed.turn_ended, 1);
         assert_eq!(resumed.checkpoints.last().unwrap().self_summary_count, 1);

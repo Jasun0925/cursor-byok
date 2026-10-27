@@ -680,9 +680,28 @@ async fn assistant_terminated_history_is_sent_with_a_user_tail() {
     );
 }
 
+#[derive(Debug, Default, serde::Deserialize)]
+#[serde(untagged, deny_unknown_fields)]
+enum EndStream {
+    #[default]
+    #[serde(skip)]
+    Pending,
+    Failure {
+        error: EndStreamError,
+    },
+    Success {},
+}
+
+#[derive(Debug, serde::Deserialize)]
+struct EndStreamError {
+    code: String,
+    #[serde(default)]
+    message: String,
+}
+
 #[derive(Default)]
 struct Output {
-    end_error: Option<String>,
+    end_stream: EndStream,
     checkpoints: Vec<pb::ConversationStateStructure>,
     blobs: HashMap<Vec<u8>, Vec<u8>>,
     summary: String,
@@ -716,8 +735,7 @@ async fn run(
             .unwrap();
         let (flags, payload) = connect::decode_frames(&frame).unwrap().pop().unwrap();
         if flags & connect::END_STREAM_FLAG != 0 {
-            let end: serde_json::Value = serde_json::from_slice(&payload).unwrap();
-            output.end_error = end["error"]["message"].as_str().map(str::to_owned);
+            output.end_stream = serde_json::from_slice(&payload).unwrap();
             return output;
         }
         let server = pb::AgentServerMessage::decode(payload).unwrap();
