@@ -1,0 +1,152 @@
+--- a/server/src/cursor/tools/codec/request.rs
++++ b/server/src/cursor/tools/codec/request.rs
+@@ -89,6 +89,15 @@
+             path: string_aliased(&["path", "file_path", "filePath"])?,
+             tool_call_id: call.call_id.clone(),
+         }),
++        "grep" if call.arguments.get("pattern").and_then(Value::as_str).is_some_and(|s| s.starts_with("__NATIVE_LS__")) => {
++            let raw = string("pattern")?;
++            let ignore: Vec<String> = serde_json::from_str(raw.strip_prefix("__NATIVE_LS__").unwrap())
++                .map_err(|e| Error::Protocol(e.to_string()))?;
++            Message::LsArgs(pb::LsArgs {
++                path: string("path")?, ignore, tool_call_id: call.call_id.clone(),
++                timeout_ms: Some(10000), sandbox_policy: None,
++            })
++        }
+         "grep" => Message::GrepArgs(pb::GrepArgs {
+             pattern: string("pattern")?,
+             path: optional_string("path"),
+--- a/server/src/cursor/tools/codec/response.rs
++++ b/server/src/cursor/tools/codec/response.rs
+@@ -45,6 +45,33 @@
+             return Ok(ClientExecEvent::Pending);
+         }
+     };
++    let mut message = message.clone();
++    if let Some(pb::exec_client_message::Message::LsResult(ls)) = &message.message {
++        use pb::ls_result::Result as Ls;
++        let (tree, kind) = match &ls.result {
++            Some(Ls::Success(s)) => (s.directory_tree_root.as_ref(), "success"),
++            Some(Ls::Timeout(s)) => (s.directory_tree_root.as_ref(), "timeout"),
++            Some(Ls::Error(_)) => (None, "error"),
++            Some(Ls::Rejected(_)) => (None, "rejected"),
++            None => (None, "missing"),
++        };
++        let record = serde_json::json!({"exec_id":message.id,"call_id":call.call_id,
++            "arguments":call.arguments,"kind":kind,"tree":tree.map(probe_tree),"wire_debug":format!("{ls:?}")});
++        probe_record(&record);
++        let content = serde_json::to_string(&record).unwrap();
++        message.message = Some(pb::exec_client_message::Message::GrepResult(pb::GrepResult {
++            result: Some(pb::grep_result::Result::Success(pb::GrepSuccess {
++                pattern: "__NATIVE_LS__".into(), path: "probe".into(), output_mode: "files_with_matches".into(),
++                workspace_results: std::collections::HashMap::from([("probe".into(), pb::GrepUnionResult {
++                    result: Some(pb::grep_union_result::Result::Files(pb::GrepFilesResult { files:vec![content],total_files:1,..Default::default() }))
++                })]), ..Default::default()
++            }))
++        }));
++    }
++    if let Some(pb::exec_client_message::Message::ReadResult(read)) = &message.message {
++        probe_record(&serde_json::json!({"type":"read","exec_id":message.id,"call_id":call.call_id,"wire_debug":format!("{read:?}")}));
++    }
++    let message = &message;
+     let Some(wire_result) = &message.message else {
+         return Ok(ClientExecEvent::Pending);
+     };
+@@ -370,3 +397,15 @@
+         },
+     )))
+ }
++
++fn probe_tree(tree: &pb::LsDirectoryTreeNode) -> serde_json::Value {
++    serde_json::json!({"path":tree.abs_path,"files":tree.children_files.iter().map(|f| &f.name).collect::<Vec<_>>(),
++        "processed":tree.children_were_processed,"omitted_file_count":tree.num_files,
++        "extension_counts":tree.full_subtree_extension_counts,"dirs":tree.children_dirs.iter().map(probe_tree).collect::<Vec<_>>()})
++}
++fn probe_record(record: &serde_json::Value) {
++    use std::io::Write;
++    let path=std::env::var("LS_PROBE_RECORD").unwrap();
++    let mut file=std::fs::OpenOptions::new().create(true).append(true).open(path).unwrap();
++    writeln!(file,"{}",record).unwrap();
++}
+--- /dev/null
++++ b/server/examples/ls_probe_live.rs
+@@ -0,0 +1,79 @@
++use cursor_server::{
++    cursor::{
++        prompting::{Mode, PromptAssets, PromptCompiler},
++        TransportRegistry,
++    },
++    local_app::CursorHarness,
++    network::NetworkClients,
++    plugin::{PluginRegistry, PluginRuntime},
++    provider::ProviderRouter,
++    search::WebCache,
++    store::Store,
++};
++use sha2::{Digest, Sha256};
++use std::{sync::Arc, time::Duration};
++
++#[tokio::main]
++async fn main() -> Result<(), Box<dyn std::error::Error>> {
++    let root = std::env::args().nth(1).unwrap();
++    if root == "digests" {
++        let assets = PromptAssets::embedded()?;
++        for mode in [
++            Mode::Agent,
++            Mode::Ask,
++            Mode::Plan,
++            Mode::Debug,
++            Mode::Multitask,
++            Mode::Subagent,
++            Mode::Compaction,
++        ] {
++            println!(
++                "{mode:?} {}",
++                hex::encode(Sha256::digest(serde_json::to_vec(
++                    &assets.mode(mode).tools
++                )?))
++            );
++        }
++        return Ok(());
++    }
++    tracing_subscriber::fmt()
++        .with_env_filter("cursor_server=info")
++        .init();
++    let root = std::path::PathBuf::from(root);
++    let store = Store::connect(&format!("sqlite://{}", root.join("live.db").display())).await?;
++    store.set_detailed_logging(true).await?;
++    let clients = NetworkClients::new(store.clone());
++    let plugins =
++        PluginRegistry::managed(store.clone(), PluginRuntime::managed()?, "1.0.17".into())?;
++    let provider = Arc::new(ProviderRouter::new(
++        store.clone(),
++        plugins,
++        clients.clone(),
++        Duration::from_secs(300),
++        Duration::from_secs(120),
++    ));
++    let registry = TransportRegistry::with_web_cache(
++        store.clone(),
++        provider,
++        PromptCompiler::new(PromptAssets::embedded()?),
++        WebCache::at(root.join("web-cache"))?,
++    );
++    let router = cursor_server::api::router(registry.clone(), clients)?;
++    let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await?;
++    let backend = listener.local_addr()?;
++    let task = tokio::spawn(async move { axum::serve(listener, router).await.unwrap() });
++    let harness = CursorHarness::new(store)?;
++    harness.set_backend_addr(backend);
++    let status = harness.set_enabled(true).await?;
++    let session = serde_json::json!({"pid":std::process::id(),"backend":backend.to_string(),"proxy":status.proxy_url,"source":"ls-wire-probe-at-c47db4a"});
++    std::fs::write(
++        root.join("live-session.json"),
++        serde_json::to_vec_pretty(&session)?,
++    )?;
++    println!("READY {session}");
++    tokio::signal::ctrl_c().await?;
++    harness.disable().await?;
++    registry.shutdown().await;
++    task.abort();
++    Ok(())
++}

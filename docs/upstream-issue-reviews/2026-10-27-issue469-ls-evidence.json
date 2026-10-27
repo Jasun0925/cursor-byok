@@ -1,0 +1,425 @@
+{
+  "baseline": "c47db4af679a525a02e0b2433876cff26606f7d9",
+  "cursor_version": "3.27.14",
+  "conversation_id": "5d305723-f9ff-4ad4-a259-c52028b77278",
+  "provider_calls": [
+    {
+      "call_id": "da0f3e19-385f-4ce2-95da-14a2605e5ac6:eb83f780:0",
+      "run_id": "da0f3e19-385f-4ce2-95da-14a2605e5ac6:eb83f780",
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "finish_reason": "tool_use",
+      "created_at_ms": 1793059808191,
+      "duration_ms": 4420,
+      "http_status": 200,
+      "error_kind": null
+    },
+    {
+      "call_id": "da0f3e19-385f-4ce2-95da-14a2605e5ac6:eb83f780:1",
+      "run_id": "da0f3e19-385f-4ce2-95da-14a2605e5ac6:eb83f780",
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "finish_reason": "tool_use",
+      "created_at_ms": 1793059813140,
+      "duration_ms": 7516,
+      "http_status": 200,
+      "error_kind": null
+    },
+    {
+      "call_id": "da0f3e19-385f-4ce2-95da-14a2605e5ac6:eb83f780:2",
+      "run_id": "da0f3e19-385f-4ce2-95da-14a2605e5ac6:eb83f780",
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "finish_reason": "tool_use",
+      "created_at_ms": 1793059821090,
+      "duration_ms": 6768,
+      "http_status": 200,
+      "error_kind": null
+    },
+    {
+      "call_id": "da0f3e19-385f-4ce2-95da-14a2605e5ac6:eb83f780:3",
+      "run_id": "da0f3e19-385f-4ce2-95da-14a2605e5ac6:eb83f780",
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "finish_reason": "stop",
+      "created_at_ms": 1793059828270,
+      "duration_ms": 6249,
+      "http_status": 200,
+      "error_kind": null
+    },
+    {
+      "call_id": "8fe251b1-3d28-40cb-86ca-b4414e8fd85b:654e1c49:0",
+      "run_id": "8fe251b1-3d28-40cb-86ca-b4414e8fd85b:654e1c49",
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "finish_reason": "tool_use",
+      "created_at_ms": 1793060179608,
+      "duration_ms": 6361,
+      "http_status": 200,
+      "error_kind": null
+    },
+    {
+      "call_id": "8fe251b1-3d28-40cb-86ca-b4414e8fd85b:654e1c49:1",
+      "run_id": "8fe251b1-3d28-40cb-86ca-b4414e8fd85b:654e1c49",
+      "model_id": "gpt-6-astra",
+      "status": "error",
+      "finish_reason": null,
+      "created_at_ms": 1793060186502,
+      "duration_ms": 7393,
+      "http_status": 502,
+      "error_kind": "provider"
+    },
+    {
+      "call_id": "8fe251b1-3d28-40cb-86ca-b4414e8fd85b:654e1c49:1:retry-1",
+      "run_id": "8fe251b1-3d28-40cb-86ca-b4414e8fd85b:654e1c49",
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "finish_reason": "tool_use",
+      "created_at_ms": 1793060198901,
+      "duration_ms": 5189,
+      "http_status": 200,
+      "error_kind": null
+    },
+    {
+      "call_id": "8fe251b1-3d28-40cb-86ca-b4414e8fd85b:654e1c49:2",
+      "run_id": "8fe251b1-3d28-40cb-86ca-b4414e8fd85b:654e1c49",
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "finish_reason": "tool_use",
+      "created_at_ms": 1793060204527,
+      "duration_ms": 4374,
+      "http_status": 200,
+      "error_kind": null
+    },
+    {
+      "call_id": "8fe251b1-3d28-40cb-86ca-b4414e8fd85b:654e1c49:3",
+      "run_id": "8fe251b1-3d28-40cb-86ca-b4414e8fd85b:654e1c49",
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "finish_reason": "tool_use",
+      "created_at_ms": 1793060209349,
+      "duration_ms": 4005,
+      "http_status": 200,
+      "error_kind": null
+    },
+    {
+      "call_id": "8fe251b1-3d28-40cb-86ca-b4414e8fd85b:654e1c49:4",
+      "run_id": "8fe251b1-3d28-40cb-86ca-b4414e8fd85b:654e1c49",
+      "model_id": "gpt-6-astra",
+      "status": "completed",
+      "finish_reason": "stop",
+      "created_at_ms": 1793060213810,
+      "duration_ms": 4451,
+      "http_status": 200,
+      "error_kind": null
+    }
+  ],
+  "prefix_comparisons": [
+    {
+      "call_id": "da0f3e19-385f-4ce2-95da-14a2605e5ac6:eb83f780:0",
+      "message_count": 3,
+      "previous_messages_are_prefix": null,
+      "tools_unchanged": null
+    },
+    {
+      "call_id": "da0f3e19-385f-4ce2-95da-14a2605e5ac6:eb83f780:1",
+      "message_count": 5,
+      "previous_messages_are_prefix": true,
+      "tools_unchanged": true
+    },
+    {
+      "call_id": "da0f3e19-385f-4ce2-95da-14a2605e5ac6:eb83f780:2",
+      "message_count": 7,
+      "previous_messages_are_prefix": true,
+      "tools_unchanged": true
+    },
+    {
+      "call_id": "da0f3e19-385f-4ce2-95da-14a2605e5ac6:eb83f780:3",
+      "message_count": 9,
+      "previous_messages_are_prefix": true,
+      "tools_unchanged": true
+    },
+    {
+      "call_id": "8fe251b1-3d28-40cb-86ca-b4414e8fd85b:654e1c49:0",
+      "message_count": 11,
+      "previous_messages_are_prefix": true,
+      "tools_unchanged": true
+    },
+    {
+      "call_id": "8fe251b1-3d28-40cb-86ca-b4414e8fd85b:654e1c49:1",
+      "message_count": 13,
+      "previous_messages_are_prefix": true,
+      "tools_unchanged": true
+    },
+    {
+      "call_id": "8fe251b1-3d28-40cb-86ca-b4414e8fd85b:654e1c49:1:retry-1",
+      "message_count": 13,
+      "previous_messages_are_prefix": true,
+      "tools_unchanged": true
+    },
+    {
+      "call_id": "8fe251b1-3d28-40cb-86ca-b4414e8fd85b:654e1c49:2",
+      "message_count": 15,
+      "previous_messages_are_prefix": true,
+      "tools_unchanged": true
+    },
+    {
+      "call_id": "8fe251b1-3d28-40cb-86ca-b4414e8fd85b:654e1c49:3",
+      "message_count": 17,
+      "previous_messages_are_prefix": true,
+      "tools_unchanged": true
+    },
+    {
+      "call_id": "8fe251b1-3d28-40cb-86ca-b4414e8fd85b:654e1c49:4",
+      "message_count": 19,
+      "previous_messages_are_prefix": true,
+      "tools_unchanged": true
+    }
+  ],
+  "wire_results": [
+    {
+      "arguments": {
+        "output_mode": "files_with_matches",
+        "path": "/tmp/cursor-byok-ls-probe-45be32fv/workspace",
+        "pattern": "__NATIVE_LS__[]"
+      },
+      "call_id": "call_0ae185583f8c4cc99614f41650bbd703",
+      "exec_id": 1,
+      "kind": "success",
+      "tree": {
+        "dirs": [
+          {
+            "dirs": [],
+            "extension_counts": {},
+            "files": [
+              "visible.py"
+            ],
+            "omitted_file_count": 0,
+            "path": "/tmp/cursor-byok-ls-probe-45be32fv/workspace/nested",
+            "processed": true
+          }
+        ],
+        "extension_counts": {},
+        "files": [
+          ".cursorignore",
+          ".gitignore",
+          ".sembleignore",
+          "auth.py",
+          "multiline.py",
+          "semble-hidden.py"
+        ],
+        "omitted_file_count": 0,
+        "path": "/tmp/cursor-byok-ls-probe-45be32fv/workspace",
+        "processed": true
+      }
+    },
+    {
+      "call_id": "call_dd17405eef874ea2b9685976dd492ed2",
+      "exec_id": 2,
+      "type": "read",
+      "wire_debug": "ReadResult { result: Some(Success(ReadSuccess { path: \"/tmp/cursor-byok-ls-probe-45be32fv/workspace/multiline.py\", total_lines: 7, file_size: 90, truncated: false, output_blob_id: None, range_applied: true, output: Some(Content(\"def unicode_probe():\\n    text = \\\"中文🙂\\\"\\n\")) })) }"
+    },
+    {
+      "call_id": "call_8880747238094b77b25bf9caf2638bf0",
+      "exec_id": 3,
+      "type": "read",
+      "wire_debug": "ReadResult { result: Some(Success(ReadSuccess { path: \"/tmp/cursor-byok-ls-probe-45be32fv/workspace/multiline.py\", total_lines: 7, file_size: 90, truncated: false, output_blob_id: None, range_applied: true, output: Some(Content(\"    # line four\\n    return text\\n# EOF\")) })) }"
+    },
+    {
+      "arguments": {
+        "output_mode": "files_with_matches",
+        "path": "/tmp/cursor-byok-ls-probe-45be32fv/workspace",
+        "pattern": "__NATIVE_LS__[]"
+      },
+      "call_id": "call_8010687576114877bc0c508885d8e386",
+      "exec_id": 1,
+      "kind": "success",
+      "tree": {
+        "dirs": [
+          {
+            "dirs": [],
+            "extension_counts": {
+              ".py": 118
+            },
+            "files": [
+              "file_008_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_009_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_013_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_016_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_018_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_040_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_042_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_054_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_055_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_057_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_059_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_063_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_065_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_069_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_074_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_075_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_076_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_078_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_084_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_091_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_092_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_093_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_094_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_095_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_100_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_101_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_104_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_108_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_111_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_114_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_115_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_126_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_128_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_132_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_133_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_137_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_139_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_140_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_143_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_145_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_147_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py",
+              "file_158_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx.py"
+            ],
+            "omitted_file_count": 118,
+            "path": "/tmp/cursor-byok-ls-probe-45be32fv/workspace/bulk",
+            "processed": false
+          },
+          {
+            "dirs": [],
+            "extension_counts": {
+              ".py": 1
+            },
+            "files": [],
+            "omitted_file_count": 1,
+            "path": "/tmp/cursor-byok-ls-probe-45be32fv/workspace/nested",
+            "processed": false
+          }
+        ],
+        "extension_counts": {
+          "": 3,
+          ".py": 122
+        },
+        "files": [
+          "auth.py",
+          "multiline.py"
+        ],
+        "omitted_file_count": 125,
+        "path": "/tmp/cursor-byok-ls-probe-45be32fv/workspace",
+        "processed": false
+      }
+    },
+    {
+      "arguments": {
+        "output_mode": "files_with_matches",
+        "path": "/tmp/cursor-byok-ls-probe-45be32fv/workspace",
+        "pattern": "__NATIVE_LS__[\"bulk/**\",\"Case.py\"]"
+      },
+      "call_id": "call_fd53d79e8be349a092b98f78a0553433",
+      "exec_id": 2,
+      "kind": "success",
+      "tree": {
+        "dirs": [
+          {
+            "dirs": [],
+            "extension_counts": {},
+            "files": [
+              "visible.py"
+            ],
+            "omitted_file_count": 0,
+            "path": "/tmp/cursor-byok-ls-probe-45be32fv/workspace/nested",
+            "processed": true
+          }
+        ],
+        "extension_counts": {},
+        "files": [
+          ".cursorignore",
+          ".gitignore",
+          ".sembleignore",
+          "auth.py",
+          "multiline.py",
+          "semble-hidden.py"
+        ],
+        "omitted_file_count": 0,
+        "path": "/tmp/cursor-byok-ls-probe-45be32fv/workspace",
+        "processed": true
+      }
+    },
+    {
+      "call_id": "call_86e6f2ddbc05459d9fd119aa4c782af1",
+      "exec_id": 3,
+      "type": "read",
+      "wire_debug": "ReadResult { result: Some(Success(ReadSuccess { path: \"/tmp/cursor-byok-ls-probe-45be32fv/workspace/multiline.py\", total_lines: 7, file_size: 90, truncated: false, output_blob_id: None, range_applied: false, output: Some(Content(\"def unicode_probe():\\n    text = \\\"中文🙂\\\"\\n\\n    # line four\\n    return text\\n# EOF\\n\")) })) }"
+    },
+    {
+      "call_id": "call_8c7759ac86e347d8b992e4793fa8d185",
+      "exec_id": 4,
+      "type": "read",
+      "wire_debug": "ReadResult { result: Some(Success(ReadSuccess { path: \"/tmp/cursor-byok-ls-probe-45be32fv/workspace/multiline.py\", total_lines: 7, file_size: 90, truncated: false, output_blob_id: None, range_applied: true, output: Some(Content(\"\")) })) }"
+    }
+  ],
+  "artifact_analysis": {
+    "evidence_id": "ev_a1e98d64eedbe236a4db4f36ab8ff10effc861df240233a8ca88bf72f45d2641",
+    "artifact": "/Applications/Cursor.app/Contents/Resources/app/extensions/cursor-agent-exec/dist/main.js",
+    "sha256": "66c26ae001b20362c5f8b0169e2cf752e81e1fa98dac6056b1ba86f9c2292291",
+    "root_artifact_sha256": "4acec755ff61a515ee259d0caec0ea1cd5cea5432688d26836e65a77dcd5ffd0",
+    "limitations": [
+      "Caller-selected source analysis leaves 211 inventoried files outside analysis scope. Inventory identity covers the complete artifact; relationships through unselected sources remain unknown.",
+      "CommonJS and ESM binding relationships were recovered from inert syntax and resolved only within the inventoried artifact container.",
+      "Graph coverage is incomplete; unavailable facts remain explicit and must not be read as absence.",
+      "JavaScript and HTML were parsed as inert text; bundle bootstrap code was never executed.",
+      "Static imports, entrypoints, workers, endpoints, and storage relationships do not prove runtime execution.",
+      "Static paths and relationships may remain unresolved when expressions are dynamic or obfuscated.",
+      "Webpack/Rspack factories were recovered from AST literals; REA did not invoke push handlers or bundle bootstrap code."
+    ],
+    "source_selection": {
+      "requested_paths": [
+        "package.json",
+        "dist/main.js"
+      ],
+      "unselected_files": 211
+    },
+    "ordinary_text_inspection": [
+      {
+        "needle": "function Dr(e,",
+        "char_offset": 8477896,
+        "byte_offset": 8619039
+      },
+      {
+        "needle": "class Hx{",
+        "char_offset": 9035366,
+        "byte_offset": 9176527
+      },
+      {
+        "needle": "async buildTreeFromRipgrepStream",
+        "char_offset": 9036837,
+        "byte_offset": 9177998
+      },
+      {
+        "needle": "const bt=(0,lt.cF)(Symbol(\"execHookWorkspaceRoots\")",
+        "char_offset": 1709941,
+        "byte_offset": 1724180
+      }
+    ]
+  },
+  "ui_final_marker": "LS_LIMIT_PROBE_DONE",
+  "ui_checked_at": "2026-10-27",
+  "cleanup": {
+    "cursor_ssh_workspace_closed": true,
+    "harness_stopped": true,
+    "test_listeners_gone": [
+      62448,
+      62449
+    ],
+    "cursor_user_settings_restored_byte_exact": true,
+    "cursor_window_reloaded": true,
+    "production_health_status": 204,
+    "remote_machine_settings_restored_absent": true,
+    "remote_fixture_removed": true,
+    "credential_copies_removed": true
+  }
+}

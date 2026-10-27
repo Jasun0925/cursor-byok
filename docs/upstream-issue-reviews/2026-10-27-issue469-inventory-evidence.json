@@ -1,0 +1,38 @@
+{
+  "platform": "linux",
+  "python_version": "3.12.13",
+  "unit_tests": 9,
+  "unit_tests_passed": true,
+  "launcher_exit_code": 0,
+  "candidate_count": 163,
+  "bulk_count": 160,
+  "case_variants_preserved": true,
+  "unicode_name_preserved": true,
+  "skipped_links": [
+    "linked-dir",
+    "linked.py"
+  ],
+  "source_marker_in_output": false,
+  "outside_marker_in_output": false,
+  "policy_complete": false,
+  "output_bytes": 31612,
+  "collector_sha256": "6b0b92281783e011dc1be94f6df7e711dc69736482d7a09c98d5bb3743b21551",
+  "transport": "SSH command; not Cursor Exec",
+  "default_python": "3.6.8",
+  "default_python_error": {
+    "schema": 1,
+    "ok": false,
+    "error": "this experiment requires Python 3.9 or newer"
+  },
+  "remote_root": "/tmp/cursor-byok-inventory-20261027-71b6",
+  "baseline": "c47db4af679a525a02e0b2433876cff26606f7d9",
+  "local_tests": {
+    "platform": "macOS",
+    "passed": 9
+  },
+  "cleanup": {
+    "remote_fixture_removed": true,
+    "settings_changes": false,
+    "software_installed": false
+  }
+}

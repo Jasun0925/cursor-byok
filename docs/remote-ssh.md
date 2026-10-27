@@ -28,7 +28,7 @@ Cursor 3.21.16 起提供远程 Agent 推理路由选项。若本地 Agent 正常
 
 **源码中的 WebFetch 分页已通过真实 SSH 验收。** 长网页通过同一 WebFetch 工具逐页返回，同会话续读及跨会话隔离也通过。[修复与验收证据](upstream-issue-reviews/2026-10-27-issue469-webfetch-fix.md)。**v1.0.17 安装包仍使用旧缓存引用，不包含此修复。**
 
-**远程 Semble 仓库索引仍待修复。** 当前源码在 BYOK 本机读取仓库路径，远端独有路径已复现 `source does not exist`；候选快照补丁存在启动、忽略规则和索引来源问题，尚未采用。[定位与候选审查](upstream-issue-reviews/2026-10-27-issue469-semble-check.md)。共享索引层的 `.cursorignore` 和热缓存已[独立修复](upstream-issue-reviews/2026-10-27-semble-cursorignore-fix.md)，但未实现远端采集；[真实原生工具实验](upstream-issue-reviews/2026-10-27-issue469-native-files-check.md)还发现 Grep 会跟随内部符号链接
+**远程 Semble 仓库索引仍待修复。** 当前源码在 BYOK 本机读取仓库路径，远端独有路径已复现 `source does not exist`；候选快照补丁存在启动、忽略规则和索引来源问题，尚未采用。[定位与候选审查](upstream-issue-reviews/2026-10-27-issue469-semble-check.md)。共享索引层的 `.cursorignore` 和热缓存已[独立修复](upstream-issue-reviews/2026-10-27-semble-cursorignore-fix.md)，但未实现远端采集；[真实原生工具实验](upstream-issue-reviews/2026-10-27-issue469-native-files-check.md)还发现 Grep 会跟随内部符号链接；后续 [Ls 实测](upstream-issue-reviews/2026-10-27-issue469-inventory-check.md)确认清单会截断且排除项不区分大小写。元数据探针已在 Linux 验证，完整过滤与 Cursor 采集尚未接通。
 
 MCP、Skills、Tab、提交信息和其他模型协议尚未完成本轮远程验收，不能据此宣称所有远程能力均已支持。
 
