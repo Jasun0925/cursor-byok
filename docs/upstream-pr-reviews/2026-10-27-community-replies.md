@@ -24,6 +24,12 @@
 
 ## 其他候选草稿（未发送）
 
+### Issue #504：仅确认相关的重复交付缺口（未发送）
+
+我维护的 fork 中独立复现了一个相关问题：同一 UserMessage.message_id 使用新传输序号再次送入活动 Run 时，服务端会重新排队并中断已经执行中的工具。补丁把消息 ID 去重放到排队之前；相同文字、不同 ID 的新消息仍正常执行。
+
+六项协议测试覆盖初始与追加消息重传、真正的新输入、checkpoint 恢复、分片 Write 内容及缺失内容报错。后两类原报告症状在受控路径未复现，尚不能认定三种现象具有同一个根因。[修复与验证边界](https://github.com/haohaomin/cursor-byok/blob/main/docs/upstream-issue-reviews/2026-10-27-issue504-input-redelivery-fix.md)。源码补丁尚未发布安装包；需要原环境的脱敏请求与工具记录才能进一步确认。原仓库归档只读，本段没有发送。
+
 ### Issue #340
 
 我维护的 [fork](https://github.com/haohaomin/cursor-byok) 中已补齐后台子代理完成后的结果交付，v1.0.9 起包含，当前可下载 v1.0.17。此前使用真实 Cursor 连续两轮测试普通与 Fast：父初始 Run 结束后，子代理完成通知创建父会话的新 Run，并回复子代理结果。两次真实通知均携带工具 ID，缺省 ID 仍仅有自动化覆盖；不把此结论扩展到所有后台 Shell 审批和压缩边界。[验证记录](https://github.com/haohaomin/cursor-byok/blob/main/docs/upstream-issue-reviews/2026-10-03-issue340-fix.md)。
