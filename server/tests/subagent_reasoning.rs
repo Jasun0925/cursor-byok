@@ -179,7 +179,10 @@ async fn check_reasoning(endpoint: &'static str) {
         } else {
             body.pointer("/reasoning/effort")
         };
-        assert_eq!(effort.and_then(Value::as_str), expected, "{body}");
+        assert_eq!(effort, expected.map(Value::from).as_ref(), "{body}");
+        if expected.is_none() && endpoint == OPENAI_RESPONSES_ENDPOINT {
+            assert!(body.get("reasoning").is_none(), "{body}");
+        }
         assert!(
             requests.try_recv().is_err(),
             "no duplicate provider request"
