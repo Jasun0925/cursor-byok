@@ -86,3 +86,6 @@ jobs:
 
       - name: Run platform Clippy
         run: cargo clippy --package cursor-byok-desktop --all-targets -- -D warnings
+
+      - name: Test SQLite storage reclamation on the native host
+        run: "cargo test --package cursor-server --lib store::storage::"
