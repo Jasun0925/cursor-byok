@@ -940,6 +940,19 @@ impl ConversationOutput {
             Error::Protocol("Cursor user message action has no UserMessage".into())
         })?;
         let injection_id = format!("user-message:{}", user_message.message_id);
+        // A new transport sequence number can redeliver an already accepted
+        // input. Persistence deduplication is too late: queue_injection aborts
+        // active tools before the runtime message reaches the Store.
+        if !user_message.message_id.is_empty()
+            && (self.injection_ids.contains(&injection_id)
+                || self
+                    .context
+                    .turn_user
+                    .as_ref()
+                    .is_some_and(|initial| initial.message_id == user_message.message_id))
+        {
+            return Ok(());
+        }
         let message = compile_user_message_action(
             &action,
             self.context.mode,
