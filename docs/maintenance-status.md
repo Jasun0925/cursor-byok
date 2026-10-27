@@ -31,7 +31,7 @@
 - [#155](https://github.com/leookun/cursor-byok/issues/155)：保持“完成一半”。普通后台短任务自动续答已通过；真实审批等待、压缩期间完成、最终补丁的输出通知等边界仍待验收。20 分钟测试按维护者本轮范围排除。[验收记录](upstream-issue-reviews/2026-10-19-issue155-acceptance.md)
 - [#505](https://github.com/leookun/cursor-byok/issues/505)：多个 reasoning signature。两个合成 checkpoint 已复现拒绝第二个签名；原生 Anthropic 多块签名回放及 OpenAI Chat 聚合对照通过。仍未修复，原作者网关的签名数据与历史来源待取证，不能直接删除校验或覆盖签名。[复现与验证边界](upstream-issue-reviews/2026-10-27-issue505-check.md)
 - [#469](https://github.com/leookun/cursor-byok/issues/469) / [PR #498](https://github.com/leookun/cursor-byok/pull/498)：Remote SSH。真实 `auto` 代理连接失败已复现；远端设为 `always` 后，基础 Agent、Read/Shell、编辑、续聊、取消与窗口重载通过，v1.0.17 可使用这个[配置办法](remote-ssh.md)。WebFetch 分页已在源码修复，真实 SSH 的全文、续读、跨会话隔离及 464 项回归通过；[安装包尚未包含](upstream-issue-reviews/2026-10-27-issue469-webfetch-fix.md)。远程 Semble 路径失败已复现；候选快照的启动、忽略规则及索引身份存在实测缺陷，[尚未采用，仍待修复](upstream-issue-reviews/2026-10-27-issue469-semble-check.md)。后续 [Ls/元数据实验](upstream-issue-reviews/2026-10-27-issue469-inventory-check.md)确认原生清单不完整；元数据探针 Linux 验证通过，完整过滤与 Cursor 采集仍未接通。
-- [#511](https://github.com/leookun/cursor-byok/issues/511)：已独立复现并修复“清理统计后文件不缩小”。两种范围、历史/模型保留、读连接占用、调用者断开及失败恢复均有临时库验证；补丁在开发分支，尚未发布。原作者 19.09 GB 主库的具体组成和增长来源仍待取证，[不能视作全部解决](upstream-issue-reviews/2026-10-27-issue511-storage-fix.md)。
+- [#511](https://github.com/leookun/cursor-byok/issues/511)：已独立复现并修复“清理统计后文件不缩小”。两种范围、历史/模型保留、读连接占用、调用者断开及失败恢复均有临时库验证；本机/Linux 475 项、Windows/macOS 各 6 项回归通过，[PR #1](https://github.com/haohaomin/cursor-byok/pull/1)记录源码合入状态，尚未发布。原作者 19.09 GB 主库的具体组成和增长来源仍待取证，[不能视作全部解决](upstream-issue-reviews/2026-10-27-issue511-storage-fix.md)。
 
 ## 清单与公开回复
 

@@ -1,6 +1,6 @@
 # Issue #511：清理统计数据后回收 SQLite 文件空间
 
-**已复现并修复一个独立缺口：设置中的两种统计清理都会删除记录，却不会收缩数据库文件。原作者 19.09 GB 主库的具体组成仍未知，不能把这一修复等同于 #511 的所有增长原因已解决。** 当前补丁位于 `codex/issue511-storage`，未发布安装包。
+**已复现并修复一个独立缺口：设置中的两种统计清理都会删除记录，却不会收缩数据库文件。原作者 19.09 GB 主库的具体组成仍未知，不能把这一修复等同于 #511 的所有增长原因已解决。** 独立补丁提交为 [`ae6d8f3`](https://github.com/haohaomin/cursor-byok/commit/ae6d8f36b41abfa49e26a58aab8159262d045930)，合入状态见 [PR #1](https://github.com/haohaomin/cursor-byok/pull/1)；未发布安装包。
 
 ## 原报告与取证范围
 
@@ -72,7 +72,9 @@ server/
 5. 删除已提交后取消调用者，文件回收仍完成，写入锁正常释放。
 6. 删除中注入错误，模型请求、响应和追踪附件全部回滚保留；移除故障后重试成功。
 
-六项初轮验证通过；清理后主库 **233,472 字节（228 KiB）**、WAL **0**、空闲页 **0**，完整性和外键检查通过。加入模型配置保留及恢复后续写的最终版本，全工作区 `cargo test --workspace --all-targets` **475 通过、0 失败、0 忽略**；日志 `/tmp/cursor-byok-issue511-workspace-final.log`。远端 CI 结果待补记。
+六项初轮验证通过；清理后主库 **233,472 字节（228 KiB）**、WAL **0**、空闲页 **0**，完整性和外键检查通过。加入模型配置保留及恢复后续写的最终版本，全工作区 `cargo test --workspace --all-targets` **475 通过、0 失败、0 忽略**；日志 `/tmp/cursor-byok-issue511-workspace-final.log`。
+
+补丁提交 `ae6d8f3` 的[四组 CI](https://github.com/haohaomin/cursor-byok/actions/runs/40448321156)全部成功：Linux 全工作区 475 项，Windows/macOS 各 6 项原生存储测试，以及前端检查。CI 原始公开日志保存在 `/tmp/cursor-byok-issue511-ci.log`。本地合成库、跨平台原生库测试与原作者 19 GB 环境验收分别计入，后者仍未覆盖。
 
 全工作区 Clippy（`-D warnings`）、格式和差异检查通过；Clippy 日志 `/tmp/cursor-byok-issue511-clippy.log`。复跑入口：
 
