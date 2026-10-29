@@ -4,12 +4,12 @@
 
 在 Cursor 中使用自己的模型 API，保留 Agent、工具调用、Skills 和 MCP 工作流。
 
-[English](./README.md) · [下载最新版本](https://github.com/haohaomin/cursor-byok/releases/latest) · [版本记录](https://github.com/haohaomin/cursor-byok/releases) · [问题反馈](https://github.com/haohaomin/cursor-byok/issues) · [修复进度](./docs/maintenance-status.md) · [提交改进](https://github.com/haohaomin/cursor-byok/pulls) · [上游项目](https://github.com/leookun/cursor-byok)
+[English](./README.md) · [下载最新版本](https://github.com/Jasun0925/cursor-byok/releases/latest) · [版本记录](https://github.com/haohaomin/cursor-byok/releases) · [问题反馈](https://github.com/haohaomin/cursor-byok/issues) · [修复进度](./docs/maintenance-status.md) · [提交改进](https://github.com/haohaomin/cursor-byok/pulls) · [上游项目](https://github.com/leookun/cursor-byok)
 
-[![Release](https://img.shields.io/github/v/release/haohaomin/cursor-byok?style=flat-square)](https://github.com/haohaomin/cursor-byok/releases/latest)
+[![Release](https://img.shields.io/github/v/release/Jasun0925/cursor-byok?style=flat-square)](https://github.com/Jasun0925/cursor-byok/releases/latest)
 [![CI](https://github.com/haohaomin/cursor-byok/actions/workflows/ci.yml/badge.svg)](https://github.com/haohaomin/cursor-byok/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](./LICENSE)
-[![Platforms](https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-lightgrey?style=flat-square)](https://github.com/haohaomin/cursor-byok/releases/latest)
+[![Platforms](https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-lightgrey?style=flat-square)](https://github.com/Jasun0925/cursor-byok/releases/latest)
 
 </div>
 
@@ -21,7 +21,7 @@
 
 本分支移除了广告组件，使用独立的 GitHub Releases、更新源和更新签名，并保留 TAB 公益服务、官方直连和自定义服务选项。上游更新按需同步；候选 PR 经检查和验证后再整合。
 
-源码 `main`、测试分支与正式安装包可能处于不同进度。安装请以本仓库 [Latest Release](https://github.com/haohaomin/cursor-byok/releases/latest) 为准，具体改动以该版本的发布说明为准。
+源码 `main`、测试分支与正式安装包可能处于不同进度。安装请以本仓库 [Latest Release](https://github.com/Jasun0925/cursor-byok/releases/latest) 为准，具体改动以该版本的发布说明为准。
 
 > cursor-byok 免费开源，模型 API 可能收费。本项目与 Cursor 官方无隶属关系。本地网关仍会向你选择的模型服务发送请求，并不意味着模型在本机运行。
 
@@ -57,7 +57,7 @@
 
 ## 下载与安装
 
-前往 [Latest Release](https://github.com/haohaomin/cursor-byok/releases/latest)，在 **Assets** 中选择与你的系统和处理器一致的文件。
+前往 [Latest Release](https://github.com/Jasun0925/cursor-byok/releases/latest)，在 **Assets** 中选择与你的系统和处理器一致的文件。
 
 | 平台 | 选择的安装包 |
 | --- | --- |

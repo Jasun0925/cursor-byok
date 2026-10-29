@@ -24,7 +24,7 @@ mod replacement;
 
 #[cfg(target_os = "windows")]
 const PORTABLE_UPDATE_ENDPOINT: &str =
-    "https://github.com/renhao12356578/cursor-byok/releases/latest/download/portable-latest.json";
+    "https://github.com/Jasun0925/cursor-byok/releases/latest/download/portable-latest.json";
 #[cfg(any(target_os = "windows", test))]
 const WINDOWS_PAYLOAD_NAME: &str = "cursor-byok-desktop.exe";
 

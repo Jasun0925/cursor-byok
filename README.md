@@ -4,12 +4,12 @@
 
 Use your own model APIs in Cursor with Agent, tool calling, Skills, and MCP workflows.
 
-[中文说明](./README-CN.md) · [Download](https://github.com/haohaomin/cursor-byok/releases/latest) · [Releases](https://github.com/haohaomin/cursor-byok/releases) · [Issues](https://github.com/haohaomin/cursor-byok/issues) · [Fix status](./docs/maintenance-status.md) · [Pull Requests](https://github.com/haohaomin/cursor-byok/pulls) · [Upstream](https://github.com/leookun/cursor-byok)
+[中文说明](./README-CN.md) · [Download](https://github.com/Jasun0925/cursor-byok/releases/latest) · [Releases](https://github.com/haohaomin/cursor-byok/releases) · [Issues](https://github.com/haohaomin/cursor-byok/issues) · [Fix status](./docs/maintenance-status.md) · [Pull Requests](https://github.com/haohaomin/cursor-byok/pulls) · [Upstream](https://github.com/leookun/cursor-byok)
 
-[![Release](https://img.shields.io/github/v/release/haohaomin/cursor-byok?style=flat-square)](https://github.com/haohaomin/cursor-byok/releases/latest)
+[![Release](https://img.shields.io/github/v/release/Jasun0925/cursor-byok?style=flat-square)](https://github.com/Jasun0925/cursor-byok/releases/latest)
 [![CI](https://github.com/haohaomin/cursor-byok/actions/workflows/ci.yml/badge.svg)](https://github.com/haohaomin/cursor-byok/actions/workflows/ci.yml)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](./LICENSE)
-[![Platforms](https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-lightgrey?style=flat-square)](https://github.com/haohaomin/cursor-byok/releases/latest)
+[![Platforms](https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-lightgrey?style=flat-square)](https://github.com/Jasun0925/cursor-byok/releases/latest)
 
 </div>
 
@@ -21,7 +21,7 @@ This is a personal fork of [leookun/cursor-byok](https://github.com/leookun/curs
 
 This fork removes advertising components and uses its own GitHub Releases, update source, and updater signing identity. Public, direct, and custom TAB service options remain available. Upstream changes are integrated selectively after review and validation.
 
-The `main` branch, experimental branches, and released installers may contain different changes. Install from this repository's [Latest Release](https://github.com/haohaomin/cursor-byok/releases/latest) and consult that version's release notes for its contents.
+The `main` branch, experimental branches, and released installers may contain different changes. Install from this repository's [Latest Release](https://github.com/Jasun0925/cursor-byok/releases/latest) and consult that version's release notes for its contents.
 
 > Cursor BYOK is free and open source; your model provider may charge for API usage. This project is independent of Cursor. A local gateway still sends requests to the model service you choose; it does not imply local model inference.
 
@@ -57,7 +57,7 @@ See [all releases](https://github.com/haohaomin/cursor-byok/releases) for subseq
 
 ## Download and installation
 
-Open the [Latest Release](https://github.com/haohaomin/cursor-byok/releases/latest) and choose an **Asset** matching your operating system and processor.
+Open the [Latest Release](https://github.com/Jasun0925/cursor-byok/releases/latest) and choose an **Asset** matching your operating system and processor.
 
 | Platform | Package |
 | --- | --- |
