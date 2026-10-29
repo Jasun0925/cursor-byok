@@ -19,14 +19,20 @@ async fn config_from_response(response: Response<Body>, framed: bool) -> Value {
 }
 
 #[tokio::test]
-async fn upstream_bootstrap_enables_background_jobs_and_preserves_other_config() {
-    for (hash, retries_key, jobs_key) in [
-        ("none", "nal_agent_retries", "long_running_jobs"),
-        ("djb2", "101914982", "119294905"),
+async fn upstream_bootstrap_pins_agent_gates_and_preserves_other_config() {
+    for (hash, retries_key, jobs_key, local_loop_key) in [
+        (
+            "none",
+            "nal_agent_retries",
+            "long_running_jobs",
+            "agent_host_local_loop",
+        ),
+        ("djb2", "101914982", "119294905", "1967931573"),
         (
             "sha256",
             "ifvjhhnfrCEApPQP1Pgv02EJdaWKslFkfOhSOAezhxk=",
             "TY6yhlx6Yr6dYcXUYxqRr3v+AsH1iJrVoj44YBdYwSw=",
+            "pL49GCl+NNaNm8gwzyKmb8/Gz7VEiiUMVG56Nk3v+d0=",
         ),
     ] {
         for framed in [false, true] {
@@ -35,7 +41,8 @@ async fn upstream_bootstrap_enables_background_jobs_and_preserves_other_config()
                 "user": {"userID": "upstream-user", "customIDs": {"device": "test"}},
                 "feature_gates": {
                     "unrelated": {"value": false, "rule_id": "keep"},
-                    jobs_key: {"value": false}
+                    jobs_key: {"value": false},
+                    local_loop_key: {"value": true}
                 },
                 "dynamic_configs": {"keep": {"value": 7}},
                 "layer_configs": {"keep": {"value": "original"}}
@@ -54,7 +61,8 @@ async fn upstream_bootstrap_enables_background_jobs_and_preserves_other_config()
 
             assert_eq!(patched["feature_gates"][jobs_key]["value"], true);
             assert_eq!(patched["feature_gates"][retries_key]["value"], true);
-            assert_eq!(patched["feature_gates"].as_object().unwrap().len(), 3);
+            assert_eq!(patched["feature_gates"][local_loop_key]["value"], false);
+            assert_eq!(patched["feature_gates"].as_object().unwrap().len(), 4);
             for field in ["user", "dynamic_configs", "layer_configs", "hash_used"] {
                 assert_eq!(patched[field], original[field]);
             }
@@ -104,6 +112,10 @@ async fn unavailable_bootstrap_matches_each_request_identity() {
         assert_eq!(config["user"], json!({"userID": subject}));
         assert_eq!(config["feature_gates"]["long_running_jobs"]["value"], true);
         assert_eq!(config["feature_gates"]["nal_agent_retries"]["value"], true);
+        assert_eq!(
+            config["feature_gates"]["agent_host_local_loop"]["value"],
+            false
+        );
         assert!(config["sdkParams"].get("stableID").is_none());
         assert!(!config.to_string().contains("not-copied@example.test"));
     }

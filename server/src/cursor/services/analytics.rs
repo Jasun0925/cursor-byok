@@ -19,8 +19,14 @@ use crate::{api::cursor::proxy, Error, Result};
 mod tests;
 
 pub const BOOTSTRAP_STATSIG_PATH: &str = "/aiserver.v1.AnalyticsService/BootstrapStatsig";
-const REQUIRED_AGENT_GATES: &[&str] = &["nal_agent_retries", "long_running_jobs"];
-const LOCAL_RULE: &str = "local_enabled";
+/// `agent_host_local_loop` routes agent turns to InferenceService/RunInference,
+/// which BYOK does not serve; keeping it off keeps turns on AgentService/RunSSE.
+const PINNED_AGENT_GATES: &[(&str, bool)] = &[
+    ("nal_agent_retries", true),
+    ("long_running_jobs", true),
+    ("agent_host_local_loop", false),
+];
+const LOCAL_RULE: &str = "local_pinned";
 
 #[derive(Clone, PartialEq, Message)]
 struct BootstrapStatsigResponse {
@@ -58,7 +64,7 @@ fn patch_upstream(response: proxy::BufferedResponse) -> Result<Response<Body>> {
     let (framed, payload) = unary_payload(&response.body)?;
     let mut message = BootstrapStatsigResponse::decode(payload)?;
     let mut config = serde_json::from_str::<Value>(&message.config)?;
-    enable_agent_gates(&mut config)?;
+    pin_agent_gates(&mut config)?;
     message.config = serde_json::to_string(&config)?;
     Ok(response.with_body(encode_unary(&message, framed)))
 }
@@ -103,7 +109,7 @@ fn local_response(user_id: Option<&str>) -> Result<Response<Body>> {
         },
         "time": generated_at_ms
     });
-    enable_agent_gates(&mut config)?;
+    pin_agent_gates(&mut config)?;
     let message = BootstrapStatsigResponse {
         config: serde_json::to_string(&config)?,
         generated_at_ms,
@@ -125,10 +131,10 @@ fn local_response(user_id: Option<&str>) -> Result<Response<Body>> {
     Ok(response)
 }
 
-fn enable_agent_gates(config: &mut Value) -> Result<()> {
-    let gate_keys: Vec<_> = REQUIRED_AGENT_GATES
+fn pin_agent_gates(config: &mut Value) -> Result<()> {
+    let pinned: Vec<_> = PINNED_AGENT_GATES
         .iter()
-        .map(|name| statsig_key(config, name))
+        .map(|(name, value)| (statsig_key(config, name), *value))
         .collect();
     let root = config
         .as_object_mut()
@@ -138,8 +144,9 @@ fn enable_agent_gates(config: &mut Value) -> Result<()> {
         .or_insert_with(|| Value::Object(Map::new()))
         .as_object_mut()
         .ok_or_else(|| Error::Protocol("Statsig feature_gates must be an object".into()))?;
-    for key in gate_keys {
-        gates.insert(key.clone(), enabled_gate(&key));
+    for (key, value) in pinned {
+        let gate = pinned_gate(&key, value);
+        gates.insert(key, gate);
     }
     Ok(())
 }
@@ -161,10 +168,10 @@ fn djb2(value: &str) -> String {
         .to_string()
 }
 
-fn enabled_gate(name: &str) -> Value {
+fn pinned_gate(name: &str, value: bool) -> Value {
     json!({
         "name": name,
-        "value": true,
+        "value": value,
         "rule_id": LOCAL_RULE,
         "ruleID": LOCAL_RULE,
         "group_name": LOCAL_RULE,
