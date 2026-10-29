@@ -68,6 +68,34 @@
 
 `.sig` 是更新签名文件，`latest.json`、`portable-latest.json`、`update.json` 是更新清单，无需手动打开或安装。
 
+## 从源码构建安装包
+
+需要使用源码中尚未发布的修复时，可在自己的电脑上构建安装包。
+
+1. 安装 Rust stable、Node.js 22 与 npm、Make，以及 [Tauri 2 对应平台依赖](https://v2.tauri.app/start/prerequisites/)。Windows 可通过 Scoop 或 Chocolatey 安装 Make。
+2. 拉取代码并构建：
+
+   ```bash
+   git clone https://github.com/Jasun0925/cursor-byok.git
+   cd cursor-byok
+   npm --prefix apps/desktop ci
+   make build-desktop
+   ```
+
+   首次构建需要编译全部依赖，耗时较长。构建时会在 `.tauri/cursor-byok.local.key` 生成本地更新签名密钥，该目录已被 git 忽略。
+3. 先完全退出正在运行的 Cursor BYOK（包括托盘中的后台实例），再安装构建产物：
+
+| 系统 | 构建产物 | 安装方式 |
+| --- | --- | --- |
+| macOS | `target/release/bundle/macos/Cursor BYOK.app` | 在 Finder 中拖入“应用程序”目录，替换旧版。 |
+| Windows | `target/release/bundle/nsis/*-setup.exe` | 运行安装程序。 |
+| Linux | `target/release/bundle/` 下的 `deb`、`rpm`、`appimage` 目录 | 按发行版安装对应文件。 |
+
+- 在本机构建的 macOS 应用可以直接打开。将 `.app` 复制到其他 Mac 后，如提示“已损坏”或无法验证开发者，请执行 `xattr -dr com.apple.quarantine "/Applications/Cursor BYOK.app"`。
+- macOS 的“App 管理”权限可能阻止终端替换 `/Applications` 中的应用，请改用 Finder 拖拽。
+- 自建包沿用仓库中的版本号和更新源。应用提示更新时，安装的是 Releases 中的正式包，会覆盖自建包。需要保留源码修复时请忽略更新，之后拉取新代码重新构建。
+- 替换应用不会影响数据目录，模型和设置会保留，详见[升级、替换与数据保留](#升级替换与数据保留)。
+
 ## 快速开始
 
 1. 安装并启动 Cursor BYOK，同时准备服务商提供的接口地址、API Key 和模型 ID。

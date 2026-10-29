@@ -68,6 +68,34 @@ Open the [Latest Release](https://github.com/haohaomin/cursor-byok/releases/late
 
 Files ending in `.sig` are updater signatures. `latest.json`, `portable-latest.json`, and `update.json` are update manifests, not installers.
 
+## Building from source
+
+Build your own package when you need fixes that are in the source but not yet released.
+
+1. Install Rust stable, Node.js 22 with npm, Make, and the [Tauri 2 prerequisites](https://v2.tauri.app/start/prerequisites/) for your platform. On Windows, Make is available through Scoop or Chocolatey.
+2. Clone and build:
+
+   ```bash
+   git clone https://github.com/Jasun0925/cursor-byok.git
+   cd cursor-byok
+   npm --prefix apps/desktop ci
+   make build-desktop
+   ```
+
+   The first build compiles all dependencies and takes a while. It also generates a local updater signing key at `.tauri/cursor-byok.local.key`, which git ignores.
+3. Fully quit any running Cursor BYOK, including the tray instance, then install the output:
+
+| Platform | Build output | Installation |
+| --- | --- | --- |
+| macOS | `target/release/bundle/macos/Cursor BYOK.app` | Drag it into Applications in Finder, replacing the old version. |
+| Windows | `target/release/bundle/nsis/*-setup.exe` | Run the installer. |
+| Linux | `deb`, `rpm`, and `appimage` directories under `target/release/bundle/` | Install the file for your distribution. |
+
+- A macOS app built on the same machine opens directly. If a copied `.app` is reported as damaged or from an unidentified developer on another Mac, run `xattr -dr com.apple.quarantine "/Applications/Cursor BYOK.app"`.
+- macOS App Management permission may stop a terminal from replacing apps in `/Applications`; drag the app in Finder instead.
+- A self-built package keeps the repository's version and update source. Accepting an in-app update installs the official Release package over it; to keep source-only fixes, skip the update and rebuild from newer source.
+- Replacing the application leaves the data directory untouched, so models and settings are preserved. See [Upgrading and preserving data](#upgrading-and-preserving-data).
+
 ## Quick start
 
 1. Install and open Cursor BYOK. Have your provider's endpoint, API key, and model ID ready.
