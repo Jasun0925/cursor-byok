@@ -13,6 +13,9 @@ use crate::{
     Error, Result,
 };
 
+/// Cursor encodes conversation_state first, so this prefix covers it for new conversations.
+const DECODE_FAILURE_PREFIX_BYTES: usize = 4096;
+
 pub struct DecodedAppend {
     pub request_id: String,
     pub seqno: i64,
@@ -172,10 +175,20 @@ pub fn decode(request: &ai::BidiAppendRequest) -> Result<DecodedAppend> {
     }
     let payload = hex::decode(&request.data)
         .map_err(|error| Error::Protocol(format!("invalid BidiAppend hex: {error}")))?;
+    let message = agent::AgentClientMessage::decode(payload.as_slice()).inspect_err(|error| {
+        tracing::warn!(
+            request_id,
+            seqno = request.append_seqno,
+            payload_len = payload.len(),
+            payload_prefix = hex::encode(&payload[..payload.len().min(DECODE_FAILURE_PREFIX_BYTES)]),
+            %error,
+            "cannot decode BidiAppend AgentClientMessage"
+        );
+    })?;
     Ok(DecodedAppend {
         request_id: request_id.into(),
         seqno: request.append_seqno,
-        message: agent::AgentClientMessage::decode(payload.as_slice())?,
+        message,
     })
 }
 
