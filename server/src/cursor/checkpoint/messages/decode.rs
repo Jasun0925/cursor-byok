@@ -148,12 +148,9 @@ fn decode_text(value: &Value) -> Result<MessageContent> {
             }),
             Some("image") => {
                 let mime_type = required_string(part, "mimeType")?;
-                let encoded = required_string(part, "image")?;
                 Ok(ContentPart::Image {
                     mime_type: mime_type.into(),
-                    data: STANDARD.decode(encoded).map_err(|error| {
-                        Error::Protocol(format!("invalid Cursor image base64: {error}"))
-                    })?,
+                    data: image_bytes(part.get("image"))?,
                 })
             }
             Some(kind) => Err(Error::Protocol(format!(
@@ -249,6 +246,31 @@ fn decode_tool_result(value: &Value) -> Result<ToolResultContent> {
         image: None,
         provider_parts: Vec::new(),
     })
+}
+
+/// Cursor writes checkpoint images either as a base64 string or as the tagged
+/// `Uint8Array` object produced by its transcript JSON serializer.
+fn image_bytes(value: Option<&Value>) -> Result<Vec<u8>> {
+    let data = match value {
+        Some(Value::String(encoded)) => STANDARD
+            .decode(encoded)
+            .map_err(|error| Error::Protocol(format!("invalid Cursor image base64: {error}")))?,
+        Some(Value::Object(image))
+            if image.get("__type").and_then(Value::as_str) == Some("Uint8Array") =>
+        {
+            let hex_text = image
+                .get("hex")
+                .and_then(Value::as_str)
+                .ok_or_else(|| Error::Protocol("Cursor message is missing image".into()))?;
+            hex::decode(hex_text)
+                .map_err(|error| Error::Protocol(format!("invalid Cursor image hex: {error}")))?
+        }
+        _ => return Err(Error::Protocol("Cursor message is missing image".into())),
+    };
+    if data.is_empty() {
+        return Err(Error::Protocol("Cursor image data is empty".into()));
+    }
+    Ok(data)
 }
 
 fn required_string<'a>(value: &'a Value, name: &str) -> Result<&'a str> {

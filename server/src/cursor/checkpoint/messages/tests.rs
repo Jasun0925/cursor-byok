@@ -1,6 +1,7 @@
 //! Verifies stable checkpoint Message encoding and recovery behavior.
 use std::collections::HashSet;
 
+use base64::{engine::general_purpose::STANDARD, Engine};
 use serde_json::{json, Value};
 
 use crate::model::{
@@ -187,6 +188,160 @@ fn cursor_user_image_uses_image_field() {
     let encoded = wire_message(&projected[0], "model", None).unwrap();
     assert_eq!(encoded["content"][1]["image"], "AQID");
     assert!(encoded["content"][1].get("data").is_none());
+}
+
+#[test]
+fn cursor_user_image_uint8array_hex_round_trips_as_base64() {
+    let jpeg = [0x00, 0x01, 0x02, 0x03, 0xff];
+    let wire = json!({
+        "role": "user",
+        "providerOptions": {"cursor": {"modelName": "example"}},
+        "content": [
+            {"type":"text", "text":"look"},
+            {
+                "type":"image",
+                "mimeType":"image/jpeg",
+                "image": {"__type":"Uint8Array", "hex":"00010203ff", "ignored": true},
+            },
+            {"type":"image", "image":"AQID", "mimeType":"image/png"},
+        ],
+    });
+    let message = decode(
+        serde_json::to_vec(&wire).unwrap().as_slice(),
+        "cursor-root:user-image".into(),
+    )
+    .unwrap();
+    assert_image(&message, 1, "image/jpeg", &jpeg);
+    assert_image(&message, 2, "image/png", &[1, 2, 3]);
+
+    let projected = project_messages(&[message]).unwrap();
+    let encoded = wire_message(&projected[0], "model", None).unwrap();
+    let jpeg_base64 = STANDARD.encode(jpeg);
+    assert_eq!(encoded["content"][1]["type"], "image");
+    assert_eq!(encoded["content"][1]["mimeType"], "image/jpeg");
+    assert_eq!(
+        encoded["content"][1]["image"].as_str(),
+        Some(jpeg_base64.as_str())
+    );
+    assert!(encoded["content"][1].get("data").is_none());
+    assert!(encoded["content"][1].get("hex").is_none());
+    assert_eq!(encoded["content"][2]["image"], "AQID");
+    assert!(encoded.get("providerOptions").is_none());
+}
+
+#[test]
+fn cursor_user_image_accepts_uppercase_hex() {
+    let message = decode_user_content(json!([
+        {"type":"image", "mimeType":"image/jpeg", "image": {"__type":"Uint8Array", "hex":"FFD8"}},
+    ]))
+    .unwrap();
+    assert_image(&message, 0, "image/jpeg", &[0xff, 0xd8]);
+}
+
+#[test]
+fn cursor_user_image_rejects_unusable_image_payloads() {
+    let missing_image = json!([{"type":"image", "mimeType":"image/png"}]);
+    let unknown_object = json!([{
+        "type":"image",
+        "mimeType":"image/png",
+        "image": {"__type":"Buffer", "hex":"0102"},
+    }]);
+    let missing_hex = json!([{
+        "type":"image",
+        "mimeType":"image/png",
+        "image": {"__type":"Uint8Array"},
+    }]);
+    let numeric_hex = json!([{
+        "type":"image",
+        "mimeType":"image/png",
+        "image": {"__type":"Uint8Array", "hex": 1},
+    }]);
+    let byte_array = json!([{
+        "type":"image",
+        "mimeType":"image/png",
+        "image": [1, 2, 3],
+    }]);
+    for content in [
+        missing_image,
+        unknown_object,
+        missing_hex,
+        numeric_hex,
+        byte_array,
+    ] {
+        assert_eq!(
+            decode_user_content(content).unwrap_err().to_string(),
+            "protocol error: Cursor message is missing image"
+        );
+    }
+
+    assert_eq!(
+        decode_user_content(json!([{
+            "type":"image",
+            "mimeType":"image/png",
+            "image": {"__type":"Uint8Array", "hex":"010"},
+        }]))
+        .unwrap_err()
+        .to_string(),
+        "protocol error: invalid Cursor image hex: Odd number of digits"
+    );
+    assert_eq!(
+        decode_user_content(json!([{
+            "type":"image",
+            "mimeType":"image/png",
+            "image": {"__type":"Uint8Array", "hex":"0102zz"},
+        }]))
+        .unwrap_err()
+        .to_string(),
+        "protocol error: invalid Cursor image hex: Invalid character 'z' at position 4"
+    );
+    assert_eq!(
+        decode_user_content(json!([{"type":"image", "mimeType":"image/png", "image":"%"}]))
+            .unwrap_err()
+            .to_string(),
+        "protocol error: invalid Cursor image base64: Invalid symbol 37, offset 0."
+    );
+    assert_eq!(
+        decode_user_content(
+            json!([{"type":"image", "image": {"__type":"Uint8Array", "hex":"0102"}}])
+        )
+        .unwrap_err()
+        .to_string(),
+        "protocol error: Cursor message is missing mimeType"
+    );
+    for content in [
+        json!([{"type":"image", "mimeType":"image/png", "image":""}]),
+        json!([{
+            "type":"image",
+            "mimeType":"image/png",
+            "image": {"__type":"Uint8Array", "hex":""},
+        }]),
+    ] {
+        assert_eq!(
+            decode_user_content(content).unwrap_err().to_string(),
+            "protocol error: Cursor image data is empty"
+        );
+    }
+}
+
+fn decode_user_content(content: Value) -> crate::Result<CanonicalMessage> {
+    let wire = json!({"role":"user", "content": content});
+    decode(
+        serde_json::to_vec(&wire).unwrap().as_slice(),
+        "cursor-root:user-image".into(),
+    )
+}
+
+fn assert_image(message: &CanonicalMessage, index: usize, mime_type: &str, data: &[u8]) {
+    let MessageContent::Parts { parts } = &message.content else {
+        panic!("expected message parts");
+    };
+    assert_eq!(
+        &parts[index],
+        &ContentPart::Image {
+            mime_type: mime_type.into(),
+            data: data.to_vec(),
+        }
+    );
 }
 
 #[test]
