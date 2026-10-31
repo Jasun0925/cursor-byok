@@ -1,6 +1,6 @@
 {
   "name": "cursor-byok-desktop",
-  "version": "1.0.18",
+  "version": "1.0.19",
   "description": "Cursor BYOK desktop management application",
   "type": "module",
   "scripts": {
