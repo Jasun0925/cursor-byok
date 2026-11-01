@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-cliproxy-status"
+description = "Enables the cliproxy_status command without any pre-configured scope."
+commands.allow = ["cliproxy_status"]
+
+[[permission]]
+identifier = "deny-cliproxy-status"
+description = "Denies the cliproxy_status command without any pre-configured scope."
+commands.deny = ["cliproxy_status"]

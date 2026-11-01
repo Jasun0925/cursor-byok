@@ -171,7 +171,7 @@ export function installDemoApi() {
       tabSettings = body as TabSettings;
       return json(tabSettings);
     }
-    if (path === "/settings/desktop" && method === "GET") return json({ silent_start: false, show_dock_icon: true });
+    if (path === "/settings/desktop" && method === "GET") return json({ silent_start: false, show_dock_icon: true, show_cliproxy_tab: false });
     if (path === "/settings/desktop") return json(body);
     if (path === "/desktop/open-external-url") {
       const target = (body as { url?: string } | null)?.url;

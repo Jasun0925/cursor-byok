@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { loadCliproxyTabVisible, useCliproxyTabVisible, writeCliproxyTabVisible } from "../cliproxy/cliproxyTab";
 import {
   currentAppVersion,
   hasDockVisibilitySetting,
@@ -27,6 +28,7 @@ export function AppLifecycleSettingsCard() {
   const [silentStart, setSilentStart] = useState(false);
   const [dockIconVisible, setDockIconVisible] = useState(true);
   const [loadingDesktopSettings, setLoadingDesktopSettings] = useState(native);
+  const cliproxyTab = useCliproxyTabVisible();
 
   useEffect(() => {
     let disposed = false;
@@ -48,6 +50,7 @@ export function AppLifecycleSettingsCard() {
           setLoadingDesktopSettings(false);
         });
     }
+    void loadCliproxyTabVisible();
     return () => { disposed = true; };
   }, [message, native]);
 
@@ -83,6 +86,18 @@ export function AppLifecycleSettingsCard() {
       await writeDockIconVisibility(visible);
       setDockIconVisible(visible);
       message(visible ? t("已显示 Dock 栏图标") : t("已隐藏 Dock 栏图标"));
+    } catch (cause) {
+      message(cause instanceof Error ? cause.message : String(cause));
+    } finally {
+      setLoadingDesktopSettings(false);
+    }
+  };
+
+  const toggleCliproxyTab = async (enabled: boolean) => {
+    try {
+      setLoadingDesktopSettings(true);
+      await writeCliproxyTabVisible(enabled);
+      message(enabled ? t("已在侧边栏显示 CLIProxyAPI") : t("已从侧边栏隐藏 CLIProxyAPI"));
     } catch (cause) {
       message(cause instanceof Error ? cause.message : String(cause));
     } finally {
@@ -134,6 +149,18 @@ export function AppLifecycleSettingsCard() {
         onChange={(enabled) => void toggleSilentStart(enabled)}
       />
     </div>}
+    <div className={styles.row}>
+      <div>
+        <strong>{t("显示 CLIProxyAPI")}</strong>
+        <small>{t("开启后，侧边栏会出现 CLIProxyAPI。")}</small>
+      </div>
+      <Switch
+        checked={cliproxyTab.visible}
+        disabled={!cliproxyTab.ready || loadingDesktopSettings}
+        label={t("显示 CLIProxyAPI")}
+        onChange={(enabled) => void toggleCliproxyTab(enabled)}
+      />
+    </div>
     {dockVisibilitySetting && <div className={styles.row}>
       <div>
         <strong>{t("在 Dock 栏显示")}</strong>

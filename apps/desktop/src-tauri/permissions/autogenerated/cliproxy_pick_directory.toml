@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-cliproxy-pick-directory"
+description = "Enables the cliproxy_pick_directory command without any pre-configured scope."
+commands.allow = ["cliproxy_pick_directory"]
+
+[[permission]]
+identifier = "deny-cliproxy-pick-directory"
+description = "Denies the cliproxy_pick_directory command without any pre-configured scope."
+commands.deny = ["cliproxy_pick_directory"]

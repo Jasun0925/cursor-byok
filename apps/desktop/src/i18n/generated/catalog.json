@@ -288,6 +288,18 @@
         }
       ]
     },
+    "0ae1363f211f1453": {
+      "source": "所在目录",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/cliproxy/CliproxyPage.tsx",
+          "line": 176,
+          "column": 56
+        }
+      ]
+    },
     "0b96da34f6fbdd3b": {
       "source": "缓存读取：{tokens} × ${price}/1M = {cost}",
       "kind": "template",
@@ -374,6 +386,18 @@
           "file": "features/home/charts/DailyTokenUsageChart.tsx",
           "line": 173,
           "column": 15
+        }
+      ]
+    },
+    "0c9ca0b941d0aa5d": {
+      "source": "已在侧边栏显示 CLIProxyAPI",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/settings/AppLifecycleSettingsCard.tsx",
+          "line": 100,
+          "column": 25
         }
       ]
     },
@@ -715,7 +739,7 @@
       "refs": [
         {
           "file": "features/settings/AppLifecycleSettingsCard.tsx",
-          "line": 158,
+          "line": 185,
           "column": 27
         }
       ]
@@ -918,6 +942,18 @@
         }
       ]
     },
+    "1f0eb99b7ed094be": {
+      "source": "运行中",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/cliproxy/CliproxyPage.tsx",
+          "line": 132,
+          "column": 28
+        }
+      ]
+    },
     "1f9b46e61efcccb5": {
       "source": "筛选项：{label}，{summary}",
       "kind": "template",
@@ -1038,7 +1074,7 @@
       "refs": [
         {
           "file": "features/settings/AppLifecycleSettingsCard.tsx",
-          "line": 96,
+          "line": 111,
           "column": 29
         }
       ]
@@ -1090,7 +1126,7 @@
       "refs": [
         {
           "file": "features/settings/AppLifecycleSettingsCard.tsx",
-          "line": 154,
+          "line": 181,
           "column": 13
         }
       ]
@@ -1222,11 +1258,6 @@
           "file": "shared/ui/Modal.tsx",
           "line": 42,
           "column": 200
-        },
-        {
-          "file": "shell/AppLayout.tsx",
-          "line": 118,
-          "column": 20
         }
       ]
     },
@@ -1335,18 +1366,6 @@
         }
       ]
     },
-    "2f7ba5fd1d12f7f9": {
-      "source": "打开使用教程？",
-      "kind": "text",
-      "placeholders": [],
-      "refs": [
-        {
-          "file": "shell/AppLayout.tsx",
-          "line": 117,
-          "column": 14
-        }
-      ]
-    },
     "2f9daa828907b93f": {
       "source": "删除",
       "kind": "text",
@@ -1371,6 +1390,20 @@
           "file": "features/plugins/PluginResourcePanels.tsx",
           "line": 403,
           "column": 68
+        }
+      ]
+    },
+    "2fd1ab45e36adf0d": {
+      "source": "启动失败：{detail}",
+      "kind": "template",
+      "placeholders": [
+        "detail"
+      ],
+      "refs": [
+        {
+          "file": "features/cliproxy/CliproxyPage.tsx",
+          "line": 51,
+          "column": 14
         }
       ]
     },
@@ -1683,7 +1716,7 @@
       "refs": [
         {
           "file": "features/settings/AppLifecycleSettingsCard.tsx",
-          "line": 85,
+          "line": 88,
           "column": 45
         }
       ]
@@ -1923,7 +1956,7 @@
       "refs": [
         {
           "file": "features/settings/AppLifecycleSettingsCard.tsx",
-          "line": 128,
+          "line": 143,
           "column": 17
         }
       ]
@@ -1975,7 +2008,7 @@
       "refs": [
         {
           "file": "features/settings/AppLifecycleSettingsCard.tsx",
-          "line": 153,
+          "line": 180,
           "column": 13
         }
       ]
@@ -2111,18 +2144,6 @@
         }
       ]
     },
-    "4d0680f9efaef147": {
-      "source": "未读",
-      "kind": "text",
-      "placeholders": [],
-      "refs": [
-        {
-          "file": "shell/AppLayout.tsx",
-          "line": 86,
-          "column": 67
-        }
-      ]
-    },
     "4d99c976beb8827e": {
       "source": "可用",
       "kind": "text",
@@ -2137,6 +2158,18 @@
           "file": "features/plugins/PluginResourcePanels.tsx",
           "line": 490,
           "column": 42
+        }
+      ]
+    },
+    "4dd37dd59308eae6": {
+      "source": "目录里没有 cli-proxy-api，没有启动",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/cliproxy/CliproxyPage.tsx",
+          "line": 45,
+          "column": 14
         }
       ]
     },
@@ -2253,7 +2286,7 @@
       "refs": [
         {
           "file": "shell/AppLayout.tsx",
-          "line": 106,
+          "line": 104,
           "column": 51
         }
       ]
@@ -2332,6 +2365,18 @@
           "file": "features/settings/CommitSettingsCard.tsx",
           "line": 185,
           "column": 26
+        }
+      ]
+    },
+    "56410fc65314dfb5": {
+      "source": "启动",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/cliproxy/CliproxyPage.tsx",
+          "line": 181,
+          "column": 148
         }
       ]
     },
@@ -2563,7 +2608,7 @@
       "refs": [
         {
           "file": "features/settings/AppLifecycleSettingsCard.tsx",
-          "line": 59,
+          "line": 62,
           "column": 40
         }
       ]
@@ -2747,7 +2792,7 @@
       "refs": [
         {
           "file": "shared/api.ts",
-          "line": 524,
+          "line": 525,
           "column": 43
         }
       ]
@@ -2759,7 +2804,7 @@
       "refs": [
         {
           "file": "features/settings/AppLifecycleSettingsCard.tsx",
-          "line": 151,
+          "line": 178,
           "column": 18
         }
       ]
@@ -2838,6 +2883,18 @@
         }
       ]
     },
+    "6606ce0888c47215": {
+      "source": "请先填写 CLIProxyAPI 所在目录",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/cliproxy/CliproxyPage.tsx",
+          "line": 41,
+          "column": 14
+        }
+      ]
+    },
     "66f7ceff962da68c": {
       "source": "用于首页价值估算的 Token 单价，单位：美元 / 百万 Token。",
       "kind": "text",
@@ -2850,6 +2907,18 @@
         }
       ]
     },
+    "6744b4c6a9aa0038": {
+      "source": "已关闭",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "shell/AppLayout.tsx",
+          "line": 98,
+          "column": 53
+        }
+      ]
+    },
     "680680288a6d2ad2": {
       "source": "在 Dock 栏显示",
       "kind": "text",
@@ -2857,12 +2926,12 @@
       "refs": [
         {
           "file": "features/settings/AppLifecycleSettingsCard.tsx",
-          "line": 139,
+          "line": 166,
           "column": 18
         },
         {
           "file": "features/settings/AppLifecycleSettingsCard.tsx",
-          "line": 145,
+          "line": 172,
           "column": 16
         }
       ]
@@ -2876,6 +2945,18 @@
           "file": "features/settings/SettingsPage.tsx",
           "line": 100,
           "column": 55
+        }
+      ]
+    },
+    "685c77f1f8484da8": {
+      "source": "已从侧边栏隐藏 CLIProxyAPI",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/settings/AppLifecycleSettingsCard.tsx",
+          "line": 100,
+          "column": 52
         }
       ]
     },
@@ -2898,7 +2979,7 @@
       "refs": [
         {
           "file": "shell/AppLayout.tsx",
-          "line": 52,
+          "line": 43,
           "column": 47
         }
       ]
@@ -2937,19 +3018,14 @@
         }
       ]
     },
-    "6ae80538c2b2572d": {
-      "source": "最小化窗口",
+    "6aacb3fc1d28a2a9": {
+      "source": "目录不存在，没有启动",
       "kind": "text",
       "placeholders": [],
       "refs": [
         {
-          "file": "shell/WindowControls.tsx",
-          "line": 44,
-          "column": 19
-        },
-        {
-          "file": "shell/WindowControls.tsx",
-          "line": 45,
+          "file": "features/cliproxy/CliproxyPage.tsx",
+          "line": 43,
           "column": 14
         }
       ]
@@ -2976,6 +3052,20 @@
         }
       ]
     },
+    "6e31bc4d202181ca": {
+      "source": "停止失败：{detail}",
+      "kind": "template",
+      "placeholders": [
+        "detail"
+      ],
+      "refs": [
+        {
+          "file": "features/cliproxy/CliproxyPage.tsx",
+          "line": 53,
+          "column": 14
+        }
+      ]
+    },
     "6e86570183c3cdd0": {
       "source": "当前已是最新版本",
       "kind": "text",
@@ -2983,7 +3073,7 @@
       "refs": [
         {
           "file": "features/settings/AppLifecycleSettingsCard.tsx",
-          "line": 96,
+          "line": 111,
           "column": 78
         }
       ]
@@ -3086,7 +3176,7 @@
       "refs": [
         {
           "file": "shared/api.ts",
-          "line": 519,
+          "line": 520,
           "column": 43
         }
       ]
@@ -3165,8 +3255,20 @@
       "refs": [
         {
           "file": "App.tsx",
-          "line": 62,
+          "line": 64,
           "column": 21
+        }
+      ]
+    },
+    "7dbac1c20f237bd4": {
+      "source": "日志",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/cliproxy/CliproxyPage.tsx",
+          "line": 189,
+          "column": 60
         }
       ]
     },
@@ -3225,7 +3327,7 @@
       "refs": [
         {
           "file": "features/settings/AppLifecycleSettingsCard.tsx",
-          "line": 162,
+          "line": 189,
           "column": 37
         }
       ]
@@ -3264,7 +3366,7 @@
       "refs": [
         {
           "file": "shared/api.ts",
-          "line": 462,
+          "line": 463,
           "column": 21
         }
       ]
@@ -3342,12 +3444,12 @@
       "refs": [
         {
           "file": "features/settings/AppLifecycleSettingsCard.tsx",
-          "line": 115,
+          "line": 130,
           "column": 18
         },
         {
           "file": "features/settings/AppLifecycleSettingsCard.tsx",
-          "line": 121,
+          "line": 136,
           "column": 16
         }
       ]
@@ -3400,7 +3502,7 @@
       "refs": [
         {
           "file": "features/settings/AppLifecycleSettingsCard.tsx",
-          "line": 72,
+          "line": 75,
           "column": 25
         }
       ]
@@ -3480,6 +3582,18 @@
         }
       ]
     },
+    "8a4ef3e48e4e8a5a": {
+      "source": "已开启",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "shell/AppLayout.tsx",
+          "line": 98,
+          "column": 42
+        }
+      ]
+    },
     "8a8542f6964852dc": {
       "source": "下一页",
       "kind": "text",
@@ -3502,6 +3616,18 @@
         }
       ]
     },
+    "8ac23f707a45ebf8": {
+      "source": "无法读取 CLIProxyAPI 的运行状态",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/cliproxy/CliproxyPage.tsx",
+          "line": 197,
+          "column": 10
+        }
+      ]
+    },
     "8b6ff498515bcc2f": {
       "source": "时间",
       "kind": "text",
@@ -3521,7 +3647,7 @@
       "refs": [
         {
           "file": "shell/AppLayout.tsx",
-          "line": 48,
+          "line": 38,
           "column": 29
         }
       ]
@@ -3624,7 +3750,7 @@
       "refs": [
         {
           "file": "shell/AppLayout.tsx",
-          "line": 46,
+          "line": 36,
           "column": 39
         }
       ]
@@ -3662,7 +3788,7 @@
       "refs": [
         {
           "file": "features/settings/AppLifecycleSettingsCard.tsx",
-          "line": 99,
+          "line": 114,
           "column": 15
         }
       ]
@@ -3674,7 +3800,7 @@
       "refs": [
         {
           "file": "shell/AppLayout.tsx",
-          "line": 106,
+          "line": 104,
           "column": 62
         }
       ]
@@ -3847,18 +3973,6 @@
         }
       ]
     },
-    "9b1b7ed518ee401d": {
-      "source": "将在系统浏览器中打开使用教程，是否继续？",
-      "kind": "text",
-      "placeholders": [],
-      "refs": [
-        {
-          "file": "shell/AppLayout.tsx",
-          "line": 123,
-          "column": 11
-        }
-      ]
-    },
     "9b9bc9cd7c76406f": {
       "source": "打开授权网页",
       "kind": "text",
@@ -3922,7 +4036,7 @@
       "refs": [
         {
           "file": "features/settings/AppLifecycleSettingsCard.tsx",
-          "line": 72,
+          "line": 75,
           "column": 40
         }
       ]
@@ -4089,7 +4203,7 @@
       "refs": [
         {
           "file": "features/settings/AppLifecycleSettingsCard.tsx",
-          "line": 112,
+          "line": 127,
           "column": 29
         }
       ]
@@ -4101,12 +4215,12 @@
       "refs": [
         {
           "file": "features/settings/AppLifecycleSettingsCard.tsx",
-          "line": 127,
+          "line": 142,
           "column": 18
         },
         {
           "file": "features/settings/AppLifecycleSettingsCard.tsx",
-          "line": 133,
+          "line": 148,
           "column": 16
         }
       ]
@@ -4232,18 +4346,6 @@
         }
       ]
     },
-    "a5fb6189a8ad011d": {
-      "source": "打开教程",
-      "kind": "text",
-      "placeholders": [],
-      "refs": [
-        {
-          "file": "shell/AppLayout.tsx",
-          "line": 119,
-          "column": 21
-        }
-      ]
-    },
     "a621ab606db2a11f": {
       "source": "密码",
       "kind": "text",
@@ -4347,7 +4449,7 @@
       "refs": [
         {
           "file": "features/settings/AppLifecycleSettingsCard.tsx",
-          "line": 108,
+          "line": 123,
           "column": 15
         }
       ]
@@ -4398,7 +4500,7 @@
       "refs": [
         {
           "file": "features/settings/AppLifecycleSettingsCard.tsx",
-          "line": 59,
+          "line": 62,
           "column": 25
         }
       ]
@@ -4415,6 +4517,18 @@
         }
       ]
     },
+    "ac5cf000fda37c74": {
+      "source": "这个页面只在桌面应用里可用。",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/cliproxy/CliproxyPage.tsx",
+          "line": 174,
+          "column": 50
+        }
+      ]
+    },
     "ac69f68b7010ec79": {
       "source": "下载并安装",
       "kind": "text",
@@ -4422,7 +4536,7 @@
       "refs": [
         {
           "file": "features/settings/AppLifecycleSettingsCard.tsx",
-          "line": 158,
+          "line": 185,
           "column": 39
         }
       ]
@@ -4462,7 +4576,7 @@
       "refs": [
         {
           "file": "features/settings/AppLifecycleSettingsCard.tsx",
-          "line": 140,
+          "line": 167,
           "column": 17
         }
       ]
@@ -4489,12 +4603,12 @@
         },
         {
           "file": "shell/AppLayout.tsx",
-          "line": 129,
+          "line": 116,
           "column": 64
         },
         {
           "file": "shell/AppLayout.tsx",
-          "line": 129,
+          "line": 116,
           "column": 125
         }
       ]
@@ -4675,6 +4789,18 @@
         }
       ]
     },
+    "b61c30ed17f64f1a": {
+      "source": "8317 上的进程不是 cli-proxy-api，没有关闭。",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/cliproxy/CliproxyPage.tsx",
+          "line": 49,
+          "column": 14
+        }
+      ]
+    },
     "b6725f218ebaef26": {
       "source": "已显示 Dock 栏图标",
       "kind": "text",
@@ -4682,7 +4808,7 @@
       "refs": [
         {
           "file": "features/settings/AppLifecycleSettingsCard.tsx",
-          "line": 85,
+          "line": 88,
           "column": 25
         }
       ]
@@ -4711,6 +4837,23 @@
         }
       ]
     },
+    "b6d89485c831a5b2": {
+      "source": "显示 CLIProxyAPI",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/settings/AppLifecycleSettingsCard.tsx",
+          "line": 154,
+          "column": 18
+        },
+        {
+          "file": "features/settings/AppLifecycleSettingsCard.tsx",
+          "line": 160,
+          "column": 16
+        }
+      ]
+    },
     "b75a46aad3e7c132": {
       "source": "非缓存输入：{tokens}",
       "kind": "template",
@@ -4722,6 +4865,18 @@
           "file": "features/home/metrics/HomeMetrics.tsx",
           "line": 102,
           "column": 5
+        }
+      ]
+    },
+    "b78ae71454d48275": {
+      "source": "开启后，侧边栏会出现 CLIProxyAPI。",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/settings/AppLifecycleSettingsCard.tsx",
+          "line": 155,
+          "column": 17
         }
       ]
     },
@@ -4775,6 +4930,18 @@
           "file": "features/calls/CallTable.tsx",
           "line": 64,
           "column": 15
+        }
+      ]
+    },
+    "b99c37b7894cd195": {
+      "source": "127.0.0.1:8317 已经在监听，不再启动第二份。这份不是本应用启动的，所以这里没有它的日志。停止会关掉这个端口上的 cli-proxy-api。",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/cliproxy/CliproxyPage.tsx",
+          "line": 47,
+          "column": 14
         }
       ]
     },
@@ -5118,6 +5285,30 @@
         }
       ]
     },
+    "ca4d973c0b006b75": {
+      "source": "停止",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/cliproxy/CliproxyPage.tsx",
+          "line": 182,
+          "column": 112
+        }
+      ]
+    },
+    "ca4ec0e9b6940826": {
+      "source": "已在运行",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/cliproxy/CliproxyPage.tsx",
+          "line": 132,
+          "column": 50
+        }
+      ]
+    },
     "cb2f1709f983d2f4": {
       "source": "模型名称",
       "kind": "text",
@@ -5299,7 +5490,7 @@
       "refs": [
         {
           "file": "features/settings/AppLifecycleSettingsCard.tsx",
-          "line": 116,
+          "line": 131,
           "column": 17
         }
       ]
@@ -5335,6 +5526,18 @@
           "file": "shared/ui/Modal.tsx",
           "line": 100,
           "column": 153
+        }
+      ]
+    },
+    "d4611b794b0791ef": {
+      "source": "管理页面",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/cliproxy/CliproxyPage.tsx",
+          "line": 183,
+          "column": 78
         }
       ]
     },
@@ -5467,7 +5670,7 @@
       "refs": [
         {
           "file": "shell/AppLayout.tsx",
-          "line": 72,
+          "line": 78,
           "column": 54
         }
       ]
@@ -5551,6 +5754,18 @@
           "file": "features/models/LegacyModelImport.tsx",
           "line": 69,
           "column": 56
+        }
+      ]
+    },
+    "dcb3b8dbca4fe140": {
+      "source": "还没有日志",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/cliproxy/CliproxyPage.tsx",
+          "line": 189,
+          "column": 117
         }
       ]
     },
@@ -5643,7 +5858,7 @@
         },
         {
           "file": "shell/AppLayout.tsx",
-          "line": 50,
+          "line": 41,
           "column": 29
         }
       ]
@@ -5808,7 +6023,7 @@
       "refs": [
         {
           "file": "shell/AppLayout.tsx",
-          "line": 47,
+          "line": 37,
           "column": 44
         }
       ]
@@ -5916,6 +6131,30 @@
           "file": "features/plugins/PluginResourcePanels.tsx",
           "line": 268,
           "column": 43
+        }
+      ]
+    },
+    "e5fe24ca742f83d9": {
+      "source": "选择目录",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/cliproxy/CliproxyPage.tsx",
+          "line": 180,
+          "column": 85
+        }
+      ]
+    },
+    "e6fc5eb8c3b83c01": {
+      "source": "未启动",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/cliproxy/CliproxyPage.tsx",
+          "line": 132,
+          "column": 62
         }
       ]
     },
@@ -6183,6 +6422,35 @@
         }
       ]
     },
+    "f2fd654b176f24aa": {
+      "source": "选择这个目录后，点击启动会在该目录运行 cli-proxy-api。最小化到托盘时它会继续运行。关闭窗口或退出本应用时会一并停止它。账号和模型仍在 CLIProxyAPI 自己的配置里。",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "features/cliproxy/CliproxyPage.tsx",
+          "line": 176,
+          "column": 73
+        }
+      ]
+    },
+    "f323fc507d585565": {
+      "source": "最小化到托盘",
+      "kind": "text",
+      "placeholders": [],
+      "refs": [
+        {
+          "file": "shell/WindowControls.tsx",
+          "line": 44,
+          "column": 19
+        },
+        {
+          "file": "shell/WindowControls.tsx",
+          "line": 45,
+          "column": 14
+        }
+      ]
+    },
     "f4694c46b1e19602": {
       "source": "最终请求类型",
       "kind": "text",
@@ -6294,7 +6562,7 @@
         },
         {
           "file": "shell/AppLayout.tsx",
-          "line": 51,
+          "line": 42,
           "column": 46
         }
       ]
@@ -6440,7 +6708,7 @@
         },
         {
           "file": "features/settings/AppLifecycleSettingsCard.tsx",
-          "line": 162,
+          "line": 189,
           "column": 25
         }
       ]
@@ -6582,18 +6850,6 @@
           "file": "features/home/HomePage.tsx",
           "line": 201,
           "column": 25
-        }
-      ]
-    },
-    "fec45092945f8790": {
-      "source": "使用教程",
-      "kind": "text",
-      "placeholders": [],
-      "refs": [
-        {
-          "file": "shell/AppLayout.tsx",
-          "line": 53,
-          "column": 48
         }
       ]
     },

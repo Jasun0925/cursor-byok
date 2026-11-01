@@ -18,11 +18,16 @@
     "core:window:allow-close",
     "allow-open-terminal-with-command",
     "allow-set-dock-icon-visible",
+    "allow-cliproxy-status",
+    "allow-cliproxy-start",
+    "allow-cliproxy-stop",
+    "allow-cliproxy-pick-directory",
     "allow-check-portable-update",
     "allow-install-portable-update",
     "clipboard-manager:allow-write-text",
     "autostart:default",
     "process:allow-restart",
+    "opener:default",
     "updater:default"
   ]
 }

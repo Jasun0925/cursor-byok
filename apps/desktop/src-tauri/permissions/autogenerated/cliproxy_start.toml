@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-cliproxy-start"
+description = "Enables the cliproxy_start command without any pre-configured scope."
+commands.allow = ["cliproxy_start"]
+
+[[permission]]
+identifier = "deny-cliproxy-start"
+description = "Denies the cliproxy_start command without any pre-configured scope."
+commands.deny = ["cliproxy_start"]

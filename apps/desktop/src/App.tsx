@@ -9,6 +9,7 @@ import { CallsPage } from "./features/calls/CallsPage";
 import { CallDetailsPage } from "./features/calls/CallDetailsPage";
 import { CursorSettingsPage } from "./features/models/CursorSettingsPage";
 import { HomePage } from "./features/home/HomePage";
+import { CliproxyPage } from "./features/cliproxy/CliproxyPage";
 import { PluginManagementPage } from "./features/plugins/PluginManagementPage";
 import { SettingsPage } from "./features/settings/SettingsPage";
 import { useAppStore } from "./shared/store/appStore";
@@ -27,6 +28,7 @@ export function App() {
               <Route index element={<HomePage />} />
               <Route path="calls" element={<CallsPage />} />
               <Route path="harness/cursor" element={<CursorSettingsPage />} />
+              <Route path="cliproxy" element={<CliproxyPage />} />
               <Route path="plugins" element={<PluginManagementPage />} />
               <Route path="settings" element={<SettingsPage />} />
             </Route>

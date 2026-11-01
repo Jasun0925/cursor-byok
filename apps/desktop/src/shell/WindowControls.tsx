@@ -41,9 +41,9 @@ export function WindowControls() {
     <button
       type="button"
       className={styles.button}
-      aria-label={t("最小化窗口")}
-      title={t("最小化窗口")}
-      onClick={() => void appWindow.minimize()}
+      aria-label={t("最小化到托盘")}
+      title={t("最小化到托盘")}
+      onClick={() => void appWindow.hide()}
     >
       <Icon icon={windowMinimizeIcon} size="1.1em" />
     </button>

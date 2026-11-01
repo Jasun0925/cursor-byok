@@ -1,3 +1,4 @@
+mod cliproxy;
 mod desktop;
 #[cfg(not(dev))]
 mod frontend;

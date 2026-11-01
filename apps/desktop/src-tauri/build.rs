@@ -2,6 +2,10 @@ fn main() {
     let manifest = tauri_build::AppManifest::new().commands(&[
         "open_terminal_with_command",
         "set_dock_icon_visible",
+        "cliproxy_status",
+        "cliproxy_start",
+        "cliproxy_stop",
+        "cliproxy_pick_directory",
         "check_portable_update",
         "install_portable_update",
     ]);

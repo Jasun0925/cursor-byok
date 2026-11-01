@@ -179,7 +179,51 @@ fn create_main_window(
         .title_bar_style(tauri::TitleBarStyle::Overlay)
         .hidden_title(true);
 
-    builder.build()
+    let window = builder.build()?;
+    hide_to_tray_on_minimize(&window);
+    Ok(window)
+}
+
+fn hide_to_tray_on_minimize(window: &WebviewWindow) {
+    #[cfg(target_os = "macos")]
+    install_minimize_to_tray(window);
+    #[cfg(not(target_os = "macos"))]
+    let _ = window;
+}
+
+#[cfg(target_os = "macos")]
+fn install_minimize_to_tray(window: &WebviewWindow) {
+    use objc2::ffi;
+    use objc2::runtime::{AnyClass, AnyObject, Bool, Imp, Sel};
+
+    unsafe extern "C-unwind" fn window_should_miniaturize(
+        _this: *mut AnyObject,
+        _cmd: Sel,
+        window: *mut AnyObject,
+    ) -> Bool {
+        if !window.is_null() {
+            let _: () = unsafe { objc2::msg_send![window, orderOut: std::ptr::null::<AnyObject>()] };
+        }
+        Bool::NO
+    }
+
+    let Ok(ns_window) = window.ns_window() else {
+        return;
+    };
+    unsafe {
+        let delegate: *mut AnyObject = objc2::msg_send![ns_window as *mut AnyObject, delegate];
+        if delegate.is_null() {
+            return;
+        }
+        let class: *mut AnyClass = objc2::msg_send![delegate, class];
+        let method = window_should_miniaturize as *const ();
+        let _ = ffi::class_addMethod(
+            class,
+            objc2::sel!(windowShouldMiniaturize:),
+            std::mem::transmute::<*const (), Imp>(method),
+            c"c@:@".as_ptr(),
+        );
+    }
 }
 
 /// 按需打开主窗口:webview 仅在需要界面时创建,关闭窗口即销毁释放内存。
@@ -240,6 +284,10 @@ pub fn run() -> ExitCode {
         .invoke_handler(tauri::generate_handler![
             open_terminal_with_command,
             set_dock_icon_visible,
+            crate::cliproxy::cliproxy_status,
+            crate::cliproxy::cliproxy_start,
+            crate::cliproxy::cliproxy_stop,
+            crate::cliproxy::cliproxy_pick_directory,
             crate::update::check_portable_update,
             crate::update::install_portable_update,
         ])
@@ -253,6 +301,7 @@ pub fn run() -> ExitCode {
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
         .setup(move |app| {
+            app.manage(crate::cliproxy::CliproxySupervisor::new());
             app.handle().plugin(tauri_plugin_autostart::init(
                 tauri_plugin_autostart::MacosLauncher::LaunchAgent,
                 Some(vec![AUTOSTART_ARG]),
@@ -326,8 +375,13 @@ pub fn run() -> ExitCode {
         // code 为 None 表示所有窗口已被关闭(轻量模式),阻止退出,
         // 转发服务继续在托盘后台运行;code 为 Some 时是显式退出请求。
         RunEvent::ExitRequested { code, api, .. } => match code {
-            None => api.prevent_exit(),
+            None => {
+                // 关闭窗口后应用留在托盘，CLIProxyAPI 跟着停掉。
+                app.state::<crate::cliproxy::CliproxySupervisor>().stop(app);
+                api.prevent_exit();
+            }
             Some(_) => {
+                app.state::<crate::cliproxy::CliproxySupervisor>().stop(app);
                 let runtime = app.state::<DesktopRuntime>();
                 if !runtime.exiting.swap(true, Ordering::AcqRel) {
                     api.prevent_exit();

@@ -86,6 +86,8 @@ pub struct DesktopSettings {
     pub silent_start: bool,
     #[serde(default = "default_true")]
     pub show_dock_icon: bool,
+    #[serde(default)]
+    pub show_cliproxy_tab: bool,
 }
 
 impl Default for DesktopSettings {
@@ -93,6 +95,7 @@ impl Default for DesktopSettings {
         Self {
             silent_start: false,
             show_dock_icon: true,
+            show_cliproxy_tab: false,
         }
     }
 }
@@ -685,5 +688,19 @@ mod tests {
                 .unwrap(),
             settings
         );
+    }
+
+    #[test]
+    fn saved_desktop_settings_keep_cliproxy_hidden_until_enabled() {
+        let stored = serde_json::from_str::<super::DesktopSettings>(
+            r#"{"silent_start":false,"show_dock_icon":true}"#,
+        )
+        .unwrap();
+        assert!(!stored.show_cliproxy_tab);
+        assert!(serde_json::from_str::<super::DesktopSettings>(
+            r#"{"silent_start":false,"show_dock_icon":true,"show_cliproxy_tab":true}"#
+        )
+        .unwrap()
+        .show_cliproxy_tab);
     }
 }
