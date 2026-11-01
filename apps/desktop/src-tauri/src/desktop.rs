@@ -202,7 +202,8 @@ fn install_minimize_to_tray(window: &WebviewWindow) {
         window: *mut AnyObject,
     ) -> Bool {
         if !window.is_null() {
-            let _: () = unsafe { objc2::msg_send![window, orderOut: std::ptr::null::<AnyObject>()] };
+            let _: () =
+                unsafe { objc2::msg_send![window, orderOut: std::ptr::null::<AnyObject>()] };
         }
         Bool::NO
     }

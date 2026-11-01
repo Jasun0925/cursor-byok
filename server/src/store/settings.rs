@@ -697,10 +697,12 @@ mod tests {
         )
         .unwrap();
         assert!(!stored.show_cliproxy_tab);
-        assert!(serde_json::from_str::<super::DesktopSettings>(
-            r#"{"silent_start":false,"show_dock_icon":true,"show_cliproxy_tab":true}"#
-        )
-        .unwrap()
-        .show_cliproxy_tab);
+        assert!(
+            serde_json::from_str::<super::DesktopSettings>(
+                r#"{"silent_start":false,"show_dock_icon":true,"show_cliproxy_tab":true}"#
+            )
+            .unwrap()
+            .show_cliproxy_tab
+        );
     }
 }
