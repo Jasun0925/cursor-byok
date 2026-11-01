@@ -323,6 +323,81 @@ fn cursor_user_image_rejects_unusable_image_payloads() {
     }
 }
 
+#[test]
+fn cursor_tool_image_data_round_trips_into_provider_parts() {
+    let wire = json!({
+        "role": "tool",
+        "id": "call-1",
+        "content": [{
+            "type": "tool-result",
+            "toolCallId": "call-1",
+            "toolName": "Read",
+            "result": "Read image file: /tmp/shot.png",
+            "isError": false,
+            "experimental_content": [
+                {"type":"text", "text":"Read image file: /tmp/shot.png"},
+                {"type":"image", "data":"AQID", "mimeType":"image/png"},
+                {"type":"image", "data": {"__type":"Uint8Array", "hex":"00ff"}, "mimeType":"image/jpeg"},
+            ],
+        }],
+    });
+    let message = decode(
+        serde_json::to_vec(&wire).unwrap().as_slice(),
+        "cursor-root:tool-image".into(),
+    )
+    .unwrap();
+    let MessageContent::ToolResult(result) = &message.content else {
+        panic!("expected tool result");
+    };
+    assert_eq!(
+        result.provider_parts,
+        vec![
+            ContentPart::Text {
+                text: "Read image file: /tmp/shot.png".into(),
+            },
+            ContentPart::Image {
+                mime_type: "image/png".into(),
+                data: vec![1, 2, 3],
+            },
+            ContentPart::Image {
+                mime_type: "image/jpeg".into(),
+                data: vec![0, 255],
+            },
+        ]
+    );
+
+    let projected = project_messages(&[message]).unwrap();
+    let encoded = wire_message(&projected[0], "model", None).unwrap();
+    let experimental = &encoded["content"][0]["experimental_content"];
+    assert_eq!(experimental[0]["type"], "text");
+    assert_eq!(experimental[1]["data"], "AQID");
+    assert_eq!(experimental[1]["mimeType"], "image/png");
+    assert_eq!(experimental[2]["data"], STANDARD.encode([0, 255]));
+    assert!(experimental[1].get("image").is_none());
+}
+
+#[test]
+fn cursor_tool_image_without_bytes_is_rejected() {
+    let wire = json!({
+        "role": "tool",
+        "content": [{
+            "type": "tool-result",
+            "toolCallId": "call-1",
+            "toolName": "Read",
+            "result": "Read image file: /tmp/shot.png",
+            "experimental_content": [
+                {"type":"image", "mimeType":"image/png"},
+            ],
+        }],
+    });
+    assert_eq!(
+        decode(serde_json::to_vec(&wire).unwrap().as_slice(), "id".into())
+            .unwrap_err()
+            .to_string(),
+        "protocol error: Cursor message is missing image"
+    );
+}
+
 fn decode_user_content(content: Value) -> crate::Result<CanonicalMessage> {
     let wire = json!({"role":"user", "content": content});
     decode(

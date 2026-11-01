@@ -19,11 +19,39 @@ use crate::{
 
 use super::runtime::now_ms;
 
+fn edit_snapshot(tool: &pb::tool_call::Tool) -> Option<EditSnapshot> {
+    let pb::tool_call::Tool::EditToolCall(edit) = tool else {
+        return None;
+    };
+    let success = edit
+        .result
+        .as_ref()
+        .and_then(|result| match &result.result {
+            Some(pb::edit_result::Result::Success(success)) => Some(success),
+            _ => None,
+        })?;
+    if success.path.is_empty() {
+        return None;
+    }
+    Some(EditSnapshot {
+        path: success.path.clone(),
+        before: success.before_full_file_content.clone().unwrap_or_default(),
+        after: success.after_full_file_content.clone(),
+    })
+}
+
 pub(crate) use exec::{edit_failure, from_exec};
 pub(crate) use interaction::{complete_web_fetch, complete_web_search, from_interaction};
 pub(crate) use local::{local, subagents_disabled, todo_items};
 pub(crate) use mcp::failure as mcp_failure;
 pub(crate) use search::complete as semble;
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub(crate) struct EditSnapshot {
+    pub(crate) path: String,
+    pub(crate) before: String,
+    pub(crate) after: String,
+}
 
 #[derive(Clone, Debug)]
 pub struct ToolCompletion {
@@ -31,6 +59,7 @@ pub struct ToolCompletion {
     result: ToolResult,
     tool_call: pb::ToolCall,
     read_image: Option<ReadImage>,
+    pub(crate) edit_snapshot: Option<EditSnapshot>,
 }
 
 #[derive(Clone, Debug)]
@@ -91,6 +120,8 @@ impl ToolCompletion {
         mut result: ToolResult,
         mut tool: pb::tool_call::Tool,
     ) -> Self {
+        // Capture the full file before the model-visible size gate clears it.
+        let edit_snapshot = edit_snapshot(&tool);
         // Apply the model-visible size gate once, at the tool completion
         // boundary. Canonical history and every provider projection then
         // carry the same bounded result without reprocessing it.
@@ -106,6 +137,7 @@ impl ToolCompletion {
                 hook_additional_contexts: Vec::new(),
             },
             read_image: None,
+            edit_snapshot,
         }
     }
 

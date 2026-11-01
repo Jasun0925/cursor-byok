@@ -239,14 +239,27 @@ fn wire_content(content: &ProjectedContent, model: &str) -> Result<Value> {
             }));
             Value::Array(parts)
         }
-        ProjectedContent::ToolResult(result) => json!([{
-            "type": "tool-result",
-            "toolCallId": result.call_id,
-            "toolName": result.name,
-            "result": result.content,
-            "experimental_content": [{"type":"text", "text":result.content}],
-            "isError": result.is_error,
-        }]),
+        ProjectedContent::ToolResult(result) => {
+            let mut experimental = vec![json!({"type":"text", "text":result.content})];
+            for part in &result.provider_parts {
+                let ContentPart::Image { mime_type, data } = part else {
+                    continue;
+                };
+                experimental.push(json!({
+                    "type": "image",
+                    "data": STANDARD.encode(data),
+                    "mimeType": mime_type,
+                }));
+            }
+            json!([{
+                "type": "tool-result",
+                "toolCallId": result.call_id,
+                "toolName": result.name,
+                "result": result.content,
+                "experimental_content": experimental,
+                "isError": result.is_error,
+            }])
+        }
     })
 }
 

@@ -1,18 +1,23 @@
 //! Buffers Conversation steps that have not yet been persisted.
 use std::time::Duration;
 
-use crate::cursor::{protocol::proto::agent::v1 as pb, tools::tool_call_result::ToolCompletion};
+use crate::cursor::{
+    protocol::proto::agent::v1 as pb,
+    tools::tool_call_result::{EditSnapshot, ToolCompletion},
+};
 
 #[derive(Default)]
 pub struct PendingSteps {
     pub steps: Vec<pb::ConversationStep>,
     pub read_paths: Vec<String>,
+    pub(crate) edit_snapshots: Vec<EditSnapshot>,
 }
 
 #[derive(Default)]
 pub struct StepBuffer {
     steps: Vec<pb::ConversationStep>,
     read_paths: Vec<String>,
+    edit_snapshots: Vec<EditSnapshot>,
     text: String,
     thinking: String,
 }
@@ -68,6 +73,9 @@ impl StepBuffer {
                 }
             }
         }
+        if let Some(snapshot) = completion.edit_snapshot.clone() {
+            self.edit_snapshots.push(snapshot);
+        }
         self.steps.push(pb::ConversationStep {
             message: Some(pb::conversation_step::Message::ToolCall(
                 completion.tool_call().clone(),
@@ -98,6 +106,7 @@ impl StepBuffer {
         PendingSteps {
             steps: std::mem::take(&mut self.steps),
             read_paths: std::mem::take(&mut self.read_paths),
+            edit_snapshots: std::mem::take(&mut self.edit_snapshots),
         }
     }
 }

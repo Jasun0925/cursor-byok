@@ -231,21 +231,52 @@ fn decode_tool_result(value: &Value) -> Result<ToolResultContent> {
         .and_then(Value::as_array)
         .and_then(|parts| parts.first())
         .ok_or_else(|| Error::Protocol("Cursor tool message has no result part".into()))?;
+    let content = part
+        .get("result")
+        .and_then(Value::as_str)
+        .unwrap_or_default()
+        .to_string();
+    let images = tool_images(part.get("experimental_content"))?;
+    let mut provider_parts = Vec::new();
+    if !images.is_empty() {
+        provider_parts.push(ContentPart::Text {
+            text: content.clone(),
+        });
+        provider_parts.extend(images);
+    }
     Ok(ToolResultContent {
         call_id: required_string(part, "toolCallId")?.into(),
         name: required_string(part, "toolName")?.into(),
-        content: part
-            .get("result")
-            .and_then(Value::as_str)
-            .unwrap_or_default()
-            .into(),
+        content,
         is_error: part
             .get("isError")
             .and_then(Value::as_bool)
             .unwrap_or(false),
         image: None,
-        provider_parts: Vec::new(),
+        provider_parts,
     })
+}
+
+fn tool_images(value: Option<&Value>) -> Result<Vec<ContentPart>> {
+    let Some(parts) = value.and_then(Value::as_array) else {
+        return Ok(Vec::new());
+    };
+    let mut images = Vec::new();
+    for part in parts {
+        if part.get("type").and_then(Value::as_str) != Some("image") {
+            continue;
+        }
+        let mime_type = required_string(part, "mimeType")?.to_string();
+        let encoded = part
+            .get("image")
+            .filter(|value| !value.is_null())
+            .or_else(|| part.get("data").filter(|value| !value.is_null()));
+        images.push(ContentPart::Image {
+            mime_type,
+            data: image_bytes(encoded)?,
+        });
+    }
+    Ok(images)
 }
 
 /// Cursor writes checkpoint images either as a base64 string or as the tagged

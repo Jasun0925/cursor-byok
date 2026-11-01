@@ -1,5 +1,10 @@
 //! Maintains stable append-only Cursor root messages.
-use crate::{cursor::checkpoint::messages, model::CanonicalMessage, store::BlobId, Error, Result};
+use crate::{
+    cursor::checkpoint::messages,
+    model::{CanonicalMessage, ContentPart, MessageContent},
+    store::BlobId,
+    Error, Result,
+};
 
 use super::CheckpointBuilder;
 
@@ -15,7 +20,8 @@ impl CheckpointBuilder {
         &mut self,
         messages: &[CanonicalMessage],
     ) -> Result<Vec<BlobId>> {
-        let wire_messages = messages::stable_messages(&self.instructions, messages, &self.model)?;
+        let messages = attach_stored_tool_images(&self.store, messages).await?;
+        let wire_messages = messages::stable_messages(&self.instructions, &messages, &self.model)?;
         self.ensure_roots()?;
         let replacement = self
             .roots
@@ -76,7 +82,8 @@ impl CheckpointBuilder {
         &mut self,
         messages: &[CanonicalMessage],
     ) -> Result<Vec<BlobId>> {
-        let wire_messages = messages::stable_messages(&self.instructions, messages, &self.model)?;
+        let messages = attach_stored_tool_images(&self.store, messages).await?;
+        let wire_messages = messages::stable_messages(&self.instructions, &messages, &self.model)?;
         self.ensure_roots()?;
         let previous_system = self
             .roots
@@ -101,6 +108,92 @@ impl CheckpointBuilder {
             generated: Vec::new(),
         });
         Ok(ids)
+    }
+}
+
+async fn attach_stored_tool_images(
+    store: &crate::store::Store,
+    messages: &[CanonicalMessage],
+) -> Result<Vec<CanonicalMessage>> {
+    let mut messages = messages.to_vec();
+    for message in &mut messages {
+        let MessageContent::ToolResult(result) = &mut message.content else {
+            continue;
+        };
+        if result
+            .provider_parts
+            .iter()
+            .any(|part| matches!(part, ContentPart::Image { .. }))
+        {
+            continue;
+        }
+        let Some(image) = result.image.clone() else {
+            continue;
+        };
+        let id = BlobId::from_base64(&image.blob_id)?;
+        let data = store.get_blob(&id).await?.ok_or_else(|| {
+            Error::Protocol(format!("Read image Blob is missing: {}", image.blob_id))
+        })?;
+        let text = result.content.clone();
+        result.provider_parts = vec![
+            ContentPart::Text { text },
+            ContentPart::Image {
+                mime_type: image.mime_type,
+                data,
+            },
+        ];
+    }
+    Ok(messages)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::{
+        model::{MessageContent, Origin, Role, ToolImageReference, ToolResultContent},
+        store::Store,
+    };
+
+    #[tokio::test]
+    async fn stored_read_image_is_embedded_before_checkpoint_encoding() {
+        let store = Store::connect("sqlite::memory:").await.unwrap();
+        let blob_id = store.put_blob(&[9, 8, 7], &[]).await.unwrap();
+        let message = CanonicalMessage {
+            message_id: "result".into(),
+            role: Role::Tool,
+            origin: Origin::Tool,
+            runtime_event_id: None,
+            content: MessageContent::ToolResult(ToolResultContent {
+                call_id: "call-1".into(),
+                name: "Read".into(),
+                content: "Read image file: /tmp/shot.png".into(),
+                is_error: false,
+                image: Some(ToolImageReference {
+                    blob_id: blob_id.to_base64(),
+                    mime_type: "image/png".into(),
+                    path: "/tmp/shot.png".into(),
+                }),
+                provider_parts: Vec::new(),
+            }),
+        };
+        let prepared = attach_stored_tool_images(&store, &[message]).await.unwrap();
+        let wire = messages::stable_messages("", &prepared, "model").unwrap();
+        let decoded = messages::decode(&wire[0], "cursor-root:stored".into()).unwrap();
+        let MessageContent::ToolResult(result) = decoded.content else {
+            panic!("expected tool result");
+        };
+        assert_eq!(
+            result.provider_parts,
+            vec![
+                ContentPart::Text {
+                    text: "Read image file: /tmp/shot.png".into(),
+                },
+                ContentPart::Image {
+                    mime_type: "image/png".into(),
+                    data: vec![9, 8, 7],
+                },
+            ]
+        );
     }
 }
 

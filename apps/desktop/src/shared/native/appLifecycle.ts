@@ -1,4 +1,4 @@
-import { getVersion, setDockVisibility } from "@tauri-apps/api/app";
+import { getVersion } from "@tauri-apps/api/app";
 import { invoke, isTauri } from "@tauri-apps/api/core";
 import { disable, enable, isEnabled } from "@tauri-apps/plugin-autostart";
 import { relaunch } from "@tauri-apps/plugin-process";
@@ -35,13 +35,17 @@ export async function writeSilentStart(silentStart: boolean): Promise<void> {
   await api.setDesktopSettings({ ...settings, silent_start: silentStart });
 }
 
+async function setDockIconVisible(visible: boolean): Promise<void> {
+  await invoke("set_dock_icon_visible", { visible });
+}
+
 export async function writeDockIconVisibility(visible: boolean): Promise<void> {
   const settings = await readDesktopSettings();
-  await setDockVisibility(visible);
+  await setDockIconVisible(visible);
   try {
     await api.setDesktopSettings({ ...settings, show_dock_icon: visible });
   } catch (cause) {
-    await setDockVisibility(settings.show_dock_icon).catch(() => {});
+    await setDockIconVisible(settings.show_dock_icon).catch(() => {});
     throw cause;
   }
 }
