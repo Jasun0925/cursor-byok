@@ -146,6 +146,15 @@ async fn attach_stored_tool_images(
     Ok(messages)
 }
 
+fn changed_system_root(roots: &RootFrontier, messages: &[Vec<u8>]) -> Option<Vec<u8>> {
+    roots
+        .ids
+        .first()
+        .zip(messages.first())
+        .filter(|(current, message)| **current != BlobId::digest(message))
+        .map(|(_, message)| message.clone())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -195,13 +204,4 @@ mod tests {
             ]
         );
     }
-}
-
-fn changed_system_root(roots: &RootFrontier, messages: &[Vec<u8>]) -> Option<Vec<u8>> {
-    roots
-        .ids
-        .first()
-        .zip(messages.first())
-        .filter(|(current, message)| **current != BlobId::digest(message))
-        .map(|(_, message)| message.clone())
 }
