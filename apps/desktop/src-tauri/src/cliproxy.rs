@@ -220,6 +220,7 @@ impl CliproxySupervisor {
 
     fn spawn_output(&self, app: &AppHandle, output: ProxyOutput) {
         match output {
+            #[cfg(unix)]
             ProxyOutput::Pty { master } => {
                 spawn_pump(app.clone(), Arc::clone(&self.inner), master, false);
             }
@@ -358,6 +359,7 @@ fn is_cli_proxy(command: &str) -> bool {
     name == "cli-proxy-api" || name == "cli-proxy-api.exe"
 }
 
+#[cfg(any(unix, test))]
 fn parse_lsof_listeners(output: &str) -> Vec<Listener> {
     let mut listeners: Vec<Listener> = Vec::new();
     let mut pid = None;
@@ -490,9 +492,8 @@ fn truncate_line(line: String) -> String {
 }
 
 enum ProxyOutput {
-    Pty {
-        master: std::fs::File,
-    },
+    #[cfg(unix)]
+    Pty { master: std::fs::File },
     Pipes {
         stdout: std::process::ChildStdout,
         stderr: std::process::ChildStderr,
@@ -559,12 +560,21 @@ fn open_pty() -> std::io::Result<OpenPty> {
 
     let mut master = 0;
     let mut slave = 0;
+    #[cfg(target_os = "macos")]
     let mut size = libc::winsize {
         ws_row: 50,
         ws_col: 200,
         ws_xpixel: 0,
         ws_ypixel: 0,
     };
+    #[cfg(not(target_os = "macos"))]
+    let size = libc::winsize {
+        ws_row: 50,
+        ws_col: 200,
+        ws_xpixel: 0,
+        ws_ypixel: 0,
+    };
+    #[cfg(target_os = "macos")]
     let opened = unsafe {
         libc::openpty(
             &mut master,
@@ -572,6 +582,16 @@ fn open_pty() -> std::io::Result<OpenPty> {
             std::ptr::null_mut(),
             std::ptr::null_mut(),
             &mut size,
+        )
+    };
+    #[cfg(not(target_os = "macos"))]
+    let opened = unsafe {
+        libc::openpty(
+            &mut master,
+            &mut slave,
+            std::ptr::null_mut(),
+            std::ptr::null_mut(),
+            &size,
         )
     };
     if opened != 0 {
