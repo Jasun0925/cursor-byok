@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "checked_at": "2026-10-28T09:04:32.505795+00:00",
+  "source_revision": "c7c03945a45db1722a77e3fb5b325d7fc092c037",
+  "scope": "Isolated live fixture startup and shutdown, not Cursor approval acceptance",
+  "fixture_sha256": "d82accb1f8c47b2cff0a4ac6db8955bb607944ca8d1c423b87a36e5f02760a55",
+  "build": {
+    "example": "issue469_approval_live_20261028",
+    "passed": true
+  },
+  "isolated_backend_health": 204,
+  "isolated_proxy_https_probe": {
+    "exit_code": 0,
+    "http_status": "200",
+    "tls_validation_disabled": false
+  },
+  "cursor_run_traces_before": 0,
+  "cursor_run_traces_after": 0,
+  "settings_before_sha256": "1c86e40d0f46a6174e76598d78d4b2c3c90b601f63ddaad7d91e8f964fc843b3",
+  "settings_during_sha256": "1c86e40d0f46a6174e76598d78d4b2c3c90b601f63ddaad7d91e8f964fc843b3",
+  "cursor_pids_before": [
+    "19578"
+  ],
+  "cursor_pids_during": [
+    "19578"
+  ],
+  "remote_ssh_connection_ok": true,
+  "remote_settings_created": false,
+  "approval_accept_verified": false,
+  "approval_reject_verified": false,
+  "oauth_real_account_available": false,
+  "ui_blocker": "ScreenCaptureKit -3811 after user unlock and CUA session reset",
+  "twenty_minute_test_run": false,
+  "cleanup": {
+    "completed": true,
+    "isolated_process_exited": true,
+    "isolated_ports_closed": true,
+    "local_sensitive_copy_removed": true,
+    "temporary_example_removed": true,
+    "remote_synthetic_fixture_removed": true,
+    "remote_settings_still_absent": true,
+    "active_ssh_forwards": 0,
+    "cursor_window_close_verified": false
+  },
+  "settings_after_sha256": "1c86e40d0f46a6174e76598d78d4b2c3c90b601f63ddaad7d91e8f964fc843b3",
+  "cursor_pids_after": [
+    "19578"
+  ],
+  "formal_backend_health_after": 204
+}

@@ -24,11 +24,11 @@ Cursor 3.21.16 起提供远程 Agent 推理路由选项。若本地 Agent 正常
 
 这个设置需要在远程窗口重载后生效。每个 SSH 主机独立配置；本机接管状态不能用来判断远端是否已配置。Cursor 的 Private Inference 远端会忽略 `always`，不在本次验证范围内。无需为此公开 BYOK 监听端口或关闭证书校验；若出现证书错误，应记录报错进程和完整错误，另行定位。
 
-2026-10-27 使用 Cursor 3.27.14、BYOK v1.0.17、macOS → Linux、OpenAI Chat 模型实测：`auto` 出现上述代理连接错误；改为 `always` 后，流式回复、Read、Shell、文件写入、续聊、取消后继续、窗口重载后新对话通过。[详细证据与限制](upstream-issue-reviews/2026-10-27-issue469-check.md)
+2026-10-27 使用 Cursor 3.27.14、BYOK v1.0.17、macOS → Linux、OpenAI Chat 模型实测：`auto` 出现上述代理连接错误；改为 `always` 后，流式回复、Read、Shell、文件写入、续聊、取消后继续、窗口重载后新对话通过。[详细证据与限制](history/issues/2026-10-27-issue469-check.md)
 
-**源码中的 WebFetch 分页已通过真实 SSH 验收。** 长网页通过同一 WebFetch 工具逐页返回，同会话续读及跨会话隔离也通过。[修复与验收证据](upstream-issue-reviews/2026-10-27-issue469-webfetch-fix.md)。**v1.0.17 安装包仍使用旧缓存引用，不包含此修复。**
+**源码中的 WebFetch 分页已通过真实 SSH 验收。** 长网页通过同一 WebFetch 工具逐页返回，同会话续读及跨会话隔离也通过。[修复与验收证据](history/issues/2026-10-27-issue469-webfetch-fix.md)。**v1.0.17 安装包仍使用旧缓存引用，不包含此修复。**
 
-**远程 Semble 仓库索引仍待修复。** 当前源码在 BYOK 本机读取仓库路径，远端独有路径已复现 `source does not exist`；候选快照补丁存在启动、忽略规则和索引来源问题，尚未采用。[定位与候选审查](upstream-issue-reviews/2026-10-27-issue469-semble-check.md)。共享索引层的 `.cursorignore` 和热缓存已[独立修复](upstream-issue-reviews/2026-10-27-semble-cursorignore-fix.md)，但未实现远端采集；[真实原生工具实验](upstream-issue-reviews/2026-10-27-issue469-native-files-check.md)还发现 Grep 会跟随内部符号链接；后续 [Ls 实测](upstream-issue-reviews/2026-10-27-issue469-inventory-check.md)确认清单会截断且排除项不区分大小写。元数据探针已在 Linux 验证，完整过滤与 Cursor 采集尚未接通。
+**远程 Semble 已有开发分支实现，尚未合入或发布。** `codex/remote-semble` 的远程采集、忽略规则、分页、大目录、相关查询及取消已通过既有 SSH 实测，见 [分页验收](history/issues/2026-10-27-issue469-paging-live.md)。后续真实审批测试在 Cursor 3.27.22 中出现 `Review cancelled or failed`；本地已实现独立终端审批卡片候选并通过自动化，**修复后真实批准/拒绝仍未验收，候选尚未提交**。完整状态见 [工作状态](work-status.md)。v1.0.17 的 Semble 仍不应视作支持远端独有路径。
 
 MCP、Skills、Tab、提交信息和其他模型协议尚未完成本轮远程验收，不能据此宣称所有远程能力均已支持。
 
