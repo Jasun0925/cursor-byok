@@ -1,0 +1,269 @@
+{
+  "date": "2026-10-27",
+  "source_commit": "8fbfc7e0d0dc62dd68eda49d66d7a8360564f41d",
+  "code_commit": "cba18ff354c33a67412eea59364c73a393143fb3",
+  "binary_sha256": "d8a2e9e7737d93ac65f1c3c062581c62c6785274d14ca02ad790f820ef9ebb44",
+  "cursor_version": "3.27.14",
+  "conversation_id": "b4608218-3b2c-4369-a739-454a7a6bd5a4",
+  "environment": "isolated database and synthetic Linux SSH workspace; macOS Cursor",
+  "ci": {
+    "run_id": 40444827939,
+    "head_sha": "8fbfc7e0d0dc62dd68eda49d66d7a8360564f41d",
+    "all_four_jobs": "success",
+    "linux_tests": {
+      "passed": 496,
+      "ignored": 1
+    },
+    "windows_native_tests": 22,
+    "macos_native_tests": 22
+  },
+  "requests": [
+    {
+      "request_id": "4f0e8cc4-0753-4bc6-8930-eecebd0a8fd4",
+      "tools": [
+        {
+          "status": "completed",
+          "created_at_ms": 1793072334778,
+          "name": "SembleSearch",
+          "tool_status": "completed",
+          "result_is_error": 0,
+          "result_content": "{\n  \"query\": \"cancel_fixture_17999\",\n  \"results\": [\n    {\n      \"content\": \"def cancel_fixture_17999():\\n    return \\\"SYNTHETIC_CANCEL_17999\\\"\",\n      \"end_line\": 2,\n      \"file_path\": \"cancel_bulk/unit_17999.py\",\n      \"score\": 1.0,\n      \"start_line\": 1\n    }\n  ]\n}",
+          "completed_at_ms": 1793072472019
+        }
+      ],
+      "exec_count": 152,
+      "complete_pages": 152,
+      "max_stdout_bytes": 349649,
+      "inventory_responses": [
+        {
+          "payload_bytes": 1471381,
+          "sha256": "c4d9a3781e6b02d5e3bb37bb0ca1132e8a29cb40425b2590c5d409b1f8c20748",
+          "final_exec_id": 6,
+          "inventory_entries": 18153
+        }
+      ],
+      "body_batches_by_count": {
+        "128": 141,
+        "96": 1
+      },
+      "max_body_response_bytes": 1282427,
+      "selected_count": 18144,
+      "all_expected_paths_received": true,
+      "unexpected_paths": [],
+      "excluded_canary_paths": [],
+      "case_distinct_names_received": true,
+      "large_source": {
+        "bytes": 950000,
+        "sha256": "fedaba39797e043284c0172c0c2b61061b40e81ec82363b74fd9849a5fc61f68"
+      },
+      "incomplete_response_bytes_at_stop": 0,
+      "aborted_execs": [],
+      "first_event_ms": 1793072340555,
+      "last_event_ms": 1793072464848
+    },
+    {
+      "request_id": "233f89dc-6985-49d6-ac88-ae50081eeb89",
+      "tools": [
+        {
+          "status": "cancelled",
+          "created_at_ms": 1793072522808,
+          "name": "SembleSearch",
+          "tool_status": "completed",
+          "result_is_error": 1,
+          "result_content": "Tool execution was cancelled before completion.",
+          "completed_at_ms": 1793072533585
+        }
+      ],
+      "exec_count": 12,
+      "complete_pages": 11,
+      "max_stdout_bytes": 349649,
+      "inventory_responses": [
+        {
+          "payload_bytes": 1471381,
+          "sha256": "c4d9a3781e6b02d5e3bb37bb0ca1132e8a29cb40425b2590c5d409b1f8c20748",
+          "final_exec_id": 6,
+          "inventory_entries": 18153
+        }
+      ],
+      "body_batches_by_count": {
+        "128": 1
+      },
+      "max_body_response_bytes": 1282427,
+      "selected_count": 128,
+      "all_expected_paths_received": null,
+      "unexpected_paths": null,
+      "excluded_canary_paths": [],
+      "case_distinct_names_received": false,
+      "large_source": {
+        "bytes": 950000,
+        "sha256": "fedaba39797e043284c0172c0c2b61061b40e81ec82363b74fd9849a5fc61f68"
+      },
+      "incomplete_response_bytes_at_stop": 0,
+      "aborted_execs": [
+        {
+          "exec_id": 12,
+          "created_at_ms": 1793072533619,
+          "aborted": true,
+          "code": 4294967295,
+          "local_execution_time_ms": 183,
+          "type": "exit"
+        }
+      ],
+      "first_event_ms": 1793072526223,
+      "last_event_ms": 1793072533619
+    },
+    {
+      "request_id": "4a09de26-61b2-4841-b08e-819e830a5f68",
+      "tools": [
+        {
+          "status": "completed",
+          "created_at_ms": 1793072600012,
+          "name": "SembleFindRelated",
+          "tool_status": "completed",
+          "result_is_error": 0,
+          "result_content": "{\n  \"query\": \"Chunks related to login.py:1\",\n  \"results\": [\n    {\n      \"content\": \"def audit_login(user, valid):\\n    return {\\\"user\\\": user, \\\"accepted\\\": valid}\",\n      \"end_line\": 2,\n      \"file_path\": \"audit.py\",\n      \"score\": 0.3945688009262085,\n      \"start_line\": 1\n    }\n  ]\n}",
+          "completed_at_ms": 1793072609489
+        }
+      ],
+      "exec_count": 6,
+      "complete_pages": 6,
+      "max_stdout_bytes": 349648,
+      "inventory_responses": [
+        {
+          "payload_bytes": 1350,
+          "sha256": "7349bd359f4557212c7ec74d7ba096483ba646ff9a06157f7e84c383c5c97afa",
+          "final_exec_id": 1,
+          "inventory_entries": 11
+        }
+      ],
+      "body_batches_by_count": {
+        "4": 1
+      },
+      "max_body_response_bytes": 1267160,
+      "selected_count": 4,
+      "all_expected_paths_received": true,
+      "unexpected_paths": [],
+      "excluded_canary_paths": [],
+      "case_distinct_names_received": true,
+      "large_source": {
+        "bytes": 950000,
+        "sha256": "fedaba39797e043284c0172c0c2b61061b40e81ec82363b74fd9849a5fc61f68"
+      },
+      "incomplete_response_bytes_at_stop": 0,
+      "aborted_execs": [],
+      "first_event_ms": 1793072606808,
+      "last_event_ms": 1793072608204
+    }
+  ],
+  "provider_requests": [
+    {
+      "call_id": "4f0e8cc4-0753-4bc6-8930-eecebd0a8fd4:a4209c77:0",
+      "run_id": "4f0e8cc4-0753-4bc6-8930-eecebd0a8fd4:a4209c77",
+      "status": "completed",
+      "http_status": 200,
+      "provider_type": "openai-chat",
+      "model_id": "gpt-6-astra",
+      "message_count": 3,
+      "previous_messages_exact_prefix": null,
+      "tools_sha256": "c1f63018389a12e2c46149416875d670c4007ce80afe257df8664775fa3a5226",
+      "internal_fingerprint_found": false,
+      "internal_source_base64_found": false,
+      "excluded_canary_found": false
+    },
+    {
+      "call_id": "4f0e8cc4-0753-4bc6-8930-eecebd0a8fd4:a4209c77:1",
+      "run_id": "4f0e8cc4-0753-4bc6-8930-eecebd0a8fd4:a4209c77",
+      "status": "completed",
+      "http_status": 200,
+      "provider_type": "openai-chat",
+      "model_id": "gpt-6-astra",
+      "message_count": 5,
+      "previous_messages_exact_prefix": true,
+      "tools_sha256": "c1f63018389a12e2c46149416875d670c4007ce80afe257df8664775fa3a5226",
+      "internal_fingerprint_found": false,
+      "internal_source_base64_found": false,
+      "excluded_canary_found": false
+    },
+    {
+      "call_id": "233f89dc-6985-49d6-ac88-ae50081eeb89:ba3bfb78:0",
+      "run_id": "233f89dc-6985-49d6-ac88-ae50081eeb89:ba3bfb78",
+      "status": "completed",
+      "http_status": 200,
+      "provider_type": "openai-chat",
+      "model_id": "gpt-6-astra",
+      "message_count": 7,
+      "previous_messages_exact_prefix": true,
+      "tools_sha256": "c1f63018389a12e2c46149416875d670c4007ce80afe257df8664775fa3a5226",
+      "internal_fingerprint_found": false,
+      "internal_source_base64_found": false,
+      "excluded_canary_found": false
+    },
+    {
+      "call_id": "4a09de26-61b2-4841-b08e-819e830a5f68:fabaed10:0",
+      "run_id": "4a09de26-61b2-4841-b08e-819e830a5f68:fabaed10",
+      "status": "completed",
+      "http_status": 200,
+      "provider_type": "openai-chat",
+      "model_id": "gpt-6-astra",
+      "message_count": 10,
+      "previous_messages_exact_prefix": true,
+      "tools_sha256": "c1f63018389a12e2c46149416875d670c4007ce80afe257df8664775fa3a5226",
+      "internal_fingerprint_found": false,
+      "internal_source_base64_found": false,
+      "excluded_canary_found": false
+    },
+    {
+      "call_id": "4a09de26-61b2-4841-b08e-819e830a5f68:fabaed10:1",
+      "run_id": "4a09de26-61b2-4841-b08e-819e830a5f68:fabaed10",
+      "status": "completed",
+      "http_status": 200,
+      "provider_type": "openai-chat",
+      "model_id": "gpt-6-astra",
+      "message_count": 12,
+      "previous_messages_exact_prefix": true,
+      "tools_sha256": "c1f63018389a12e2c46149416875d670c4007ce80afe257df8664775fa3a5226",
+      "internal_fingerprint_found": false,
+      "internal_source_base64_found": false,
+      "excluded_canary_found": false
+    }
+  ],
+  "stop_clicked_at_ms": 1793072533483,
+  "ui_markers": [
+    "REMOTE_PAGED_SNAPSHOT_DONE",
+    "REMOTE_PAGED_RELATED_DONE"
+  ],
+  "ui_large_search_duration": "2m 16s",
+  "limitations": [
+    "Real approval prompt not observed.",
+    "Windows native tests passed; Windows Cursor UI not tested.",
+    "Large test is a synthetic fixture, not a general performance benchmark."
+  ],
+  "cleanup": {
+    "settings_restored_sha256": "1c86e40d0f46a6174e76598d78d4b2c3c90b601f63ddaad7d91e8f964fc843b3",
+    "ports_listening": {
+      "61882": false,
+      "61883": false,
+      "49588": true,
+      "49642": true
+    },
+    "health_status": 204,
+    "remote_machine_settings_restored_to_absent": true,
+    "remote_synthetic_workspace_removed": true,
+    "cursor_ssh_test_window_closed": true,
+    "run_states_after_wait": [
+      [
+        "4f0e8cc4-0753-4bc6-8930-eecebd0a8fd4",
+        "completed"
+      ],
+      [
+        "233f89dc-6985-49d6-ac88-ae50081eeb89",
+        "cancelled"
+      ],
+      [
+        "4a09de26-61b2-4841-b08e-819e830a5f68",
+        "completed"
+      ]
+    ],
+    "private_database_settings_and_raw_logs_removed": true
+  }
+}

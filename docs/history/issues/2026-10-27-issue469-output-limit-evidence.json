@@ -1,0 +1,46 @@
+{
+  "date": "2026-10-27",
+  "cursor_version": "3.27.14",
+  "artifact": "/Applications/Cursor.app/Contents/Resources/app/extensions/cursor-agent-exec/dist/main.js",
+  "sha256": "66c26ae001b20362c5f8b0169e2cf752e81e1fa98dac6056b1ba86f9c2292291",
+  "remote_same_sha256": true,
+  "remote_install_commit": "69b724ebc67ec522c1b5d287a5025f7a7e81be90",
+  "prior_rea_evidence": "ev_a1e98d64eedbe236a4db4f36ab8ff10effc861df240233a8ca88bf72f45d2641",
+  "inspection_kind": "ordinary focused text inspection of an unchanged artifact previously analyzed with REA; no bundle execution",
+  "facts": [
+    {
+      "needle": "Ae=1048576,Re=52428800",
+      "char_offset": 8451273,
+      "byte_offset": 8592403
+    },
+    {
+      "needle": "d=!s&&o+k<=Ae",
+      "char_offset": 8506630,
+      "byte_offset": 8647773
+    },
+    {
+      "needle": "a.size>a.threshold",
+      "char_offset": 8506898,
+      "byte_offset": 8648041
+    },
+    {
+      "needle": "yield{type:\"stdout_trimmed\"}",
+      "char_offset": 8507310,
+      "byte_offset": 8648453
+    }
+  ],
+  "inline_stdout_limit_bytes": 1048576,
+  "behavior": "A chunk is emitted only if cumulative stdout bytes including that whole chunk stay within the inline limit. File-output threshold is a separate setting.",
+  "runtime_correlation": {
+    "request_id": "ab61cffa-6bad-4ad9-add5-b65b25b9eeb4",
+    "stdout_chunks_bytes": [
+      277248,
+      292352,
+      263360
+    ],
+    "stdout_total_bytes": 832960,
+    "exit_code": 0,
+    "complete_json": false
+  },
+  "scope": "Static branch plus actual incomplete output supports the transport limit diagnosis; no claim that every possible large-output failure shares this cause."
+}
