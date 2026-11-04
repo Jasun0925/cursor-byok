@@ -1,0 +1,56 @@
+{
+  "date": "2026-10-28",
+  "source_revision": "f90cb668497da2bf0bcc30298b1d504d6df30995",
+  "scope": "Production Collector and generated shell commands executed over SSH; no Cursor Run/Exec or approval UI in this check",
+  "host": "Linux / aliyun-server",
+  "default_python": "3.6.8",
+  "selected_python": "3.13.13",
+  "cases": [
+    {
+      "case": "workspace_modules_and_pythonpath",
+      "exec_count": 2,
+      "exit_codes": [
+        0,
+        0
+      ],
+      "response_json_bytes": [
+        982,
+        406
+      ],
+      "response_digests_valid": true,
+      "result_files": [
+        {
+          "path": "receipt.rs",
+          "bytes": 66,
+          "sha256": "ed96d7d25eb2698908b839cdaa8f4c7cd185f661ff33fd384316ef2cc41ee4c6"
+        }
+      ]
+    },
+    {
+      "case": "pythonpath_only",
+      "exec_count": 2,
+      "exit_codes": [
+        0,
+        0
+      ],
+      "response_json_bytes": [
+        482,
+        406
+      ],
+      "response_digests_valid": true,
+      "result_files": [
+        {
+          "path": "receipt.rs",
+          "bytes": 66,
+          "sha256": "ed96d7d25eb2698908b839cdaa8f4c7cd185f661ff33fd384316ef2cc41ee4c6"
+        }
+      ]
+    }
+  ],
+  "workspace_top_level_unchanged": true,
+  "python_bytecode_directories_created": false,
+  "remote_fixture_removed": true,
+  "production_service_or_proxy_changed": false,
+  "cursor_approval_verified": false,
+  "windows_cursor_ui_verified": false
+}

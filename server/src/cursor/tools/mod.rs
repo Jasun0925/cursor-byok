@@ -12,6 +12,7 @@ pub(crate) mod edit;
 pub(crate) mod registry;
 pub mod runtime;
 mod schedule;
+pub(crate) mod semble;
 pub(crate) mod stream;
 mod tool_call_dispatch;
 pub(crate) mod tool_call_result;

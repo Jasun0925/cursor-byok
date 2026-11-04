@@ -1,0 +1,1214 @@
+{
+  "schema": 1,
+  "date": "2026-10-27",
+  "candidate_commit": "2956bbf3869dbbdbfaad0c84adccdd59fe81968b",
+  "live_patch": "inherit Cursor Shell policy; requested_sandbox_policy=None; skip_approval=false",
+  "patched_files_sha256": {
+    "server/src/cursor/tools/semble.rs": "02b7e42b4738817bf7a57d68726fc7fc3a05c49c40875fbdd598baff1b225053",
+    "server/src/cursor/tools/semble/tests.rs": "8647f5f774e413392ba68170deb42dc412809df71bb9fff13a9113ee04c7e007"
+  },
+  "cursor_version": "3.27.14",
+  "environment": "macOS Cursor / Remote SSH Linux; isolated database and synthetic workspace",
+  "conversation_id": "a8105f47-61e0-42de-b0af-9ab2e6d31b92",
+  "ci": {
+    "run_id": 40435694002,
+    "head_sha": "2956bbf3869dbbdbfaad0c84adccdd59fe81968b",
+    "jobs": [
+      "Rust (Linux)",
+      "Frontend",
+      "Desktop Rust (windows-latest)",
+      "Desktop Rust (macos-latest)"
+    ],
+    "conclusion": "success",
+    "test_counts": {
+      "Rust (Linux)": [
+        491,
+        0,
+        1
+      ],
+      "Desktop Rust (windows-latest)": [
+        17,
+        0,
+        0
+      ],
+      "Desktop Rust (macos-latest)": [
+        17,
+        0,
+        0
+      ]
+    }
+  },
+  "requests": [
+    {
+      "request_id": "5307a194-fdc3-4e12-8ad2-d8ad4ea5937a",
+      "tools": [
+        {
+          "status": "completed",
+          "created_at_ms": 1793067386048,
+          "name": "SembleSearch",
+          "tool_status": "completed",
+          "result_is_error": 1,
+          "completed_at_ms": 1793067393263,
+          "result_sha256": "1b1d828f28ccaf9461d020cbdcbf166ef6c858d99caebd4dfccef0967a35cfc2",
+          "result_bytes": 886,
+          "error": "Workspace collection exited with code 2 (aborted=false): Error: Failed to resolve Linux sandbox backend: Unsupported sandbox configuration: Linux auto backend selection failed. Landlock error: Unsupported sandbox configuration: Failed to apply Landlock: Step 5/7 (landlock) failed: Failed to apply Landlock: Landlock V3 filesystem restrictions not supported. Error: fully incompatible access-rights: BitFlags<AccessFs>(0b111111111110010, WriteFile | RemoveDir | RemoveFile | MakeChar | MakeDir | MakeReg | MakeSock | MakeFifo | MakeBlock | MakeSym | Refer | Truncate). Ensure Landlock LSM is enabled (CONFIG_SECURITY_LANDLOCK=y) on a kernel with V3 support.. Bubblewrap error: Unsupported sandbox configuration: Unsupported sandbox configuration: Bubblewrap preflight failed with exit code Some(1): bwrap: Can't create file at /etc/pki/tls/certs/ca-bundle.crt: No such file or directory"
+        }
+      ],
+      "transmitted_body_count": 0,
+      "transmitted_distinct_paths": 0,
+      "body_path_sample": [],
+      "excluded_canaries_in_transmitted_bodies": [],
+      "execution_summary": {
+        "exec_count": 2,
+        "stdout_bytes": 1308,
+        "inventory_entry_counts": [
+          11
+        ],
+        "body_batches_by_file_count": {},
+        "exit_codes": [
+          0,
+          2
+        ],
+        "aborted_exec_ids": [],
+        "first_event_ms": 1793067392377,
+        "last_event_ms": 1793067393246,
+        "actual_shell_policies": [
+          3
+        ]
+      },
+      "exec_details": [
+        {
+          "exec_id": 1,
+          "stdout_bytes": 1308,
+          "stdout_sha256": "38d8475609017b1cae4910eff88edc88d0fe949c97bd71491584cc6d4bd3954b",
+          "stdout_chunks": 1,
+          "first_event_ms": 1793067392377,
+          "last_event_ms": 1793067393121,
+          "start": [
+            {
+              "network": true,
+              "policy": 3,
+              "type": "start"
+            }
+          ],
+          "exit": [
+            {
+              "aborted": false,
+              "code": 0,
+              "local_execution_time_ms": 734,
+              "type": "exit"
+            }
+          ],
+          "complete_json": true,
+          "inventory_entries": 11
+        },
+        {
+          "exec_id": 2,
+          "stdout_bytes": 0,
+          "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "stdout_chunks": 0,
+          "first_event_ms": 1793067393186,
+          "last_event_ms": 1793067393246,
+          "start": [
+            {
+              "network": true,
+              "policy": 3,
+              "type": "start"
+            }
+          ],
+          "exit": [
+            {
+              "aborted": false,
+              "code": 2,
+              "local_execution_time_ms": 53,
+              "type": "exit"
+            }
+          ],
+          "complete_json": false
+        }
+      ]
+    },
+    {
+      "request_id": "7849e22c-837c-459d-b752-a1c09bcbfa0a",
+      "tools": [
+        {
+          "status": "completed",
+          "created_at_ms": 1793067620298,
+          "name": "Shell",
+          "tool_status": "completed",
+          "result_is_error": 0,
+          "completed_at_ms": 1793067632052,
+          "result_sha256": "e1af1081b93ebabed6ef305b799cbcbd8b8ba3e8b9f673357144e7d74e0a39ae",
+          "result_bytes": 23
+        }
+      ],
+      "transmitted_body_count": 0,
+      "transmitted_distinct_paths": 0,
+      "body_path_sample": [],
+      "excluded_canaries_in_transmitted_bodies": [],
+      "execution_summary": {
+        "exec_count": 1,
+        "stdout_bytes": 23,
+        "inventory_entry_counts": [],
+        "body_batches_by_file_count": {},
+        "exit_codes": [
+          0
+        ],
+        "aborted_exec_ids": [],
+        "first_event_ms": 1793067631941,
+        "last_event_ms": 1793067632044,
+        "actual_shell_policies": [
+          1
+        ]
+      },
+      "exec_details": [
+        {
+          "exec_id": 1,
+          "stdout_bytes": 23,
+          "stdout_sha256": "e1af1081b93ebabed6ef305b799cbcbd8b8ba3e8b9f673357144e7d74e0a39ae",
+          "stdout_chunks": 1,
+          "first_event_ms": 1793067631941,
+          "last_event_ms": 1793067632044,
+          "start": [
+            {
+              "network": null,
+              "policy": 1,
+              "type": "start"
+            }
+          ],
+          "exit": [
+            {
+              "aborted": false,
+              "code": 0,
+              "local_execution_time_ms": 90,
+              "type": "exit"
+            }
+          ],
+          "complete_json": false
+        }
+      ]
+    },
+    {
+      "request_id": "4e7f3450-a0ad-45ca-b76f-0e9ceeffc62f",
+      "tools": [
+        {
+          "status": "completed",
+          "created_at_ms": 1793068239492,
+          "name": "SembleSearch",
+          "tool_status": "completed",
+          "result_is_error": 0,
+          "completed_at_ms": 1793068251331,
+          "result_sha256": "d65037a13cc1b29a3bfa4511f9ff08ffb25187d8d2caa17c2a026302bbbcfb63",
+          "result_bytes": 1029,
+          "result_paths": [
+            "login.py",
+            "audit.py",
+            "Case.py",
+            "case.py"
+          ]
+        },
+        {
+          "status": "completed",
+          "created_at_ms": 1793068239492,
+          "name": "SembleFindRelated",
+          "tool_status": "completed",
+          "result_is_error": 0,
+          "completed_at_ms": 1793068258816,
+          "result_sha256": "e75747a42813a9fd98092b76037bc6dd8542c22e94cc216f90f9bff9b33d2883",
+          "result_bytes": 730,
+          "result_paths": [
+            "audit.py",
+            "Case.py",
+            "case.py"
+          ]
+        }
+      ],
+      "transmitted_body_count": 8,
+      "transmitted_distinct_paths": 4,
+      "body_path_sample": [
+        "Case.py",
+        "audit.py",
+        "case.py",
+        "login.py"
+      ],
+      "excluded_canaries_in_transmitted_bodies": [],
+      "execution_summary": {
+        "exec_count": 4,
+        "stdout_bytes": 4020,
+        "inventory_entry_counts": [
+          11,
+          11
+        ],
+        "body_batches_by_file_count": {
+          "4": 2
+        },
+        "exit_codes": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "aborted_exec_ids": [],
+        "first_event_ms": 1793068249451,
+        "last_event_ms": 1793068258807,
+        "actual_shell_policies": [
+          1
+        ]
+      },
+      "exec_details": [
+        {
+          "exec_id": 1,
+          "stdout_bytes": 1309,
+          "stdout_sha256": "49ea9d33b4777f1b6aaf73f9005168ae6dd8538dd16a2545416b9bd95982a825",
+          "stdout_chunks": 1,
+          "first_event_ms": 1793068249451,
+          "last_event_ms": 1793068250078,
+          "start": [
+            {
+              "network": null,
+              "policy": 1,
+              "type": "start"
+            }
+          ],
+          "exit": [
+            {
+              "aborted": false,
+              "code": 0,
+              "local_execution_time_ms": 609,
+              "type": "exit"
+            }
+          ],
+          "complete_json": true,
+          "inventory_entries": 11
+        },
+        {
+          "exec_id": 2,
+          "stdout_bytes": 701,
+          "stdout_sha256": "4322ce1747889cfac59bcc201a6406d520ce915c0a1f5d82ff18b1ed9126a1b8",
+          "stdout_chunks": 1,
+          "first_event_ms": 1793068250142,
+          "last_event_ms": 1793068250290,
+          "start": [
+            {
+              "network": null,
+              "policy": 1,
+              "type": "start"
+            }
+          ],
+          "exit": [
+            {
+              "aborted": false,
+              "code": 0,
+              "local_execution_time_ms": 131,
+              "type": "exit"
+            }
+          ],
+          "complete_json": true,
+          "body_count": 4
+        },
+        {
+          "exec_id": 3,
+          "stdout_bytes": 1309,
+          "stdout_sha256": "49ea9d33b4777f1b6aaf73f9005168ae6dd8538dd16a2545416b9bd95982a825",
+          "stdout_chunks": 1,
+          "first_event_ms": 1793068258460,
+          "last_event_ms": 1793068258612,
+          "start": [
+            {
+              "network": null,
+              "policy": 1,
+              "type": "start"
+            }
+          ],
+          "exit": [
+            {
+              "aborted": false,
+              "code": 0,
+              "local_execution_time_ms": 122,
+              "type": "exit"
+            }
+          ],
+          "complete_json": true,
+          "inventory_entries": 11
+        },
+        {
+          "exec_id": 4,
+          "stdout_bytes": 701,
+          "stdout_sha256": "4322ce1747889cfac59bcc201a6406d520ce915c0a1f5d82ff18b1ed9126a1b8",
+          "stdout_chunks": 1,
+          "first_event_ms": 1793068258670,
+          "last_event_ms": 1793068258807,
+          "start": [
+            {
+              "network": null,
+              "policy": 1,
+              "type": "start"
+            }
+          ],
+          "exit": [
+            {
+              "aborted": false,
+              "code": 0,
+              "local_execution_time_ms": 123,
+              "type": "exit"
+            }
+          ],
+          "complete_json": true,
+          "body_count": 4
+        }
+      ]
+    },
+    {
+      "request_id": "73aea70a-6df5-4794-8f09-c0eb954da33c",
+      "tools": [
+        {
+          "status": "completed",
+          "created_at_ms": 1793068668697,
+          "name": "SembleSearch",
+          "tool_status": "completed",
+          "result_is_error": 0,
+          "completed_at_ms": 1793068675023,
+          "result_sha256": "2ed0913ff3dae1be5d966087aaaed293f6eac26fe27d73be1c9dbb40eb33641c",
+          "result_bytes": 249,
+          "result_paths": [
+            "bulk/file_139_中文.py"
+          ]
+        }
+      ],
+      "transmitted_body_count": 144,
+      "transmitted_distinct_paths": 144,
+      "body_path_sample": [
+        "Case.py",
+        "audit.py",
+        "bulk/file_000_中文.py",
+        "bulk/file_001_中文.py"
+      ],
+      "excluded_canaries_in_transmitted_bodies": [],
+      "execution_summary": {
+        "exec_count": 3,
+        "stdout_bytes": 31294,
+        "inventory_entry_counts": [
+          152
+        ],
+        "body_batches_by_file_count": {
+          "128": 1,
+          "16": 1
+        },
+        "exit_codes": [
+          0,
+          0,
+          0
+        ],
+        "aborted_exec_ids": [],
+        "first_event_ms": 1793068674372,
+        "last_event_ms": 1793068674977,
+        "actual_shell_policies": [
+          1
+        ]
+      },
+      "exec_details": [
+        {
+          "exec_id": 1,
+          "stdout_bytes": 13270,
+          "stdout_sha256": "9284ca8d3c596371fafc5a3248e6b10e87dc5c21015843a146e1b5d2269fa5ff",
+          "stdout_chunks": 1,
+          "first_event_ms": 1793068674372,
+          "last_event_ms": 1793068674539,
+          "start": [
+            {
+              "network": null,
+              "policy": 1,
+              "type": "start"
+            }
+          ],
+          "exit": [
+            {
+              "aborted": false,
+              "code": 0,
+              "local_execution_time_ms": 155,
+              "type": "exit"
+            }
+          ],
+          "complete_json": true,
+          "inventory_entries": 152
+        },
+        {
+          "exec_id": 2,
+          "stdout_bytes": 15900,
+          "stdout_sha256": "e2c3e9994e7126cd0e6309b2f0fd75a1c5bfdd8960e314a08173500609f6b7e5",
+          "stdout_chunks": 1,
+          "first_event_ms": 1793068674605,
+          "last_event_ms": 1793068674764,
+          "start": [
+            {
+              "network": null,
+              "policy": 1,
+              "type": "start"
+            }
+          ],
+          "exit": [
+            {
+              "aborted": false,
+              "code": 0,
+              "local_execution_time_ms": 149,
+              "type": "exit"
+            }
+          ],
+          "complete_json": true,
+          "body_count": 128
+        },
+        {
+          "exec_id": 3,
+          "stdout_bytes": 2124,
+          "stdout_sha256": "b930b7586cfb41ce055367a21ba3619dfffa0b51e4b33d637c7b341451d4eb31",
+          "stdout_chunks": 1,
+          "first_event_ms": 1793068674821,
+          "last_event_ms": 1793068674977,
+          "start": [
+            {
+              "network": null,
+              "policy": 1,
+              "type": "start"
+            }
+          ],
+          "exit": [
+            {
+              "aborted": false,
+              "code": 0,
+              "local_execution_time_ms": 141,
+              "type": "exit"
+            }
+          ],
+          "complete_json": true,
+          "body_count": 16
+        }
+      ]
+    },
+    {
+      "request_id": "1ef53573-e2eb-4ec3-a178-dc61a5e82e38",
+      "tools": [
+        {
+          "status": "completed",
+          "created_at_ms": 1793068939717,
+          "name": "SembleSearch",
+          "tool_status": "completed",
+          "result_is_error": 0,
+          "completed_at_ms": 1793068967663,
+          "result_sha256": "3982f6759b7483d5adacd6449b75e535d890e6a12f572ee2c999e7a11c5457fe",
+          "result_bytes": 263,
+          "result_paths": [
+            "cancel_bulk/unit_5999.py"
+          ]
+        }
+      ],
+      "transmitted_body_count": 6144,
+      "transmitted_distinct_paths": 6144,
+      "body_path_sample": [
+        "Case.py",
+        "audit.py",
+        "bulk/file_000_中文.py",
+        "bulk/file_001_中文.py"
+      ],
+      "excluded_canaries_in_transmitted_bodies": [],
+      "execution_summary": {
+        "exec_count": 49,
+        "stdout_bytes": 1296102,
+        "inventory_entry_counts": [
+          6153
+        ],
+        "body_batches_by_file_count": {
+          "128": 48
+        },
+        "exit_codes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "aborted_exec_ids": [],
+        "first_event_ms": 1793068947066,
+        "last_event_ms": 1793068966529,
+        "actual_shell_policies": [
+          1
+        ]
+      }
+    },
+    {
+      "request_id": "9a79c7e2-95f7-496e-b572-e95c7dc2c133",
+      "tools": [
+        {
+          "status": "completed",
+          "created_at_ms": 1793069701974,
+          "name": "SembleSearch",
+          "tool_status": "completed",
+          "result_is_error": 0,
+          "completed_at_ms": 1793069733621,
+          "result_sha256": "62d0ef2f8d96cbfdb2bc11d227e2165dd2a55dfd006a6a29548dc1a89bcac0a3",
+          "result_bytes": 263,
+          "result_paths": [
+            "cancel_bulk/unit_5998.py"
+          ]
+        }
+      ],
+      "transmitted_body_count": 6144,
+      "transmitted_distinct_paths": 6144,
+      "body_path_sample": [
+        "Case.py",
+        "audit.py",
+        "bulk/file_000_中文.py",
+        "bulk/file_001_中文.py"
+      ],
+      "excluded_canaries_in_transmitted_bodies": [],
+      "execution_summary": {
+        "exec_count": 49,
+        "stdout_bytes": 1296102,
+        "inventory_entry_counts": [
+          6153
+        ],
+        "body_batches_by_file_count": {
+          "128": 48
+        },
+        "exit_codes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "aborted_exec_ids": [],
+        "first_event_ms": 1793069710220,
+        "last_event_ms": 1793069732518,
+        "actual_shell_policies": [
+          1
+        ]
+      }
+    },
+    {
+      "request_id": "1479e99b-20b3-4903-82a1-16179eb375a7",
+      "tools": [
+        {
+          "status": "cancelled",
+          "created_at_ms": 1793069783960,
+          "name": "SembleSearch",
+          "tool_status": "completed",
+          "result_is_error": 0,
+          "completed_at_ms": 1793069809545,
+          "result_sha256": "787a43d54d41bc818d79e4e8dc48376f671578268bf2e0c43f7f3aabbe453cf6",
+          "result_bytes": 263,
+          "result_paths": [
+            "cancel_bulk/unit_5997.py"
+          ]
+        }
+      ],
+      "transmitted_body_count": 6144,
+      "transmitted_distinct_paths": 6144,
+      "body_path_sample": [
+        "Case.py",
+        "audit.py",
+        "bulk/file_000_中文.py",
+        "bulk/file_001_中文.py"
+      ],
+      "excluded_canaries_in_transmitted_bodies": [],
+      "execution_summary": {
+        "exec_count": 49,
+        "stdout_bytes": 1296102,
+        "inventory_entry_counts": [
+          6153
+        ],
+        "body_batches_by_file_count": {
+          "128": 48
+        },
+        "exit_codes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "aborted_exec_ids": [],
+        "first_event_ms": 1793069789053,
+        "last_event_ms": 1793069808457,
+        "actual_shell_policies": [
+          1
+        ]
+      }
+    },
+    {
+      "request_id": "ab61cffa-6bad-4ad9-add5-b65b25b9eeb4",
+      "tools": [
+        {
+          "status": "completed",
+          "created_at_ms": 1793069981552,
+          "name": "SembleSearch",
+          "tool_status": "completed",
+          "result_is_error": 1,
+          "completed_at_ms": 1793069987591,
+          "result_sha256": "6c8faac9728eb086dcaec94f97284a4f66dadadef422e9a8fd63404edb23d0bb",
+          "result_bytes": 87,
+          "error": "Invalid workspace collection result: EOF while parsing a string at line 1 column 832960"
+        }
+      ],
+      "transmitted_body_count": 0,
+      "transmitted_distinct_paths": 0,
+      "body_path_sample": [],
+      "excluded_canaries_in_transmitted_bodies": [],
+      "execution_summary": {
+        "exec_count": 1,
+        "stdout_bytes": 832960,
+        "inventory_entry_counts": [],
+        "body_batches_by_file_count": {},
+        "exit_codes": [
+          0
+        ],
+        "aborted_exec_ids": [],
+        "first_event_ms": 1793069986975,
+        "last_event_ms": 1793069987595,
+        "actual_shell_policies": [
+          1
+        ]
+      },
+      "exec_details": [
+        {
+          "exec_id": 1,
+          "stdout_bytes": 832960,
+          "stdout_sha256": "799371594eef86876213cb37b840fe9c1135d34ce6e8d096085101d190612a1b",
+          "stdout_chunks": 3,
+          "first_event_ms": 1793069986975,
+          "last_event_ms": 1793069987595,
+          "start": [
+            {
+              "network": null,
+              "policy": 1,
+              "type": "start"
+            }
+          ],
+          "exit": [
+            {
+              "aborted": false,
+              "code": 0,
+              "local_execution_time_ms": 507,
+              "type": "exit"
+            }
+          ],
+          "complete_json": false
+        }
+      ],
+      "unresolved": "Inventory stdout ended inside a JSON string before exit code 0; expected 18,153 entries, no body collection started."
+    },
+    {
+      "request_id": "db166d19-14ed-4a08-b435-1bb59b65f23c",
+      "tools": [
+        {
+          "status": "cancelled",
+          "created_at_ms": 1793070104178,
+          "name": "SembleSearch",
+          "tool_status": "completed",
+          "result_is_error": 1,
+          "completed_at_ms": 1793070113209,
+          "result_sha256": "5bc09bd8ea037e654ebfefeaa7218edb10d419087e7bfdab68433c4b63d9ff7d",
+          "result_bytes": 47,
+          "error": "Tool execution was cancelled before completion."
+        }
+      ],
+      "transmitted_body_count": 1152,
+      "transmitted_distinct_paths": 1152,
+      "body_path_sample": [
+        "Case.py",
+        "audit.py",
+        "bulk/file_000_中文.py",
+        "bulk/file_001_中文.py"
+      ],
+      "excluded_canaries_in_transmitted_bodies": [],
+      "execution_summary": {
+        "exec_count": 11,
+        "stdout_bytes": 643086,
+        "inventory_entry_counts": [
+          6153
+        ],
+        "body_batches_by_file_count": {
+          "128": 9
+        },
+        "exit_codes": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          4294967295
+        ],
+        "aborted_exec_ids": [
+          11
+        ],
+        "first_event_ms": 1793070108472,
+        "last_event_ms": 1793070113211,
+        "actual_shell_policies": [
+          1
+        ]
+      },
+      "last_exec": {
+        "exec_id": 11,
+        "stdout_bytes": 0,
+        "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "stdout_chunks": 0,
+        "first_event_ms": 1793070112889,
+        "last_event_ms": 1793070113211,
+        "start": [
+          {
+            "network": null,
+            "policy": 1,
+            "type": "start"
+          }
+        ],
+        "exit": [
+          {
+            "aborted": true,
+            "code": 4294967295,
+            "local_execution_time_ms": 303,
+            "type": "exit"
+          }
+        ],
+        "complete_json": false
+      },
+      "acceptance": "Stop during collection; only 9 of 48 body batches completed; exec 11 aborted; tool cancelled, no result or automatic re-run."
+    }
+  ],
+  "provider_requests": [
+    {
+      "call_id": "5307a194-fdc3-4e12-8ad2-d8ad4ea5937a:5aae50a1:0",
+      "run_id": "5307a194-fdc3-4e12-8ad2-d8ad4ea5937a:5aae50a1",
+      "status": "completed",
+      "http_status": 200,
+      "provider_type": "openai-chat",
+      "model_id": "gpt-6-astra",
+      "created_at_ms": 1793067386488,
+      "message_count": 3,
+      "previous_messages_exact_prefix": null,
+      "tools_sha256": "c1f63018389a12e2c46149416875d670c4007ce80afe257df8664775fa3a5226",
+      "collector_fingerprint_found": false,
+      "collector_body_base64_found": false,
+      "excluded_canary_found": false
+    },
+    {
+      "call_id": "5307a194-fdc3-4e12-8ad2-d8ad4ea5937a:5aae50a1:1",
+      "run_id": "5307a194-fdc3-4e12-8ad2-d8ad4ea5937a:5aae50a1",
+      "status": "completed",
+      "http_status": 200,
+      "provider_type": "openai-chat",
+      "model_id": "gpt-6-astra",
+      "created_at_ms": 1793067393617,
+      "message_count": 5,
+      "previous_messages_exact_prefix": true,
+      "tools_sha256": "c1f63018389a12e2c46149416875d670c4007ce80afe257df8664775fa3a5226",
+      "collector_fingerprint_found": false,
+      "collector_body_base64_found": false,
+      "excluded_canary_found": false
+    },
+    {
+      "call_id": "7849e22c-837c-459d-b752-a1c09bcbfa0a:7f54c915:0",
+      "run_id": "7849e22c-837c-459d-b752-a1c09bcbfa0a:7f54c915",
+      "status": "completed",
+      "http_status": 200,
+      "provider_type": "openai-chat",
+      "model_id": "gpt-6-astra",
+      "created_at_ms": 1793067620549,
+      "message_count": 7,
+      "previous_messages_exact_prefix": true,
+      "tools_sha256": "c1f63018389a12e2c46149416875d670c4007ce80afe257df8664775fa3a5226",
+      "collector_fingerprint_found": false,
+      "collector_body_base64_found": false,
+      "excluded_canary_found": false
+    },
+    {
+      "call_id": "7849e22c-837c-459d-b752-a1c09bcbfa0a:7f54c915:1",
+      "run_id": "7849e22c-837c-459d-b752-a1c09bcbfa0a:7f54c915",
+      "status": "completed",
+      "http_status": 200,
+      "provider_type": "openai-chat",
+      "model_id": "gpt-6-astra",
+      "created_at_ms": 1793067632381,
+      "message_count": 9,
+      "previous_messages_exact_prefix": true,
+      "tools_sha256": "c1f63018389a12e2c46149416875d670c4007ce80afe257df8664775fa3a5226",
+      "collector_fingerprint_found": false,
+      "collector_body_base64_found": false,
+      "excluded_canary_found": false
+    },
+    {
+      "call_id": "4e7f3450-a0ad-45ca-b76f-0e9ceeffc62f:d2e0520f:0",
+      "run_id": "4e7f3450-a0ad-45ca-b76f-0e9ceeffc62f:d2e0520f",
+      "status": "completed",
+      "http_status": 200,
+      "provider_type": "openai-chat",
+      "model_id": "gpt-6-astra",
+      "created_at_ms": 1793068239750,
+      "message_count": 11,
+      "previous_messages_exact_prefix": true,
+      "tools_sha256": "c1f63018389a12e2c46149416875d670c4007ce80afe257df8664775fa3a5226",
+      "collector_fingerprint_found": false,
+      "collector_body_base64_found": false,
+      "excluded_canary_found": false
+    },
+    {
+      "call_id": "4e7f3450-a0ad-45ca-b76f-0e9ceeffc62f:d2e0520f:1",
+      "run_id": "4e7f3450-a0ad-45ca-b76f-0e9ceeffc62f:d2e0520f",
+      "status": "completed",
+      "http_status": 200,
+      "provider_type": "openai-chat",
+      "model_id": "gpt-6-astra",
+      "created_at_ms": 1793068251693,
+      "message_count": 13,
+      "previous_messages_exact_prefix": true,
+      "tools_sha256": "c1f63018389a12e2c46149416875d670c4007ce80afe257df8664775fa3a5226",
+      "collector_fingerprint_found": false,
+      "collector_body_base64_found": false,
+      "excluded_canary_found": false
+    },
+    {
+      "call_id": "4e7f3450-a0ad-45ca-b76f-0e9ceeffc62f:d2e0520f:2",
+      "run_id": "4e7f3450-a0ad-45ca-b76f-0e9ceeffc62f:d2e0520f",
+      "status": "completed",
+      "http_status": 200,
+      "provider_type": "openai-chat",
+      "model_id": "gpt-6-astra",
+      "created_at_ms": 1793068259191,
+      "message_count": 15,
+      "previous_messages_exact_prefix": true,
+      "tools_sha256": "c1f63018389a12e2c46149416875d670c4007ce80afe257df8664775fa3a5226",
+      "collector_fingerprint_found": false,
+      "collector_body_base64_found": false,
+      "excluded_canary_found": false
+    },
+    {
+      "call_id": "73aea70a-6df5-4794-8f09-c0eb954da33c:997305d9:0",
+      "run_id": "73aea70a-6df5-4794-8f09-c0eb954da33c:997305d9",
+      "status": "completed",
+      "http_status": 200,
+      "provider_type": "openai-chat",
+      "model_id": "gpt-6-astra",
+      "created_at_ms": 1793068668991,
+      "message_count": 17,
+      "previous_messages_exact_prefix": true,
+      "tools_sha256": "c1f63018389a12e2c46149416875d670c4007ce80afe257df8664775fa3a5226",
+      "collector_fingerprint_found": false,
+      "collector_body_base64_found": false,
+      "excluded_canary_found": false
+    },
+    {
+      "call_id": "73aea70a-6df5-4794-8f09-c0eb954da33c:997305d9:1",
+      "run_id": "73aea70a-6df5-4794-8f09-c0eb954da33c:997305d9",
+      "status": "completed",
+      "http_status": 200,
+      "provider_type": "openai-chat",
+      "model_id": "gpt-6-astra",
+      "created_at_ms": 1793068675387,
+      "message_count": 19,
+      "previous_messages_exact_prefix": true,
+      "tools_sha256": "c1f63018389a12e2c46149416875d670c4007ce80afe257df8664775fa3a5226",
+      "collector_fingerprint_found": false,
+      "collector_body_base64_found": false,
+      "excluded_canary_found": false
+    },
+    {
+      "call_id": "1ef53573-e2eb-4ec3-a178-dc61a5e82e38:83e2cfcc:0",
+      "run_id": "1ef53573-e2eb-4ec3-a178-dc61a5e82e38:83e2cfcc",
+      "status": "completed",
+      "http_status": 200,
+      "provider_type": "openai-chat",
+      "model_id": "gpt-6-astra",
+      "created_at_ms": 1793068939993,
+      "message_count": 21,
+      "previous_messages_exact_prefix": true,
+      "tools_sha256": "c1f63018389a12e2c46149416875d670c4007ce80afe257df8664775fa3a5226",
+      "collector_fingerprint_found": false,
+      "collector_body_base64_found": false,
+      "excluded_canary_found": false
+    },
+    {
+      "call_id": "1ef53573-e2eb-4ec3-a178-dc61a5e82e38:83e2cfcc:1",
+      "run_id": "1ef53573-e2eb-4ec3-a178-dc61a5e82e38:83e2cfcc",
+      "status": "completed",
+      "http_status": 200,
+      "provider_type": "openai-chat",
+      "model_id": "gpt-6-astra",
+      "created_at_ms": 1793068968028,
+      "message_count": 23,
+      "previous_messages_exact_prefix": true,
+      "tools_sha256": "c1f63018389a12e2c46149416875d670c4007ce80afe257df8664775fa3a5226",
+      "collector_fingerprint_found": false,
+      "collector_body_base64_found": false,
+      "excluded_canary_found": false
+    },
+    {
+      "call_id": "9a79c7e2-95f7-496e-b572-e95c7dc2c133:36443166:0",
+      "run_id": "9a79c7e2-95f7-496e-b572-e95c7dc2c133:36443166",
+      "status": "completed",
+      "http_status": 200,
+      "provider_type": "openai-chat",
+      "model_id": "gpt-6-astra",
+      "created_at_ms": 1793069702232,
+      "message_count": 25,
+      "previous_messages_exact_prefix": true,
+      "tools_sha256": "c1f63018389a12e2c46149416875d670c4007ce80afe257df8664775fa3a5226",
+      "collector_fingerprint_found": false,
+      "collector_body_base64_found": false,
+      "excluded_canary_found": false
+    },
+    {
+      "call_id": "9a79c7e2-95f7-496e-b572-e95c7dc2c133:36443166:1",
+      "run_id": "9a79c7e2-95f7-496e-b572-e95c7dc2c133:36443166",
+      "status": "completed",
+      "http_status": 200,
+      "provider_type": "openai-chat",
+      "model_id": "gpt-6-astra",
+      "created_at_ms": 1793069733987,
+      "message_count": 27,
+      "previous_messages_exact_prefix": true,
+      "tools_sha256": "c1f63018389a12e2c46149416875d670c4007ce80afe257df8664775fa3a5226",
+      "collector_fingerprint_found": false,
+      "collector_body_base64_found": false,
+      "excluded_canary_found": false
+    },
+    {
+      "call_id": "1479e99b-20b3-4903-82a1-16179eb375a7:358a710d:0",
+      "run_id": "1479e99b-20b3-4903-82a1-16179eb375a7:358a710d",
+      "status": "completed",
+      "http_status": 200,
+      "provider_type": "openai-chat",
+      "model_id": "gpt-6-astra",
+      "created_at_ms": 1793069784266,
+      "message_count": 29,
+      "previous_messages_exact_prefix": true,
+      "tools_sha256": "c1f63018389a12e2c46149416875d670c4007ce80afe257df8664775fa3a5226",
+      "collector_fingerprint_found": false,
+      "collector_body_base64_found": false,
+      "excluded_canary_found": false
+    },
+    {
+      "call_id": "1479e99b-20b3-4903-82a1-16179eb375a7:358a710d:1",
+      "run_id": "1479e99b-20b3-4903-82a1-16179eb375a7:358a710d",
+      "status": "cancelled",
+      "http_status": null,
+      "provider_type": "openai-chat",
+      "model_id": "gpt-6-astra",
+      "created_at_ms": 1793069809928,
+      "message_count": 31,
+      "previous_messages_exact_prefix": true,
+      "tools_sha256": "c1f63018389a12e2c46149416875d670c4007ce80afe257df8664775fa3a5226",
+      "collector_fingerprint_found": false,
+      "collector_body_base64_found": false,
+      "excluded_canary_found": false
+    },
+    {
+      "call_id": "ab61cffa-6bad-4ad9-add5-b65b25b9eeb4:9b372acd:0",
+      "run_id": "ab61cffa-6bad-4ad9-add5-b65b25b9eeb4:9b372acd",
+      "status": "completed",
+      "http_status": 200,
+      "provider_type": "openai-chat",
+      "model_id": "gpt-6-astra",
+      "created_at_ms": 1793069981813,
+      "message_count": 32,
+      "previous_messages_exact_prefix": true,
+      "tools_sha256": "c1f63018389a12e2c46149416875d670c4007ce80afe257df8664775fa3a5226",
+      "collector_fingerprint_found": false,
+      "collector_body_base64_found": false,
+      "excluded_canary_found": false
+    },
+    {
+      "call_id": "ab61cffa-6bad-4ad9-add5-b65b25b9eeb4:9b372acd:1",
+      "run_id": "ab61cffa-6bad-4ad9-add5-b65b25b9eeb4:9b372acd",
+      "status": "completed",
+      "http_status": 200,
+      "provider_type": "openai-chat",
+      "model_id": "gpt-6-astra",
+      "created_at_ms": 1793069987964,
+      "message_count": 34,
+      "previous_messages_exact_prefix": true,
+      "tools_sha256": "c1f63018389a12e2c46149416875d670c4007ce80afe257df8664775fa3a5226",
+      "collector_fingerprint_found": false,
+      "collector_body_base64_found": false,
+      "excluded_canary_found": false
+    },
+    {
+      "call_id": "db166d19-14ed-4a08-b435-1bb59b65f23c:090750a7:0",
+      "run_id": "db166d19-14ed-4a08-b435-1bb59b65f23c:090750a7",
+      "status": "completed",
+      "http_status": 200,
+      "provider_type": "openai-chat",
+      "model_id": "gpt-6-astra",
+      "created_at_ms": 1793070104422,
+      "message_count": 36,
+      "previous_messages_exact_prefix": true,
+      "tools_sha256": "c1f63018389a12e2c46149416875d670c4007ce80afe257df8664775fa3a5226",
+      "collector_fingerprint_found": false,
+      "collector_body_base64_found": false,
+      "excluded_canary_found": false
+    }
+  ],
+  "ui_stop_ms": {
+    "1479e99b-20b3-4903-82a1-16179eb375a7": 1793069812631,
+    "db166d19-14ed-4a08-b435-1bb59b65f23c": 1793070113097
+  },
+  "limitations": [
+    "Actual approval prompt not observed; Cursor used its existing policy.",
+    "Windows native automated tests passed; Windows Cursor UI not tested.",
+    "18,144-file test received an incomplete inventory JSON and failed; unresolved transport boundary.",
+    "Earlier Stop attempts completed collection before Stop and do not prove collector cancellation."
+  ],
+  "cleanup": {
+    "settings_restored": true,
+    "settings_sha256": "1c86e40d0f46a6174e76598d78d4b2c3c90b601f63ddaad7d91e8f964fc843b3",
+    "ports_listening": {
+      "49611": false,
+      "62260": false,
+      "49642": true,
+      "49588": true
+    },
+    "remote_machine_settings_restored_to_absent": true,
+    "remote_synthetic_workspace_removed": true,
+    "cursor_ssh_test_window_closed": true,
+    "last_test_run_after_wait": {
+      "request_id": "db166d19-14ed-4a08-b435-1bb59b65f23c",
+      "status": "cancelled"
+    },
+    "private_database_settings_and_raw_logs_removed": true
+  },
+  "live_binary_sha256": "1ec949b7870bf515c5820b32373b5bc5c1247daae291fde2d2a15e34861118f6"
+}
