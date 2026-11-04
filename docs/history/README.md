@@ -7,6 +7,8 @@
 
 ## Issue 调查与验收
 
+- [2026-10-27 · Grok OAuth 续期验证](issues/2026-10-27-issue445-check.md)
+
 - [2026-10-02 · Issue #410 检查记录](issues/2026-10-02-issue410-check.md)
 - [2026-10-02 · 最终 Responses 快照文字补全修复](issues/2026-10-02-issue410-fix.md)
 - [2026-10-02 · Issue #477：子代理请求准入修复](issues/2026-10-02-issue477-fix.md)

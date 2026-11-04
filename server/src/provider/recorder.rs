@@ -139,6 +139,18 @@ impl CallRecorder {
         }
     }
 
+    /// Keep the rejected request and the single authentication retry separate.
+    pub(crate) async fn restart_for_auth_retry(&self, message: &str) -> Result<()> {
+        self.failed(&crate::Error::Provider(message.into())).await?;
+        let mut call = self.inner.base_call.clone();
+        call.call_id = format!("{}:auth-retry", call.call_id);
+        let mut attempt = self.inner.attempt.lock().await;
+        self.inner.store.start_llm_call(&call).await?;
+        *attempt = AttemptState::new(call.call_id);
+        self.inner.finished.store(false, Ordering::Release);
+        Ok(())
+    }
+
     pub async fn request(
         &self,
         headers: serde_json::Value,

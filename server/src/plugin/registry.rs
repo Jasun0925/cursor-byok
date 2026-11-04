@@ -53,6 +53,8 @@ struct RegistryInner {
     entries: RwLock<Option<Vec<PluginEntry>>>,
     workers: Mutex<HashMap<String, Arc<PluginWorker>>>,
     oauth_sessions: Mutex<HashMap<String, OAuthSession>>,
+    preparation_locks: Mutex<HashMap<String, Arc<Mutex<()>>>>,
+    pending_preparations: Mutex<HashMap<String, (ResourceRecord, serde_json::Value)>>,
 }
 
 struct OAuthSession {
@@ -158,6 +160,8 @@ impl PluginRegistry {
                 entries: RwLock::new(None),
                 workers: Mutex::new(HashMap::new()),
                 oauth_sessions: Mutex::new(HashMap::new()),
+                preparation_locks: Mutex::new(HashMap::new()),
+                pending_preparations: Mutex::new(HashMap::new()),
             }),
         })
     }
@@ -280,67 +284,91 @@ impl PluginRegistry {
                 .into_iter()
                 .find(|model| model.id == upstream_id)
                 .ok_or_else(|| Error::RunNotFound(format!("plugin model {model_id}")))?;
-            let resource = match &provider.resource_type {
-                Some(resource_type) => Some((
-                    resource_type.clone(),
-                    registry.select_resource(&plugin_id, resource_type).await?,
-                )),
+            let mut resource = match &provider.resource_type {
+                Some(resource_type) => {
+                    let record = registry.select_resource(&plugin_id, resource_type).await?;
+                    let prepared = tokio::select! {
+                        biased;
+                        _ = reset.cancelled() => Err(Error::Cancelled),
+                        _ = cancellation.cancelled() => Err(Error::Cancelled),
+                        prepared = registry.prepare_resource(&entry, &executable, resource_type, record, None) => prepared,
+                    }?;
+                    Some((resource_type.clone(), prepared))
+                }
                 None => None,
             };
             let request = wire::llm_request(&invocation)?;
-            let params = serde_json::json!({
-                "providerId": provider_id,
-                "model": stored.snapshot(),
-                "resource": resource.as_ref().map(|(resource_type, record)| record.snapshot(resource_type)),
-                "request": request,
-            });
             let worker = registry.worker(&entry, &executable).await;
-            let mut items = worker.invoke_streaming("provider.invoke", params, request_cancellation, Some(recorder)).await?;
             drop(operation);
             yield ModelEvent::Start { model_call_id: invocation.call_id.clone() };
-            loop {
-                let item = tokio::select! {
-                    biased;
-                    _ = reset.cancelled() => Err(Error::Cancelled),
-                    _ = cancellation.cancelled() => Err(Error::Cancelled),
-                    item = items.recv() => Ok(item),
-                }?;
-                let Some(item) = item else { break; };
-                match item {
-                    WorkerStreamItem::Event(event) => {
-                        yield wire::model_event(&event)?;
-                    }
-                    WorkerStreamItem::Result(result) => {
-                        let _operation = registry.begin_operation()?;
-                        let value = result?;
-                        let status = value.get("status").and_then(serde_json::Value::as_str).unwrap_or_default();
-                        let patch = value.get("patch")
-                            .filter(|patch| !patch.is_null())
-                            .map(|patch| serde_json::from_value::<ResourcePatch>(patch.clone()))
-                            .transpose()?;
-                        if let (Some(patch), Some((resource_type, record))) = (patch, resource.as_ref()) {
-                            if let Err(error) = registry.inner.state
-                                .apply_patch(&plugin_id, resource_type, &record.id, patch).await
-                            {
-                                tracing::warn!(plugin = %plugin_id, %error, "failed to apply plugin resource patch");
-                            }
+            for attempt in 0..2 {
+                if cancellation.is_cancelled() { Err(Error::Cancelled)?; }
+                let params = serde_json::json!({
+                    "providerId": provider_id,
+                    "model": stored.snapshot(),
+                    "resource": resource.as_ref().map(|(kind, record)| record.snapshot(kind)),
+                    "request": request,
+                });
+                let operation = registry.begin_operation()?;
+                let mut items = worker.invoke_streaming("provider.invoke", params, request_cancellation.clone(), Some(recorder.clone())).await?;
+                drop(operation);
+                let mut emitted = false;
+                let mut retry = false;
+                loop {
+                    let item = tokio::select! {
+                        biased;
+                        _ = reset.cancelled() => Err(Error::Cancelled),
+                        _ = cancellation.cancelled() => Err(Error::Cancelled),
+                        item = items.recv() => Ok(item),
+                    }?;
+                    let Some(item) = item else { break; };
+                    match item {
+                        WorkerStreamItem::Event(event) => {
+                            emitted = true;
+                            yield wire::model_event(&event)?;
                         }
-                        match status {
-                            "completed" => return,
-                            "resource-error" | "request-error" => {
-                                let message = value.get("message")
-                                    .and_then(serde_json::Value::as_str)
-                                    .unwrap_or("plugin provider call failed");
-                                Err(Error::Provider(message.to_owned()))?;
+                        WorkerStreamItem::Result(result) => {
+                            let _operation = registry.begin_operation()?;
+                            let value = result?;
+                            let status = value.get("status").and_then(serde_json::Value::as_str).unwrap_or_default();
+                            if should_retry_auth(status, attempt, emitted) {
+                                if let Some((kind, record)) = resource.as_ref() {
+                                    if find_resource(&entry, kind)?.can_prepare {
+                                        let prepared = tokio::select! {
+                                            biased;
+                                            _ = reset.cancelled() => Err(Error::Cancelled),
+                                            _ = cancellation.cancelled() => Err(Error::Cancelled),
+                                            prepared = registry.prepare_resource(&entry, &executable, kind, record.clone(), Some(record.clone())) => prepared,
+                                        }?;
+                                        resource = Some((kind.clone(), prepared));
+                                        recorder.restart_for_auth_retry(
+                                            value.get("message").and_then(serde_json::Value::as_str)
+                                                .unwrap_or("plugin authentication failed"),
+                                        ).await?;
+                                        retry = true;
+                                        break;
+                                    }
+                                }
                             }
-                            status => {
-                                Err(Error::Protocol(format!("unknown plugin provider result: {status}")))?;
+                            let patch = value.get("patch").filter(|patch| !patch.is_null())
+                                .map(|patch| serde_json::from_value::<ResourcePatch>(patch.clone())).transpose()?;
+                            if let (Some(patch), Some((kind, record))) = (patch, resource.as_ref()) {
+                                registry.inner.state.apply_patch_if_current(&plugin_id, kind, record, patch).await?;
+                            }
+                            match status {
+                                "completed" => return,
+                                "auth-error" | "resource-error" | "request-error" => {
+                                    let message = value.get("message").and_then(serde_json::Value::as_str).unwrap_or("plugin provider call failed");
+                                    Err(Error::Provider(message.to_owned()))?;
+                                }
+                                status => Err(Error::Protocol(format!("unknown plugin provider result: {status}")))?,
                             }
                         }
                     }
                 }
+                if !retry { Err(Error::Provider(format!("plugin '{plugin_id}' worker stopped mid-stream")))?; }
             }
-            Err(Error::Provider(format!("plugin '{plugin_id}' worker stopped mid-stream")))?;
+            Err(Error::Provider("plugin authentication retry exhausted".into()))?;
         })
     }
 
@@ -864,23 +892,51 @@ impl PluginRegistry {
         let record = self
             .find_record(plugin_id, resource_type, resource_id)
             .await?;
-        let value = self
-            .worker(&entry, &executable)
-            .await
-            .invoke(
-                "resource.refresh",
-                serde_json::json!({
-                    "resourceType": resource_type,
-                    "resource": record.snapshot(resource_type),
-                }),
-                self.cancellation(),
-            )
+        self.prepare_resource(&entry, &executable, resource_type, record, None)
             .await?;
-        let patch: ResourcePatch = serde_json::from_value(value)?;
-        self.inner
-            .state
-            .apply_patch(plugin_id, resource_type, resource_id, patch)
-            .await
+        let lock = self
+            .preparation_lock(plugin_id, resource_type, resource_id)
+            .await;
+        for attempt in 0..2 {
+            let guard = lock.lock().await;
+            let record = self
+                .find_record(plugin_id, resource_type, resource_id)
+                .await?;
+            let value = self.worker(&entry, &executable).await.invoke(
+                "resource.refresh",
+                serde_json::json!({"resourceType": resource_type, "resource": record.snapshot(resource_type)}),
+                self.cancellation(),
+            ).await?;
+            match serde_json::from_value::<ResourceRefreshResult>(value)? {
+                ResourceRefreshResult::Completed { patch } => {
+                    return self
+                        .inner
+                        .state
+                        .apply_patch_if_current(plugin_id, resource_type, &record, patch)
+                        .await
+                        .map(|_| ());
+                }
+                ResourceRefreshResult::AuthError { message } => {
+                    if attempt != 0 || !resource.can_prepare {
+                        return Err(Error::Provider(message));
+                    }
+                    // Preparation owns the same account lock. Release it, then persist
+                    // any rotation before querying quota again with the latest snapshot.
+                    drop(guard);
+                    self.prepare_resource(
+                        &entry,
+                        &executable,
+                        resource_type,
+                        record.clone(),
+                        Some(record),
+                    )
+                    .await?;
+                }
+            }
+        }
+        Err(Error::Provider(
+            "plugin account authentication retry exhausted".into(),
+        ))
     }
 
     pub async fn resource_action(
@@ -930,7 +986,7 @@ impl PluginRegistry {
         if let Some(patch) = result.patch.clone() {
             self.inner
                 .state
-                .apply_patch(plugin_id, resource_type, resource_id, patch)
+                .apply_patch_if_current(plugin_id, resource_type, &record, patch)
                 .await?;
         }
         Ok(serde_json::to_value(ResourceActionResponse::from(result))?)
@@ -1198,6 +1254,9 @@ impl PluginRegistry {
         let resource = match &provider.resource_type {
             Some(resource_type) => {
                 let record = self.select_resource(plugin_id, resource_type).await?;
+                let record = self
+                    .prepare_resource(entry, executable, resource_type, record, None)
+                    .await?;
                 Some(record.snapshot(resource_type))
             }
             None => None,
@@ -1299,8 +1358,49 @@ impl PluginRegistry {
         if let Some(entries) = self.inner.entries.read().await.as_ref() {
             return entries.clone();
         }
+        let mut cache = self.inner.entries.write().await;
+        if let Some(entries) = cache.as_ref() {
+            return entries.clone();
+        }
         let loaded = self.inner.catalog.entries(executable).await;
-        *self.inner.entries.write().await = Some(loaded.clone());
+        *cache = Some(loaded.clone());
+        drop(cache);
+        for entry in &loaded {
+            for resource in entry
+                .definition
+                .resources
+                .iter()
+                .filter(|resource| resource.can_prepare)
+            {
+                let registry = self.clone();
+                let entry = entry.clone();
+                let executable = executable.to_path_buf();
+                let kind = resource.resource_type.clone();
+                let reset = self.cancellation();
+                tokio::spawn(async move {
+                    let Ok(_operation) = registry.begin_operation() else {
+                        return;
+                    };
+                    if reset.is_cancelled() {
+                        return;
+                    }
+                    let records = registry
+                        .inner
+                        .state
+                        .resources(&entry.manifest.id, &kind)
+                        .await
+                        .unwrap_or_default();
+                    for record in records {
+                        if let Err(error) = registry
+                            .prepare_resource(&entry, &executable, &kind, record, None)
+                            .await
+                        {
+                            tracing::warn!(plugin = %entry.manifest.id, %error, "startup credential preparation failed");
+                        }
+                    }
+                });
+            }
+        }
         loaded
     }
 
@@ -1310,6 +1410,121 @@ impl PluginRegistry {
             .into_iter()
             .find(|entry| entry.manifest.id == plugin_id)
             .ok_or_else(|| Error::RunNotFound(format!("plugin {plugin_id}")))
+    }
+
+    async fn preparation_lock(&self, plugin: &str, kind: &str, id: &str) -> Arc<Mutex<()>> {
+        self.inner
+            .preparation_locks
+            .lock()
+            .await
+            .entry(format!("{plugin}/{kind}/{id}"))
+            .or_default()
+            .clone()
+    }
+
+    /// Once a refresh is issued, commit rotated credentials even if the model request is cancelled.
+    async fn prepare_resource(
+        &self,
+        entry: &PluginEntry,
+        executable: &Path,
+        kind: &str,
+        record: ResourceRecord,
+        rejected: Option<ResourceRecord>,
+    ) -> Result<ResourceRecord> {
+        if !find_resource(entry, kind)?.can_prepare {
+            return Ok(record);
+        }
+        let registry = self.clone();
+        let entry = entry.clone();
+        let executable = executable.to_path_buf();
+        let kind = kind.to_owned();
+        let reset = self.cancellation();
+        tokio::spawn(async move {
+            // Model cancellation must not discard rotated credentials. Plugin reset,
+            // however, cancels this lifecycle and waits for any persistence to finish.
+            let _operation = registry.begin_operation()?;
+            if reset.is_cancelled() {
+                return Err(Error::Cancelled);
+            }
+            let plugin = &entry.manifest.id;
+            let key = format!("{plugin}/{kind}/{}", record.id);
+            let lock = registry.preparation_lock(plugin, &kind, &record.id).await;
+            let _guard = tokio::select! {
+                biased;
+                _ = reset.cancelled() => return Err(Error::Cancelled),
+                guard = lock.lock() => guard,
+            };
+            // Retry failed persistence before ever exchanging another refresh token.
+            let pending = registry
+                .inner
+                .pending_preparations
+                .lock()
+                .await
+                .get(&key)
+                .cloned();
+            if let Some((snapshot, value)) = pending {
+                registry
+                    .inner
+                    .state
+                    .apply_patch_if_current(
+                        plugin,
+                        &kind,
+                        &snapshot,
+                        serde_json::from_value(value)?,
+                    )
+                    .await?;
+                registry
+                    .inner
+                    .pending_preparations
+                    .lock()
+                    .await
+                    .remove(&key);
+            }
+            let current = registry.find_record(plugin, &kind, &record.id).await?;
+            let value = registry
+                .worker(&entry, &executable)
+                .await
+                .invoke(
+                    "resource.prepare",
+                    serde_json::json!({"resourceType": kind, "resource": current.snapshot(&kind),
+                    "rejectedResource": rejected.as_ref().map(|item| item.snapshot(&kind))}),
+                    reset,
+                )
+                .await?;
+            let had_patch = !value.is_null();
+            if had_patch {
+                registry
+                    .inner
+                    .pending_preparations
+                    .lock()
+                    .await
+                    .insert(key.clone(), (current.clone(), value.clone()));
+                registry
+                    .inner
+                    .state
+                    .apply_patch_if_current(plugin, &kind, &current, serde_json::from_value(value)?)
+                    .await?;
+                registry
+                    .inner
+                    .pending_preparations
+                    .lock()
+                    .await
+                    .remove(&key);
+            }
+            let prepared = registry.find_record(plugin, &kind, &record.id).await?;
+            if had_patch && !prepared.state.is_ready(now_ms()) {
+                let message = match &prepared.state {
+                    super::state::ResourceState::Invalid { message }
+                    | super::state::ResourceState::Cooling { message, .. } => message.clone(),
+                    _ => None,
+                }
+                .unwrap_or_else(|| "plugin account is not ready".into());
+                return Err(Error::Provider(message));
+            }
+            Ok(prepared)
+        })
+        .await
+        .map_err(|error| Error::Provider(format!("credential preparation task failed: {error}")))?
     }
 
     async fn worker(&self, entry: &PluginEntry, executable: &Path) -> Arc<PluginWorker> {
@@ -1326,6 +1541,13 @@ impl PluginRegistry {
             })
             .clone()
     }
+}
+
+#[derive(Debug, serde::Deserialize)]
+#[serde(tag = "status", rename_all = "kebab-case", deny_unknown_fields)]
+enum ResourceRefreshResult {
+    Completed { patch: ResourcePatch },
+    AuthError { message: String },
 }
 
 #[derive(Debug, serde::Deserialize)]
@@ -1421,3 +1643,12 @@ fn find_resource<'a>(
             ))
         })
 }
+
+fn should_retry_auth(status: &str, attempt: usize, emitted: bool) -> bool {
+    status == "auth-error" && attempt == 0 && !emitted
+}
+
+#[cfg(test)]
+mod auth_retry_tests;
+#[cfg(test)]
+mod manual_refresh_tests;

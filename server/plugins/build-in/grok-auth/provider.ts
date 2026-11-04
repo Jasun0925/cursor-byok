@@ -78,8 +78,8 @@ async function invoke(
     return { status: "completed" };
   } catch (error) {
     if (error instanceof HttpError) {
-      if ((error.status === 401 || error.status === 403) && !isQuotaHttpError(error)) {
-        return invalidResult(error.message, "Grok authorization expired; sign in again");
+      if (error.status === 401) {
+        return { status: "auth-error", message: "Grok rejected the access token" };
       }
       if (isQuotaHttpError(error)) {
         return {

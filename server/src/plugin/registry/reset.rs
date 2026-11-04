@@ -41,6 +41,8 @@ impl PluginRegistry {
         let _operations = self.inner.operations.write().await;
         let result = async {
             self.inner.oauth_sessions.lock().await.clear();
+            self.inner.pending_preparations.lock().await.clear();
+            self.inner.preparation_locks.lock().await.clear();
             for (_, worker) in self.inner.workers.lock().await.drain() {
                 worker.stop().await;
             }
@@ -106,6 +108,8 @@ mod tests {
                 entries: RwLock::new(Some(Vec::new())),
                 workers: Mutex::new(HashMap::new()),
                 oauth_sessions: Mutex::new(HashMap::new()),
+                preparation_locks: Mutex::new(HashMap::new()),
+                pending_preparations: Mutex::new(HashMap::new()),
             }),
         };
         (directory, registry)
@@ -136,6 +140,23 @@ mod tests {
                 flow: OAuthFlow::DeviceCode,
             },
         );
+        registry
+            .preparation_lock("test-plugin", "account", "one")
+            .await;
+        registry.inner.pending_preparations.lock().await.insert(
+            "test-plugin/account/one".into(),
+            (
+                ResourceRecord {
+                    id: "one".into(),
+                    key: "one".into(),
+                    private_data: serde_json::json!({"token": "expired-test-token"}),
+                    state: crate::plugin::state::ResourceState::Ready,
+                    created_at_ms: 1,
+                    updated_at_ms: 1,
+                },
+                serde_json::json!({"privateData": {"refreshToken": "rotated-test-token"}}),
+            ),
+        );
         let old_lifecycle = registry.cancellation();
         assert_eq!(
             registry.reset().await.unwrap().state,
@@ -145,6 +166,8 @@ mod tests {
         assert!(!registry.inner.root.exists());
         assert!(registry.inner.entries.read().await.is_none());
         assert!(registry.inner.oauth_sessions.lock().await.is_empty());
+        assert!(registry.inner.pending_preparations.lock().await.is_empty());
+        assert!(registry.inner.preparation_locks.lock().await.is_empty());
         assert!(directory.path().join("test.db").exists());
         assert_eq!(
             std::fs::read_to_string(ca.join("certificate")).unwrap(),

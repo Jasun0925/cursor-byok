@@ -19,6 +19,6 @@ export default defineProviderPlugin({
     import: credentialImport,
     present: presentAccount,
     actions: [listResetCardsAction, consumeResetCardAction],
-    refresh: refreshAccount,
+    refresh: async (resource, context) => ({ status: "completed", patch: await refreshAccount(resource, context) }),
   }],
 });
