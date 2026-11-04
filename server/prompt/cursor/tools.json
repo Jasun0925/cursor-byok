@@ -112,7 +112,7 @@
       "type": "function",
       "function": {
         "name": "SembleSearch",
-        "description": "Search a source repository with hybrid semantic retrieval, BM25 lexical matching, and exact-symbol lookup. Use it to locate unknown implementations, understand behavior, find symbols and relevant code, or identify likely entry points in a code flow. The repository may be an absolute local directory or an explicit HTTP(S) Git URL.\n\nWrite natural-language queries in English because the code-specialized model performs best in English; preserve exact identifiers, literals, and code fragments unchanged. Prefer a focused query, start with top_k 5 and 8-12 snippet lines, and keep the default code scope unless documentation or configuration is specifically relevant. Results are ranked evidence, not an exhaustive text match or authoritative call graph; use Grep when every exact occurrence is required, and use SembleFindRelated to expand from a known result.",
+        "description": "Search a source repository with hybrid semantic retrieval, BM25 lexical matching, and exact-symbol lookup. Use it to locate unknown implementations, understand behavior, find symbols and relevant code, or identify likely entry points in a code flow. The repository may be an absolute directory inside the current Cursor workspace (on the remote host for SSH) or an explicit HTTP(S) Git URL.\n\nWrite natural-language queries in English because the code-specialized model performs best in English; preserve exact identifiers, literals, and code fragments unchanged. Prefer a focused query, start with top_k 5 and 8-12 snippet lines, and keep the default code scope unless documentation or configuration is specifically relevant. Results are ranked evidence, not an exhaustive text match or authoritative call graph; use Grep when every exact occurrence is required, and use SembleFindRelated to expand from a known result.",
         "parameters": {
           "type": "object",
           "properties": {
@@ -121,7 +121,7 @@
               "type": "string"
             },
             "repo": {
-              "description": "Absolute local repository directory or explicit HTTP(S) Git URL.",
+              "description": "Absolute directory inside the current Cursor workspace, on its host, or an explicit HTTP(S) Git URL.",
               "type": "string"
             },
             "query": {
@@ -138,6 +138,7 @@
               "description": "Number of ranked chunks to return.",
               "type": "integer",
               "minimum": 1,
+              "maximum": 100,
               "default": 5
             },
             "max_snippet_lines": {
@@ -164,7 +165,7 @@
               "type": "string"
             },
             "repo": {
-              "description": "The same absolute local repository directory or explicit HTTP(S) Git URL used for search.",
+              "description": "The same directory on the Cursor workspace host or explicit HTTP(S) Git URL used for search.",
               "type": "string"
             },
             "file_path": {
@@ -186,6 +187,7 @@
               "description": "Number of ranked related chunks to return.",
               "type": "integer",
               "minimum": 1,
+              "maximum": 100,
               "default": 5
             },
             "max_snippet_lines": {

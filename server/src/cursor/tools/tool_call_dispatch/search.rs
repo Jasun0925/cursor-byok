@@ -1,38 +1,26 @@
-//! Dispatches search Tool calls.
-//! Cursor tool orchestration for application-owned Semble search.
-
+//! Start one workspace-owned semantic search; no server-local path substitution.
+use super::ToolStart;
 use crate::{
     cursor::tools::{
-        runtime::now_ms,
-        tool_call_result::{self as result, ToolResultSender},
+        runtime::{CursorToolRuntime, ExecContext},
+        semble,
+        tool_call_result::ToolResultSender,
     },
     model::ToolCall,
-    search,
     store::Store,
     Result,
 };
 
-use super::ToolStart;
-
-pub(super) fn start(
+pub(super) async fn start(
+    runtime: &CursorToolRuntime,
     results: &ToolResultSender,
     call: &ToolCall,
+    context: &ExecContext,
     store: Option<Store>,
 ) -> Result<ToolStart> {
-    let tool_name = super::normalized(&call.name);
-    let arguments = call.arguments.clone();
-    let call = call.clone();
-    let results = results.clone();
-    let started_at_ms = now_ms();
-    tokio::spawn(async move {
-        let output = search::execute_semble(&tool_name, arguments, store).await;
-        match result::semble(&call, started_at_ms, output) {
-            Ok(completion) => results.send(completion),
-            Err(error) => results.send_error(error),
-        }
-    });
+    let message = semble::start(runtime, results, call, context, store).await?;
     Ok(ToolStart {
-        messages: Vec::new(),
+        messages: message.into_iter().collect(),
         completion: None,
     })
 }

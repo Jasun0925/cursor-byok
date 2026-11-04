@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+      - 'codex/**'
 
 permissions:
   contents: read
@@ -86,6 +87,16 @@ jobs:
 
       - name: Run platform Clippy
         run: cargo clippy --package cursor-byok-desktop --all-targets -- -D warnings
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Test workspace collection on the native host
+        run: "cargo test --package cursor-server --lib search::snapshot::"
+
+      - name: Test host-independent source selection and snapshots
+        run: cargo test --package semble-core --test inventory_policy --test request_snapshot
 
       - name: Test SQLite storage reclamation on the native host
         run: "cargo test --package cursor-server --lib store::storage::"

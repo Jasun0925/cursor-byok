@@ -2,7 +2,7 @@
 use std::{
     collections::{HashMap, HashSet},
     sync::{
-        atomic::{AtomicU32, Ordering},
+        atomic::{AtomicBool, AtomicU32, Ordering},
         Arc,
     },
 };
@@ -20,6 +20,12 @@ pub struct CursorToolRuntime {
     interactions: Arc<Mutex<HashMap<u32, PendingInteraction>>>,
     completed: Arc<Mutex<HashMap<u32, String>>>,
     interrupted: Arc<Mutex<HashSet<u32>>>,
+    searches: Arc<Mutex<HashMap<String, SearchWork>>>,
+}
+
+struct SearchWork {
+    cancelled: Arc<AtomicBool>,
+    worker: Option<tokio::task::AbortHandle>,
 }
 
 pub(crate) struct PendingExec {
@@ -35,6 +41,7 @@ pub(crate) enum ExecStage {
     Direct,
     DynamicMcp(pb::McpToolDefinition),
     EditRead,
+    Semble(Box<super::semble::SembleExecution>),
     EditWrite(EditWrite),
 }
 
@@ -47,6 +54,7 @@ pub struct ExecContext {
     pub allow_subagents: bool,
     pub subagents_disabled: bool,
     pub terminals_folder: String,
+    pub workspace_paths: Vec<String>,
     pub admin_command_denylist: Vec<String>,
     pub mcp_routes: HashMap<(String, String), McpRoute>,
 }
@@ -127,7 +135,128 @@ impl CursorToolRuntime {
             interactions: Arc::new(Mutex::new(HashMap::new())),
             completed: Arc::new(Mutex::new(HashMap::new())),
             interrupted: self.interrupted.clone(),
+            searches: Arc::new(Mutex::new(HashMap::new())),
         }
+    }
+
+    pub(crate) async fn register_search(&self, call_id: &str) -> Arc<AtomicBool> {
+        let cancelled = Arc::new(AtomicBool::new(false));
+        if let Some(previous) = self.searches.lock().await.insert(
+            call_id.into(),
+            SearchWork {
+                cancelled: cancelled.clone(),
+                worker: None,
+            },
+        ) {
+            previous.cancelled.store(true, Ordering::Release);
+            if let Some(worker) = previous.worker {
+                worker.abort();
+            }
+        }
+        cancelled
+    }
+
+    pub(crate) async fn attach_search_worker(
+        &self,
+        call_id: &str,
+        cancelled: &Arc<AtomicBool>,
+        worker: tokio::task::AbortHandle,
+    ) {
+        let mut searches = self.searches.lock().await;
+        if let Some(work) = searches
+            .get_mut(call_id)
+            .filter(|work| Arc::ptr_eq(&work.cancelled, cancelled))
+        {
+            work.worker = Some(worker);
+        } else {
+            worker.abort();
+        }
+    }
+
+    pub(crate) async fn finish_search(
+        &self,
+        call_id: &str,
+        cancelled: &Arc<AtomicBool>,
+        results: &super::tool_call_result::ToolResultSender,
+        completion: Result<super::tool_call_result::ToolCompletion>,
+    ) {
+        let mut searches = self.searches.lock().await;
+        if searches
+            .get(call_id)
+            .is_some_and(|owner| Arc::ptr_eq(&owner.cancelled, cancelled))
+        {
+            if !cancelled.load(Ordering::Acquire) {
+                match completion {
+                    Ok(value) => results.send(value),
+                    Err(error) => results.send_error(error),
+                }
+            }
+            searches.remove(call_id);
+        }
+    }
+
+    async fn cancel_searches(&self) {
+        for (_, work) in self.searches.lock().await.drain() {
+            work.cancelled.store(true, Ordering::Release);
+            if let Some(worker) = work.worker {
+                worker.abort();
+            }
+        }
+    }
+
+    pub(crate) async fn reserve_semble(
+        &self,
+        call: &ToolCall,
+        context: &ExecContext,
+        state: Box<super::semble::SembleExecution>,
+        started_at_ms: u64,
+    ) -> Result<u32> {
+        let mut execs = self.execs.lock().await;
+        if state.cancelled.load(Ordering::Acquire) {
+            return Err(Error::Protocol("Semble search was cancelled".into()));
+        }
+        let id = self.next_id()?;
+        execs.insert(
+            id,
+            PendingExec {
+                call: call.clone(),
+                context: context.clone(),
+                started_at_ms,
+                stdout: String::new(),
+                stderr: String::new(),
+                stage: ExecStage::Semble(state),
+            },
+        );
+        Ok(id)
+    }
+
+    pub(crate) async fn is_semble(&self, id: u32) -> bool {
+        self.execs
+            .lock()
+            .await
+            .get(&id)
+            .is_some_and(|entry| matches!(entry.stage, ExecStage::Semble(_)))
+    }
+
+    pub(crate) async fn append_semble_output(
+        &self,
+        id: u32,
+        text: &str,
+        stdout: bool,
+    ) -> std::result::Result<(), String> {
+        let mut entries = self.execs.lock().await;
+        if let Some(entry) = entries.get_mut(&id) {
+            let (buffer, limit) = if stdout {
+                (&mut entry.stdout, crate::search::snapshot::MAX_OUTPUT_BYTES)
+            } else {
+                (&mut entry.stderr, 16384)
+            };
+            if text.len() > limit.saturating_sub(buffer.len()) {
+                return Err("Semble collector output exceeded its limit".into());
+            }
+            buffer.push_str(text);
+        }
+        Ok(())
     }
 
     pub async fn reserve_exec(&self, call: &ToolCall, context: &ExecContext) -> Result<u32> {
@@ -279,6 +408,7 @@ impl CursorToolRuntime {
     }
 
     pub async fn drain_running(&self) -> Vec<u32> {
+        self.cancel_searches().await;
         let mut entries = self.execs.lock().await;
         let mut ids = entries.drain().map(|(id, _)| id).collect::<Vec<_>>();
         ids.sort_unstable();
@@ -289,6 +419,7 @@ impl CursorToolRuntime {
     }
 
     pub async fn interrupt_for_run_replacement(&self) -> Vec<u32> {
+        self.cancel_searches().await;
         let mut execs = self.execs.lock().await;
         let mut abort_ids = execs.keys().copied().collect::<Vec<_>>();
         let mut interrupted_ids = abort_ids.clone();
@@ -307,6 +438,7 @@ impl CursorToolRuntime {
     }
 
     pub async fn interrupt_for_message(&self) -> Vec<u32> {
+        self.cancel_searches().await;
         let (abort_ids, interrupted_ids) = {
             let mut entries = self.execs.lock().await;
             let mut abort_ids = Vec::new();
