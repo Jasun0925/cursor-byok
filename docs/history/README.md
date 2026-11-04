@@ -2,6 +2,7 @@
 
 这里保存当时的版本、输入、测试、失败与验收边界。它们不表示当前仍待执行，也不表示所有问题已经解决。当前状态以 [工作状态](../work-status.md)、[Issue 清单](../issues.md)和 [PR 清单](../pull-requests.md)为准。
 
+- [2026-11-04 分支合并与验证](2026-11-04-branch-integration.md)
 - [历史发布与资产核验](releases.md)
 - [2026-09-30 上游同步](upstream-sync/2026-09-30.md)
 

@@ -1,6 +1,6 @@
 # Issue 清单
 
-整理：2026-11-02；本地工作状态最后核对：2026-11-01。上游元数据以 [2026-10-27 快照](history/issues/2026-10-27.snapshot.json) 为准，当时开放 104 项；保留首次收集的 100 项和后续 6 项，关闭或无法访问不等于本地已解决。
+整理：2026-11-04；本轮合入状态已核对。上游元数据以 [2026-10-27 快照](history/issues/2026-10-27.snapshot.json) 为准，当时开放 104 项；保留首次收集的 100 项和后续 6 项，关闭或无法访问不等于本地已解决。
 
 - **先看进度**：[已做好与未完成工作](work-status.md)。
 - **看安装包包含什么**：[维护状态](maintenance-status.md)。
@@ -12,8 +12,8 @@
 
 | 项目 | 已完成 | 剩余 |
 | --- | --- | --- |
-| #469 远程 Semble | 主机采集/分页等已推送；最新审批候选本机回归通过 | 审批候选未提交；真实批准/拒绝及 Windows Cursor UI 待验收 |
-| #445 / #481 OAuth | 独立分支实现并推送，有隔离测试 | 真实账号验收；#481 依赖 #445 分支，均未合入发布 |
+| #469 远程 Semble | 主机采集/分页等已合入 main；本地审批候选回归通过 | 审批候选未提交；真实批准/拒绝及 Windows Cursor UI 待验收 |
+| #445 / #481 OAuth | 实现已合入 main，有隔离测试 | 真实账号验收；API 2 依赖已一起合入，尚未发布 |
 | #155 后台任务 | v1.0.17 普通短任务自动续答和去重通过 | 仍为完成一半；审批、压缩等边界未完整覆盖，不测 20 分钟 |
 | #505 多 reasoning signature | 合成 checkpoint 失败已复现 | 原网关证据及修复尚缺 |
 
@@ -105,7 +105,7 @@
 
 | 完成 | Issue / 原标题 | 分级 | 本地状态 | 下一步 / 证据线索 |
 | --- | --- | --- | --- | --- |
-| ☐ | [#469](https://github.com/leookun/cursor-byok/issues/469) v1.0.0 版本在更新 cursor 后无法在服务器上使用 | A | 基础路由/检索已实测；审批候选未提交、待实机验收 | v1.0.17 可用 [always 配置](remote-ssh.md)。开发分支的 WebFetch、采集、忽略规则、多批及大目录分页已有 [SSH 验收](history/issues/2026-10-27-issue469-paging-live.md)，[Python 导入隔离](history/issues/2026-10-28-issue469-python-isolation-fix.md)已修复。后续 [真实审批自动取消](history/issues/2026-10-30-issue469-approval-evidence.json)已复现；独立终端卡片候选自动化通过，批准/拒绝及 Windows Cursor UI 未验收，未合入发布。当前分支与测试边界见 [工作状态](work-status.md)。 |
+| ☐ | [#469](https://github.com/leookun/cursor-byok/issues/469) v1.0.0 版本在更新 cursor 后无法在服务器上使用 | A | 基础路由/检索已实测；审批候选未提交、待实机验收 | v1.0.17 可用 [always 配置](remote-ssh.md)。已合入 main 的 WebFetch、采集、忽略规则、多批及大目录分页已有 [SSH 验收](history/issues/2026-10-27-issue469-paging-live.md)，[Python 导入隔离](history/issues/2026-10-28-issue469-python-isolation-fix.md)已修复。后续 [真实审批自动取消](history/issues/2026-10-30-issue469-approval-evidence.json)已复现；独立终端卡片候选自动化通过，批准/拒绝及 Windows Cursor UI 未验收，审批补丁未合入，安装包未发布。当前分支与测试边界见 [工作状态](work-status.md)。 |
 | ☐ | [#465](https://github.com/leookun/cursor-byok/issues/465) The model you chose is not available | A | 作者报恢复，待独立复测 | 作者称合并 #433 后恢复；需复测无真实调用记录的问题，不能直接照搬该 PR 的广泛拦截。 |
 | ☐ | [#478](https://github.com/leookun/cursor-byok/issues/478) 使用 multi model review 时候，无法选择官方模型+自定义模型 | B | 待现版复测 | 先复现 multi-model review 的模型列表和调用路由；区分官方/自定义模型限制。 |
 | ☐ | [#467](https://github.com/leookun/cursor-byok/issues/467) 插件代理不可用 | B | 待现版复测 | 区分 Cursor 扩展网络、系统代理与 BYOK 代理，记录实际出口。 |
@@ -134,8 +134,8 @@
 
 | 完成 | Issue / 原标题 | 分级 | 本地状态 | 下一步 / 证据线索 |
 | --- | --- | --- | --- | --- |
-| ☐ | [#445](https://github.com/leookun/cursor-byok/issues/445) [Bug] Grok 登录令牌到期后不会自动续期，已保存的 refresh_token 未使用 | A | 已修复待实机验收 | 基线续期探针、模型准备取消与不透明 token 手动刷新均先复现再修复。Grok 23 项脚本、36 项宿主测试通过；手动刷新及 API 2 提交的四组 CI 全通过。插件 API 2 同步适配三个内置插件；真实账号未验收，未合入未发布。见 [记录](history/issues/2026-10-27-issue445-check.md)。 |
-| ☐ | [#481](https://github.com/leookun/cursor-byok/issues/481) GPT和Gemini账号令牌过期 | B | 隔离已复现，修复待合入 | Codex/Gemini 改用 API 2 prepare；补齐 Google 手动刷新失效状态阻断、401 被吞及失败误报成功。40 项宿主、16 项 Google 回归通过，见 [复查记录](history/issues/2026-10-28-issue481-check.md)。PR #6 依赖 PR #4，真实账号待验收。 |
+| ☐ | [#445](https://github.com/leookun/cursor-byok/issues/445) [Bug] Grok 登录令牌到期后不会自动续期，已保存的 refresh_token 未使用 | A | 源码已合入；真实账号待验收 | 基线续期探针、模型准备取消与不透明 token 手动刷新均先复现再修复。Grok 23 项脚本、最新 Linux/macOS 宿主各 37 项及 Windows 38 项通过；四组 CI 全通过，含详细日志认证重试回归。插件 API 2 同步适配三个内置插件；真实账号未验收，已通过 fork PR #4 合入 main，尚未发布。见 [记录](history/issues/2026-10-27-issue445-check.md)。 |
+| ☐ | [#481](https://github.com/leookun/cursor-byok/issues/481) GPT和Gemini账号令牌过期 | B | 源码已合入；真实账号待验收 | Codex/Gemini 改用 API 2 prepare；补齐 Google 手动刷新失效状态阻断、401 被吞及失败误报成功。最新 Linux/macOS 宿主各 41 项、Windows 42 项及 Google 16 项脚本通过，见 [复查记录](history/issues/2026-10-28-issue481-check.md)。PR #4 与 #6 均已合入 main，真实账号待验收，尚未发布。 |
 | ☐ | [#191](https://github.com/leookun/cursor-byok/issues/191) 额度显示 | C | 需求待评估 | 核对现版账号额度面板已有覆盖，按具体供应商补需求。 |
 
 ### 安装、桌面界面与数据（11 项）
