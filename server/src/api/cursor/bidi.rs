@@ -172,10 +172,19 @@ pub fn decode(request: &ai::BidiAppendRequest) -> Result<DecodedAppend> {
     }
     let payload = hex::decode(&request.data)
         .map_err(|error| Error::Protocol(format!("invalid BidiAppend hex: {error}")))?;
+    let message = agent::AgentClientMessage::decode(payload.as_slice()).inspect_err(|error| {
+        tracing::warn!(
+            request_id,
+            seqno = request.append_seqno,
+            payload_len = payload.len(),
+            %error,
+            "cannot decode BidiAppend AgentClientMessage"
+        );
+    })?;
     Ok(DecodedAppend {
         request_id: request_id.into(),
         seqno: request.append_seqno,
-        message: agent::AgentClientMessage::decode(payload.as_slice())?,
+        message,
     })
 }
 
@@ -208,4 +217,46 @@ pub async fn append(
         })
         .await?;
     Ok(ai::BidiAppendResponse {})
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::io::{Read, Seek, SeekFrom};
+
+    #[test]
+    fn decode_failure_logs_metadata_without_payload() {
+        let mut log = tempfile::tempfile().unwrap();
+        let writer = log.try_clone().unwrap();
+        let subscriber = tracing_subscriber::fmt()
+            .without_time()
+            .with_ansi(false)
+            .with_writer(move || writer.try_clone().unwrap())
+            .finish();
+        // Field 1 must be length-delimited, not a 32-bit value.
+        let mut payload = vec![0x0d];
+        payload.extend_from_slice(b"private-conversation-content");
+        let request = ai::BidiAppendRequest {
+            request_id: Some(ai::BidiRequestId {
+                request_id: "decode-failure-test".into(),
+            }),
+            append_seqno: 7,
+            data: hex::encode(&payload),
+            ..Default::default()
+        };
+
+        tracing::subscriber::with_default(subscriber, || {
+            assert!(decode(&request).is_err());
+        });
+        log.seek(SeekFrom::Start(0)).unwrap();
+        let mut output = String::new();
+        log.read_to_string(&mut output).unwrap();
+        assert!(output.contains("cannot decode BidiAppend AgentClientMessage"));
+        assert!(output.contains("decode-failure-test"));
+        assert!(output.contains("seqno=7"));
+        assert!(output.contains(&format!("payload_len={}", payload.len())));
+        assert!(!output.contains("private-conversation-content"));
+        assert!(!output.contains(&hex::encode(&payload)));
+        assert!(!output.contains("payload_prefix"));
+    }
 }
