@@ -28,7 +28,7 @@ rg -n -i '广告|advertisement|promotions|AdMenu|FloatingAd|react-css-marquee|in
 | --- | --- |
 | `apps/desktop/src-tauri/tauri.conf.json` | `plugins.updater.endpoints` 指向 `https://github.com/renhao12356578/cursor-byok/releases/latest/download/latest.json`；保留用户当前公钥 |
 | `apps/desktop/src-tauri/src/update/mod.rs` | Windows 便携更新指向同仓库的 `portable-latest.json` |
-| `README.md`、`README-CN.md` | 改版下载链接和版本徽章指向用户仓库；原作者署名、协议来源及上游链接可保留 |
+| `README.md`、`README-EN.md` | 默认中文，顶部 English 链接进入英文版；下载链接和版本徽章指向用户仓库，保留原作者署名、协议来源及上游链接 |
 | `.github/workflows/release.yml`、`.github/scripts/` | 使用当前 GitHub 仓库生成产物 URL，发布所有平台成功后才公开 Release |
 | `.tauri/cursor-byok.key` | 既有私钥，仅本地与用户仓库的 `TAURI_SIGNING_PRIVATE_KEY` Secret 持有；目录继续被忽略 |
 | `.tauri/cursor-byok.key.pub` | 本地公钥，应与应用配置一致；不要把公钥值硬编码进技能，避免形成多个来源 |

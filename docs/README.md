@@ -10,7 +10,7 @@
 | 上游 PR 能否采用、风险是什么 | [PR 审查清单](pull-requests.md) |
 | Remote SSH 如何配置 | [远程连接指南](remote-ssh.md) |
 | 复现、失败基线、验收、截图与旧发布 | [历史资料](history/README.md) |
-| 安装、功能和使用说明 | [中文 README](../README-CN.md) / [English README](../README.md) |
+| 安装、功能和使用说明 | [中文 README](../README.md) / [English README](../README-EN.md) |
 | Semble 来源与基准测试 | [来源](../UPSTREAM.md) / [基准说明](../support/benchmarks/semble/README.md) |
 
 ```text
