@@ -6,7 +6,7 @@
 
 Free and open source · No ads · macOS / Windows / Linux
 
-[中文说明](./README-CN.md) · [Download](https://github.com/haohaomin/cursor-byok/releases/latest) · [Quick start](#quick-start) · [Docs](docs/README.md) · [Report an issue](https://github.com/haohaomin/cursor-byok/issues)
+[中文说明](./README-CN.md) · [Download](https://github.com/haohaomin/cursor-byok/releases/latest) · [Quick start](#quick-start) · [Maintenance](#ongoing-maintenance-and-upstream-work) · [Docs](docs/README.md) · [Disclaimer](#disclaimer) · [Report an issue](https://github.com/haohaomin/cursor-byok/issues)
 
 [![Release](https://img.shields.io/github/v/release/haohaomin/cursor-byok?style=flat-square)](https://github.com/haohaomin/cursor-byok/releases/latest)
 [![CI](https://github.com/haohaomin/cursor-byok/actions/workflows/ci.yml/badge.svg)](https://github.com/haohaomin/cursor-byok/actions/workflows/ci.yml)
@@ -14,7 +14,22 @@ Free and open source · No ads · macOS / Windows / Linux
 
 </div>
 
-> **This repository is maintained by [haohaomin](https://github.com/haohaomin).** The original [leookun/cursor-byok](https://github.com/leookun/cursor-byok) project is no longer maintained and has been archived. I continue development, bug fixes, and releases here. Please use this repository for downloads, updates, issues, and pull requests. Thanks to the original author and all contributors.
+> [!IMPORTANT]
+> **Upstream maintenance has stopped; this repository is personally maintained by [haohaomin](https://github.com/haohaomin).** The original [leookun/cursor-byok](https://github.com/leookun/cursor-byok) project is archived. I am continuing to investigate and fix unresolved upstream issues, evaluate unmerged pull requests, and maintain future releases. Please use this repository for downloads, updates, issues, and contributions. Thanks to the original author and all contributors.
+
+## Ongoing maintenance and upstream work
+
+**My current focus is resolving upstream issues and bringing validated community improvements into this fork.** I prioritize work by impact, reproducibility, and the time I can contribute, with public records of completed fixes, open problems, and validation limits.
+
+| Maintenance area | Approach and progress |
+| --- | --- |
+| Upstream issues | Reproduce, investigate, fix, and run regression checks. Reports without enough evidence or pending real-world validation remain open in the checklist. See the [issue checklist](docs/issues.md). |
+| Upstream pull requests | Review suitability and risk, then adopt, adapt, complete, or reimplement changes while retaining contributor attribution and validation records. A listed PR is not necessarily merged. See the [PR checklist](docs/pull-requests.md). |
+| Releases and compatibility | Fix problems in this fork, follow Cursor changes, and publish updates. Source merges, automated checks, real-world validation, and packaged releases are tracked separately. See [maintenance status](docs/maintenance-status.md) and [release notes](https://github.com/haohaomin/cursor-byok/releases). |
+
+Work so far covers Responses output, subagent execution and result delivery, SQLite, OAuth renewal, and Remote SSH. Background tasks, real accounts, and client approvals still have unresolved or unverified cases. **This does not mean every upstream issue is fixed or every PR will be merged.** See [work status](docs/work-status.md) for completed and remaining work, and the [documentation index](docs/README.md) for supporting records. Detailed maintenance records are currently in Chinese.
+
+**Source fixes may not be included in an installer yet. Check the release notes for the version you download.**
 
 ![Cursor BYOK dashboard](./images/en-home-1.png)
 
@@ -131,19 +146,6 @@ In **Settings → TAB Settings**, choose a public service, official direct conne
 | Existing data missing after an upgrade | Check the OS user, data directory, and application copy before clearing any database. |
 | TAB fails while Agent works | Check TAB mode, service availability, and account quota separately. |
 
-## Maintenance and documentation
-
-I continue investigating existing issues, validating community patches, and publishing updates. **Released, merged, in development, and awaiting validation are tracked separately.** A source or development-branch fix may not be in an installer yet. Consult each release's notes for its contents.
-
-| What you need | Where to look |
-| --- | --- |
-| Changes in published builds | [Release notes](https://github.com/haohaomin/cursor-byok/releases) |
-| Fixes and known limitations | [Maintenance status](docs/maintenance-status.md) |
-| Completed work, remaining work, and development branches | [Work status](docs/work-status.md) |
-| Issue and PR investigations with validation evidence | [Documentation index](docs/README.md) · [Issue checklist](docs/issues.md) · [PR checklist](docs/pull-requests.md) |
-
-The detailed maintenance documents are currently in Chinese.
-
 ## Local development
 
 Use Rust stable, Node.js 22, npm, Make, and the [Tauri 2 platform prerequisites](https://v2.tauri.app/start/prerequisites/).
@@ -205,12 +207,19 @@ Extend model protocols in `server/src/provider/`. The host in `server/src/plugin
 
 ## Support and contributing
 
-Report problems in [this repository's Issues](https://github.com/haohaomin/cursor-byok/issues) or submit improvements through [Pull Requests](https://github.com/haohaomin/cursor-byok/pulls). Include your **OS, Cursor/BYOK versions, model protocol, reproduction steps, and redacted errors**. Link an existing upstream report when relevant.
+Report problems in [this repository's Issues](https://github.com/haohaomin/cursor-byok/issues) or submit improvements through [Pull Requests](https://github.com/haohaomin/cursor-byok/pulls). Include your **OS, Cursor/BYOK versions, model protocol, reproduction steps, and redacted errors**. For an existing upstream issue or PR, check the maintenance lists and include its original link. Reproduction cases, redacted logs, and validation on other platforms are welcome.
 
 Read [AGENTS.md](./AGENTS.md) before contributing code. Keep changes focused, add regression coverage where needed, and run the relevant checks. For new features or substantial changes, open an issue to discuss the approach first. Do not publish credentials or private conversations.
+
+## Disclaimer
+
+- **Independent project:** This is a personally maintained community fork. It is not affiliated with, partnered with, or endorsed by Cursor or model service providers, and does not claim to be an official successor designated by the original author. Names and trademarks belong to their respective owners.
+- **Compatibility and maintenance:** Availability depends on Cursor versions, model capabilities, API protocols, and third-party services. The maintainer does not guarantee ongoing compatibility with every feature, account, or environment, or a deadline for fixing each issue. Passing tests establish only the documented validation scope.
+- **Accounts, data, and costs:** Use only accounts, credentials, and services you are authorized to access, and follow applicable service terms and laws. You are responsible for choosing and assessing providers, securing credentials, backing up important data, reviewing Agent file operations and commands, and paying for the services you use. A local gateway does not mean offline processing; do not send sensitive content to a service that is not authorized to receive it.
+- **No warranty and limited liability:** The software is provided “as is” under the [MIT License](./LICENSE), without express or implied warranties. To the extent permitted by applicable law, the authors and copyright holders are not liable for claims, damages, or other liability arising from use of the software. The license text governs the full permission, warranty, and liability terms.
 
 ## Credits and license
 
 This independently maintained repository is based on [leookun/cursor-byok](https://github.com/leookun/cursor-byok). Thanks to [leookun](https://github.com/leookun) and the [original contributors](https://github.com/leookun/cursor-byok/graphs/contributors). Screenshots come from the original project; the installed version's interface may differ. Semble provenance is documented in [UPSTREAM.md](./UPSTREAM.md).
 
-Distributed under the [MIT License](./LICENSE), retaining the original copyright notice. This project is not affiliated with Cursor.
+Distributed under the [MIT License](./LICENSE), retaining the original copyright notice and contributor attribution.

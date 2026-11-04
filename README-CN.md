@@ -6,7 +6,7 @@
 
 免费开源 · 无广告 · macOS / Windows / Linux
 
-[English](./README.md) · [下载最新版](https://github.com/haohaomin/cursor-byok/releases/latest) · [快速开始](#快速开始) · [文档](docs/README.md) · [问题反馈](https://github.com/haohaomin/cursor-byok/issues)
+[English](./README.md) · [下载最新版](https://github.com/haohaomin/cursor-byok/releases/latest) · [快速开始](#快速开始) · [维护进度](#持续维护与上游问题处理) · [文档](docs/README.md) · [免责声明](#免责声明) · [问题反馈](https://github.com/haohaomin/cursor-byok/issues)
 
 [![Release](https://img.shields.io/github/v/release/haohaomin/cursor-byok?style=flat-square)](https://github.com/haohaomin/cursor-byok/releases/latest)
 [![CI](https://github.com/haohaomin/cursor-byok/actions/workflows/ci.yml/badge.svg)](https://github.com/haohaomin/cursor-byok/actions/workflows/ci.yml)
@@ -14,7 +14,22 @@
 
 </div>
 
-> **本仓库由 [haohaomin](https://github.com/haohaomin) 持续维护。** 原项目 [leookun/cursor-byok](https://github.com/leookun/cursor-byok) 已停止维护并归档，我在其基础上继续开发、修复问题和发布版本。后续下载、更新、Issue 和 PR 请使用本仓库的入口。感谢原作者与所有贡献者。
+> [!IMPORTANT]
+> **上游已停止维护，本仓库由 [haohaomin](https://github.com/haohaomin) 个人持续维护。** 原项目 [leookun/cursor-byok](https://github.com/leookun/cursor-byok) 已归档。我正在继续排查和修复上游遗留的 Issue，评估尚未合入的 PR，并维护后续版本。下载、更新、问题反馈与贡献请使用本仓库的入口。感谢原作者与所有贡献者。
+
+## 持续维护与上游问题处理
+
+**当前维护重点是继续解决上游遗留问题，并把经过验证的社区改进带入这个 fork。** 我会结合问题影响、复现条件和个人可投入的时间推进，公开记录已完成的修复、未解决的问题和验证边界。
+
+| 维护方向 | 处理方式与进度 |
+| --- | --- |
+| 上游 Issue | 逐项复现、定位、修复和回归验证；缺少证据或尚未完成实机验收的条目继续保留待办。查看 [Issue 清单](docs/issues.md)。 |
+| 上游 PR | 审查适用性与风险，选择采纳、适配补全或重新实现，保留贡献者署名与验证记录。收录进清单不代表已经合并。查看 [PR 清单](docs/pull-requests.md)。 |
+| 版本与兼容性 | 持续修复本 fork 的问题、跟进 Cursor 变化并发布更新；源码合入、自动化测试、真实环境验收和安装包发布分别记录。查看 [维护状态](docs/maintenance-status.md)与 [版本记录](https://github.com/haohaomin/cursor-byok/releases)。 |
+
+已有工作覆盖 Responses 输出、子代理执行与结果交付、SQLite、OAuth 续期及 Remote SSH 等方向；后台任务、真实账号和客户端审批等场景仍有待处理或验收的部分。**这不表示所有上游 Issue 已解决，也不表示所有 PR 都会合入。** 最新已完成/未完成事项见 [工作状态](docs/work-status.md)，详细资料见 [文档导航](docs/README.md)。
+
+**源码中的修复可能尚未进入安装包，下载前请以对应版本的发布说明为准。**
 
 ![Cursor BYOK 控制面板](./images/en-home-1.png)
 
@@ -131,17 +146,6 @@ Cursor 更新后如果连接失效，重新检查应用内的 Cursor 配置并�
 | 升级后看不到原数据 | 先确认系统用户、数据目录和运行的应用副本，不要先清空数据库。 |
 | TAB 不可用但 Agent 正常 | 单独检查 TAB 模式、服务可用性和官方账号额度。 |
 
-## 维护进度与文档
-
-我会继续处理已有问题、验证社区补丁并发布更新。**已发布、已合入源码、开发中和待验收分别记录**；源码或测试分支中的修复可能尚未进入安装包。安装包包含的改动以对应版本的发布说明为准。
-
-| 需要了解什么 | 入口 |
-| --- | --- |
-| 安装包的更新内容 | [版本记录](https://github.com/haohaomin/cursor-byok/releases) |
-| 已修复内容与已知限制 | [维护状态](docs/maintenance-status.md) |
-| 已完成、未完成及开发分支 | [工作状态](docs/work-status.md) |
-| Issue、PR 调查与验收依据 | [文档导航](docs/README.md) · [Issue 清单](docs/issues.md) · [PR 清单](docs/pull-requests.md) |
-
 ## 本地开发
 
 需要 Rust stable、Node.js 22、npm、Make，以及 [Tauri 2 平台依赖](https://v2.tauri.app/start/prerequisites/)。
@@ -203,12 +207,19 @@ Cursor → 本地接入 / 协议编译 → Agent 运行时 ↔ SQLite 会话状�
 
 ## 反馈与贡献
 
-欢迎到[本仓库 Issues](https://github.com/haohaomin/cursor-byok/issues)反馈问题，或通过 [Pull Requests](https://github.com/haohaomin/cursor-byok/pulls)提交改进。反馈请提供 **操作系统、Cursor/BYOK 版本、模型协议、复现步骤和脱敏错误**；与旧上游问题相关时，附上原链接即可。
+欢迎到[本仓库 Issues](https://github.com/haohaomin/cursor-byok/issues)反馈问题，或通过 [Pull Requests](https://github.com/haohaomin/cursor-byok/pulls)提交改进。反馈请提供 **操作系统、Cursor/BYOK 版本、模型协议、复现步骤和脱敏错误**；与上游已有 Issue 或 PR 相关时，请先查看维护清单，并附上原链接；欢迎补充复现样例、脱敏日志和不同平台的验证结果。
 
 提交代码前请阅读 [AGENTS.md](./AGENTS.md)，保持改动范围明确，按改动补充必要的回归验证并运行相关检查。新功能或较大改动建议先通过 Issue 讨论。不要在公开反馈中附带密钥、凭据或私人对话。
+
+## 免责声明
+
+- **独立维护项目**：本仓库是社区个人维护的 fork，与 Cursor 官方及模型服务商无隶属、合作或背书关系，也不代表原作者指定了本仓库作为官方继任项目。相关名称与商标归各自权利人所有。
+- **兼容性与维护范围**：可用性取决于 Cursor 版本、模型能力、接口协议和第三方服务状态。维护者不保证所有功能、账号或环境持续兼容，也不承诺每个问题的修复时间；已通过的测试仅代表所记录的验证范围。
+- **账号、数据与费用**：请使用有权访问的账号、密钥和服务，并遵守相关服务条款及适用法律。你需要自行选择和评估模型服务商，妥善保管凭据、备份重要数据、审阅 Agent 的文件和命令操作，并承担所选服务产生的费用。本地网关不等于离线处理，请勿向无权接收相关信息的服务提交敏感内容。
+- **无担保与责任限制**：软件按 [MIT License](./LICENSE)“按现状”提供，不作明示或默示担保。在适用法律允许的范围内，作者和版权持有人不对因使用本软件产生的索赔、损害或其他责任承担责任；完整的授权、担保与责任限制以许可证正文为准。
 
 ## 致谢与许可
 
 本仓库基于 [leookun/cursor-byok](https://github.com/leookun/cursor-byok) 独立维护，感谢 [leookun](https://github.com/leookun) 与[原项目贡献者](https://github.com/leookun/cursor-byok/graphs/contributors)。页面截图沿用原项目素材，实际界面以安装版本为准。Semble 的来源与署名见 [UPSTREAM.md](./UPSTREAM.md)。
 
-项目采用 [MIT License](./LICENSE)，保留原有版权声明。本项目与 Cursor 官方无隶属关系。
+项目采用 [MIT License](./LICENSE)，保留原有版权声明及贡献者署名。
