@@ -180,7 +180,7 @@ server/
 | [#474](https://github.com/leookun/cursor-byok/pull/474) | `24316e9642a8e6c3e048bb70a255c8200fe4f130` |
 | [#466](https://github.com/leookun/cursor-byok/pull/466) | `1cfcf4a994f357f27426387344efc0c795dcc6dd` |
 | [#460](https://github.com/leookun/cursor-byok/pull/460) | `98d57a0a605843a9f7d1a8af441772935520d831` |
-| [#459](https://github.com/leookun/cursor-byok/pull/459) | Grok OAuth 自动续期与思考强度 | B | 17；+1073/-59 | 未见 | 现版冲突已适配并补全 | [现版验证](history/issues/2026-10-27-issue445-check.md) 已复现并修复 #445；排除独立 reasoning 改动，补齐重置、模型取消与手动刷新。Grok 23 项脚本 / 36 项宿主测试通过；手动刷新及 API 2 提交的四组 CI 全通过，真实账号仍待验收。个人 fork 草稿 PR #4，未合入。 |
+| [#459](https://github.com/leookun/cursor-byok/pull/459) | `c751da4cf087af3de4cd53a2464d545035961be4` |
 | [#458](https://github.com/leookun/cursor-byok/pull/458) | `5b63b8586a22975114e955933022b1f3c64a9de4` |
 | [#447](https://github.com/leookun/cursor-byok/pull/447) | `4dfabeeadd0c4e01fa6cb7761cbcb8d74b7dc6ae` |
 | [#437](https://github.com/leookun/cursor-byok/pull/437) | `c5d5de08ff922977ecf023d81ee3534d1454157b` |
