@@ -272,6 +272,19 @@ async fn model_stream_retries_auth_once_preserving_request_and_committing_rotati
     assert_eq!(calls[0]["request"], calls[1]["request"]);
     assert_eq!(calls[0]["resource"]["privateData"]["token"], "fresh-1");
     assert_eq!(calls[1]["resource"]["privateData"]["token"], "fresh-2");
+    let recorded = registry.inner.store.llm_calls(10).await.unwrap();
+    assert_eq!(recorded.len(), 2);
+    assert_eq!(
+        recorded
+            .iter()
+            .find(|call| call.call_id == "call")
+            .unwrap()
+            .status,
+        "error"
+    );
+    assert!(recorded
+        .iter()
+        .any(|call| call.call_id == "call:auth-retry"));
     let saved = registry
         .inner
         .state

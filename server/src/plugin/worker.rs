@@ -862,6 +862,49 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn detailed_auth_retry_records_both_network_attempts() {
+        let (_directory, store, recorder) = recorder(true, "auth-retry").await;
+        let host = host_with_recorder(store.clone(), recorder.clone()).await;
+        let params = network_params();
+        let _ = host.request("invocation", &params).await.unwrap();
+        recorder.response_headers(401).await.unwrap();
+        recorder.response_chunk(b"unauthorized").await.unwrap();
+
+        // A fresh provider invocation after credential rotation claims its recorder again.
+        recorder
+            .restart_for_auth_retry("unauthorized")
+            .await
+            .unwrap();
+        let retry_host = host_with_recorder(store.clone(), recorder.clone()).await;
+        let _ = retry_host.request("invocation", &params).await.unwrap();
+        recorder.response_headers(200).await.unwrap();
+        recorder.response_chunk(b"success").await.unwrap();
+        recorder.completed(FinishReason::Stop).await.unwrap();
+
+        let calls = store.llm_calls(10).await.unwrap();
+        assert_eq!(calls.len(), 2);
+        for (id, status, http_status, body) in [
+            ("auth-retry", "error", 401, "unauthorized"),
+            ("auth-retry:auth-retry", "completed", 200, "success"),
+        ] {
+            let call = store.llm_call(id).await.unwrap().unwrap();
+            assert_eq!(call.status, status);
+            assert_eq!(call.http_status, Some(http_status));
+            let request = store.llm_call_request(id).await.unwrap().unwrap();
+            assert!(request.headers.get("Authorization").is_none());
+            assert_eq!(
+                request.body,
+                serde_json::json!({"model":"test", "stream":true})
+            );
+            let chunks = store.llm_call_chunks(id).await.unwrap();
+            assert_eq!(
+                chunks.iter().map(|c| c.data.as_str()).collect::<String>(),
+                body
+            );
+        }
+    }
+
+    #[tokio::test]
     async fn standard_plugin_network_recording_keeps_metrics_without_payloads() {
         let (_directory, store, recorder) = recorder(false, "standard-plugin").await;
         let host = host_with_recorder(store.clone(), recorder.clone()).await;

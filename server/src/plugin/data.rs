@@ -266,6 +266,10 @@ mod tests {
         }
         done.store(true, Ordering::Relaxed);
         reader.join().unwrap();
+        assert_eq!(
+            store.read("test.plugin", "tokens").await.unwrap()["refreshToken"],
+            99
+        );
     }
     #[tokio::test]
     async fn writes_reads_and_removes_json() {

@@ -1,7 +1,7 @@
 // Failure reproduction for main 2cbd4a58; all network responses and credentials are synthetic.
 // Direct plugin boundary only: the candidate moves renewal into the host prepare lifecycle.
-import { credentialDraft, refreshAccount, RESOURCE_TYPE } from "../../../server/plugins/build-in/grok-auth/resources.ts";
-import { grokProvider } from "../../../server/plugins/build-in/grok-auth/provider.ts";
+import { credentialDraft, refreshAccount, RESOURCE_TYPE } from "../../../../server/plugins/build-in/grok-auth/resources.ts";
+import { grokProvider } from "../../../../server/plugins/build-in/grok-auth/provider.ts";
 import type { PluginContext } from "cursor-byok:plugin";
 import type { ResourceSnapshot } from "cursor-byok:resource";
 
