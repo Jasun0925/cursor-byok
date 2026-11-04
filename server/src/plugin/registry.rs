@@ -341,6 +341,10 @@ impl PluginRegistry {
                                             prepared = registry.prepare_resource(&entry, &executable, kind, record.clone(), Some(record.clone())) => prepared,
                                         }?;
                                         resource = Some((kind.clone(), prepared));
+                                        recorder.restart_for_auth_retry(
+                                            value.get("message").and_then(serde_json::Value::as_str)
+                                                .unwrap_or("plugin authentication failed"),
+                                        ).await?;
                                         retry = true;
                                         break;
                                     }
