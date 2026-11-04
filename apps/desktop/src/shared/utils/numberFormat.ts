@@ -28,3 +28,15 @@ export function formatCompactInteger(value: number) {
   const fractionDigits = Math.abs(scaled) < 100 ? 1 : 0;
   return `${trimTrailingZeros(scaled.toFixed(fractionDigits))}${unit.suffix}`;
 }
+
+export function formatBytes(bytes: number) {
+  if (bytes < 1024) return `${bytes} B`;
+  const units = ["KB", "MB", "GB"];
+  let value = bytes / 1024;
+  let unit = 0;
+  while (value >= 1024 && unit < units.length - 1) {
+    value /= 1024;
+    unit += 1;
+  }
+  return `${value < 10 ? value.toFixed(1) : value.toFixed(0)} ${units[unit]}`;
+}

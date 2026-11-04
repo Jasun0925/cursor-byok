@@ -195,6 +195,10 @@ pub fn api_router(service: ControlService) -> Router {
             get(settings::get_storage).delete(settings::clear_storage),
         )
         .route(
+            "/__byok-api__/api/settings/storage/unreferenced-blobs",
+            get(settings::get_unreferenced_blobs),
+        )
+        .route(
             "/__byok-api__/api/settings/proxy",
             get(settings::get_proxy).put(settings::update_proxy),
         )

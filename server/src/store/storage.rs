@@ -7,12 +7,19 @@ use crate::{Error, Result};
 use super::Store;
 
 #[cfg(test)]
+mod blob_tests;
+mod blobs;
+#[cfg(test)]
 mod tests;
+
+pub use blobs::UnreferencedBlobs;
 
 #[derive(Clone, Copy, Debug, Default, Serialize)]
 pub struct StatisticsStorage {
     pub call_count: i64,
     pub trace_count: i64,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub removed_blobs: Option<UnreferencedBlobs>,
 }
 
 #[derive(Clone, Copy, Debug, Default, Deserialize, Eq, PartialEq)]
@@ -21,6 +28,7 @@ pub enum StatisticsStorageScope {
     #[default]
     Details,
     All,
+    UnreferencedBlobs,
 }
 
 impl Store {
@@ -34,6 +42,7 @@ impl Store {
         Ok(StatisticsStorage {
             call_count,
             trace_count,
+            removed_blobs: None,
         })
     }
 
@@ -43,6 +52,11 @@ impl Store {
 
     pub async fn clear_all_statistics_storage(&self) -> Result<StatisticsStorage> {
         self.clear_statistics(StatisticsStorageScope::All).await
+    }
+
+    pub async fn clear_unreferenced_blobs(&self) -> Result<StatisticsStorage> {
+        self.clear_statistics(StatisticsStorageScope::UnreferencedBlobs)
+            .await
     }
 
     async fn clear_statistics(&self, scope: StatisticsStorageScope) -> Result<StatisticsStorage> {
@@ -61,6 +75,17 @@ impl Store {
         // Hold the existing write coordinator through deletion and compaction so
         // new trace chunks and conversation writes resume only after maintenance.
         let _write = self.writes.lock().await;
+        if scope == StatisticsStorageScope::UnreferencedBlobs {
+            let removed = self.delete_unreferenced_blobs(super::now_ms()).await?;
+            self.reclaim_storage_space().await.map_err(|error| {
+                Error::Store(format!(
+                    "unused blobs were removed, but disk space reclamation did not finish: {error}"
+                ))
+            })?;
+            let mut storage = self.statistics_storage().await?;
+            storage.removed_blobs = Some(removed);
+            return Ok(storage);
+        }
         let mut transaction = self.pool.begin().await?;
         match scope {
             StatisticsStorageScope::Details => {
@@ -75,6 +100,7 @@ impl Store {
                     .execute(&mut *transaction)
                     .await?;
             }
+            StatisticsStorageScope::UnreferencedBlobs => unreachable!("handled above"),
         }
         transaction.commit().await?;
         self.reclaim_storage_space().await.map_err(|error| {

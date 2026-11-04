@@ -119,12 +119,18 @@ export interface ExternalApiSettings {
   api_key: string;
 }
 
+export interface UnreferencedBlobs {
+  blob_count: number;
+  byte_count: number;
+}
+
 export interface StatisticsStorage {
   call_count: number;
   trace_count: number;
+  removed_blobs?: UnreferencedBlobs;
 }
 
-export type StatisticsStorageScope = "details" | "all";
+export type StatisticsStorageScope = "details" | "all" | "unreferenced_blobs";
 
 export type ProxyMode = "default" | "custom";
 
@@ -543,6 +549,7 @@ export const api = {
   setExternalApiSettings: (settings: ExternalApiSettings) => request<ExternalApiSettings>("/settings/external-api", { method: "PUT", body: JSON.stringify(settings) }),
   statisticsStorage: () => request<StatisticsStorage>("/settings/storage/statistics"),
   clearStatisticsStorage: (scope: StatisticsStorageScope) => request<StatisticsStorage>("/settings/storage/statistics", { method: "DELETE", body: JSON.stringify({ scope }) }),
+  unreferencedBlobs: () => request<UnreferencedBlobs>("/settings/storage/unreferenced-blobs"),
   proxySettings: () => request<ProxySettings>("/settings/proxy"),
   setProxySettings: (settings: ProxySettingsInput) => request<ProxySettings>("/settings/proxy", { method: "PUT", body: JSON.stringify(settings) }),
   tabSettings: () => request<TabSettings>("/settings/tab"),

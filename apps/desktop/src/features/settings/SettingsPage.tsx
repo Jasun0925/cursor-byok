@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { api, type ProxySettings, type ProxySettingsInput, type StatisticsStorage, type StatisticsStorageScope, type TabSettings } from "../../shared/api";
+import { api, type ProxySettings, type ProxySettingsInput, type StatisticsStorage, type StatisticsStorageScope, type TabSettings, type UnreferencedBlobs } from "../../shared/api";
 import { PageContent } from "../../shell/layout/PageContent";
 import { LegacyModelImport } from "../models/LegacyModelImport";
 import { AppLifecycleSettingsCard } from "./AppLifecycleSettingsCard";
@@ -18,6 +18,7 @@ import { setLocalePreference, useI18n, type LocalePreference } from "../../i18n/
 import { useMessage } from "../../shared/ui/message";
 import { appStore, useAppStore } from "../../shared/store/appStore";
 import { themeOptions } from "../../shared/theme/theme";
+import { formatBytes } from "../../shared/utils/numberFormat";
 import styles from "./SettingsPage.module.scss";
 
 export function SettingsPage() {
@@ -31,6 +32,7 @@ export function SettingsPage() {
   const [storage, setStorage] = useState<StatisticsStorage | null>(null);
   const [confirmClear, setConfirmClear] = useState(false);
   const [clearScope, setClearScope] = useState<StatisticsStorageScope>("details");
+  const [unusedPreview, setUnusedPreview] = useState<UnreferencedBlobs | "loading" | string | null>(null);
   const [clearing, setClearing] = useState(false);
   const [outboundProxy, setOutboundProxy] = useState<ProxySettings | null>(null);
   const [proxyDraft, setProxyDraft] = useState<ProxySettingsInput>({ mode: "default", address: "", auth_enabled: false, username: "", password: "" });
@@ -94,16 +96,34 @@ export function SettingsPage() {
   const clearStorage = async () => {
     try {
       setClearing(true);
-      setStorage(await api.clearStatisticsStorage(clearScope));
+      const result = await api.clearStatisticsStorage(clearScope);
+      setStorage(result);
       setConfirmClear(false);
       await appStore.refresh();
-      message(clearScope === "all" ? t("全部统计数据已清理") : t("详细记录已清理"));
+      if (clearScope === "unreferenced_blobs") {
+        const removed = result.removed_blobs ?? { blob_count: 0, byte_count: 0 };
+        message(t("已清理 {count} 个无用数据块，释放 {size}", { count: removed.blob_count, size: formatBytes(removed.byte_count) }));
+      } else {
+        message(clearScope === "all" ? t("全部统计数据已清理") : t("详细记录已清理"));
+      }
     } catch (cause) {
       message(cause instanceof Error ? cause.message : String(cause));
     } finally {
       setClearing(false);
     }
   };
+  useEffect(() => {
+    if (!confirmClear || clearScope !== "unreferenced_blobs") {
+      setUnusedPreview(null);
+      return;
+    }
+    let disposed = false;
+    setUnusedPreview("loading");
+    api.unreferencedBlobs()
+      .then((preview) => { if (!disposed) setUnusedPreview(preview); })
+      .catch((cause) => { if (!disposed) setUnusedPreview(cause instanceof Error ? cause.message : String(cause)); });
+    return () => { disposed = true; };
+  }, [confirmClear, clearScope]);
   const editProxy = () => {
     if (!outboundProxy) return;
     setProxyDraft({ mode: outboundProxy.mode, address: outboundProxy.address, auth_enabled: outboundProxy.auth_enabled, username: outboundProxy.username, password: "" });
@@ -153,10 +173,23 @@ export function SettingsPage() {
       setSavingTab(false);
     }
   };
-  const clearTitle = clearScope === "all" ? t("确定要清理全部统计数据吗？") : t("确定要清理详细记录吗？");
+  const clearTitle = clearScope === "all"
+    ? t("确定要清理全部统计数据吗？")
+    : clearScope === "unreferenced_blobs"
+      ? t("确定要清理无用会话数据吗？")
+      : t("确定要清理详细记录吗？");
   const clearDescription = clearScope === "all"
     ? t("所有调用汇总、详细内容和追踪记录都会被删除。模型配置、CA 和应用设置不会受到影响，此操作无法撤销。")
-    : t("仅删除请求、响应和追踪附件等详细内容，保留调用汇总、统计指标和配置。");
+    : clearScope === "unreferenced_blobs"
+      ? t("只删除已没有任何对话、图片或进行中任务还在使用的数据块，最近 24 小时写入的不会删除。已有对话和图片都会保留。")
+      : t("仅删除请求、响应和追踪附件等详细内容，保留调用汇总、统计指标和配置。");
+  const unusedPreviewText = unusedPreview === null
+    ? null
+    : unusedPreview === "loading"
+      ? t("正在计算可清理的数据…")
+      : typeof unusedPreview === "string"
+        ? unusedPreview
+        : t("可清理 {count} 个数据块，约 {size}", { count: unusedPreview.blob_count, size: formatBytes(unusedPreview.byte_count) });
   const content = (
     <div className={styles.page}>
       <TitledCard title={t("调用观测")}>
@@ -307,10 +340,12 @@ export function SettingsPage() {
             options={[
               { value: "details", label: t("仅清理详细记录") },
               { value: "all", label: t("清理全部统计数据") },
+              { value: "unreferenced_blobs", label: t("清理无用会话数据") },
             ]}
             onChange={(value) => setClearScope(value as StatisticsStorageScope)}
           />
           <small>{clearDescription}</small>
+          {unusedPreviewText && <small>{unusedPreviewText}</small>}
         </div>
       </ConfirmDialog>
     </div>

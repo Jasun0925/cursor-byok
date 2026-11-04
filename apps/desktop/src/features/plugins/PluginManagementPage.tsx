@@ -12,6 +12,7 @@ import { Modal } from "../../shared/ui/Modal";
 import { useMessage } from "../../shared/ui/message";
 import { TruncatedButton } from "../../shared/ui/TruncatedButton";
 import { PluginAddPanel, PluginSettingsPanel } from "./PluginResourcePanels";
+import { formatBytes } from "../../shared/utils/numberFormat";
 import styles from "./PluginManagementPage.module.scss";
 
 export function PluginManagementPage() {
@@ -349,16 +350,4 @@ function phaseText(phase: PluginRuntimePhase | null) {
     case "validating": return t("正在验证插件运行时");
     default: return t("正在准备插件运行时");
   }
-}
-
-function formatBytes(bytes: number) {
-  if (bytes < 1024) return `${bytes} B`;
-  const units = ["KB", "MB", "GB"];
-  let value = bytes / 1024;
-  let unit = 0;
-  while (value >= 1024 && unit < units.length - 1) {
-    value /= 1024;
-    unit += 1;
-  }
-  return `${value < 10 ? value.toFixed(1) : value.toFixed(0)} ${units[unit]}`;
 }

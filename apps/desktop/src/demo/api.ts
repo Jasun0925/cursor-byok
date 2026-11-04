@@ -155,10 +155,11 @@ export function installDemoApi() {
       return json(externalApiSettings);
     }
     if (path === "/settings/storage/statistics" && method === "GET") return json(storage);
+    if (path === "/settings/storage/unreferenced-blobs") return json({ blob_count: 0, byte_count: 0 });
     if (path === "/settings/storage/statistics") {
       const scope = (body as { scope?: string } | null)?.scope ?? "details";
       storage = scope === "all" ? { call_count: 0, trace_count: 0 } : storage;
-      return json(storage);
+      return json(scope === "unreferenced_blobs" ? { ...storage, removed_blobs: { blob_count: 0, byte_count: 0 } } : storage);
     }
     if (path === "/settings/proxy" && method === "GET") return json(proxySettings);
     if (path === "/settings/proxy") {

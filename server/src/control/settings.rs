@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 use crate::store::{
     CommitPromptLocale, CommitSettings, DesktopSettings, ExternalApiSettings, PortSettings,
     ProxySettings, ProxySettingsInput, StatisticsStorage, StatisticsStorageScope, TabSettings,
-    TokenPricingSettings,
+    TokenPricingSettings, UnreferencedBlobs,
 };
 
 use super::{ControlService, ObservabilitySettings};
@@ -62,8 +62,15 @@ pub async fn clear_storage(
     let storage = match scope {
         StatisticsStorageScope::Details => service.clear_statistics_storage().await?,
         StatisticsStorageScope::All => service.clear_all_statistics_storage().await?,
+        StatisticsStorageScope::UnreferencedBlobs => service.clear_unreferenced_blobs().await?,
     };
     Ok(Json(storage))
+}
+
+pub async fn get_unreferenced_blobs(
+    State(service): State<ControlService>,
+) -> Result<Json<UnreferencedBlobs>> {
+    Ok(Json(service.unreferenced_blobs().await?))
 }
 
 #[derive(Deserialize)]
