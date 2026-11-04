@@ -95,5 +95,6 @@
 - [2026-10-27 · PR #513：SQLite 事务失败后的连接池恢复](pull-requests/2026-10-27-pr513-recovery.md)
 - [2026-10-27 · PR #514：会话缓存键与连通性测试](pull-requests/2026-10-27-pr514-fix.md)
 - [2026-10-28 · PR #515：空消息 ID 与父任务关联复核](pull-requests/2026-10-28-pr515-check.md)
+- [2026-11-04 · 本 fork PR #10：选择性采用与隔离测试](pull-requests/2026-11-04-pr10-check.md)
 
 该目录中的 JSON、assets 与 reproductions 分别保存结构化证据、截图和复现源码；入口见上方报告。
