@@ -26,7 +26,7 @@ rg -n -i '广告|advertisement|promotions|AdMenu|FloatingAd|react-css-marquee|in
 
 | 位置 | 改版要求 |
 | --- | --- |
-| `apps/desktop/src-tauri/tauri.conf.json` | `plugins.updater.endpoints` 指向 `https://github.com/renhao12356578/cursor-byok/releases/latest/download/latest.json`；保留用户当前公钥 |
+| `apps/desktop/src-tauri/tauri.conf.json` | `plugins.updater.endpoints` 指向 `https://github.com/haohaomin/cursor-byok/releases/latest/download/latest.json`；保留用户当前公钥 |
 | `apps/desktop/src-tauri/src/update/mod.rs` | Windows 便携更新指向同仓库的 `portable-latest.json` |
 | `README.md`、`README-EN.md` | 默认中文，顶部 English 链接进入英文版；下载链接和版本徽章指向用户仓库，保留原作者署名、协议来源及上游链接 |
 | `.github/workflows/release.yml`、`.github/scripts/` | 使用当前 GitHub 仓库生成产物 URL，发布所有平台成功后才公开 Release |

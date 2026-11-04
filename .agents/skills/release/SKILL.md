@@ -9,8 +9,8 @@ Release through `.github/workflows/release.yml`. Preserve the updater manifests 
 
 ## Publication authority
 
-- Release only to the user's explicitly selected repository. This fork uses `origin = renhao12356578/cursor-byok`; `upstream = leookun/cursor-byok` is a source of code, not a publication destination.
-- Before publication, require an explicit release instruction in the current task and verify the selected GitHub repository, push permission, and actor. The current workflow requires `gh api user --jq .login` to match that repository's owner (`renhao12356578` for this fork). Honor authorization already supplied for the current task; do not require the upstream author's identity to publish the user's fork.
+- Release only to the user's explicitly selected repository. This fork uses `origin = haohaomin/cursor-byok`; `upstream = leookun/cursor-byok` is a source of code, not a publication destination.
+- Before publication, require an explicit release instruction in the current task and verify the selected GitHub repository, push permission, and actor. The current workflow requires `gh api user --jq .login` to match that repository's owner (`haohaomin` for this fork). Honor authorization already supplied for the current task; do not require the upstream author's identity to publish the user's fork.
 - Treat all of these as publication actions: pushing a `v*` tag, rerunning the release workflow, and publishing or editing a GitHub Release. Pushing a release commit to `main` only prepares the release and must never trigger publication by itself.
 - Without that authorization, restrict work to inspection, local edits, validation, and a release-ready commit or branch. Do not infer publication permission from requests such as “prepare”, “check”, or “ready to release”.
 - Never print, commit, or upload `.tauri/cursor-byok.key` anywhere except the repository's `TAURI_SIGNING_PRIVATE_KEY` Actions Secret when the author explicitly requests that secret configuration.

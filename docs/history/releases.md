@@ -319,3 +319,37 @@
 已下载并核验三份清单引用的全部不同资产：Tauri 各平台及 Windows portable 的签名均使用现有应用公钥通过 Ed25519/Minisign 验证，legacy 四平台归档大小与 SHA256 全部符合清单。资产下载同时核对 GitHub 提供的摘要。发布说明已写明 #155“完成一半”及未验收边界。
 
 没有关闭上游 Issue，没有自动安装新版本。完整摘要见 [发布证据](issues/2026-10-19-issue155-release-evidence.json)。
+
+
+<a id="v110"></a>
+
+## v1.1.0 发布记录
+
+来源日期：2026-11-04。当前为发布准备，最终状态与资产核验将在工作流完成后补齐。
+
+本地验证：`npm run check`、`npm run tauri:build -- --debug --no-bundle`、Rust 格式与差异检查通过；portable 更新清单测试 2 项通过；工作流 YAML、仅标签触发、五处版本一致性及原签名公钥已核对。前端保留既有 chunk 大小和动态导入提示，构建成功。
+
+本版本集中发布 v1.0.17 之后已合入主线的维护修复，继续处理原仓库遗留的 Issue 和社区 PR。
+
+## 升级前请注意
+
+- **插件协议升级到 API 2**：三个内置插件已适配。API 1 的外部插件需要适配新协议，旧插件会被明确拒绝加载。
+- 更新前请完全退出应用并备份整个数据目录 `~/.cursor-byok-v3/`（Windows 为 `%USERPROFILE%\.cursor-byok-v3`），保留模型、凭据和数据库。
+- 自动更新地址改为当前维护仓库 `haohaomin/cursor-byok`，沿用原有签名公钥。
+
+## 主要更新
+
+- **OAuth 续期**：Grok、ChatGPT/Codex、Google 账号由宿主准备并持久化轮换凭据；支持有限认证重试、并发保护、取消和重置处理，修复 Google 手动额度刷新及详细日志下认证重试失败。
+- **Remote SSH 与搜索**：加入配置指南；WebFetch 按会话分页；远程 Semble 通过 Cursor 采集工作区，支持忽略规则、大目录分页、取消和 Python 导入隔离。相关审批限制见下文。
+- **会话与工具**：修复重复用户消息打断工具、MCP schema 整数精度，并补齐 Responses 文字、Anthropic 拒绝处理及 Steer 后子代理结果交付的后续修复。
+- **数据库与网络**：清理统计后回收 SQLite 文件空间；避免失败事务污染连接池；系统代理变化后重建客户端；按会话生成提示缓存键。
+- **维护文档**：默认中文 README，可切换 English；新增个人持续维护说明、Issue/PR 处理清单、验证边界和免责声明。
+
+## 已知限制
+
+- OAuth 续期通过合成网络与真实 Deno 宿主测试，真实 Grok、ChatGPT、Google 账号尚未完成验收。
+- 远程 Semble 采集实现已包含，但 Cursor 审批曾出现自动取消；独立终端审批卡片的 10 个本地候选文件没有进入本版本，真实批准/拒绝及 Windows Cursor UI 仍待验证。
+- #155 后台任务保持“完成一半”：已有普通短任务自动续答验证，审批、压缩等边界仍待验收；本轮不测试 20 分钟任务。
+- #505 多 reasoning signature 等仍在处理，不能将本次发版视为所有上游问题已解决。
+
+安装包和更新清单以本 Release 的 Assets 为准。更详细的进度见 [工作状态](https://github.com/haohaomin/cursor-byok/blob/main/docs/work-status.md)及 [维护状态](https://github.com/haohaomin/cursor-byok/blob/main/docs/maintenance-status.md)。
