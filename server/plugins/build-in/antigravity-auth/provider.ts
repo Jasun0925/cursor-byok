@@ -7,7 +7,7 @@ import type {
   ProviderResult,
   ProviderSupport,
 } from "cursor-byok:provider";
-import type { JsonValue, PluginContext } from "cursor-byok:plugin";
+import type { PluginContext } from "cursor-byok:plugin";
 import { HttpError } from "cursor-byok:protocol/openai-chat";
 import {
   ANTIGRAVITY_CLIENT_HEADERS,
@@ -15,14 +15,7 @@ import {
   ANTIGRAVITY_USER_AGENT,
   antigravityModels,
 } from "./models.ts";
-import {
-  type AccountData,
-  accountData,
-  isTokenExpired,
-  quotaExhaustedPatch,
-  refreshAccount,
-  RESOURCE_TYPE,
-} from "./resources.ts";
+import { type AccountData, accountData, quotaExhaustedPatch, RESOURCE_TYPE } from "./resources.ts";
 
 export function isQuotaError(error: string): boolean {
   const message = error.toLowerCase();
@@ -623,58 +616,18 @@ async function invoke(
     return invalidResult(message, message);
   }
 
-  let patchData: AccountData | null = null;
-
-  // Auto-refresh token if expired or close to expiration (skew 5 mins)
-  if (data.refreshToken && isTokenExpired(data)) {
-    try {
-      const refreshed = await refreshAccount(input.resource, context);
-      if (refreshed.privateData) {
-        data = refreshed.privateData as unknown as AccountData;
-        patchData = data;
-      }
-    } catch {
-      // Continue with existing token
-    }
-  }
-
   let projectId = data.projectId ?? "bamboo-precept-lgxtn";
 
   try {
     await streamCloudCode(data.accessToken, projectId, input.model.id, input, output, context);
-    return patchData
-      ? {
-        status: "completed",
-        patch: { privateData: patchData as unknown as JsonValue, state: { status: "ready" } },
-      }
-      : { status: "completed" };
+    return { status: "completed" };
   } catch (error) {
     if (error instanceof HttpError) {
       if (
         (error.status === 401 || error.status === 403) && data.refreshToken &&
         !isQuotaHttpError(error)
       ) {
-        try {
-          const refreshed = await refreshAccount(input.resource, context);
-          if (refreshed.privateData) {
-            const freshData = refreshed.privateData as unknown as AccountData;
-            const freshProj = freshData.projectId ?? projectId;
-            await streamCloudCode(
-              freshData.accessToken,
-              freshProj,
-              input.model.id,
-              input,
-              output,
-              context,
-            );
-            return {
-              status: "completed",
-              patch: { privateData: freshData as unknown as JsonValue, state: { status: "ready" } },
-            };
-          }
-        } catch {
-          // Failed refresh
-        }
+        return { status: "auth-error", message: error.message };
       }
       if (isQuotaHttpError(error)) {
         return {

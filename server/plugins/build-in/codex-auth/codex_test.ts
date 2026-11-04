@@ -326,7 +326,11 @@ Deno.test("device OAuth begins with a host-held session and completes with a res
       return {
         status: 200,
         headers: {},
-        body: JSON.stringify({ access_token: accessToken, refresh_token: "refresh-secret" }),
+        body: JSON.stringify({
+          access_token: accessToken,
+          refresh_token: "refresh-secret",
+          expires_in: "3600",
+        }),
       };
     },
   });
@@ -338,6 +342,10 @@ Deno.test("device OAuth begins with a host-held session and completes with a res
   const polled = await codexDeviceOAuth.poll(begun.session, flowContext);
   assert(polled.status === "completed", `expected completed, received ${polled.status}`);
   assertEquals(polled.resources[0].key, "codex:acct-oauth");
+  assert(
+    typeof (polled.resources[0].privateData as Record<string, unknown>).expiresAtMs === "number",
+    "OAuth expiry should be retained for proactive refresh",
+  );
   assertEquals(requestNumber, 3);
 });
 

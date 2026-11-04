@@ -141,6 +141,7 @@ fn task_execution_prioritizes_explicit_model_over_cursor_default() {
         allow_subagents: true,
         subagents_disabled: false,
         terminals_folder: String::new(),
+        workspace_paths: Vec::new(),
         admin_command_denylist: vec![],
         mcp_routes: Default::default(),
     };

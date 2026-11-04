@@ -11,8 +11,8 @@ use crate::{
     config::{SembleConfig, INDEX_FORMAT_VERSION},
     embedding::Embedder,
     index::extract_definitions,
-    language::detect_language,
-    source::discover_files,
+    language::{content_type_for_path, detect_language},
+    source::{discover_files, FileStamp, SnapshotFile},
     ContentType, Error, Result,
 };
 
@@ -123,39 +123,11 @@ impl IndexRepository {
             }
             let bytes = fs::read(&file.absolute_path)
                 .map_err(|error| Error::io(&file.absolute_path, error))?;
-            if bytes.iter().take(8192).any(|byte| *byte == 0) {
-                continue;
+            if let Some(index) =
+                self.index_file(&file.relative_path, &bytes, file.stamp, file.content_type)?
+            {
+                indexed.push(index);
             }
-            let source = String::from_utf8_lossy(&bytes);
-            let language = detect_language(&file.absolute_path);
-            let chunks = chunk_source(
-                &source,
-                &file.relative_path,
-                language,
-                self.config.desired_chunk_bytes,
-            );
-            if chunks.is_empty() {
-                continue;
-            }
-            let texts = chunks
-                .iter()
-                .map(|chunk| chunk.content.clone())
-                .collect::<Vec<_>>();
-            let vectors =
-                quantize_vectors(self.embedder.encode(&texts)?, self.embedder.dimensions())?;
-            let lexical_documents = chunks
-                .iter()
-                .map(|chunk| lexical_document(&chunk.content))
-                .collect();
-            indexed.push(IndexedFile {
-                path: file.relative_path,
-                stamp: file.stamp,
-                content_type: file.content_type,
-                definitions: extract_definitions(&chunks),
-                lexical_documents,
-                chunks,
-                vectors,
-            });
         }
         if indexed.is_empty() {
             return Err(Error::EmptyIndex(root.to_path_buf()));
@@ -174,6 +146,93 @@ impl IndexRepository {
         save_runtime(&layout.runtime, &loaded)?;
         self.store_loaded(layout.snapshot, loaded.clone());
         Ok(loaded)
+    }
+
+    /// Build an immutable, request-owned index without reading or writing caches.
+    pub(crate) fn build_snapshot(
+        &self,
+        files: &[SnapshotFile],
+        content: &[ContentType],
+        cancelled: &std::sync::atomic::AtomicBool,
+    ) -> Result<LoadedIndex> {
+        check_cancelled(cancelled)?;
+        SnapshotFile::validate_all(files, self.config.max_file_bytes)?;
+        let mut sorted = files.iter().collect::<Vec<_>>();
+        sorted.sort_by(|left, right| left.relative_path.cmp(&right.relative_path));
+        let mut indexed = Vec::new();
+        for file in sorted {
+            check_cancelled(cancelled)?;
+            let Some(kind) = content_type_for_path(Path::new(&file.relative_path)) else {
+                continue;
+            };
+            if !content.contains(&kind) {
+                continue;
+            }
+            if let Some(index) = self.index_file(
+                &file.relative_path,
+                &file.bytes,
+                FileStamp {
+                    modified_ns: 0,
+                    size: file.bytes.len() as u64,
+                },
+                kind,
+            )? {
+                indexed.push(index);
+            }
+            check_cancelled(cancelled)?;
+        }
+        if indexed.is_empty() {
+            return Err(Error::EmptyIndex("request snapshot".into()));
+        }
+        LoadedIndex::from_snapshot(IndexSnapshot {
+            format_version: INDEX_FORMAT_VERSION,
+            source_identity: "request snapshot (not cached)".into(),
+            model_id: self.embedder.id().into(),
+            dimensions: self.embedder.dimensions(),
+            desired_chunk_bytes: self.config.desired_chunk_bytes,
+            content: content.to_vec(),
+            files: indexed,
+        })
+    }
+
+    fn index_file(
+        &self,
+        path: &str,
+        bytes: &[u8],
+        stamp: FileStamp,
+        content_type: ContentType,
+    ) -> Result<Option<IndexedFile>> {
+        if bytes.iter().take(8192).any(|byte| *byte == 0) {
+            return Ok(None);
+        }
+        let source = String::from_utf8_lossy(bytes);
+        let chunks = chunk_source(
+            &source,
+            path,
+            detect_language(Path::new(path)),
+            self.config.desired_chunk_bytes,
+        );
+        if chunks.is_empty() {
+            return Ok(None);
+        }
+        let texts = chunks
+            .iter()
+            .map(|chunk| chunk.content.clone())
+            .collect::<Vec<_>>();
+        let vectors = quantize_vectors(self.embedder.encode(&texts)?, self.embedder.dimensions())?;
+        let lexical_documents = chunks
+            .iter()
+            .map(|chunk| lexical_document(&chunk.content))
+            .collect();
+        Ok(Some(IndexedFile {
+            path: path.into(),
+            stamp,
+            content_type,
+            definitions: extract_definitions(&chunks),
+            lexical_documents,
+            chunks,
+            vectors,
+        }))
     }
 
     fn store_loaded(&self, snapshot: std::path::PathBuf, index: Arc<LoadedIndex>) {
@@ -196,6 +255,14 @@ impl IndexRepository {
 
     pub(crate) fn encode(&self, texts: &[String]) -> Result<Vec<Vec<f32>>> {
         self.embedder.encode(texts)
+    }
+}
+
+pub(crate) fn check_cancelled(cancelled: &std::sync::atomic::AtomicBool) -> Result<()> {
+    if cancelled.load(std::sync::atomic::Ordering::Acquire) {
+        Err(Error::Cancelled)
+    } else {
+        Ok(())
     }
 }
 

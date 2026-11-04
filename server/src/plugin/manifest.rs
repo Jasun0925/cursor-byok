@@ -6,7 +6,8 @@ use serde::Deserialize;
 
 use crate::{Error, Result};
 
-pub const PLUGIN_API_VERSION: u32 = 1;
+// API 2 makes resource.refresh return an explicit completed/auth-error result.
+pub const PLUGIN_API_VERSION: u32 = 2;
 
 #[derive(Clone, Debug, Deserialize)]
 #[serde(rename_all = "camelCase", deny_unknown_fields)]

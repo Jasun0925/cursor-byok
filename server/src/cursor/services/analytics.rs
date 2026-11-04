@@ -19,8 +19,8 @@ use crate::{api::cursor::proxy, Error, Result};
 mod tests;
 
 pub const BOOTSTRAP_STATSIG_PATH: &str = "/aiserver.v1.AnalyticsService/BootstrapStatsig";
-/// `agent_host_local_loop` routes agent turns to InferenceService/RunInference,
-/// which BYOK does not serve; keeping it off keeps turns on AgentService/RunSSE.
+/// Keep BYOK agent turns on AgentService/RunSSE. The local-loop route targets
+/// Cursor's managed InferenceService, which this server does not implement.
 const PINNED_AGENT_GATES: &[(&str, bool)] = &[
     ("nal_agent_retries", true),
     ("long_running_jobs", true),
@@ -145,8 +145,7 @@ fn pin_agent_gates(config: &mut Value) -> Result<()> {
         .as_object_mut()
         .ok_or_else(|| Error::Protocol("Statsig feature_gates must be an object".into()))?;
     for (key, value) in pinned {
-        let gate = pinned_gate(&key, value);
-        gates.insert(key, gate);
+        gates.insert(key.clone(), pinned_gate(&key, value));
     }
     Ok(())
 }

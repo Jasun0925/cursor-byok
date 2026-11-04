@@ -144,3 +144,30 @@ Deno.test("isQuotaError identifies rate limits and quota exhaustion", () => {
   assert(isQuotaError("HTTP 429 Too Many Requests"));
   assert(!isQuotaError("Invalid authorization header"));
 });
+
+Deno.test("HTTP 401 asks the host to refresh Google credentials before retry", async () => {
+  const events: ModelEvent[] = [];
+  const result = await antigravityProvider.invoke(
+    {
+      model: { id: "gemini-3.7-flash", displayName: "Gemini 3.7 Flash", privateData: {} },
+      resource: snapshot({
+        accessToken: "expired-access",
+        refreshToken: "refresh-token",
+        expiresAtMs: Date.now() + 60_000,
+        projectId: "test-project",
+        displayName: "test",
+      }),
+      request: request(),
+    },
+    { emit: (event) => events.push(event) },
+    context({
+      stream: () => ({
+        status: 401,
+        headers: {},
+        lines: sse(["unauthorized"]),
+      }),
+    }),
+  );
+  assertEquals(result.status, "auth-error");
+  assert(events.length === 0, "the host may retry only before model output");
+});

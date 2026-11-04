@@ -1,4 +1,5 @@
 import { defineProviderPlugin } from "cursor-byok:plugin";
+import { prepareAccount } from "./credentials.ts";
 import { antigravityAuthorizationCodeOAuth } from "./oauth.ts";
 import { antigravityProvider } from "./provider.ts";
 import { credentialImport, presentAccount, refreshAccount, RESOURCE_TYPE } from "./resources.ts";
@@ -15,5 +16,6 @@ export default defineProviderPlugin({
     import: credentialImport,
     present: presentAccount,
     refresh: refreshAccount,
+    prepare: prepareAccount,
   }],
 });

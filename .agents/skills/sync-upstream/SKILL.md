@@ -23,7 +23,7 @@ upstream: leookun/cursor-byok              # 原作者源码，只作为同步�
 codex/sync-upstream-<日期或主题>           # 合并、解决冲突、验证
     │ 经检查合入
     ▼
-main → origin: renhao12356578/cursor-byok  # 用户维护的源码
+main → origin: haohaomin/cursor-byok  # 用户维护的源码
     │ 仅在发版已授权时推送新版本标签
     ▼
 .github/workflows/release.yml             # 多平台构建、签名、发布

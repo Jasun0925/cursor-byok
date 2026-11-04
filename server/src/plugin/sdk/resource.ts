@@ -35,6 +35,11 @@ export type ResourcePatch = {
   state?: ResourceState;
 };
 
+/** Authentication recovery belongs to the host, which persists rotated credentials before retrying. */
+export type ResourceRefreshResult =
+  | { status: "completed"; patch: ResourcePatch }
+  | { status: "auth-error"; message: string };
+
 export type ResourceMetric = {
   id: string;
   label: LocalizedText;
@@ -185,8 +190,16 @@ export type ResourceSupport = {
   import?: ResourceImportSupport;
   present(resource: ResourceSnapshot): ResourceView;
   actions?: ResourceAction[];
+  /** Runs before use. The host serializes this per account and persists its patch before proceeding.
+   * rejectedResource is the snapshot rejected with HTTP 401, or null for a normal expiry check.
+   */
+  prepare?(
+    resource: ResourceSnapshot,
+    rejectedResource: ResourceSnapshot | null,
+    context: PluginContext,
+  ): Promise<ResourcePatch | null>;
   /** 用户主动触发时重新读取上游状态(额度、凭证有效性)。 */
-  refresh?(resource: ResourceSnapshot, context: PluginContext): Promise<ResourcePatch>;
+  refresh?(resource: ResourceSnapshot, context: PluginContext): Promise<ResourceRefreshResult>;
   /** 可选的上游撤销;宿主随后删除本地记录。 */
   remove?(resource: ResourceSnapshot, context: PluginContext): Promise<void>;
 };

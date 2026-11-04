@@ -21,7 +21,7 @@ enum ContentSelection {
 }
 
 #[derive(Debug, Deserialize)]
-struct SearchArguments {
+pub(crate) struct SearchArguments {
     query: String,
     repo: String,
     #[serde(default = "default_top_k")]
@@ -33,7 +33,7 @@ struct SearchArguments {
 }
 
 #[derive(Debug, Deserialize)]
-struct FindRelatedArguments {
+pub(crate) struct FindRelatedArguments {
     repo: String,
     file_path: String,
     line: usize,
@@ -45,9 +45,86 @@ struct FindRelatedArguments {
     content: ContentSelection,
 }
 
-enum Operation {
+pub(crate) enum Operation {
     Search(SearchArguments),
     FindRelated(FindRelatedArguments),
+}
+
+impl Operation {
+    pub(crate) fn parse(tool_name: &str, arguments: Value) -> std::result::Result<Self, String> {
+        let operation = match tool_name {
+            "semblesearch" => Operation::Search(
+                serde_json::from_value(arguments).map_err(|error| error.to_string())?,
+            ),
+            "semblefindrelated" => Operation::FindRelated(
+                serde_json::from_value(arguments).map_err(|error| error.to_string())?,
+            ),
+            _ => return Err(format!("unsupported Semble tool: {tool_name}")),
+        };
+        let (top_k, invalid) = match &operation {
+            Self::Search(a) => (a.top_k, a.query.trim().is_empty()),
+            Self::FindRelated(a) => (a.top_k, a.line == 0),
+        };
+        if invalid || top_k == 0 || top_k > 100 {
+            return Err("Invalid Semble query, line, or top_k".into());
+        }
+        Ok(operation)
+    }
+    pub(crate) fn repo(&self) -> &str {
+        match self {
+            Self::Search(a) => &a.repo,
+            Self::FindRelated(a) => &a.repo,
+        }
+    }
+    pub(crate) fn content(&self) -> Vec<ContentType> {
+        content(match self {
+            Self::Search(a) => a.content,
+            Self::FindRelated(a) => a.content,
+        })
+    }
+    pub(crate) async fn execute_snapshot(
+        self,
+        files: Vec<semble_core::source::SnapshotFile>,
+        cancelled: Arc<std::sync::atomic::AtomicBool>,
+        store: Option<Store>,
+    ) -> std::result::Result<Value, String> {
+        if cancelled.load(std::sync::atomic::Ordering::Acquire) {
+            return Err("Search was cancelled".into());
+        }
+        let engine = engine(store).await.map_err(|error| error.to_string())?;
+        tokio::task::spawn_blocking(move || match self {
+            Self::Search(a) => engine
+                .search_snapshot(
+                    SearchRequest {
+                        query: a.query,
+                        repo: a.repo.into(),
+                        top_k: a.top_k,
+                        max_snippet_lines: a.max_snippet_lines,
+                        content: content(a.content),
+                    },
+                    &files,
+                    &cancelled,
+                )
+                .and_then(json_value),
+            Self::FindRelated(a) => engine
+                .find_related_snapshot(
+                    FindRelatedRequest {
+                        repo: a.repo.into(),
+                        file_path: a.file_path,
+                        line: a.line,
+                        top_k: a.top_k,
+                        max_snippet_lines: a.max_snippet_lines,
+                        content: content(a.content),
+                    },
+                    &files,
+                    &cancelled,
+                )
+                .and_then(json_value),
+        })
+        .await
+        .map_err(|error| format!("Semble search worker failed: {error}"))?
+        .map_err(|error| error.to_string())
+    }
 }
 
 pub(crate) async fn execute(
@@ -55,15 +132,7 @@ pub(crate) async fn execute(
     arguments: Value,
     store: Option<Store>,
 ) -> std::result::Result<Value, String> {
-    let operation = match tool_name {
-        "semblesearch" => {
-            Operation::Search(serde_json::from_value(arguments).map_err(|error| error.to_string())?)
-        }
-        "semblefindrelated" => Operation::FindRelated(
-            serde_json::from_value(arguments).map_err(|error| error.to_string())?,
-        ),
-        _ => return Err(format!("unsupported Semble tool: {tool_name}")),
-    };
+    let operation = Operation::parse(tool_name, arguments)?;
     let engine = engine(store).await.map_err(|error| error.to_string())?;
     tokio::task::spawn_blocking(move || match operation {
         Operation::Search(arguments) => engine

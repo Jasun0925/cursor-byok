@@ -14,6 +14,7 @@ name = "cursor-server"
 path = "src/bin/cursor-server.rs"
 
 [dependencies]
+flate2 = "1"
 async-stream = "0.3"
 axum = "0.8"
 base64 = "0.22"
@@ -63,7 +64,6 @@ prost-build = "0.13"
 protoc-bin-vendored = "3"
 
 [dev-dependencies]
-flate2 = "1"
 tempfile = "3"
 tower = { version = "0.5", features = ["util"] }
 
