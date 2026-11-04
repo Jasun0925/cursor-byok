@@ -37,12 +37,35 @@ pub(super) async fn fixture() -> (
     .unwrap();
     std::fs::write(
         directory.join("main.ts"),
-        include_str!("refresh_fixture.ts").replace(
-            "../../../plugins/build-in/grok-auth/resources.ts",
-            "./grok_resources.ts",
-        ),
+        include_str!("refresh_fixture.ts")
+            .replace(
+                "../../../plugins/build-in/grok-auth/resources.ts",
+                "./grok_resources.ts",
+            )
+            .replace("../../../plugins/build-in/antigravity-auth/", "./google/"),
     )
     .unwrap();
+    std::fs::create_dir_all(directory.join("google")).unwrap();
+    for (name, source) in [
+        (
+            "resources.ts",
+            include_str!("../../../plugins/build-in/antigravity-auth/resources.ts"),
+        ),
+        (
+            "credentials.ts",
+            include_str!("../../../plugins/build-in/antigravity-auth/credentials.ts"),
+        ),
+        (
+            "models.ts",
+            include_str!("../../../plugins/build-in/antigravity-auth/models.ts"),
+        ),
+        (
+            "google_oauth.ts",
+            include_str!("../../../plugins/build-in/antigravity-auth/google_oauth.ts"),
+        ),
+    ] {
+        std::fs::write(directory.join("google").join(name), source).unwrap();
+    }
     std::fs::write(
         directory.join("grok_resources.ts"),
         include_str!("../../../plugins/build-in/grok-auth/resources.ts"),
@@ -501,4 +524,89 @@ async fn failed_disk_write_retries_saved_rotation_without_reusing_old_token() {
     assert_eq!(prepared.private_data["refreshToken"], "rotated-1");
     assert!(registry.inner.pending_preparations.lock().await.is_empty());
     stop_workers(&registry).await;
+}
+
+#[tokio::test]
+#[ignore = "requires DENO_TEST_EXECUTABLE"]
+async fn newly_authorized_credentials_supersede_an_unsaved_rotation() {
+    let (_root, registry, entry, executable, record) = fixture().await;
+    let key = format!("dev.refresh/account/{}", record.id);
+    registry.inner.pending_preparations.lock().await.insert(
+        key,
+        (
+            record.clone(),
+            serde_json::json!({
+                "privateData": {"token":"fresh-stale", "refreshToken":"stale-rotation"},
+                "state":{"status":"ready"}
+            }),
+        ),
+    );
+    registry.inner.state.upsert_resources("dev.refresh", "account", vec![ResourceDraft {
+        key: record.key.clone(),
+        private_data: serde_json::json!({"token":"fresh-login", "refreshToken":"new-login"}),
+        state: None,
+    }]).await.unwrap();
+    for _ in 0..2 {
+        let prepared = registry
+            .prepare_resource(&entry, &executable, "account", record.clone(), None)
+            .await
+            .unwrap();
+        assert_eq!(
+            prepared.private_data["refreshToken"], "new-login",
+            "pending credentials from the old login must not replace a new authorization"
+        );
+    }
+    assert!(registry.inner.pending_preparations.lock().await.is_empty());
+    stop_workers(&registry).await;
+}
+
+#[tokio::test]
+#[ignore = "requires DENO_TEST_EXECUTABLE"]
+async fn late_provider_patch_commits_a_pending_rotation_before_updating_quota() {
+    let (_root, registry, _, _, record) = fixture().await;
+    registry
+        .inner
+        .state
+        .upsert_resources(
+            "dev.refresh",
+            "account",
+            vec![ResourceDraft {
+                key: record.key.clone(),
+                private_data: serde_json::json!({"token":"fresh-before", "refreshToken":"before"}),
+                state: None,
+            }],
+        )
+        .await
+        .unwrap();
+    let current = registry
+        .find_record("dev.refresh", "account", &record.id)
+        .await
+        .unwrap();
+    let mut stream = model_stream(&registry, "late-quota-patch", CancellationToken::new()).await;
+    loop {
+        let event = stream.next().await.unwrap().unwrap();
+        if matches!(event, ModelEvent::Done(_)) {
+            break;
+        }
+    }
+    // A prior exchange finished but its disk write failed while this model was in flight.
+    registry.inner.pending_preparations.lock().await.insert(
+        format!("dev.refresh/account/{}", record.id),
+        (
+            current,
+            serde_json::json!({
+                "privateData":{"token":"fresh-after", "refreshToken":"rotated-after"},
+                "state":{"status":"ready"}
+            }),
+        ),
+    );
+    let events = stream.collect::<Vec<_>>().await;
+    stop_workers(&registry).await;
+    assert!(events.iter().all(Result::is_ok), "{events:?}");
+    let saved = registry
+        .find_record("dev.refresh", "account", &record.id)
+        .await
+        .unwrap();
+    assert_eq!(saved.private_data["refreshToken"], "rotated-after");
+    assert!(registry.inner.pending_preparations.lock().await.is_empty());
 }

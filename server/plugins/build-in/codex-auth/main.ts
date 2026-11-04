@@ -1,3 +1,4 @@
+import { prepareAccount } from "./credentials.ts";
 import { defineProviderPlugin } from "cursor-byok:plugin";
 import { codexDeviceOAuth } from "./oauth.ts";
 import { codexProvider } from "./provider.ts";
@@ -19,6 +20,7 @@ export default defineProviderPlugin({
     import: credentialImport,
     present: presentAccount,
     actions: [listResetCardsAction, consumeResetCardAction],
-    refresh: async (resource, context) => ({ status: "completed", patch: await refreshAccount(resource, context) }),
+    refresh: refreshAccount,
+    prepare: prepareAccount,
   }],
 });

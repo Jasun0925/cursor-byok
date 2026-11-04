@@ -353,6 +353,9 @@ impl PluginRegistry {
                             let patch = value.get("patch").filter(|patch| !patch.is_null())
                                 .map(|patch| serde_json::from_value::<ResourcePatch>(patch.clone())).transpose()?;
                             if let (Some(patch), Some((kind, record))) = (patch, resource.as_ref()) {
+                                let lock = registry.preparation_lock(&plugin_id, kind, &record.id).await;
+                                let _guard = lock.lock().await;
+                                registry.persist_pending_preparation(&plugin_id, kind, &record.id).await?;
                                 registry.inner.state.apply_patch_if_current(&plugin_id, kind, record, patch).await?;
                             }
                             match status {
@@ -899,6 +902,8 @@ impl PluginRegistry {
             .await;
         for attempt in 0..2 {
             let guard = lock.lock().await;
+            self.persist_pending_preparation(plugin_id, resource_type, resource_id)
+                .await?;
             let record = self
                 .find_record(plugin_id, resource_type, resource_id)
                 .await?;
@@ -965,6 +970,12 @@ impl PluginRegistry {
                 "plugin '{plugin_id}' resource action '{action_id}' has an invalid target"
             )));
         }
+        let lock = self
+            .preparation_lock(plugin_id, resource_type, resource_id)
+            .await;
+        let _guard = lock.lock().await;
+        self.persist_pending_preparation(plugin_id, resource_type, resource_id)
+            .await?;
         let record = self
             .find_record(plugin_id, resource_type, resource_id)
             .await?;
@@ -1422,6 +1433,31 @@ impl PluginRegistry {
             .clone()
     }
 
+    /// Called only while holding the account preparation lock. Runtime mutations
+    /// drain this journal before applying their own result. A different snapshot
+    /// can therefore only supersede it via a new OAuth login or credential import;
+    /// never rebase credentials from the old authorization onto that new record.
+    async fn persist_pending_preparation(&self, plugin: &str, kind: &str, id: &str) -> Result<()> {
+        let key = format!("{plugin}/{kind}/{id}");
+        let pending = self
+            .inner
+            .pending_preparations
+            .lock()
+            .await
+            .get(&key)
+            .cloned();
+        if let Some((snapshot, value)) = pending {
+            self.inner
+                .state
+                .apply_patch_if_current(plugin, kind, &snapshot, serde_json::from_value(value)?)
+                .await?;
+            // I/O errors return above and retain the journal. A conditional
+            // mismatch means explicit replacement credentials take precedence.
+            self.inner.pending_preparations.lock().await.remove(&key);
+        }
+        Ok(())
+    }
+
     /// Once a refresh is issued, commit rotated credentials even if the model request is cancelled.
     async fn prepare_resource(
         &self,
@@ -1455,31 +1491,9 @@ impl PluginRegistry {
                 guard = lock.lock() => guard,
             };
             // Retry failed persistence before ever exchanging another refresh token.
-            let pending = registry
-                .inner
-                .pending_preparations
-                .lock()
-                .await
-                .get(&key)
-                .cloned();
-            if let Some((snapshot, value)) = pending {
-                registry
-                    .inner
-                    .state
-                    .apply_patch_if_current(
-                        plugin,
-                        &kind,
-                        &snapshot,
-                        serde_json::from_value(value)?,
-                    )
-                    .await?;
-                registry
-                    .inner
-                    .pending_preparations
-                    .lock()
-                    .await
-                    .remove(&key);
-            }
+            registry
+                .persist_pending_preparation(plugin, &kind, &record.id)
+                .await?;
             let current = registry.find_record(plugin, &kind, &record.id).await?;
             let value = registry
                 .worker(&entry, &executable)
@@ -1500,16 +1514,8 @@ impl PluginRegistry {
                     .await
                     .insert(key.clone(), (current.clone(), value.clone()));
                 registry
-                    .inner
-                    .state
-                    .apply_patch_if_current(plugin, &kind, &current, serde_json::from_value(value)?)
+                    .persist_pending_preparation(plugin, &kind, &record.id)
                     .await?;
-                registry
-                    .inner
-                    .pending_preparations
-                    .lock()
-                    .await
-                    .remove(&key);
             }
             let prepared = registry.find_record(plugin, &kind, &record.id).await?;
             if had_patch && !prepared.state.is_ready(now_ms()) {

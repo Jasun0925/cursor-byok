@@ -135,7 +135,7 @@
 | 完成 | Issue / 原标题 | 分级 | 本地状态 | 下一步 / 证据线索 |
 | --- | --- | --- | --- | --- |
 | ☐ | [#445](https://github.com/leookun/cursor-byok/issues/445) [Bug] Grok 登录令牌到期后不会自动续期，已保存的 refresh_token 未使用 | A | 已修复待实机验收 | 基线续期探针、模型准备取消与不透明 token 手动刷新均先复现再修复。Grok 23 项脚本、36 项宿主测试通过；手动刷新及 API 2 提交的四组 CI 全通过。插件 API 2 同步适配三个内置插件；真实账号未验收，未合入未发布。见 [记录](history/issues/2026-10-27-issue445-check.md)。 |
-| ☐ | [#481](https://github.com/leookun/cursor-byok/issues/481) GPT和Gemini账号令牌过期 | B | 独立分支已实现、已推送；真实账号待验 | `codex/issue481-oauth-refresh` / PR #6，head `9951089`；续期、轮换、冷却、重新授权和 Google 手动刷新有隔离测试。基于 Grok 分支，依赖插件 API 2；无真实测试账号，未合入、未发布，见[工作总览](work-status.md)。 |
+| ☐ | [#481](https://github.com/leookun/cursor-byok/issues/481) GPT和Gemini账号令牌过期 | B | 隔离已复现，修复待合入 | Codex/Gemini 改用 API 2 prepare；补齐 Google 手动刷新失效状态阻断、401 被吞及失败误报成功。40 项宿主、16 项 Google 回归通过，见 [复查记录](history/issues/2026-10-28-issue481-check.md)。PR #6 依赖 PR #4，真实账号待验收。 |
 | ☐ | [#191](https://github.com/leookun/cursor-byok/issues/191) 额度显示 | C | 需求待评估 | 核对现版账号额度面板已有覆盖，按具体供应商补需求。 |
 
 ### 安装、桌面界面与数据（11 项）

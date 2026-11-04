@@ -9,6 +9,7 @@ import type {
   ResourceImportSupport,
   ResourceMetric,
   ResourcePatch,
+  ResourceRefreshResult,
   ResourceSnapshot,
   ResourceState,
   ResourceView,
@@ -46,6 +47,9 @@ export type AccountData = {
   accountId: string | null;
   displayName: string;
   quota: AccountQuota | null;
+  expiresAtMs?: number;
+  refreshError?: string;
+  refreshRetryAtMs?: number;
 };
 
 export type CredentialCandidate = {
@@ -53,6 +57,7 @@ export type CredentialCandidate = {
   refreshToken: string | null;
   accountId?: string | null;
   displayName: string | null;
+  expiresAtMs?: number;
 };
 
 function object(value: unknown): Record<string, unknown> | null {
@@ -136,6 +141,7 @@ export async function credentialDraft(credential: CredentialCandidate): Promise<
     accountId: credential.accountId ?? chatGptAccountId(credential.accessToken),
     displayName: credential.displayName ?? identity.displayName,
     quota: null,
+    ...(credential.expiresAtMs ? { expiresAtMs: credential.expiresAtMs } : {}),
   };
   return { key: identity.key, privateData: data as unknown as JsonValue };
 }
@@ -150,7 +156,17 @@ export function accountData(resource: ResourceSnapshot): AccountData {
     accountId: text(data?.accountId) ?? chatGptAccountId(accessToken),
     displayName: text(data?.displayName) ?? "ChatGPT account",
     quota: (data?.quota ?? null) as AccountQuota | null,
+    ...(number(data?.expiresAtMs) !== null ? { expiresAtMs: number(data?.expiresAtMs)! } : {}),
+    ...(text(data?.refreshError) ? { refreshError: text(data?.refreshError)! } : {}),
+    ...(number(data?.refreshRetryAtMs) !== null
+      ? { refreshRetryAtMs: number(data?.refreshRetryAtMs)! }
+      : {}),
   };
+}
+
+export function tokenExpiresAt(data: AccountData): number | null {
+  const exp = number(decodeJwtPayload(data.accessToken)?.exp);
+  return data.expiresAtMs ?? (exp !== null ? exp * 1000 : null);
 }
 
 export function accountHeaders(data: AccountData): Record<string, string> {
@@ -411,7 +427,9 @@ async function consumeResetCard(
     );
   }
 
-  const patch = await refreshAccount(resource, context);
+  const refresh = await refreshAccount(resource, context);
+  if (refresh.status === "auth-error") throw new Error(refresh.message);
+  const patch = refresh.patch;
   const refreshedResource: ResourceSnapshot = {
     ...resource,
     ...(patch.privateData ? { privateData: patch.privateData } : {}),
@@ -491,7 +509,7 @@ export function presentAccount(resource: ResourceSnapshot): ResourceView {
 export async function refreshAccount(
   resource: ResourceSnapshot,
   context: PluginContext,
-): Promise<ResourcePatch> {
+): Promise<ResourceRefreshResult> {
   const data = accountData(resource);
   const response = await context.network.fetch(USAGE_URL, {
     method: "GET",
@@ -500,7 +518,8 @@ export async function refreshAccount(
   if (response.status < 200 || response.status >= 300) {
     if (response.status === 401) {
       return {
-        state: { status: "invalid", message: "ChatGPT authorization expired; sign in again" },
+        status: "auth-error",
+        message: "ChatGPT usage request rejected the access token",
       };
     }
     throw new Error(`Codex usage lookup failed (HTTP ${response.status}): ${response.body}`);
@@ -513,8 +532,11 @@ export async function refreshAccount(
   }
   const quota = parseCodexUsage(body);
   return {
-    privateData: { ...data, quota } as unknown as JsonValue,
-    state: quotaState(quota),
+    status: "completed",
+    patch: {
+      privateData: { ...data, quota } as unknown as JsonValue,
+      state: quotaState(quota),
+    },
   };
 }
 

@@ -7,6 +7,8 @@
 
 ## Issue 调查与验收
 
+- [2026-10-28 · GPT / Google OAuth 续期验证](issues/2026-10-28-issue481-check.md)
+
 - [2026-10-27 · Grok OAuth 续期验证](issues/2026-10-27-issue445-check.md)
 
 - [2026-10-02 · Issue #410 检查记录](issues/2026-10-02-issue410-check.md)

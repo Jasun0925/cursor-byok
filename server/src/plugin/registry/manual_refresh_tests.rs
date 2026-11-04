@@ -1,4 +1,4 @@
-//! Exercise the actual Grok resource functions through the host refresh entry point.
+//! Exercise the actual Grok and Google resource functions through the host refresh entry point.
 use super::{
     auth_retry_tests::{fixture, stop_workers, worker_observations},
     *,
@@ -106,4 +106,130 @@ async fn concurrent_manual_refreshes_do_not_rotate_the_same_rejected_token_twice
             .count(),
         1
     );
+}
+
+async fn add_google_account(
+    registry: &PluginRegistry,
+    mode: &str,
+    invalid: bool,
+) -> ResourceRecord {
+    registry
+        .inner
+        .state
+        .upsert_resources(
+            "dev.refresh",
+            "antigravity-account",
+            vec![ResourceDraft {
+                key: "google:test".into(),
+                private_data: serde_json::json!({
+                    "accessToken": format!("opaque-google-{mode}"),
+                    "refreshToken": format!("refresh-google-{mode}"),
+                    "displayName": "test", "quota": { "gemini": { "remainingPercent": 30 } },
+                }),
+                state: invalid.then(|| super::super::state::ResourceStateInput::Invalid {
+                    message: Some("Access token expired".into()),
+                }),
+            }],
+        )
+        .await
+        .unwrap();
+    registry
+        .inner
+        .state
+        .resources("dev.refresh", "antigravity-account")
+        .await
+        .unwrap()
+        .remove(0)
+}
+
+#[tokio::test]
+#[ignore = "requires DENO_TEST_EXECUTABLE"]
+async fn google_manual_refresh_recovers_project_and_quota_authentication_errors() {
+    for (mode, invalid) in [("project", false), ("quota", false), ("expired", true)] {
+        let (_root, registry, entry, executable, _) = fixture().await;
+        let record = add_google_account(&registry, mode, invalid).await;
+        let result = registry
+            .refresh_resource("dev.refresh", "antigravity-account", &record.id)
+            .await;
+        let saved = registry
+            .find_record("dev.refresh", "antigravity-account", &record.id)
+            .await
+            .unwrap();
+        let observed = worker_observations(&registry, &entry, &executable).await;
+        stop_workers(&registry).await;
+        result.unwrap();
+        assert!(saved.state.is_ready(now_ms()));
+        assert_eq!(saved.id, record.id);
+        assert_eq!(
+            saved.private_data["accessToken"],
+            format!("opaque-google-{mode}-rotated")
+        );
+        assert_eq!(
+            saved.private_data["refreshToken"],
+            format!("rotated-google-{mode}")
+        );
+        assert_eq!(
+            saved.private_data["quota"]["gemini"]["remainingPercent"],
+            75
+        );
+        let mut calls = Vec::new();
+        if !invalid {
+            calls.push(format!("project:Bearer opaque-google-{mode}"));
+            if mode == "quota" {
+                calls.push(format!("quota:Bearer opaque-google-{mode}"));
+            }
+        }
+        calls.extend([
+            "token".into(),
+            format!("project:Bearer opaque-google-{mode}-rotated"),
+            format!("quota:Bearer opaque-google-{mode}-rotated"),
+        ]);
+        assert_eq!(observed["googleCalls"], serde_json::json!(calls));
+    }
+}
+
+#[tokio::test]
+#[ignore = "requires DENO_TEST_EXECUTABLE"]
+async fn google_manual_refresh_failure_preserves_rotation_and_previous_quota() {
+    for mode in ["reject", "unavailable", "revoked"] {
+        let (_root, registry, entry, executable, _) = fixture().await;
+        let record = add_google_account(&registry, mode, false).await;
+        let result = registry
+            .refresh_resource("dev.refresh", "antigravity-account", &record.id)
+            .await;
+        if mode == "revoked" {
+            assert!(registry
+                .refresh_resource("dev.refresh", "antigravity-account", &record.id)
+                .await
+                .is_err());
+        }
+        let saved = registry
+            .find_record("dev.refresh", "antigravity-account", &record.id)
+            .await
+            .unwrap();
+        let observed = worker_observations(&registry, &entry, &executable).await;
+        stop_workers(&registry).await;
+        assert!(result.is_err(), "{mode}: quota failure must be reported");
+        assert_eq!(
+            saved.private_data["quota"]["gemini"]["remainingPercent"],
+            30
+        );
+        if mode == "revoked" {
+            assert!(!saved.state.is_ready(now_ms()));
+        } else {
+            assert_eq!(
+                saved.private_data["refreshToken"],
+                format!("rotated-google-{mode}")
+            );
+        }
+        assert_eq!(
+            observed["googleCalls"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .filter(|call| *call == "token")
+                .count(),
+            1
+        );
+    }
 }

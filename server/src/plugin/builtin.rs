@@ -49,6 +49,13 @@ const CODEX_AUTH: &[(&str, &str)] = &[
         )),
     ),
     (
+        "credentials.ts",
+        include_str!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/plugins/build-in/codex-auth/credentials.ts"
+        )),
+    ),
+    (
         "assets/codex.svg",
         include_str!(concat!(
             env!("CARGO_MANIFEST_DIR"),
@@ -157,6 +164,13 @@ const ANTIGRAVITY_AUTH: &[(&str, &str)] = &[
         include_str!(concat!(
             env!("CARGO_MANIFEST_DIR"),
             "/plugins/build-in/antigravity-auth/resources.ts"
+        )),
+    ),
+    (
+        "credentials.ts",
+        include_str!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/plugins/build-in/antigravity-auth/credentials.ts"
         )),
     ),
     (

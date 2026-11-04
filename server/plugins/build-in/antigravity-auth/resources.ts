@@ -6,6 +6,7 @@ import type {
   ResourceImportSupport,
   ResourceMetric,
   ResourcePatch,
+  ResourceRefreshResult,
   ResourceSnapshot,
   ResourceState,
   ResourceView,
@@ -20,6 +21,8 @@ import { CLIENT_ID, CLIENT_SECRET } from "./google_oauth.ts";
 export const RESOURCE_TYPE = "antigravity-account";
 
 const REFRESH_TOKEN_URL = "https://oauth2.googleapis.com/token";
+
+class AccountAuthenticationError extends Error {}
 
 async function fetchText(
   network: PluginContext["network"] | undefined,
@@ -54,6 +57,8 @@ export type AccountData = {
   displayName: string;
   projectId?: string | null;
   expiresAtMs?: number | null;
+  refreshError?: string;
+  refreshRetryAtMs?: number;
   quota: AccountQuota | null;
 };
 
@@ -82,8 +87,12 @@ export async function fetchAccountProjectAndTier(
         },
         body: JSON.stringify({ metadata: { ideType: "ANTIGRAVITY" } }),
       });
+      if (assistRes.status === 401) {
+        throw new AccountAuthenticationError("Google project lookup rejected the access token");
+      }
       if (assistRes.status >= 200 && assistRes.status < 300) {
         const body = object(JSON.parse(assistRes.body));
+        if (!body) throw new Error("Google project lookup returned an invalid response");
         const project = text(body?.cloudaicompanionProject);
         const paid = object(body?.paidTier);
         const current = object(body?.currentTier);
@@ -99,11 +108,12 @@ export async function fetchAccountProjectAndTier(
         }
         return { projectId: project ?? "bamboo-precept-lgxtn", planLabel };
       }
-    } catch {
+    } catch (error) {
+      if (error instanceof AccountAuthenticationError) throw error;
       // Continue next endpoint
     }
   }
-  return { projectId: "bamboo-precept-lgxtn", planLabel: "FREE" };
+  throw new Error("Google project lookup failed on all endpoints; retry shortly");
 }
 
 export async function queryAccountQuota(
@@ -125,6 +135,9 @@ export async function queryAccountQuota(
         },
         body: JSON.stringify({ project: projectId }),
       });
+      if (response.status === 401) {
+        throw new AccountAuthenticationError("Google quota lookup rejected the access token");
+      }
       if (response.status < 200 || response.status >= 300) continue;
       const root = object(JSON.parse(response.body));
       const models = object(root?.models);
@@ -174,22 +187,12 @@ export async function queryAccountQuota(
             : null,
         },
       };
-    } catch {
+    } catch (error) {
+      if (error instanceof AccountAuthenticationError) throw error;
       // Continue next endpoint
     }
   }
-
-  return {
-    projectId,
-    quota: {
-      planLabel,
-      limitReached: false,
-      coolingUntilMs: null,
-      updatedAtMs: Date.now(),
-      claude: null,
-      gemini: null,
-    },
-  };
+  throw new Error("Google quota lookup failed on all endpoints; retry shortly");
 }
 
 function object(value: unknown): Record<string, unknown> | null {
@@ -287,6 +290,10 @@ export function accountData(resource: ResourceSnapshot): AccountData {
     displayName: text(data?.displayName) ?? "Antigravity account",
     projectId: text(data?.projectId) ?? "bamboo-precept-lgxtn",
     expiresAtMs: typeof data?.expiresAtMs === "number" ? data.expiresAtMs : null,
+    ...(text(data?.refreshError) ? { refreshError: text(data?.refreshError)! } : {}),
+    ...(typeof data?.refreshRetryAtMs === "number"
+      ? { refreshRetryAtMs: data.refreshRetryAtMs }
+      : {}),
     quota: (data?.quota ?? null) as AccountQuota | null,
   };
 }
@@ -374,68 +381,28 @@ export function presentAccount(resource: ResourceSnapshot): ResourceView {
 export async function refreshAccount(
   resource: ResourceSnapshot,
   context: PluginContext,
-): Promise<ResourcePatch> {
+): Promise<ResourceRefreshResult> {
   const data = accountData(resource);
-  let accessToken = data.accessToken;
-  let refreshToken = data.refreshToken;
-  let projectId = data.projectId ?? "bamboo-precept-lgxtn";
-  let expiresAtMs = data.expiresAtMs ?? null;
-
-  if (refreshToken) {
-    const response = await context.network.fetch(REFRESH_TOKEN_URL, {
-      method: "POST",
-      headers: {
-        accept: "application/json",
-        "content-type": "application/x-www-form-urlencoded",
-      },
-      body: new URLSearchParams({
-        client_id: CLIENT_ID,
-        client_secret: CLIENT_SECRET,
-        grant_type: "refresh_token",
-        refresh_token: refreshToken,
-      }).toString(),
-    });
-
-    if (response.status < 200 || response.status >= 300) {
-      const bodyText = response.body.toLowerCase();
-      // Only mark invalid if token is revoked or client is invalid
-      if (bodyText.includes("invalid_grant") || bodyText.includes("unauthorized_client")) {
-        return {
-          state: {
-            status: "invalid",
-            message: "Google authorization expired or revoked; please sign in again",
-          },
-        };
-      }
-      // On network glitches or temporary Google server errors, keep ready
-      return {
+  try {
+    const result = await queryAccountQuota(data.accessToken, context.network);
+    const updatedData: AccountData = {
+      ...data,
+      projectId: result.projectId,
+      quota: result.quota,
+    };
+    return {
+      status: "completed",
+      patch: {
+        privateData: updatedData as unknown as JsonValue,
         state: { status: "ready" },
-      };
+      },
+    };
+  } catch (error) {
+    if (error instanceof AccountAuthenticationError) {
+      return { status: "auth-error", message: error.message };
     }
-
-    const body = object(JSON.parse(response.body));
-    accessToken = text(body?.access_token) ?? accessToken;
-    refreshToken = text(body?.refresh_token) ?? refreshToken;
-    const expiresIn = typeof body?.expires_in === "number" ? body.expires_in : 3600;
-    expiresAtMs = Date.now() + expiresIn * 1000;
+    throw error;
   }
-
-  // Fetch real-time quota and project ID
-  const result = await queryAccountQuota(accessToken, context.network);
-  projectId = result.projectId || projectId;
-
-  const updatedData: AccountData = {
-    ...data,
-    accessToken,
-    refreshToken,
-    projectId,
-    expiresAtMs,
-    quota: result.quota ?? data.quota,
-  };
-  return {
-    privateData: updatedData as unknown as JsonValue,
-    state: { status: "ready" },
-  };
 }
 
 function firstText(source: Record<string, unknown>, keys: string[]): string | null {
