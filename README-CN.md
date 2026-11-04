@@ -19,7 +19,7 @@
 
 这个仓库是 [Jasun0925/cursor-byok](https://github.com/Jasun0925/cursor-byok)。应用在本机运行网关，把 Cursor 的 Agent 请求转换成你配置的模型接口请求。
 
-它基于已归档的 [leookun/cursor-byok](https://github.com/leookun/cursor-byok)。安装包、更新和问题反馈都使用本仓库。当前发布版本是 [v1.0.20](https://github.com/Jasun0925/cursor-byok/releases/tag/v1.0.20)。
+它基于已归档的 [leookun/cursor-byok](https://github.com/leookun/cursor-byok)。安装包、更新和问题反馈都使用本仓库。当前发布版本是 [v1.0.22](https://github.com/Jasun0925/cursor-byok/releases/tag/v1.0.22)。
 
 > cursor-byok 免费开源，模型 API 可能收费。本项目与 Cursor 官方无隶属关系。本地网关会把请求发到你选择的模型服务。
 
@@ -30,6 +30,8 @@
 | [v1.0.18](https://github.com/Jasun0925/cursor-byok/releases/tag/v1.0.18) | Agent 对话继续走 `AgentService/RunSSE`。Cursor 打开 `agent_host_local_loop` 后会把请求改到 `InferenceService/RunInference`，本网关无法按原协议解码，并报 `ConversationStateStructure.summary` 的 `ThirtyTwoBit`。更新地址和更新签名改为本仓库。 |
 | [v1.0.19](https://github.com/Jasun0925/cursor-byok/releases/tag/v1.0.19) | 解码历史消息里以 `{ "__type": "Uint8Array", "hex": "..." }` 保存的用户图片。已有图片的对话不再报 `Cursor message is missing image`。 |
 | [v1.0.20](https://github.com/Jasun0925/cursor-byok/releases/tag/v1.0.20) | 工具读到的图片在下一轮仍然交给模型。成功编辑写入 `file_states_v2`，重载后 Review 仍能列出文件。macOS 重新打开窗口时保持 Dock 图标的隐藏状态。 |
+| [v1.0.21](https://github.com/Jasun0925/cursor-byok/releases/tag/v1.0.21) | 可在系统设置里开启 CLIProxyAPI 标签页：在所选目录启动 `cli-proxy-api`、查看输出、打开它的管理页面。最小化收到菜单栏托盘。移除「使用教程」标签页。 |
+| [v1.0.22](https://github.com/Jasun0925/cursor-byok/releases/tag/v1.0.22) | 系统设置可以清理已没有对话、图片或进行中任务使用的会话数据块，并回收空间。内置的 Grok、ChatGPT/Codex、Google 插件会自动续期 OAuth 凭据（插件 API 2，来自上游 v1.1.0）。BidiAppend 解码失败时日志不再写入请求内容。 |
 
 请从[最新发布](https://github.com/Jasun0925/cursor-byok/releases/latest)安装。每个版本的具体说明以该 Release 页面为准。
 

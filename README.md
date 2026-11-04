@@ -19,7 +19,7 @@ Use your own model APIs in Cursor with Agent, tool calling, Skills, and MCP work
 
 This repository publishes Cursor BYOK from [Jasun0925/cursor-byok](https://github.com/Jasun0925/cursor-byok). The application runs a local gateway that turns Cursor Agent requests into requests to the model APIs you configure.
 
-It is based on [leookun/cursor-byok](https://github.com/leookun/cursor-byok). That upstream repository is archived. Installers, updates, and issues for this line are on this repository. The current release is [v1.0.20](https://github.com/Jasun0925/cursor-byok/releases/tag/v1.0.20).
+It is based on [leookun/cursor-byok](https://github.com/leookun/cursor-byok). That upstream repository is archived. Installers, updates, and issues for this line are on this repository. The current release is [v1.0.22](https://github.com/Jasun0925/cursor-byok/releases/tag/v1.0.22).
 
 > Cursor BYOK is free and open source. Your model provider may charge for API usage. This project is independent of Cursor. The local gateway sends requests to the model service you choose.
 
@@ -30,6 +30,8 @@ It is based on [leookun/cursor-byok](https://github.com/leookun/cursor-byok). Th
 | [v1.0.18](https://github.com/Jasun0925/cursor-byok/releases/tag/v1.0.18) | Keep Agent turns on `AgentService/RunSSE`. Cursor's `agent_host_local_loop` gate was sending turns to `InferenceService/RunInference`, which this gateway cannot decode and reported as `ConversationStateStructure.summary` wire type `ThirtyTwoBit`. Updates and the updater signing key come from this repository. |
 | [v1.0.19](https://github.com/Jasun0925/cursor-byok/releases/tag/v1.0.19) | Decode user images stored as `{ "__type": "Uint8Array", "hex": "..." }` in conversation history. Chats that already contained those images no longer stop with `Cursor message is missing image`. |
 | [v1.0.20](https://github.com/Jasun0925/cursor-byok/releases/tag/v1.0.20) | Keep images returned by tools available on the next turn. Record successful edit snapshots in `file_states_v2` so Review can list files after a reload. On macOS, preserve a hidden Dock icon when the window is opened again. |
+| [v1.0.21](https://github.com/Jasun0925/cursor-byok/releases/tag/v1.0.21) | Optional CLIProxyAPI tab, enabled in Settings: start `cli-proxy-api` from a chosen directory, view its output, and open its management page. Minimize to the menu bar tray. Remove the tutorial tab. |
+| [v1.0.22](https://github.com/Jasun0925/cursor-byok/releases/tag/v1.0.22) | Settings can remove conversation data blocks that no saved conversation, image, or running task uses, then reclaim the space. Built-in Grok, ChatGPT/Codex, and Google plugins renew OAuth credentials (plugin API 2, from upstream v1.1.0). BidiAppend decode errors no longer write request content to the log. |
 
 Install from the [latest release](https://github.com/Jasun0925/cursor-byok/releases/latest). Release notes there describe that build.
 
