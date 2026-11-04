@@ -325,7 +325,7 @@
 
 ## v1.1.0 发布记录
 
-来源日期：2026-11-04。当前为发布准备，最终状态与资产核验将在工作流完成后补齐。
+来源日期：2026-11-04。已发布为 Latest，非草稿、非预发布；以下结果属于本次发布核验。
 
 本地验证：`npm run check`、`npm run tauri:build -- --debug --no-bundle`、Rust 格式与差异检查通过；portable 更新清单测试 2 项通过；工作流 YAML、仅标签触发、五处版本一致性及原签名公钥已核对。前端保留既有 chunk 大小和动态导入提示，构建成功。
 
@@ -349,7 +349,28 @@
 
 - OAuth 续期通过合成网络与真实 Deno 宿主测试，真实 Grok、ChatGPT、Google 账号尚未完成验收。
 - 远程 Semble 采集实现已包含，但 Cursor 审批曾出现自动取消；独立终端审批卡片的 10 个本地候选文件没有进入本版本，真实批准/拒绝及 Windows Cursor UI 仍待验证。
-- #155 后台任务保持“完成一半”：已有普通短任务自动续答验证，审批、压缩等边界仍待验收；本轮不测试 20 分钟任务。
-- #505 多 reasoning signature 等仍在处理，不能将本次发版视为所有上游问题已解决。
+- [上游 #155](https://github.com/leookun/cursor-byok/issues/155) 后台任务保持“完成一半”：已有普通短任务自动续答验证，审批、压缩等边界仍待验收；本轮不测试 20 分钟任务。
+- [上游 #505](https://github.com/leookun/cursor-byok/issues/505) 多 reasoning signature 等仍在处理，不能将本次发版视为所有上游问题已解决。
 
 安装包和更新清单以本 Release 的 Assets 为准。更详细的进度见 [工作状态](https://github.com/haohaomin/cursor-byok/blob/main/docs/work-status.md)及 [维护状态](https://github.com/haohaomin/cursor-byok/blob/main/docs/maintenance-status.md)。
+
+### 发布与核验结果
+
+- 发布提交：`d85d8ee0cac3ca73903edc7461320c2ad4c55886`，标签 `v1.1.0` 位于 `origin/main` 历史中。
+- [四平台发布工作流](https://github.com/haohaomin/cursor-byok/actions/runs/41792371217)及[发布提交 CI](https://github.com/haohaomin/cursor-byok/actions/runs/41792325239)：全部成功。
+- [v1.1.0 Release](https://github.com/haohaomin/cursor-byok/releases/tag/v1.1.0)：Latest，`draft=false`、`prerelease=false`。
+- 实际下载全部附件，核对文件大小与 GitHub 提供的 SHA-256 摘要；七个安装/更新包通过原 updater 公钥的 Minisign 签名验证。
+- `latest.json`、`portable-latest.json`、`update.json` 均为 1.1.0；平台覆盖、下载 URL、签名以及旧版更新包的大小与 SHA-256 全部匹配。
+- 新旧仓库用户名的三个 Latest 更新入口均能获取 1.1.0 清单；没有更换签名身份。
+- 本次没有安装或替换本机应用，不把产物下载和签名验证记为应用内自动安装验收。
+- [结构化证据](2026-11-04-v1.1.0-release-evidence.json)。
+
+| 签名产物 | SHA-256 | 结果 |
+| --- | --- | --- |
+| Cursor.BYOK-1.1.0-1.x86_64.rpm | `4f37a76a2ec711b6fabfd6ed88f2ef7adaf29e5e5428aa2028202427c88f26d9` | 通过 |
+| Cursor.BYOK_1.1.0_aarch64.app.tar.gz | `4dad48d94aec3ee7fe3c3f07e3d21289b41dcece4eb0524b5f98891523a04741` | 通过 |
+| Cursor.BYOK_1.1.0_amd64.AppImage | `c6a38adfa27f4ba8188610e8fba9a054c5d837da76edca2aa2c1e7b154493d9d` | 通过 |
+| Cursor.BYOK_1.1.0_amd64.deb | `4b26cb947fce8eb47ac615334eda222beeac61bf77412be47664dff72c6691a3` | 通过 |
+| Cursor.BYOK_1.1.0_x64-setup.exe | `64b67236db116a45c5296c62e6b6ca2e358aa180fc821e7ccdf054cd603d7c92` | 通过 |
+| Cursor.BYOK_1.1.0_x64.app.tar.gz | `bf500d027ce9c16fe464b53124de31d96d0fe1828ffe04b72315ac6db4213977` | 通过 |
+| cursor-byok-1.1.0-windows-amd64.zip | `cb40821f94c5879f24744ff1142ef6df66ed053ff30ba9864c8476498780d348` | 通过 |

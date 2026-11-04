@@ -1,0 +1,265 @@
+{
+  "ci_tests": {
+    "Desktop Rust (macos-latest) / Test workspace collection on the native host": {
+      "passed": 14,
+      "failed": 0,
+      "ignored": 0
+    },
+    "Desktop Rust (macos-latest) / Test host-independent source selection and snapshots": {
+      "passed": 10,
+      "failed": 0,
+      "ignored": 0
+    },
+    "Desktop Rust (macos-latest) / Test SQLite storage reclamation on the native host": {
+      "passed": 6,
+      "failed": 0,
+      "ignored": 0
+    },
+    "Desktop Rust (macos-latest) / Test plugin credential lifecycle": {
+      "passed": 41,
+      "failed": 0,
+      "ignored": 0
+    },
+    "Desktop Rust (windows-latest) / Test workspace collection on the native host": {
+      "passed": 14,
+      "failed": 0,
+      "ignored": 0
+    },
+    "Desktop Rust (windows-latest) / Test host-independent source selection and snapshots": {
+      "passed": 10,
+      "failed": 0,
+      "ignored": 0
+    },
+    "Desktop Rust (windows-latest) / Test SQLite storage reclamation on the native host": {
+      "passed": 6,
+      "failed": 0,
+      "ignored": 0
+    },
+    "Desktop Rust (windows-latest) / Test plugin credential lifecycle": {
+      "passed": 42,
+      "failed": 0,
+      "ignored": 0
+    },
+    "Rust (Linux) / Run tests": {
+      "passed": 522,
+      "failed": 0,
+      "ignored": 14
+    },
+    "Rust (Linux) / Test plugin credential lifecycle": {
+      "passed": 41,
+      "failed": 0,
+      "ignored": 0
+    }
+  },
+  "version": "1.1.0",
+  "repository": "haohaomin/cursor-byok",
+  "release_url": "https://github.com/haohaomin/cursor-byok/releases/tag/v1.1.0",
+  "release_commit": "d85d8ee0cac3ca73903edc7461320c2ad4c55886",
+  "release_run": "https://github.com/haohaomin/cursor-byok/actions/runs/41792371217",
+  "ci_run": "https://github.com/haohaomin/cursor-byok/actions/runs/41792325239",
+  "updater_public_key_sha256": "a4e4479f2f264e2aa24e384b67e9adb0b57efa5225f1f76cad0be0249a28ce15",
+  "published_at": "2026-11-04T07:57:28Z",
+  "draft": false,
+  "prerelease": false,
+  "latest": true,
+  "assets": [
+    {
+      "name": "Cursor.BYOK-1.1.0-1.x86_64.rpm",
+      "size": 31789232,
+      "sha256": "4f37a76a2ec711b6fabfd6ed88f2ef7adaf29e5e5428aa2028202427c88f26d9",
+      "github_digest_verified": true,
+      "signature": "valid"
+    },
+    {
+      "name": "Cursor.BYOK-1.1.0-1.x86_64.rpm.sig",
+      "size": 420,
+      "sha256": "6f7575f8a9b9f3aa5d077da6590eff881aa007ef6f68c590d1cfcdf2a080a029",
+      "github_digest_verified": true
+    },
+    {
+      "name": "Cursor.BYOK_1.1.0_aarch64.app.tar.gz",
+      "size": 28946962,
+      "sha256": "4dad48d94aec3ee7fe3c3f07e3d21289b41dcece4eb0524b5f98891523a04741",
+      "github_digest_verified": true,
+      "signature": "valid"
+    },
+    {
+      "name": "Cursor.BYOK_1.1.0_aarch64.app.tar.gz.sig",
+      "size": 412,
+      "sha256": "7ae2b0ed41d5170d3807313b35444f0b68b570103153708371f492596033c98b",
+      "github_digest_verified": true
+    },
+    {
+      "name": "Cursor.BYOK_1.1.0_amd64.AppImage",
+      "size": 109537784,
+      "sha256": "c6a38adfa27f4ba8188610e8fba9a054c5d837da76edca2aa2c1e7b154493d9d",
+      "github_digest_verified": true,
+      "signature": "valid"
+    },
+    {
+      "name": "Cursor.BYOK_1.1.0_amd64.AppImage.sig",
+      "size": 424,
+      "sha256": "4555eb4b98424b45ebb2d83a3e06ea407776983b498dd9f277556dfc1583fb98",
+      "github_digest_verified": true
+    },
+    {
+      "name": "Cursor.BYOK_1.1.0_amd64.deb",
+      "size": 31780474,
+      "sha256": "4b26cb947fce8eb47ac615334eda222beeac61bf77412be47664dff72c6691a3",
+      "github_digest_verified": true,
+      "signature": "valid"
+    },
+    {
+      "name": "Cursor.BYOK_1.1.0_amd64.deb.sig",
+      "size": 416,
+      "sha256": "003d0ba843c3b9af3ce64410423f43916fb7b230942cc7242d7889de47c0d1d8",
+      "github_digest_verified": true
+    },
+    {
+      "name": "Cursor.BYOK_1.1.0_x64-setup.exe",
+      "size": 21187816,
+      "sha256": "64b67236db116a45c5296c62e6b6ca2e358aa180fc821e7ccdf054cd603d7c92",
+      "github_digest_verified": true,
+      "signature": "valid"
+    },
+    {
+      "name": "Cursor.BYOK_1.1.0_x64-setup.exe.sig",
+      "size": 424,
+      "sha256": "cc896583d4c0b083d681f16bfd8d830bed3d651b2c72b2f75f4ffd53b5523b30",
+      "github_digest_verified": true
+    },
+    {
+      "name": "Cursor.BYOK_1.1.0_x64.app.tar.gz",
+      "size": 29995559,
+      "sha256": "bf500d027ce9c16fe464b53124de31d96d0fe1828ffe04b72315ac6db4213977",
+      "github_digest_verified": true,
+      "signature": "valid"
+    },
+    {
+      "name": "Cursor.BYOK_1.1.0_x64.app.tar.gz.sig",
+      "size": 412,
+      "sha256": "1a47491204cf71c9ff6677cc71c85231cde5d93a71abfc2db7d9b52d5d35883b",
+      "github_digest_verified": true
+    },
+    {
+      "name": "cursor-byok-1.1.0-linux-amd64.tar.gz",
+      "size": 31244659,
+      "sha256": "ccb86532eb7fa70459be8f6667247d30da4e216c0fc7bad07edf2a42f7ededec",
+      "github_digest_verified": true
+    },
+    {
+      "name": "cursor-byok-1.1.0-macos-amd64.tar.gz",
+      "size": 29995559,
+      "sha256": "bf500d027ce9c16fe464b53124de31d96d0fe1828ffe04b72315ac6db4213977",
+      "github_digest_verified": true
+    },
+    {
+      "name": "cursor-byok-1.1.0-macos-arm64.tar.gz",
+      "size": 28946962,
+      "sha256": "4dad48d94aec3ee7fe3c3f07e3d21289b41dcece4eb0524b5f98891523a04741",
+      "github_digest_verified": true
+    },
+    {
+      "name": "cursor-byok-1.1.0-windows-amd64.zip",
+      "size": 27995605,
+      "sha256": "cb40821f94c5879f24744ff1142ef6df66ed053ff30ba9864c8476498780d348",
+      "github_digest_verified": true,
+      "signature": "valid"
+    },
+    {
+      "name": "cursor-byok-1.1.0-windows-amd64.zip.sig",
+      "size": 428,
+      "sha256": "45c09abbe7f0c34d4e63d7092f1eb7672adaa9e81b2045588569ff2ffcb5ae2f",
+      "github_digest_verified": true
+    },
+    {
+      "name": "latest.json",
+      "size": 6045,
+      "sha256": "cbe693eb98f92676568e4897e57a696dcecc69984138fb8f3a0a089dd84abcbc",
+      "github_digest_verified": true
+    },
+    {
+      "name": "portable-latest.json",
+      "size": 720,
+      "sha256": "225edb84915c34c0ab9da9bd34f4aafbb86348e07fcb6863ac11b73407f7d4d2",
+      "github_digest_verified": true
+    },
+    {
+      "name": "update.json",
+      "size": 1208,
+      "sha256": "c4ba588168c0a754e1741cb5788e2506d266ac6757df906c86064ffb877eba48",
+      "github_digest_verified": true
+    }
+  ],
+  "manifests": {
+    "latest.json": {
+      "version": "1.1.0",
+      "platforms": [
+        "darwin-aarch64",
+        "darwin-aarch64-app",
+        "linux-x86_64",
+        "linux-x86_64-appimage",
+        "linux-x86_64-deb",
+        "linux-x86_64-rpm",
+        "windows-x86_64",
+        "windows-x86_64-nsis",
+        "darwin-x86_64",
+        "darwin-x86_64-app"
+      ]
+    },
+    "portable-latest.json": {
+      "version": "1.1.0",
+      "platforms": [
+        "windows-x86_64"
+      ]
+    },
+    "update.json": {
+      "version": "1.1.0",
+      "platforms": [
+        "macos-arm64",
+        "macos-amd64",
+        "windows-amd64",
+        "linux-amd64"
+      ]
+    }
+  },
+  "latest_endpoints": [
+    {
+      "owner": "renhao12356578",
+      "manifest": "latest.json",
+      "version": "1.1.0"
+    },
+    {
+      "owner": "renhao12356578",
+      "manifest": "portable-latest.json",
+      "version": "1.1.0"
+    },
+    {
+      "owner": "renhao12356578",
+      "manifest": "update.json",
+      "version": "1.1.0"
+    },
+    {
+      "owner": "haohaomin",
+      "manifest": "latest.json",
+      "version": "1.1.0"
+    },
+    {
+      "owner": "haohaomin",
+      "manifest": "portable-latest.json",
+      "version": "1.1.0"
+    },
+    {
+      "owner": "haohaomin",
+      "manifest": "update.json",
+      "version": "1.1.0"
+    }
+  ],
+  "verification": "Downloaded all assets; checked sizes and GitHub SHA-256 digests when supplied; verified all seven Minisign signatures with the unchanged updater public key; checked manifest URLs, signatures, legacy checksums, and current/old-owner Latest endpoints.",
+  "limits": [
+    "No installation or automatic upgrade was performed.",
+    "Real OAuth accounts and Semble approval remain unverified.",
+    "Ten uncommitted Semble approval files are excluded.",
+    "No 20-minute task test was run."
+  ]
+}

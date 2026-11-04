@@ -1,12 +1,12 @@
 # 工作状态
 
-更新：2026-11-04；本轮合并状态已通过 GitHub API 核对。历史测试与环境状态保留原核对日期。逐项调查见 [Issue 清单](issues.md)，原始测试见 [历史资料](history/README.md)。
+更新：2026-11-04；本轮合并与 v1.1.0 发布状态已通过 GitHub API 和产物下载核对。历史测试与环境状态保留原核对日期。逐项调查见 [Issue 清单](issues.md)，原始测试见 [历史资料](history/README.md)。
 
-**结论：远程 Semble、Grok 与 GPT/Google OAuth 的已提交实现均已合入 main 并推送；尚未发布新安装包。Semble 独立终端审批卡片候选仍有 10 个本地文件未提交、未推送。真实 OAuth 账号、Semble 批准/拒绝及 Windows Cursor UI 仍待验收。**
+**结论：远程 Semble、Grok 与 GPT/Google OAuth 的已提交实现均已合入 main，并随 v1.1.0 发布。Semble 独立终端审批卡片候选仍有 10 个本地文件未提交、未推送。真实 OAuth 账号、Semble 批准/拒绝及 Windows Cursor UI 仍待验收。**
 
 ## 1. 已发布的成果
 
-既有发布与验收证据见 [维护状态](maintenance-status.md)，本次没有发布新版本。
+v1.1.0 已发布，涵盖近期主线维护修复，见 [发布与资产核验](history/releases.md#v110)。发布没有扩大真实账号、客户端审批等未完成场景的验收范围。
 
 | 工作 | 已完成部分 | 保留的边界 |
 | --- | --- | --- |
@@ -30,7 +30,7 @@
 
 ## 3. 2026-11-04 合入的实现
 
-按维护者要求完成源码合并。#8 先合入；#4 同步新 main、解决文档迁移冲突后合入；#6 同步 #4 并改为以 main 为目标，随后合入。生产源码没有产生需要手工选择的合并冲突。
+按维护者要求完成源码合并。#8 先合入；#4 同步新 main、解决文档迁移冲突后合入；#6 同步 #4 并改为以 main 为目标，随后合入。生产源码没有产生需要手工选择的合并冲突。以下实现已随 v1.1.0 发布。
 
 | PR | 合并提交 | 已合入内容 | 仍待验证 |
 | --- | --- | --- | --- |
@@ -38,7 +38,7 @@
 | [PR #4](https://github.com/haohaomin/cursor-byok/pull/4) | `e24eddf` | Grok 自动/手动续期、凭据轮换、插件 API 2、详细日志认证重试 | 真实 Grok 账号；API 1 外部插件需适配 API 2 |
 | [PR #6](https://github.com/haohaomin/cursor-byok/pull/6) | `91db826` | GPT/Google 续期、有限重试、冷却、旧凭据保护、Google 手动配额刷新 | 真实 GPT/Google 账号 |
 
-本轮合并记录与 CI 见 [集成记录](history/2026-11-04-branch-integration.md)。OAuth 详细记录已进入当前文档目录：[Grok](history/issues/2026-10-27-issue445-check.md)、[GPT/Google](history/issues/2026-10-28-issue481-check.md)。合入和自动化通过不等于真实账号或客户端验收，也不改变当前安装包的功能范围。
+本轮合并记录与 CI 见 [集成记录](history/2026-11-04-branch-integration.md)。OAuth 详细记录已进入当前文档目录：[Grok](history/issues/2026-10-27-issue445-check.md)、[GPT/Google](history/issues/2026-10-28-issue481-check.md)。这些源码已进入 v1.1.0 安装包；合入、构建及自动化通过不等于真实账号或客户端验收。
 
 ## 4. 上轮新增、尚未提交的审批修复
 
@@ -86,6 +86,6 @@ server/tests/tool_round.rs            # 断流错误结果的回归适配
 - 隔离服务已经停止，50745/50746 两个端口关闭；正式后端健康检查为 204。
 - 已清理测试期间含凭据的临时数据库副本、设置备份、服务日志和重复 example；脱敏证据、测试日志及合成远端工作区保留用于复核。
 - 测试时临时移除的 Command Allowlist `python3` 项：**尚无恢复确认**。它不保存在上述 settings.json 中，不能用设置文件摘要宣称已恢复。
-- 当前审批候选仍保留在 `codex/remote-semble` 的本地工作区，未提交。功能实现已另行合入；本地审批候选没有随合并上传，也没有发布新安装包。
+- 当前审批候选仍保留在 `codex/remote-semble` 的本地工作区，未提交。功能实现已另行合入；本地审批候选没有随合并上传，也不包含在 v1.1.0 安装包中。
 
 后续顺序：确认允许列表恢复情况 → 在可操作的 Cursor 中验收候选审批（批准后只执行一次、拒绝不执行、等待不超时）→ 提交/推送并核对该提交的 CI → 决定合入。OAuth 实现已合入，真实账号验收等待可用测试账号；#155 的未覆盖边界独立保留，不以 #469 的搜索测试代替。

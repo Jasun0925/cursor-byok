@@ -20,11 +20,11 @@
 | [#484](https://github.com/leookun/cursor-byok/pull/484) fix: accept incomplete Cursor subagent run protocol (parent headers, message id) | `ea5864a20e4d` | 5 | 对应入口修复已有 #477 覆盖；不重复合入，保留现有父子关系与幂等语义。 |
 | [#510](https://github.com/leookun/cursor-byok/pull/510) feat(plugins): add GitHub Copilot (copilot-auth) built-in provider plugin | `2d882ea88e8e` | 14 | 新 Copilot 插件；需账号授权、token 生命周期、请求路由、错误重试及额度验证。 |
 | [#515](https://github.com/leookun/cursor-byok/pull/515) fix: accept Cursor subagent runs with empty message_id | `ef0bd94b8681` | 6 | 不采用。主线准入 8 项通过；移植内容身份/丢弃单父头后 3 项回归，重复轮次历史缩短且父任务进度丢失，见 [复核](history/pull-requests/2026-10-28-pr515-check.md)。 |
-| [#514](https://github.com/leookun/cursor-byok/pull/514) fix: 修复提示缓存键固定值，并在模型测试中省略缓存键 | `bf4fab373aae` | 10 | 已复现并移植，补真实连通性入口测试；源码修复，未发布。 |
-| [#513](https://github.com/leookun/cursor-byok/pull/513) fix: keep sessions running after failed writes and incomplete subagent requests | `87ee81dced16` | 17 | 已独立修复可复现的连接池污染；使用 SQLx 归还检查，保留正常回滚连接，未导入 WriteSession 或重复子代理补丁。7 项定向与 446 项工作区回归通过，[证据](history/pull-requests/2026-10-27-pr513-recovery.md)；未发布。 |
+| [#514](https://github.com/leookun/cursor-byok/pull/514) fix: 修复提示缓存键固定值，并在模型测试中省略缓存键 | `bf4fab373aae` | 10 | 已复现并移植，补真实连通性入口测试；源码修复，已随 v1.1.0 发布。 |
+| [#513](https://github.com/leookun/cursor-byok/pull/513) fix: keep sessions running after failed writes and incomplete subagent requests | `87ee81dced16` | 17 | 已独立修复可复现的连接池污染；使用 SQLx 归还检查，保留正常回滚连接，未导入 WriteSession 或重复子代理补丁。7 项定向与 446 项工作区回归通过，[证据](history/pull-requests/2026-10-27-pr513-recovery.md)；已随 v1.1.0 发布。 |
 | [#512](https://github.com/leookun/cursor-byok/pull/512) feat(auto-review): review Shell, WebFetch and MCP calls when Auto-review is on | `08f5c335c6a0` | 12 | Auto-review 新协议与审批行为；需真实客户端验收，未合入。 |
 | [#485](https://github.com/leookun/cursor-byok/pull/485) [codex] Fix BYOK Agent tools, subagents and native todos | `49e29e3756e1` | 12 | 工具/子代理/todo 综合补丁；先拆分需求，避免覆盖现有完整生命周期修复。 |
-| [#498](https://github.com/leookun/cursor-byok/pull/498) fix(remote-ssh): restore BYOK for Cursor 3.21+ SSH (#469) | `c7114878c330` | 35 | 选择性采用，未整体合入。配置指南与 WebFetch 分页已有 [真实 SSH 验证](history/issues/2026-10-27-issue469-webfetch-fix.md)；早期快照候选的 [启动/忽略/身份缺陷](history/issues/2026-10-27-issue469-semble-check.md)有独立失败证据。重写的采集及分页实现已通过 fork PR #8 合入 main，最新审批候选未提交、真实批准/拒绝待验收，见 [工作状态](work-status.md)。未发布。 |
+| [#498](https://github.com/leookun/cursor-byok/pull/498) fix(remote-ssh): restore BYOK for Cursor 3.21+ SSH (#469) | `c7114878c330` | 35 | 选择性采用，未整体合入。配置指南与 WebFetch 分页已有 [真实 SSH 验证](history/issues/2026-10-27-issue469-webfetch-fix.md)；早期快照候选的 [启动/忽略/身份缺陷](history/issues/2026-10-27-issue469-semble-check.md)有独立失败证据。重写的采集及分页实现已通过 fork PR #8 合入 main，最新审批候选未提交、真实批准/拒绝待验收，见 [工作状态](work-status.md)。已随 v1.1.0 发布。 |
 | [#497](https://github.com/leookun/cursor-byok/pull/497) CODEX ACCOUNTS: choose one Codex account and show remaining quota | `a4199525ab82` | 40 | 账号选择、切换和额度 UI；需并发选择与首输出前后切换回归，未合入。 |
 | [#496](https://github.com/leookun/cursor-byok/pull/496) ALIAS MODELS: create model groups that fail over by priority | `fda59c5157a0` | 100 | 模型别名与故障转移共 100 文件；需数据库、会话粘性、失败重试语义专项设计。 |
 | [#495](https://github.com/leookun/cursor-byok/pull/495) ADD CUSTOM PLUGINS: install a plugin from a chosen directory | `0a8cece13535` | 18 | 自定义插件目录安装；需路径穿越、符号链接和账号保留验证，未合入。 |
@@ -36,7 +36,7 @@
 
 #424、#423、#421 的本地修复和既有发布记录见 [维护状态](maintenance-status.md)；它们的旧“待 UI / 待合入”过程描述不再作为待办。上游 #420 的完整 schema 修复已进 main，但 v1.0.17 不包含后续补修。
 
-远程 Semble（fork PR #8）、Grok（#4）和 GPT/Google OAuth（#6）均已于 2026-11-04 合入 main；仍未发布。Semble 本地审批补丁未提交，真实账号与客户端审批仍待验收，见 [工作状态](work-status.md)。
+远程 Semble（fork PR #8）、Grok（#4）和 GPT/Google OAuth（#6）均已于 2026-11-04 合入 main；已随 v1.1.0 发布。Semble 本地审批补丁未提交，真实账号与客户端审批仍待验收，见 [工作状态](work-status.md)。
 
 ## 2026-09-28 初筛的基线与方法
 
@@ -60,8 +60,8 @@
 | [#479](https://github.com/leookun/cursor-byok/pull/479) | OpenCode 免费模型插件 | B | 12；+1211/-121 | 未见 | 无文本冲突 | 中：新外部服务及插件管理 UI；旧审查提出的端点、会话 ID、断言问题在当前 SHA 已有修正。 **下一步：**验证目录同步、Chat/Responses、限额、工具调用及原有插件 UI。 |
 | [#466](https://github.com/leookun/cursor-byok/pull/466) | Antigravity 额度与账号启停 | B | 15；+649/-119 | 未见 | 冲突 1 | 中：宿主 Disabled 状态、冷却选择及新接口；冲突仅在生成翻译目录，但运行语义仍需验证。 **下一步：**重新生成翻译；验证禁用账号不被回写启用、重启保留和所有账号冷却。 |
 | [#460](https://github.com/leookun/cursor-byok/pull/460) | 缺失 usage 时估算上下文 | B | 5；+306/-2 | 4✓ | 无文本冲突 | 中：估算值写入普通 usage；未知模型窗口默认 200k，不能当作真实容量或计费值。 **下一步：**核对部分/零 usage、失败与取消、统计展示和自动压缩阈值。 |
-| [#459](https://github.com/leookun/cursor-byok/pull/459) | Grok OAuth 自动续期与思考强度 | B | 17；+1073/-59 | 未见 | 现版冲突已适配并补全 | [现版验证](history/issues/2026-10-27-issue445-check.md) 已复现并修复 #445；排除独立 reasoning 改动，补齐重置、模型取消与手动刷新。Grok 23 项脚本、最新 Linux/macOS 宿主各 37 项与 Windows 38 项通过；四组 CI 全通过，真实账号仍待验收。个人 fork PR #4 已合入 main，未发布。 |
-| [#420](https://github.com/leookun/cursor-byok/pull/420) | MCP schema 整数约束规范化 | B（本地已合入） | 原 PR：1；+182/-31 | 本轮服务端 387 测试及 Clippy 通过 | 已合入并推送 main（`e2f17e0`） | 已补齐原补丁的大整数精度缺陷；合并保留空 schema、properties 和 required 修复，新增组合回归。v1.0.17 尚未包含该合入，未新增真实 UI 验证；上游仍 OPEN、仓库已归档。见 [合并记录](history/pull-requests/2026-10-19-branch-integration.md)。 |
+| [#459](https://github.com/leookun/cursor-byok/pull/459) | Grok OAuth 自动续期与思考强度 | B | 17；+1073/-59 | 未见 | 现版冲突已适配并补全 | [现版验证](history/issues/2026-10-27-issue445-check.md) 已复现并修复 #445；排除独立 reasoning 改动，补齐重置、模型取消与手动刷新。Grok 23 项脚本、最新 Linux/macOS 宿主各 37 项与 Windows 38 项通过；四组 CI 全通过，真实账号仍待验收。个人 fork PR #4 已合入 main，已随 v1.1.0 发布。 |
+| [#420](https://github.com/leookun/cursor-byok/pull/420) | MCP schema 整数约束规范化 | B（本地已合入） | 原 PR：1；+182/-31 | 本轮服务端 387 测试及 Clippy 通过 | 已合入并推送 main（`e2f17e0`） | 已补齐原补丁的大整数精度缺陷；合并保留空 schema、properties 和 required 修复，新增组合回归。v1.1.0 已包含该合入，未新增真实 UI 验证；上游仍 OPEN、仓库已归档。见 [合并记录](history/pull-requests/2026-10-19-branch-integration.md)。 |
 | [#483](https://github.com/leookun/cursor-byok/pull/483) | CodeBuddy CN 与后台自动签到 | C | 38；+4888/-211 | 未见 | 冲突 1 | 高：38 文件，新增宿主调度、锁、状态持久化、凭据刷新及导出策略；作者未测真实流式聊天。 **下一步：**单独验证调度取消/重启/跨日、账号并发与 token 日志保护，再测真实聊天。 |
 | [#474](https://github.com/leookun/cursor-byok/pull/474) | 代理缓存刷新，夹带规则黑名单 | C | 6；+242/-1 | 4✓ | 无文本冲突 | 高且有具体问题：与标题无关的规则正文日志、匹配规则删除、返回成功但未保存。 **2026-10-27：**网络部分已独立实现并补验证；规则删除/正文日志仍不采用。见[#508 修复](history/issues/2026-10-27-issue508-fix.md)。 |
 | [#458](https://github.com/leookun/cursor-byok/pull/458) | Windows cmd 转义及 CA 信任范围 | C | 3；+7/-8 | 未见 | 无文本冲突 | 高且有具体问题：同时把证书安装/检测由 LocalMachine 改为 CurrentUser，已有安装可能误报未信任。 **下一步：**拆出 cmd 修复，保留当前证书存储约定；Windows 实机验证终端与转义。 |
@@ -96,7 +96,7 @@
 
 ### #474：CI 通过，但实际不只是网络修复
 
-[规则入口](https://github.com/leookun/cursor-byok/blob/24316e9642a8e6c3e048bb70a255c8200fe4f130/server/src/cursor/services/knowledge/mod.rs#L135) 在普通 add/update 路径以 info 级别记录完整规则正文；命中 `.blocklist` 时，add 返回成功和 `id="blocked"`，update 删除旧规则且忽略删除结果。[规则存储](https://github.com/leookun/cursor-byok/blob/24316e9642a8e6c3e048bb70a255c8200fe4f130/server/src/cursor/services/knowledge/store.rs#L145) 也会清理已落盘内容。这会造成规则内容进入日志，以及用户看到成功但数据未保存/被删除。**不建议整项合并。2026-10-27 已独立实现代理缓存修复并补齐隔离 HTTP 验证；源码未发布，系统 UI 切换待验，见[处理记录](history/issues/2026-10-27-issue508-fix.md)。** 没有 `.blocklist` 时不触发黑名单删除，但正文日志仍存在。
+[规则入口](https://github.com/leookun/cursor-byok/blob/24316e9642a8e6c3e048bb70a255c8200fe4f130/server/src/cursor/services/knowledge/mod.rs#L135) 在普通 add/update 路径以 info 级别记录完整规则正文；命中 `.blocklist` 时，add 返回成功和 `id="blocked"`，update 删除旧规则且忽略删除结果。[规则存储](https://github.com/leookun/cursor-byok/blob/24316e9642a8e6c3e048bb70a255c8200fe4f130/server/src/cursor/services/knowledge/store.rs#L145) 也会清理已落盘内容。这会造成规则内容进入日志，以及用户看到成功但数据未保存/被删除。**不建议整项合并。2026-10-27 已独立实现代理缓存修复并补齐隔离 HTTP 验证；源码已随 v1.1.0 发布，系统 UI 切换待验，见[处理记录](history/issues/2026-10-27-issue508-fix.md)。** 没有 `.blocklist` 时不触发黑名单删除，但正文日志仍存在。
 
 ### #433：硬编码拒绝请求早于正常分流
 
