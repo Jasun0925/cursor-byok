@@ -12,7 +12,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{language::content_type_for_path, ContentType, Error, Result};
 
-const IGNORED_DIRS: &[&str] = &[
+pub(super) const IGNORED_DIRS: &[&str] = &[
     ".git",
     ".hg",
     ".svn",

@@ -1,0 +1,43 @@
+   Compiling cursor-server v0.1.0 (<checkout>/server)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 18.68s
+     Running tests/subagent_admission.rs (<target>/debug/deps/subagent_admission-a9b34a5739696145)
+
+running 8 tests
+test empty_parent_headers_are_rejected_before_provider_execution ... FAILED
+test missing_message_id_on_a_root_run_is_still_rejected ... ok
+test parent_metadata_enrichment_is_atomic_and_never_clears_known_ids ... ok
+test subagent_starts_with_only_parent_request_header ... ok
+test idless_subagent_with_only_tool_header_keeps_parent_progress ... FAILED
+test subagent_starts_with_only_parent_tool_header ... ok
+test idless_subagent_retries_deduplicate_but_repeated_turns_keep_history ... FAILED
+test subagent_starts_with_paired_or_absent_headers ... ok
+
+failures:
+
+---- empty_parent_headers_are_rejected_before_provider_execution stdout ----
+
+thread 'empty_parent_headers_are_rejected_before_provider_execution' (thread-id) panicked at server/tests/subagent_admission.rs:325:9:
+assertion `left == right` failed
+  left: 200
+ right: 400
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+---- idless_subagent_with_only_tool_header_keeps_parent_progress stdout ----
+
+thread 'idless_subagent_with_only_tool_header_keeps_parent_progress' (thread-id) panicked at server/tests/subagent_admission.rs:446:10:
+parent association survives partial headers
+
+---- idless_subagent_retries_deduplicate_but_repeated_turns_keep_history stdout ----
+
+thread 'idless_subagent_retries_deduplicate_but_repeated_turns_keep_history' (thread-id) panicked at server/tests/subagent_admission.rs:131:13:
+{"error":{"code":"invalid_argument","message":"protocol error: Cursor stable history shrank from 4 to 2 roots"}}
+
+
+failures:
+    empty_parent_headers_are_rejected_before_provider_execution
+    idless_subagent_retries_deduplicate_but_repeated_turns_keep_history
+    idless_subagent_with_only_tool_header_keeps_parent_progress
+
+test result: FAILED. 5 passed; 3 failed; 0 ignored; 0 measured; 0 filtered out; finished in 4.79s
+
+error: test failed, to rerun pass `-p cursor-server --test subagent_admission`

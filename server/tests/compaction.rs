@@ -3,6 +3,8 @@
 mod fake_provider;
 #[path = "support/fixtures.rs"]
 mod fixtures;
+#[path = "compaction/recovery.rs"]
+mod recovery;
 
 use std::{collections::HashMap, sync::Arc, time::Duration};
 
@@ -678,8 +680,28 @@ async fn assistant_terminated_history_is_sent_with_a_user_tail() {
     );
 }
 
+#[derive(Debug, Default, serde::Deserialize)]
+#[serde(untagged, deny_unknown_fields)]
+enum EndStream {
+    #[default]
+    #[serde(skip)]
+    Pending,
+    Failure {
+        error: EndStreamError,
+    },
+    Success {},
+}
+
+#[derive(Debug, serde::Deserialize)]
+struct EndStreamError {
+    code: String,
+    #[serde(default)]
+    message: String,
+}
+
 #[derive(Default)]
 struct Output {
+    end_stream: EndStream,
     checkpoints: Vec<pb::ConversationStateStructure>,
     blobs: HashMap<Vec<u8>, Vec<u8>>,
     summary: String,
@@ -713,6 +735,7 @@ async fn run(
             .unwrap();
         let (flags, payload) = connect::decode_frames(&frame).unwrap().pop().unwrap();
         if flags & connect::END_STREAM_FLAG != 0 {
+            output.end_stream = serde_json::from_slice(&payload).unwrap();
             return output;
         }
         let server = pb::AgentServerMessage::decode(payload).unwrap();

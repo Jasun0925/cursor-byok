@@ -1,0 +1,45 @@
+--- a/server/src/cursor/compile/run.rs
++++ b/server/src/cursor/compile/run.rs
+@@ -449,17 +449,14 @@
+ // with identical text) has a different position. user_event_id adds semantic
+ // content identity; volatile transport IDs and checkpoint maps stay excluded.
+ fn subagent_input_id(request: &pb::AgentRunRequest) -> Result<String> {
+-    let state = request.conversation_state.as_ref();
+-    let empty = Vec::new();
+-    let identity = serde_json::to_vec(&(
+-        state.map_or(&empty, |state| &state.root_prompt_messages_json),
+-        state.map_or(&empty, |state| &state.turns),
+-        state.and_then(|state| state.summary.as_ref()),
+-    ))?;
+-    Ok(format!(
+-        "subagent-input:{}",
+-        BlobId::digest(&identity).to_base64()
+-    ))
++    let Some(pb::conversation_action::Action::UserMessageAction(action)) = request
++        .action.as_ref().and_then(|action| action.action.as_ref()) else { unreachable!() };
++    let user = action.user_message.as_ref().unwrap();
++    let identity = BlobId::digest(format!("{}\0{}\0{}\0{}\0{}", user.mode,
++        user.thread_id.as_deref().unwrap_or_default(),
++        user.prompt_reference_id.as_deref().unwrap_or_default(),
++        user.rich_text.as_deref().unwrap_or_default(), user.text).as_bytes()).to_base64();
++    Ok(format!("derived:{identity}"))
+ }
+ 
+ fn action(request: &pb::AgentRunRequest) -> Result<ActionProjection> {
+--- a/server/src/api/cursor/handlers.rs
++++ b/server/src/api/cursor/handlers.rs
+@@ -371,10 +371,11 @@
+     let tool_call_id = header_text(headers, "x-parent-agent-tool-call-id")?;
+     match (request_id, tool_call_id) {
+         (None, None) => Ok(None),
+-        (request_id, tool_call_id) => Ok(Some(TransportParent {
+-            request_id: request_id.map(str::to_owned),
+-            tool_call_id: tool_call_id.map(str::to_owned),
++        (Some(request_id), Some(tool_call_id)) => Ok(Some(TransportParent {
++            request_id: Some(request_id.into()),
++            tool_call_id: Some(tool_call_id.into()),
+         })),
++        _ => Ok(None),
+     }
+ }
+ 

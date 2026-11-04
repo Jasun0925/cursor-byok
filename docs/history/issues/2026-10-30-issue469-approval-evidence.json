@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "checked_at": "2026-10-29T16:24:06.284769+00:00",
+  "source_revision": "fd5ca63ca220c8a2200d9d0946e355be06ac4a61",
+  "cursor_version": "3.27.22",
+  "conversation_id": "44d6b550-c97a-4b7f-9210-83e713ff4a2d",
+  "scope": "Real Cursor SSH SembleSearch automatically rejected before human approval; fix awaits real approval acceptance",
+  "run_traces": [
+    {
+      "request_id": "96c44a52-98a5-4405-9744-456babbbea1b",
+      "status": "completed",
+      "http_status": 200,
+      "received_at_ms": 1793289365724,
+      "finished_at_ms": 1793289388151,
+      "error_message": null
+    }
+  ],
+  "model_calls": [
+    {
+      "call_id": "96c44a52-98a5-4405-9744-456babbbea1b:9ca30f58:0",
+      "status": "completed",
+      "http_status": 200,
+      "finish_reason": "tool_use",
+      "model_id": "gpt-6-astra"
+    },
+    {
+      "call_id": "96c44a52-98a5-4405-9744-456babbbea1b:9ca30f58:1",
+      "status": "completed",
+      "http_status": 200,
+      "finish_reason": "stop",
+      "model_id": "gpt-6-astra"
+    }
+  ],
+  "exec_events": [
+    {
+      "created_at_ms": 1793289371341,
+      "event": {
+        "reason": "Review cancelled or failed",
+        "type": "rejected"
+      },
+      "exec_id": 1,
+      "request_id": "96c44a52-98a5-4405-9744-456babbbea1b",
+      "trace_seq": 61
+    }
+  ],
+  "human_rejected": false,
+  "collector_started": false,
+  "approval_accept_verified": false,
+  "approval_reject_verified": false,
+  "twenty_minute_test_run": false,
+  "client_static_inspection": {
+    "method": "ordinary source text inspection; not runtime tracing",
+    "sha256": "fd9ac3ed70ddcfa975f357187152488abcc8a4d183d776442593d5967b9821b6",
+    "character_offsets": {
+      "getTerminalReviewModelForBubble(e,t)": 20314431,
+      "async runTerminalReviewMode": 20360526,
+      "Review cancelled or failed": 20348272
+    },
+    "finding": "Terminal review requires a RUN_TERMINAL_COMMAND_V2 bubble; missing terminal review model returns NONE, then Shell is rejected with Review cancelled or failed."
+  },
+  "rea": {
+    "evidence_id": "ev_75c3e3b3cc99eda7db2e94611dc08768209a70b94aec06138ced27cdc1a7809c",
+    "artifact_sha256": "536ee46ff88b9056c6099f1bd4d921269339c84d6a8fd529df679d1821e12190",
+    "scope": "Artifact identity/inventory only for workbench.desktop.main.js; static parser exhausted its heap. Do not treat REA as confirmation of runtime reachability.",
+    "limitations": [
+      "workbench.desktop.main.js: Resource constraint during analyze_javascript_application: Owned JavaScript worker exhausted its heap while analyzing workbench.desktop.main.js during parse"
+    ]
+  },
+  "ui_blocker": "Subsequent CUA reads and a reset returned ScreenCaptureKit -3812",
+  "cleanup": {
+    "checked_on": "2026-11-01",
+    "isolated_ports_closed": [
+      50745,
+      50746
+    ],
+    "local_settings_restored": true,
+    "local_settings_sha256": "1c86e40d0f46a6174e76598d78d4b2c3c90b601f63ddaad7d91e8f964fc843b3",
+    "remote_machine_settings_restored_to_absent": true,
+    "formal_backend_health": 204,
+    "sensitive_fixture_copies_removed": true,
+    "removed": [
+      "live.db",
+      "live.db-wal",
+      "live.db-shm",
+      "cursor-settings.original",
+      "service.log",
+      "host-cache",
+      "web-cache",
+      "server/examples/issue469_approval_live_20261029.rs"
+    ],
+    "retained": "Redacted evidence, non-sensitive test logs, REA artifact analysis, workspace definition and marked synthetic remote workspace retained for reproducibility.",
+    "python3_allowlist_restore_confirmed": false,
+    "remaining": "Cursor UI unavailable; original python3 allowlist entry restoration and test-window closure not verified."
+  },
+  "organized_on": "2026-11-01",
+  "verification": {
+    "workspace": {
+      "command": "cargo test --workspace",
+      "passed": 522,
+      "failed": 0,
+      "ignored": 1
+    },
+    "real_host_model": {
+      "command": "cargo test --package cursor-server --lib real_model_host_exec_round_trip_search_and_related -- --ignored --nocapture",
+      "passed": 1,
+      "failed": 0,
+      "uses_cursor_approval_ui": false
+    },
+    "clippy": {
+      "command": "cargo clippy --workspace --all-targets -- -D warnings",
+      "passed": true
+    },
+    "format_and_diff": {
+      "rechecked_on": "2026-11-01",
+      "passed": true
+    },
+    "log_sha256": {
+      "workspace-tests.log": "b605d7228f8287ca8e2a533bea8071b4700db81cf9edff762c2d3098c129ba83",
+      "clippy.log": "3a0d33ddc950e5b20deb0cbe6dddcc98b8665332455069edf0ad78c102751f98",
+      "host-model-test.log": "f1b91e988106760cf78d0d710695c9de59b4a655335592776e34f2714d9d6714"
+    },
+    "production_baseline": "fd5ca63ca220c8a2200d9d0946e355be06ac4a61",
+    "approval_patch_committed": false,
+    "real_approval_after_patch_verified": false
+  }
+}

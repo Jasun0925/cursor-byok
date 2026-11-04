@@ -4,6 +4,8 @@ use std::path::PathBuf;
 
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
+    #[error("search was cancelled")]
+    Cancelled,
     #[error("source does not exist: {0}")]
     SourceMissing(PathBuf),
     #[error("source is not a directory: {0}")]

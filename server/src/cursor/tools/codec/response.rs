@@ -45,6 +45,9 @@ pub async fn client_event(
             return Ok(ClientExecEvent::Pending);
         }
     };
+    if pending.is_semble(message.id).await {
+        return super::super::semble::client_event(message, pending).await;
+    }
     let Some(wire_result) = &message.message else {
         return Ok(ClientExecEvent::Pending);
     };
@@ -52,9 +55,10 @@ pub async fn client_event(
         let entry = take(message.id, pending).await?;
         return match entry.stage {
             ExecStage::EditRead => advance_edit(entry, wire_result, pending).await,
-            ExecStage::Direct | ExecStage::DynamicMcp(_) | ExecStage::EditWrite(_) => {
-                completed(entry, wire_result.clone())
-            }
+            ExecStage::Direct
+            | ExecStage::DynamicMcp(_)
+            | ExecStage::EditWrite(_)
+            | ExecStage::Semble(_) => completed(entry, wire_result.clone()),
         };
     };
     use pb::shell_stream::Event;
@@ -143,6 +147,11 @@ pub async fn stream_closed(id: u32, pending: &CursorToolRuntime) -> Result<Optio
         return Ok(None);
     };
     let error = "Cursor Exec stream closed before returning a terminal result";
+    if matches!(entry.stage, ExecStage::Semble(_)) {
+        super::super::semble::fail(entry, pending, error.into()).await?;
+        return Ok(None);
+    }
+
     if entry.call.name.eq_ignore_ascii_case("Shell") || entry.call.name.eq_ignore_ascii_case("Bash")
     {
         let command = entry

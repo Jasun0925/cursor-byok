@@ -10,8 +10,8 @@ use parking_lot::Mutex;
 
 use crate::{
     embedding::{Embedder, ModelAssets, StaticEmbedder},
-    index::{tokenize, Bm25Match, IndexRepository, LoadedIndex},
-    source::{canonical_source_root, RemoteRepository},
+    index::{check_cancelled, tokenize, Bm25Match, IndexRepository, LoadedIndex},
+    source::{canonical_source_root, RemoteRepository, SnapshotFile},
     types::snippet,
     ContentType, Error, FindRelatedRequest, IndexStats, Result, SearchRequest, SearchResponse,
     SearchResult, SembleConfig,
@@ -86,6 +86,32 @@ impl SearchEngine {
         let (root, identity) = self.resolve_source(&request.repo)?;
         let content = normalize_content(&request.content);
         let index = self.repository.load_or_build(&root, &identity, &content)?;
+        self.search_index(&request, &index, SnippetSource::Local(&root))
+    }
+
+    /// Query already-filtered, immutable bodies owned by this request.
+    /// This path neither resolves `repo` on the server nor persists the index.
+    pub fn search_snapshot(
+        &self,
+        request: SearchRequest,
+        files: &[SnapshotFile],
+        cancelled: &std::sync::atomic::AtomicBool,
+    ) -> Result<SearchResponse> {
+        validate_query(&request.query, request.top_k)?;
+        let content = normalize_content(&request.content);
+        let index = self.repository.build_snapshot(files, &content, cancelled)?;
+        check_cancelled(cancelled)?;
+        let result = self.search_index(&request, &index, SnippetSource::InMemory)?;
+        check_cancelled(cancelled)?;
+        Ok(result)
+    }
+
+    fn search_index(
+        &self,
+        request: &SearchRequest,
+        index: &LoadedIndex,
+        source: SnippetSource<'_>,
+    ) -> Result<SearchResponse> {
         if !request.query.contains(char::is_whitespace) {
             let exact = index
                 .lexical
@@ -94,13 +120,13 @@ impl SearchEngine {
                 return response(
                     &request.query,
                     exact,
-                    &index,
-                    &root,
+                    index,
+                    source,
                     request.max_snippet_lines,
                 );
             }
         }
-        let query_vector = quantize_query(self.encode_query(&index, &request.query)?);
+        let query_vector = quantize_query(self.encode_query(index, &request.query)?);
         let candidate_count = request.top_k.saturating_mul(5).max(request.top_k);
         let semantic = rank_semantic(
             &query_vector,
@@ -134,7 +160,7 @@ impl SearchEngine {
                 &lexical,
                 &index.chunks,
                 &request.query,
-                &root,
+                source,
                 request.top_k.min(3),
             )?
         };
@@ -147,8 +173,8 @@ impl SearchEngine {
         response(
             &request.query,
             ranked,
-            &index,
-            &root,
+            index,
+            source,
             request.max_snippet_lines,
         )
     }
@@ -162,8 +188,36 @@ impl SearchEngine {
         let (root, identity) = self.resolve_source(&request.repo)?;
         let content = normalize_content(&request.content);
         let index = self.repository.load_or_build(&root, &identity, &content)?;
+        self.related_index(&request, &index, SnippetSource::Local(&root))
+    }
+
+    pub fn find_related_snapshot(
+        &self,
+        request: FindRelatedRequest,
+        files: &[SnapshotFile],
+        cancelled: &std::sync::atomic::AtomicBool,
+    ) -> Result<SearchResponse> {
+        if request.line == 0 || request.top_k == 0 {
+            return Err(Error::InvalidRequest(
+                "line and top_k must be greater than zero".into(),
+            ));
+        }
+        let content = normalize_content(&request.content);
+        let index = self.repository.build_snapshot(files, &content, cancelled)?;
+        check_cancelled(cancelled)?;
+        let result = self.related_index(&request, &index, SnippetSource::InMemory)?;
+        check_cancelled(cancelled)?;
+        Ok(result)
+    }
+
+    fn related_index(
+        &self,
+        request: &FindRelatedRequest,
+        index: &LoadedIndex,
+        source: SnippetSource<'_>,
+    ) -> Result<SearchResponse> {
         let normalized = request.file_path.replace('\\', "/");
-        let source = index
+        let source_position = index
             .chunks
             .iter()
             .position(|chunk| {
@@ -178,12 +232,12 @@ impl SearchEngine {
                 ))
             })?;
         let dimensions = index.metadata.dimensions;
-        let source_start = source * dimensions;
+        let source_start = source_position * dimensions;
         let source_vector = &index.vectors[source_start..source_start + dimensions];
         let mut ranked =
             rank_semantic(source_vector, &index.vectors, dimensions, request.top_k + 1)
                 .into_iter()
-                .filter(|position| *position != source)
+                .filter(|position| *position != source_position)
                 .take(request.top_k)
                 .map(|position| {
                     (
@@ -199,8 +253,8 @@ impl SearchEngine {
         response(
             &format!("Chunks related to {}:{}", request.file_path, request.line),
             ranked,
-            &index,
-            &root,
+            index,
+            source,
             request.max_snippet_lines,
         )
     }
@@ -221,6 +275,26 @@ impl SearchEngine {
         self.repository
             .encode(&[query.to_owned()])
             .map(|mut values| values.remove(0))
+    }
+}
+
+#[derive(Clone, Copy)]
+enum SnippetSource<'a> {
+    Local(&'a Path),
+    InMemory,
+}
+
+impl SnippetSource<'_> {
+    fn read(self, relative_path: &str) -> Result<String> {
+        match self {
+            Self::Local(root) => {
+                let path = root.join(relative_path);
+                std::fs::read_to_string(&path).map_err(|error| Error::io(path, error))
+            }
+            Self::InMemory => Err(Error::CorruptIndex(
+                "request snapshot chunk is missing its source body".into(),
+            )),
+        }
     }
 }
 
@@ -254,7 +328,7 @@ fn strong_lexical_matches(
     lexical: &[Bm25Match],
     chunks: &[crate::Chunk],
     query: &str,
-    root: &Path,
+    source: SnippetSource<'_>,
     limit: usize,
 ) -> Result<Vec<(usize, f32)>> {
     let query_terms = tokenize(query).into_iter().collect::<HashSet<_>>();
@@ -267,7 +341,7 @@ fn strong_lexical_matches(
     for matched in lexical {
         let score_ratio = matched.score / top_score;
         let phrase = if matched.coverage >= 0.5 {
-            let content = indexed_chunk_text(&chunks[matched.document], root, &mut files)?;
+            let content = indexed_chunk_text(&chunks[matched.document], source, &mut files)?;
             if path_penalty(&chunks[matched.document].file_path) < 0.5
                 || content.trim_start().starts_with("#[cfg(test)]")
             {
@@ -360,16 +434,14 @@ fn is_literal_query(query: &str) -> bool {
 
 fn indexed_chunk_text(
     chunk: &crate::Chunk,
-    root: &Path,
+    source: SnippetSource<'_>,
     files: &mut HashMap<String, String>,
 ) -> Result<String> {
     if !chunk.content.is_empty() {
         return Ok(chunk.content.clone());
     }
     if !files.contains_key(&chunk.file_path) {
-        let path = root.join(&chunk.file_path);
-        let source = std::fs::read_to_string(&path).map_err(|error| Error::io(&path, error))?;
-        files.insert(chunk.file_path.clone(), source);
+        files.insert(chunk.file_path.clone(), source.read(&chunk.file_path)?);
     }
     Ok(files[&chunk.file_path]
         .lines()
@@ -463,7 +535,7 @@ fn response(
     query: &str,
     ranked: Vec<(usize, f32)>,
     index: &LoadedIndex,
-    root: &Path,
+    source: SnippetSource<'_>,
     max_lines: Option<usize>,
 ) -> Result<SearchResponse> {
     Ok(SearchResponse {
@@ -477,7 +549,7 @@ fn response(
                     start_line: chunk.start_line,
                     end_line: chunk.end_line,
                     score,
-                    content: chunk_content(root, chunk, max_lines)?,
+                    content: chunk_content(source, chunk, max_lines)?,
                 })
             })
             .collect::<Result<Vec<_>>>()?,
@@ -485,7 +557,7 @@ fn response(
 }
 
 fn chunk_content(
-    root: &Path,
+    source: SnippetSource<'_>,
     chunk: &crate::Chunk,
     lines: Option<usize>,
 ) -> Result<Option<String>> {
@@ -495,8 +567,7 @@ fn chunk_content(
     if !chunk.content.is_empty() {
         return Ok(snippet(&chunk.content, lines));
     }
-    let path = root.join(&chunk.file_path);
-    let source = std::fs::read_to_string(&path).map_err(|error| Error::io(&path, error))?;
+    let source = source.read(&chunk.file_path)?;
     let available = chunk.end_line.saturating_sub(chunk.start_line) + 1;
     let limit = lines.unwrap_or(available).min(available);
     Ok(Some(

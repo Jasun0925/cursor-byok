@@ -687,6 +687,11 @@ fn exec_context(
             .as_ref()
             .map(|env| env.terminals_folder.clone())
             .unwrap_or_default(),
+        workspace_paths: request_context
+            .env
+            .as_ref()
+            .map(|env| env.workspace_paths.clone())
+            .unwrap_or_default(),
         admin_command_denylist: request_context.admin_command_denylist.clone(),
         mcp_routes: context::meta_mcp_routes(request_context),
     }

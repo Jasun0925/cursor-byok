@@ -50,6 +50,7 @@ fn exec_context() -> ExecContext {
         default_subagent_model: "model".into(),
         subagent_model: None,
         terminals_folder: "/tmp/terminals".into(),
+        workspace_paths: Vec::new(),
         admin_command_denylist: Vec::new(),
         allow_subagents: true,
         subagents_disabled: false,

@@ -6,6 +6,7 @@ mod lexical;
 mod snapshot;
 
 pub(crate) use bm25::{lexical_document, Bm25Index, Bm25Match};
+pub(crate) use builder::check_cancelled;
 pub use builder::IndexRepository;
 pub use lexical::{extract_definitions, tokenize, SymbolIndex};
 pub use snapshot::{
