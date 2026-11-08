@@ -466,11 +466,103 @@ mod tests {
             .unwrap();
 
             assert_eq!(checksum_after, checksum_before);
-            assert_eq!(versions, vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+            assert_eq!(versions, vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
             assert_eq!(checkpoint_table_exists, 1);
             assert_eq!(argument_error_column_exists, 1);
             assert_eq!(strip_images_column_exists, 1);
         }
+    }
+
+    #[tokio::test]
+    async fn opaque_cursor_signatures_become_reasoning_parts_in_serde_form() {
+        use crate::model::{
+            CanonicalMessage, MessageContent, Origin, ProviderReplayState, Role, ToolRoundAssistant,
+        };
+
+        let pool = SqlitePoolOptions::new()
+            .max_connections(1)
+            .connect("sqlite::memory:")
+            .await
+            .unwrap();
+        let historical = migrator_with_line_endings(MigrationLineEndings::Lf);
+        Migrator {
+            migrations: Cow::Owned(historical.iter().take(11).cloned().collect()),
+            ..Migrator::DEFAULT
+        }
+        .run(&pool)
+        .await
+        .unwrap();
+        sqlx::query("PRAGMA foreign_keys = OFF")
+            .execute(&pool)
+            .await
+            .unwrap();
+
+        let thinking = "line\n\"quoted\" \\ \u{1b} é 😀 /";
+        let opaque = Some(ProviderReplayState {
+            provider_kind: "cursor_opaque".into(),
+            value: serde_json::Value::String("sig-1_x".into()),
+        });
+        let message = CanonicalMessage {
+            message_id: "cursor-root:a:1".into(),
+            role: Role::Assistant,
+            origin: Origin::Assistant,
+            content: MessageContent::Assistant {
+                text: "answer".into(),
+                thinking: thinking.into(),
+                tool_round_id: None,
+                replay_state: opaque.clone(),
+                tool_calls: Vec::new(),
+            },
+            runtime_event_id: None,
+        };
+        let assistant = ToolRoundAssistant {
+            text: String::new(),
+            thinking: thinking.into(),
+            model_call_id: "call".into(),
+            replay_state: opaque,
+        };
+        sqlx::query(
+            "INSERT INTO messages
+             (conversation_id, message_id, role, origin, payload_json, created_at_ms)
+             VALUES ('c', 'cursor-root:a:1', 'assistant', 'assistant', ?, 0)",
+        )
+        .bind(serde_json::to_string(&message).unwrap())
+        .execute(&pool)
+        .await
+        .unwrap();
+        sqlx::query(
+            "INSERT INTO tool_rounds
+             (round_id, run_id, base_checkpoint_id, assistant_json, status, created_at_ms, updated_at_ms)
+             VALUES ('r', 'run', 1, ?, 'pending', 0, 0)",
+        )
+        .bind(serde_json::to_string(&assistant).unwrap())
+        .execute(&pool)
+        .await
+        .unwrap();
+
+        run(&pool, Path::new("opaque-reasoning-parts.db"))
+            .await
+            .unwrap();
+
+        let expected = serde_json::json!([{"signature": "sig-1_x", "text": thinking}]);
+        let payload: String = sqlx::query_scalar("SELECT payload_json FROM messages")
+            .fetch_one(&pool)
+            .await
+            .unwrap();
+        let migrated: CanonicalMessage = serde_json::from_str(&payload).unwrap();
+        assert_eq!(serde_json::to_string(&migrated).unwrap(), payload);
+        let MessageContent::Assistant { replay_state, .. } = migrated.content else {
+            panic!("expected assistant");
+        };
+        assert_eq!(replay_state.unwrap().value, expected);
+
+        let assistant_json: String = sqlx::query_scalar("SELECT assistant_json FROM tool_rounds")
+            .fetch_one(&pool)
+            .await
+            .unwrap();
+        let migrated: ToolRoundAssistant = serde_json::from_str(&assistant_json).unwrap();
+        assert_eq!(serde_json::to_string(&migrated).unwrap(), assistant_json);
+        assert_eq!(migrated.replay_state.unwrap().value, expected);
     }
 
     #[test]

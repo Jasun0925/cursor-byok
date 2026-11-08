@@ -499,3 +499,92 @@ fn opaque_cursor_reasoning_signature_round_trips_without_decoding() {
     let encoded = wire_message(&projected[0], "model", None).unwrap();
     assert_eq!(encoded["content"][0]["signature"], signature);
 }
+
+#[test]
+fn cursor_reasoning_parts_with_separate_signatures_round_trip() {
+    let wire = json!({
+        "role": "assistant",
+        "id": "1",
+        "content": [
+            {"type":"reasoning", "text":"choose colors", "signature":"thinking-signature"},
+            {"type":"reasoning", "text":"我把背景换成色带", "signature":"narration-signature"},
+            {"type":"tool-call", "toolCallId":"call-1", "toolName":"StrReplace", "args":{"path":"/a"}},
+        ],
+    });
+    let message = decode(
+        serde_json::to_vec(&wire).unwrap().as_slice(),
+        "cursor-root:narration".into(),
+    )
+    .unwrap();
+    let MessageContent::Assistant {
+        thinking,
+        replay_state,
+        ..
+    } = &message.content
+    else {
+        panic!("expected assistant");
+    };
+    assert_eq!(thinking, "choose colors我把背景换成色带");
+    assert_eq!(
+        replay_state.as_ref().unwrap(),
+        &ProviderReplayState {
+            provider_kind: "cursor_opaque".into(),
+            value: json!([
+                {"text":"choose colors", "signature":"thinking-signature"},
+                {"text":"我把背景换成色带", "signature":"narration-signature"},
+            ]),
+        }
+    );
+
+    let result = ToolResultContent {
+        call_id: "call-1".into(),
+        name: "StrReplace".into(),
+        content: "ok".into(),
+        is_error: false,
+        image: None,
+        provider_parts: Vec::new(),
+    };
+    let tool = CanonicalMessage {
+        message_id: "cursor-root:result".into(),
+        role: Role::Tool,
+        origin: crate::model::Origin::Tool,
+        content: MessageContent::ToolResult(result),
+        runtime_event_id: None,
+    };
+    let projected = project_messages(&[message, tool]).unwrap();
+    let encoded = wire_message(&projected[0], "model", None).unwrap();
+    let content = encoded["content"].as_array().unwrap();
+    assert_eq!(content.len(), 3);
+    for (part, (text, signature)) in content.iter().zip([
+        ("choose colors", "thinking-signature"),
+        ("我把背景换成色带", "narration-signature"),
+    ]) {
+        assert_eq!(part["type"], "reasoning");
+        assert_eq!(part["text"], text);
+        assert_eq!(part["signature"], signature);
+    }
+    assert_eq!(content[2]["toolCallId"], "call-1");
+}
+
+#[test]
+fn byok_replay_envelope_cannot_share_a_message_with_other_signatures() {
+    let envelope = format!(
+        "{}{}",
+        super::REPLAY_ENVELOPE_PREFIX,
+        STANDARD.encode(br#"{"provider_kind":"anthropic","value":{}}"#)
+    );
+    let wire = json!({
+        "role": "assistant",
+        "id": "1",
+        "content": [
+            {"type":"reasoning", "text":"a", "signature":envelope},
+            {"type":"reasoning", "text":"b", "signature":"opaque"},
+        ],
+    });
+    let error = decode(
+        serde_json::to_vec(&wire).unwrap().as_slice(),
+        "cursor-root:mixed".into(),
+    )
+    .unwrap_err();
+    assert!(error.to_string().contains("BYOK replay envelope"));
+}

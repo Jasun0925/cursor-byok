@@ -1,6 +1,6 @@
 //! Decodes Cursor checkpoint message data into canonical Messages.
 use base64::{engine::general_purpose::STANDARD, Engine};
-use serde_json::Value;
+use serde_json::{json, Value};
 
 use crate::{
     model::{
@@ -11,7 +11,7 @@ use crate::{
     Error, Result,
 };
 
-use super::REPLAY_ENVELOPE_PREFIX;
+use super::{CURSOR_OPAQUE_REPLAY_KIND, REPLAY_ENVELOPE_PREFIX};
 
 pub fn decode(data: &[u8], internal_id: String) -> Result<CanonicalMessage> {
     let value: Value = serde_json::from_slice(data)?;
@@ -168,7 +168,7 @@ fn decode_assistant(value: &Value, internal_id: &str) -> Result<MessageContent> 
     let mut text = String::new();
     let mut thinking = String::new();
     let mut calls = Vec::new();
-    let mut replay_state = None;
+    let mut reasoning = Vec::new();
     for part in value
         .get("content")
         .and_then(Value::as_array)
@@ -180,15 +180,9 @@ fn decode_assistant(value: &Value, internal_id: &str) -> Result<MessageContent> 
                 text.push_str(part.get("text").and_then(Value::as_str).unwrap_or_default())
             }
             Some("reasoning") => {
-                thinking.push_str(part.get("text").and_then(Value::as_str).unwrap_or_default());
-                if let Some(signature) = part.get("signature").and_then(Value::as_str) {
-                    if replay_state.is_some() {
-                        return Err(Error::Protocol(
-                            "Cursor assistant has multiple reasoning signatures".into(),
-                        ));
-                    }
-                    replay_state = Some(decode_replay_state(signature)?);
-                }
+                let part_text = part.get("text").and_then(Value::as_str).unwrap_or_default();
+                thinking.push_str(part_text);
+                reasoning.push((part_text, part.get("signature").and_then(Value::as_str)));
             }
             Some("tool-call") => calls.push(ToolCallContent {
                 index: calls.len(),
@@ -199,6 +193,7 @@ fn decode_assistant(value: &Value, internal_id: &str) -> Result<MessageContent> 
             _ => {}
         }
     }
+    let replay_state = decode_replay_state(&reasoning)?;
     Ok(MessageContent::Assistant {
         text,
         thinking,
@@ -209,13 +204,44 @@ fn decode_assistant(value: &Value, internal_id: &str) -> Result<MessageContent> 
     })
 }
 
-fn decode_replay_state(signature: &str) -> Result<crate::model::ProviderReplayState> {
-    let Some(encoded) = signature.strip_prefix(REPLAY_ENVELOPE_PREFIX) else {
-        return Ok(crate::model::ProviderReplayState {
-            provider_kind: "cursor_opaque".into(),
-            value: Value::String(signature.into()),
-        });
-    };
+/// BYOK writes one reasoning part carrying its replay envelope. Cursor's own
+/// models may sign several reasoning parts (thinking, narration) in one message;
+/// those are kept part by part so they can be written back unchanged.
+fn decode_replay_state(
+    reasoning: &[(&str, Option<&str>)],
+) -> Result<Option<crate::model::ProviderReplayState>> {
+    let signatures = reasoning
+        .iter()
+        .filter_map(|(_, signature)| *signature)
+        .collect::<Vec<_>>();
+    let envelope = signatures
+        .iter()
+        .find_map(|signature| signature.strip_prefix(REPLAY_ENVELOPE_PREFIX));
+    match (envelope, signatures.len()) {
+        (_, 0) => Ok(None),
+        (Some(encoded), 1) => decode_replay_envelope(encoded).map(Some),
+        (Some(_), _) => Err(Error::Protocol(
+            "Cursor assistant mixes a BYOK replay envelope with other reasoning signatures".into(),
+        )),
+        (None, _) => Ok(Some(crate::model::ProviderReplayState {
+            provider_kind: CURSOR_OPAQUE_REPLAY_KIND.into(),
+            value: Value::Array(
+                reasoning
+                    .iter()
+                    .map(|(text, signature)| {
+                        let mut part = json!({"text": text});
+                        if let Some(signature) = signature {
+                            part["signature"] = Value::String((*signature).into());
+                        }
+                        part
+                    })
+                    .collect(),
+            ),
+        })),
+    }
+}
+
+fn decode_replay_envelope(encoded: &str) -> Result<crate::model::ProviderReplayState> {
     let bytes = STANDARD.decode(encoded).map_err(|error| {
         Error::Protocol(format!(
             "invalid Cursor BYOK replay envelope base64: {error}"
