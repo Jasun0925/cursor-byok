@@ -1,4 +1,6 @@
 //! Accepts ordered Cursor Bidi append requests and routes them by request_id.
+use std::borrow::Cow;
+
 use prost::Message;
 
 use crate::{
@@ -160,19 +162,25 @@ pub fn decode(request: &ai::BidiAppendRequest) -> Result<DecodedAppend> {
         .map(|id| id.request_id.as_str())
         .filter(|id| !id.is_empty())
         .ok_or_else(|| Error::Protocol("BidiAppend request_id is required".into()))?;
-    if !request.data_binary.is_empty() {
-        return Err(Error::Protocol(
-            "BidiAppend data_binary is not part of the captured protocol".into(),
-        ));
-    }
-    if request.data.is_empty() {
-        return Err(Error::Protocol(
-            "BidiAppend contains no AgentClientMessage".into(),
-        ));
-    }
-    let payload = hex::decode(&request.data)
-        .map_err(|error| Error::Protocol(format!("invalid BidiAppend hex: {error}")))?;
-    let message = agent::AgentClientMessage::decode(payload.as_slice()).inspect_err(|error| {
+    // Older Cursor clients send hex text in `data`; newer ones send raw bytes in `data_binary`.
+    let payload: Cow<[u8]> = match (request.data.is_empty(), request.data_binary.is_empty()) {
+        (false, true) => Cow::Owned(
+            hex::decode(&request.data)
+                .map_err(|error| Error::Protocol(format!("invalid BidiAppend hex: {error}")))?,
+        ),
+        (true, false) => Cow::Borrowed(&request.data_binary[..]),
+        (true, true) => {
+            return Err(Error::Protocol(
+                "BidiAppend contains no AgentClientMessage".into(),
+            ))
+        }
+        (false, false) => {
+            return Err(Error::Protocol(
+                "BidiAppend sets both data and data_binary".into(),
+            ))
+        }
+    };
+    let message = agent::AgentClientMessage::decode(&payload[..]).inspect_err(|error| {
         tracing::warn!(
             request_id,
             seqno = request.append_seqno,
@@ -258,5 +266,49 @@ mod tests {
         assert!(!output.contains("private-conversation-content"));
         assert!(!output.contains(&hex::encode(&payload)));
         assert!(!output.contains("payload_prefix"));
+    }
+
+    fn run_request_bytes() -> Vec<u8> {
+        agent::AgentClientMessage {
+            message: Some(agent::agent_client_message::Message::RunRequest(
+                agent::AgentRunRequest {
+                    conversation_id: Some("binary-conversation".into()),
+                    ..Default::default()
+                },
+            )),
+        }
+        .encode_to_vec()
+    }
+
+    fn append_request(data: String, data_binary: Vec<u8>) -> ai::BidiAppendRequest {
+        ai::BidiAppendRequest {
+            request_id: Some(ai::BidiRequestId {
+                request_id: "data-encoding-test".into(),
+            }),
+            append_seqno: 3,
+            data,
+            data_binary,
+        }
+    }
+
+    #[test]
+    fn decodes_hex_data_and_raw_data_binary_alike() {
+        let bytes = run_request_bytes();
+        for request in [
+            append_request(hex::encode(&bytes), Vec::new()),
+            append_request(String::new(), bytes.clone()),
+        ] {
+            let decoded = decode(&request).unwrap();
+            assert_eq!(decoded.request_id, "data-encoding-test");
+            assert_eq!(decoded.seqno, 3);
+            assert_eq!(decoded.conversation_id(), Some("binary-conversation"));
+        }
+    }
+
+    #[test]
+    fn rejects_empty_or_ambiguous_payloads() {
+        let bytes = run_request_bytes();
+        assert!(decode(&append_request(String::new(), Vec::new())).is_err());
+        assert!(decode(&append_request(hex::encode(&bytes), bytes)).is_err());
     }
 }
