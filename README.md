@@ -19,7 +19,7 @@ Use your own model APIs in Cursor with Agent, tool calling, Skills, and MCP work
 
 This repository publishes Cursor BYOK from [Jasun0925/cursor-byok](https://github.com/Jasun0925/cursor-byok). The application runs a local gateway that turns Cursor Agent requests into requests to the model APIs you configure.
 
-It is based on [leookun/cursor-byok](https://github.com/leookun/cursor-byok). That upstream repository is archived. Installers, updates, and issues for this line are on this repository. The current release is [v1.0.23](https://github.com/Jasun0925/cursor-byok/releases/tag/v1.0.22).
+It is based on [leookun/cursor-byok](https://github.com/leookun/cursor-byok). That upstream repository is archived. Installers, updates, and issues for this line are on this repository. The current release is [v1.0.23](https://github.com/Jasun0925/cursor-byok/releases/tag/v1.0.23).
 
 > Cursor BYOK is free and open source. Your model provider may charge for API usage. This project is independent of Cursor. The local gateway sends requests to the model service you choose.
 
