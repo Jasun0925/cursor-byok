@@ -181,8 +181,8 @@ impl ConversationRuntime {
                             if let Some(run) = generation.run.lock().clone() {
                                 run.cancel();
                             }
-                            for id in generation.tool_runtime.drain_running().await {
-                                let _ = handle.emit(&codec::abort(id));
+                            for message in generation.tool_runtime.drain_running().await {
+                                let _ = handle.emit(&message);
                             }
                         }
                         let turn_completed = waiting_for_action
@@ -259,8 +259,8 @@ impl ConversationRuntime {
                             RunFinish::Transport(finish) => {
                                 if let Some(current) = current.as_ref() {
                                     current.tasks.cancel();
-                                    for id in current.tool_runtime.drain_running().await {
-                                        let _ = handle.emit(&codec::abort(id));
+                                    for message in current.tool_runtime.drain_running().await {
+                                        let _ = handle.emit(&message);
                                     }
                                 }
                                 waiting_for_action = false;
@@ -328,6 +328,11 @@ impl ConversationRuntime {
                                         )
                                         .await
                                         {
+                                            Ok(codec::ClientExecEvent::Messages(messages)) => {
+                                                for message in messages {
+                                                    let _ = handle.emit(&message);
+                                                }
+                                            }
                                             Ok(codec::ClientExecEvent::Delta(message)) => {
                                                 let _ = handle.emit(&message);
                                             }
@@ -367,15 +372,24 @@ impl ConversationRuntime {
                                                 )
                                                 .await
                                                 {
-                                                    Ok(Some(mut completion)) => {
+                                                    Ok(codec::ClientExecEvent::Completed(
+                                                        mut completion,
+                                                    )) => {
                                                         completion.exec_id = Some(close.id);
                                                         generation.tasks.receive(
-                                                            completion,
+                                                            *completion,
                                                             &generation.results,
                                                             &handle,
                                                         );
                                                     }
-                                                    Ok(None) => {}
+                                                    Ok(codec::ClientExecEvent::Messages(
+                                                        messages,
+                                                    )) => {
+                                                        for message in messages {
+                                                            let _ = handle.emit(&message);
+                                                        }
+                                                    }
+                                                    Ok(_) => {}
                                                     Err(error) => {
                                                         generation.results.send_error(error)
                                                     }
@@ -545,10 +559,10 @@ impl ConversationRuntime {
                                                     ));
                                                     draining = true;
                                                 }
-                                                for id in
+                                                for message in
                                                     generation.tool_runtime.drain_running().await
                                                 {
-                                                    let _ = handle.emit(&codec::abort(id));
+                                                    let _ = handle.emit(&message);
                                                 }
                                             }
                                         }
@@ -642,8 +656,8 @@ async fn start_generation(
             if let Some(run) = previous.run.lock().clone() {
                 run.cancel();
             }
-            for id in previous.tool_runtime.interrupt_for_run_replacement().await {
-                let _ = handle.emit(&codec::abort(id));
+            for message in previous.tool_runtime.interrupt_for_run_replacement().await {
+                let _ = handle.emit(&message);
             }
         }
         Some(previous.finished.clone())
