@@ -112,7 +112,7 @@
 | ☐ | [#461](https://github.com/leookun/cursor-byok/issues/461) 功能无法使用 | B | 待现版复测 | 按模型列表→Agent 请求→代理入口→供应商调用逐段定位，与 #465 对照。 |
 | ☐ | [#442](https://github.com/leookun/cursor-byok/issues/442) 突然不能用了 | B | 待现版复测 | 补最近一次正常/失败版本和代理日志，优先区分全模型故障与供应商故障。 |
 | ☐ | [#415](https://github.com/leookun/cursor-byok/issues/415) skills显示为空的问题 | B | 待现版复测 | Remote SSH 的文件可读但 UI 空白；先区分 Cursor 展示与 BYOK 提示注入。 |
-| ☐ | [#352](https://github.com/leookun/cursor-byok/issues/352) 新版本必须要安装证书吗 | B | 待现版复测 | 属于部署约束咨询；核对证书依赖和支持模式，不能直接禁用 TLS 校验。 |
+| ◐ | [#352](https://github.com/leookun/cursor-byok/issues/352) 新版本必须要安装证书吗 | B | 已补充 [CA 与证书说明](certificates.md) | Cursor 接管需要本地 CA；企业禁止安装时可改用本机外部 API。未在企业策略设备上实测证书安装，也不承诺旧版本永久兼容。 |
 | ☐ | [#317](https://github.com/leookun/cursor-byok/issues/317) 新版本怎么使用呢？配置了上游deepseek但是打开cursor没有一点反应 | B | 待现版复测 | 与 #461/#465 归组；确认请求是否进入代理及服务端。 |
 | ☐ | [#203](https://github.com/leookun/cursor-byok/issues/203) 生成的代码块索引无法点击跳转到代码文件 | B | 待现版复测 | 复测代码引用协议和文件跳转，区分渲染链接与路径生成。 |
 | ☐ | [#175](https://github.com/leookun/cursor-byok/issues/175) StreamableHttp Mcp 工具在ssh 远程服务器上不工作 | B | 待现版复测 | 需 Remote SSH 实测 Streamable HTTP MCP 的请求出口与代理透传。 |
