@@ -87,6 +87,12 @@ export interface LegacyModelImportResult {
   total: number;
 }
 
+export interface ModelBackup {
+  format: "cursor-byok-models";
+  version: 1;
+  models: ModelInput[];
+}
+
 export interface ModelConnectivityResult {
   duration_ms: number;
   first_valid_response_ms: number | null;
@@ -493,6 +499,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 export const api = {
   models: () => request<Model[]>("/models"),
   createModels: (models: ModelInput[]) => request<Model[]>("/models", { method: "POST", body: JSON.stringify({ models }) }),
+  importModelBackup: (backup: ModelBackup) => request<LegacyModelImportResult>("/models/backup/import", { method: "POST", body: JSON.stringify(backup) }),
   reorderModels: (modelHashes: string[]) => request<Model[]>("/models/order", { method: "PUT", body: JSON.stringify({ model_hashes: modelHashes }) }),
   discoverModels: (input: ModelDiscoveryInput) => request<{ models: string[] }>("/models/discover", { method: "POST", body: JSON.stringify(input) }),
   previewV0049Models: () => request<LegacyModelImportPreview>("/models/import-v0049"),

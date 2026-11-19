@@ -210,12 +210,13 @@ impl CursorToolRuntime {
         context: &ExecContext,
         state: Box<super::semble::SembleExecution>,
         started_at_ms: u64,
-    ) -> Result<u32> {
+    ) -> Result<Vec<pb::AgentServerMessage>> {
         let mut execs = self.execs.lock().await;
         if state.cancelled.load(Ordering::Acquire) {
             return Err(Error::Protocol("Semble search was cancelled".into()));
         }
         let id = self.next_id()?;
+        let messages = state.request(id, &call.model_call_id);
         execs.insert(
             id,
             PendingExec {
@@ -227,7 +228,7 @@ impl CursorToolRuntime {
                 stage: ExecStage::Semble(state),
             },
         );
-        Ok(id)
+        Ok(messages)
     }
 
     pub(crate) async fn is_semble(&self, id: u32) -> bool {
@@ -407,23 +408,21 @@ impl CursorToolRuntime {
         self.interactions.lock().await.remove(&id);
     }
 
-    pub async fn drain_running(&self) -> Vec<u32> {
+    pub async fn drain_running(&self) -> Vec<pb::AgentServerMessage> {
         self.cancel_searches().await;
         let mut entries = self.execs.lock().await;
-        let mut ids = entries.drain().map(|(id, _)| id).collect::<Vec<_>>();
-        ids.sort_unstable();
+        let messages = abort_entries(&mut entries, false);
         self.interactions.lock().await.clear();
         self.completed.lock().await.clear();
         self.interrupted.lock().await.clear();
-        ids
+        messages
     }
 
-    pub async fn interrupt_for_run_replacement(&self) -> Vec<u32> {
+    pub async fn interrupt_for_run_replacement(&self) -> Vec<pb::AgentServerMessage> {
         self.cancel_searches().await;
         let mut execs = self.execs.lock().await;
-        let mut abort_ids = execs.keys().copied().collect::<Vec<_>>();
-        let mut interrupted_ids = abort_ids.clone();
-        execs.clear();
+        let mut interrupted_ids = execs.keys().copied().collect::<Vec<_>>();
+        let messages = abort_entries(&mut execs, false);
         drop(execs);
 
         let mut interactions = self.interactions.lock().await;
@@ -433,25 +432,19 @@ impl CursorToolRuntime {
 
         self.completed.lock().await.clear();
         self.interrupted.lock().await.extend(interrupted_ids);
-        abort_ids.sort_unstable();
-        abort_ids
+        messages
     }
 
-    pub async fn interrupt_for_message(&self) -> Vec<u32> {
+    pub async fn interrupt_for_message(&self) -> Vec<pb::AgentServerMessage> {
         self.cancel_searches().await;
-        let (abort_ids, interrupted_ids) = {
+        let (messages, interrupted_ids) = {
             let mut entries = self.execs.lock().await;
-            let mut abort_ids = Vec::new();
-            let mut interrupted_ids = Vec::new();
-            entries.retain(|id, entry| {
-                let keep_running = entry.call.name.eq_ignore_ascii_case("Task");
-                if !keep_running {
-                    interrupted_ids.push(*id);
-                    abort_ids.push(*id);
-                }
-                keep_running
-            });
-            (abort_ids, interrupted_ids)
+            let interrupted_ids = entries
+                .iter()
+                .filter(|(_, entry)| !entry.call.name.eq_ignore_ascii_case("Task"))
+                .map(|(id, _)| *id)
+                .collect::<Vec<_>>();
+            (abort_entries(&mut entries, true), interrupted_ids)
         };
         let interaction_ids = {
             let mut interactions = self.interactions.lock().await;
@@ -462,9 +455,7 @@ impl CursorToolRuntime {
         let mut interrupted = self.interrupted.lock().await;
         interrupted.extend(interrupted_ids);
         interrupted.extend(interaction_ids);
-        let mut abort_ids = abort_ids;
-        abort_ids.sort_unstable();
-        abort_ids
+        messages
     }
 
     pub async fn running_exec_ids(&self) -> Vec<u32> {
@@ -508,4 +499,28 @@ pub(crate) fn now_ms() -> u64 {
         .duration_since(std::time::UNIX_EPOCH)
         .unwrap_or_default()
         .as_millis() as u64
+}
+
+// Close auxiliary collection cards together with their Exec ownership. These
+// UI events never enter the provider's canonical tool round.
+fn abort_entries(
+    entries: &mut HashMap<u32, PendingExec>,
+    keep_tasks: bool,
+) -> Vec<pb::AgentServerMessage> {
+    let mut ids = entries
+        .iter()
+        .filter(|(_, entry)| !keep_tasks || !entry.call.name.eq_ignore_ascii_case("Task"))
+        .map(|(id, _)| *id)
+        .collect::<Vec<_>>();
+    ids.sort_unstable();
+    let mut messages = Vec::new();
+    for id in ids {
+        let entry = entries.remove(&id).expect("selected running Exec");
+        messages.push(super::codec::abort(id));
+        if let Some(card) = super::semble::cancelled_card(&entry, "Workspace collection cancelled")
+        {
+            messages.push(card);
+        }
+    }
+    messages
 }
