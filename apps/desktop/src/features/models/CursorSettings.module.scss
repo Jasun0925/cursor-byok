@@ -323,6 +323,16 @@
   width: 100%;
   grid-column: 1 / -1;
 }
+.batchModels {
+  display: flex;
+  align-items: end;
+  gap: 8px;
+
+  > :first-child {
+    flex: 1;
+    min-width: 0;
+  }
+}
 .discoverButton {
   min-height: 34px;
   height: 34px;

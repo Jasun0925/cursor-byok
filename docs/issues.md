@@ -112,7 +112,7 @@
 | ☐ | [#461](https://github.com/leookun/cursor-byok/issues/461) 功能无法使用 | B | 待现版复测 | 按模型列表→Agent 请求→代理入口→供应商调用逐段定位，与 #465 对照。 |
 | ☐ | [#442](https://github.com/leookun/cursor-byok/issues/442) 突然不能用了 | B | 待现版复测 | 补最近一次正常/失败版本和代理日志，优先区分全模型故障与供应商故障。 |
 | ☐ | [#415](https://github.com/leookun/cursor-byok/issues/415) skills显示为空的问题 | B | 待现版复测 | Remote SSH 的文件可读但 UI 空白；先区分 Cursor 展示与 BYOK 提示注入。 |
-| ☐ | [#352](https://github.com/leookun/cursor-byok/issues/352) 新版本必须要安装证书吗 | B | 待现版复测 | 属于部署约束咨询；核对证书依赖和支持模式，不能直接禁用 TLS 校验。 |
+| ◐ | [#352](https://github.com/leookun/cursor-byok/issues/352) 新版本必须要安装证书吗 | B | 已补充 [CA 与证书说明](certificates.md) | Cursor 接管需要本地 CA；企业禁止安装时可改用本机外部 API。未在企业策略设备上实测证书安装，也不承诺旧版本永久兼容。 |
 | ☐ | [#317](https://github.com/leookun/cursor-byok/issues/317) 新版本怎么使用呢？配置了上游deepseek但是打开cursor没有一点反应 | B | 待现版复测 | 与 #461/#465 归组；确认请求是否进入代理及服务端。 |
 | ☐ | [#203](https://github.com/leookun/cursor-byok/issues/203) 生成的代码块索引无法点击跳转到代码文件 | B | 待现版复测 | 复测代码引用协议和文件跳转，区分渲染链接与路径生成。 |
 | ☐ | [#175](https://github.com/leookun/cursor-byok/issues/175) StreamableHttp Mcp 工具在ssh 远程服务器上不工作 | B | 待现版复测 | 需 Remote SSH 实测 Streamable HTTP MCP 的请求出口与代理透传。 |
@@ -159,13 +159,13 @@
 | 完成 | Issue / 原标题 | 分级 | 本地状态 | 下一步 / 证据线索 |
 | --- | --- | --- | --- | --- |
 | ☐ | [#324](https://github.com/leookun/cursor-byok/issues/324) 使用上的一些小痛点。 | B | 待现版复测 | 拆分配置复制、密钥显示和模型哈希冲突；先复现冲突，避免混合改动。 |
-| ☐ | [#471](https://github.com/leookun/cursor-byok/issues/471) 需求：增加一个配置备份功能 | C | 需求待评估 | 定义导出/导入字段、密钥处理和覆盖策略；先确认当前版本已有能力。 |
+| ◐ | [#471](https://github.com/leookun/cursor-byok/issues/471) 需求：增加一个配置备份功能 | C | 已实现内置模型 JSON 导出/导入；已补排序、并发刷新和大请求体回归；macOS 与 Oracle Linux 9.8 ARM64 定向验证通过 | 插件模型由插件配置独立管理，不进入本备份；导出包含 API Key，界面已提示妥善保管；真实打包桌面 UI 尚待人工验收。实现与验证见 [记录](history/issues/2026-11-13-issue471-model-backup.md)。 |
 | ☑（PR #39 已合入 main） | [#417](https://github.com/leookun/cursor-byok/issues/417) 增加自定义定价 | C | 已实现全局及逐模型 Token 价格；[PR #39](https://github.com/haohaomin/cursor-byok/pull/39) 已在当前 `main` 基线上通过本地验证并合入 | 以 `model_hash` 保存输入/输出/缓存读写单价；未设置覆盖时使用全局价格。插件模型暂沿用全局价格，见 [实现与验证](history/issues/2026-11-13-issue150-model-pricing.md)。 |
 | ☐（现版已支持） | [#254](https://github.com/leookun/cursor-byok/issues/254) 支持配置tab-server的baseurl，而不是内置一个 | C | 既有功能无需重写；路由、持久化及设置页受控验证通过 | 16 个 TAB RPC 的前缀/query/二进制转发、SQLite 重连、地址切换、流式交付与非法配置保护共 4 项测试通过；设置页接线已测。未修改生产代码；真实 Cursor TAB、HTTPS 服务及控制面账号未验，见 [核查与边界](history/issues/2026-11-06-issue254-tab-baseurl-check.md)。 |
 | ☑（PR #34、#39 已合入 main） | [#150](https://github.com/leookun/cursor-byok/issues/150) 提几个意见看看需求能否实现。 | C | #107 按模型分项统计见 [PR #34](https://github.com/haohaomin/cursor-byok/pull/34)，逐模型 Token 定价见 [PR #39](https://github.com/haohaomin/cursor-byok/pull/39)；两者本地验证通过 | 首页总价和模型明细按 `model_hash` 选择覆盖价，其他模型使用全局价格；插件模型暂不单独定价。真实供应商、插件独立定价和发布版本仍待验收。见 [统计记录](history/issues/2026-11-12-issue107-model-usage-breakdown.md) 与 [定价验证](history/issues/2026-11-13-issue150-model-pricing.md)。 |
 | ☐ | [#146](https://github.com/leookun/cursor-byok/issues/146) Docker支持 | C | 需求待评估 | 明确桌面/纯服务部署目标后评估容器支持。 |
 | ☑（PR #34 已合入 main） | [#107](https://github.com/leookun/cursor-byok/issues/107) 请问能不能在用量统计时候加个模型的分类 | C | 概览四项统计可按模型展开；Store、工作区和浏览器回归通过 | Git 自动提交的本地模型/直连路径已核对，真实 Cursor Git UI 未验。 |
-| ☐ | [#99](https://github.com/leookun/cursor-byok/issues/99) 关于批量添加模型和token用量统计的一点建议 | C | 需求待评估 | 先检查现版批量模型导入和统计；统计清零单独作为数据问题验证。 |
+| ◐ | [#99](https://github.com/leookun/cursor-byok/issues/99) 关于批量添加模型和token用量统计的一点建议 | C | 已支持发现模型后多选并批量添加；Token 用量统计已由 #107/#150 覆盖 | macOS 与 Oracle Linux 9.8 ARM64 的格式检查、控制 API 回归通过，Oracle Linux Clippy 通过；真实供应商返回模型列表、重复配置提示及已安装应用操作仍待手工验收，见 [验证记录](history/issues/2026-11-13-issue99-batch-models.md)。 |
 
 ### 社区讨论（1 项）
 

@@ -67,7 +67,7 @@ Installers use this repository's update source and signing identity. **Moving fr
 
 Have your model service's **endpoint, API key, and model ID** ready, then:
 
-1. **Open Cursor BYOK.** Follow the in-app prompts for Cursor integration, local CA initialization, and certificate trust. Complete system authorization when prompted.
+1. **Open Cursor BYOK.** Follow the in-app prompts for Cursor integration, local CA initialization, and certificate trust. If your managed device cannot install certificates, read the [CA and certificate guide](docs/certificates.md) first. Complete system authorization when prompted.
 2. **Add a model.** Enter the service details in Model Settings, select the matching protocol, save, and run the connection test.
 3. **Confirm the connection.** Enable Cursor's local integration as instructed and keep Cursor BYOK running.
 4. **Restart Cursor and select the model.** Quit completely, reopen Cursor, start a new conversation, and select your configured model. **Auto uses official models; it does not select your BYOK models.**
