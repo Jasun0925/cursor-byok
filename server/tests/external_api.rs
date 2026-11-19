@@ -22,7 +22,7 @@ use cursor_server::{
     network::NetworkClients,
     plugin::{PluginRegistry, PluginRuntime},
     provider::{FinishReason, ModelEvent, ProviderRouter},
-    store::ExternalApiSettings,
+    store::{ExternalApiSettings, TokenPricingSettings},
 };
 use serde_json::{json, Value};
 use tower::ServiceExt;
@@ -116,6 +116,254 @@ async fn management_settings_enable_the_external_route_without_restart() {
         .await
         .0,
         StatusCode::OK
+    );
+}
+
+#[tokio::test]
+async fn model_backup_import_skips_existing_models_and_is_idempotent() {
+    let (router, _provider, store, _directory) = setup().await;
+    let mut new_model = model_input();
+    new_model.display_name = "Imported".into();
+    new_model.model_id = "imported-model".into();
+    let payload = json!({
+        "format": "cursor-byok-models",
+        "version": 1,
+        "models": [model_input(), new_model]
+    });
+
+    let (status, body) = send(
+        router.clone(),
+        "POST",
+        "/__byok-api__/api/models/backup/import",
+        None,
+        payload.clone(),
+    )
+    .await;
+    assert_eq!(status, StatusCode::OK);
+    assert_eq!(
+        serde_json::from_str::<Value>(&body).unwrap(),
+        json!({"imported": 1, "skipped": 1, "total": 2})
+    );
+    assert_eq!(store.models().await.unwrap().len(), 2);
+
+    let (status, body) = send(
+        router,
+        "POST",
+        "/__byok-api__/api/models/backup/import",
+        None,
+        payload,
+    )
+    .await;
+    assert_eq!(status, StatusCode::OK);
+    assert_eq!(
+        serde_json::from_str::<Value>(&body).unwrap(),
+        json!({"imported": 0, "skipped": 2, "total": 2})
+    );
+}
+
+#[tokio::test]
+async fn model_backup_import_rejects_unknown_format_and_empty_backups() {
+    let (router, _provider, _store, _directory) = setup().await;
+    let (status, body) = send(
+        router.clone(),
+        "POST",
+        "/__byok-api__/api/models/backup/import",
+        None,
+        json!({"format": "other", "version": 1, "models": [model_input()]}),
+    )
+    .await;
+    assert_eq!(status, StatusCode::BAD_REQUEST);
+    assert!(body.contains("unsupported model backup format"));
+
+    let (status, body) = send(
+        router,
+        "POST",
+        "/__byok-api__/api/models/backup/import",
+        None,
+        json!({"format": "cursor-byok-models", "version": 1, "models": []}),
+    )
+    .await;
+    assert_eq!(status, StatusCode::BAD_REQUEST);
+    assert!(body.contains("model backup contains no models"));
+}
+
+#[tokio::test]
+async fn model_backup_import_appends_models_in_backup_order() {
+    let (router, _provider, store, _directory) = setup().await;
+    let mut first = model_input();
+    first.display_name = "First imported".into();
+    first.model_id = "imported-first".into();
+    first.sort_order = 99;
+    let mut second = first.clone();
+    second.display_name = "Second imported".into();
+    second.model_id = "imported-second".into();
+    second.sort_order = 1;
+
+    let (status, _) = send(
+        router,
+        "POST",
+        "/__byok-api__/api/models/backup/import",
+        None,
+        json!({"format": "cursor-byok-models", "version": 1, "models": [first, second]}),
+    )
+    .await;
+    assert_eq!(status, StatusCode::OK);
+    let model_ids = store
+        .models()
+        .await
+        .unwrap()
+        .into_iter()
+        .map(|model| model.model_id)
+        .collect::<Vec<_>>();
+    assert_eq!(
+        model_ids,
+        ["qwen/model", "imported-first", "imported-second"]
+    );
+}
+
+#[tokio::test]
+async fn model_backup_import_accepts_payloads_larger_than_the_default_json_limit() {
+    let (router, _provider, store, _directory) = setup().await;
+    let mut imported = model_input();
+    imported.display_name = "Large backup".into();
+    imported.model_id = "large-backup".into();
+    let payload = json!({
+        "format": "cursor-byok-models",
+        "version": 1,
+        "models": [imported],
+        "padding": "x".repeat(2 * 1024 * 1024),
+    });
+
+    let (status, body) = send(
+        router,
+        "POST",
+        "/__byok-api__/api/models/backup/import",
+        None,
+        payload,
+    )
+    .await;
+    assert_eq!(status, StatusCode::OK);
+    assert_eq!(
+        serde_json::from_str::<Value>(&body).unwrap(),
+        json!({"imported": 1, "skipped": 0, "total": 1})
+    );
+    assert_eq!(store.models().await.unwrap().len(), 2);
+}
+
+#[tokio::test]
+async fn model_create_accepts_a_batch_of_discovered_models() {
+    let (router, _provider, store, _directory) = setup().await;
+    let mut first = model_input();
+    first.display_name = "Batch one".into();
+    first.model_id = "batch/one".into();
+    let mut second = first.clone();
+    second.display_name = "Batch two".into();
+    second.model_id = "batch/two".into();
+
+    let (status, body) = send(
+        router.clone(),
+        "POST",
+        "/__byok-api__/api/models",
+        None,
+        json!({
+            "models": [serde_json::to_value(first).unwrap(), serde_json::to_value(second).unwrap()]
+        }),
+    )
+    .await;
+    assert_eq!(status, StatusCode::CREATED);
+    let created = serde_json::from_str::<Vec<Value>>(&body).unwrap();
+    assert_eq!(created.len(), 2);
+    assert_eq!(
+        created
+            .iter()
+            .map(|model| model["model_id"].as_str().unwrap())
+            .collect::<HashSet<_>>(),
+        HashSet::from(["batch/one", "batch/two"])
+    );
+
+    let saved = store.models().await.unwrap();
+    assert_eq!(saved.len(), 3);
+}
+
+#[tokio::test]
+async fn model_pricing_settings_round_trip_through_control_api() {
+    let (router, _provider, _store, _directory) = setup().await;
+    let (status, body) = send(
+        router.clone(),
+        "GET",
+        "/__byok-api__/api/settings/model-pricing",
+        None,
+        json!({}),
+    )
+    .await;
+    assert_eq!(status, StatusCode::OK);
+    assert_eq!(serde_json::from_str::<Value>(&body).unwrap(), json!([]));
+
+    let payload = json!([
+        {
+            "model_hash": "z-model",
+            "input_per_million": 3.0,
+            "output_per_million": 15.0,
+            "cache_read_per_million": 0.3,
+            "cache_write_per_million": 3.75
+        },
+        {
+            "model_hash": "a-model",
+            "input_per_million": 5.0,
+            "output_per_million": 25.0,
+            "cache_read_per_million": 0.5,
+            "cache_write_per_million": 6.25
+        }
+    ]);
+    let (status, body) = send(
+        router.clone(),
+        "PUT",
+        "/__byok-api__/api/settings/model-pricing",
+        None,
+        payload,
+    )
+    .await;
+    assert_eq!(status, StatusCode::OK);
+    let saved =
+        serde_json::from_str::<Vec<cursor_server::store::ModelTokenPricing>>(&body).unwrap();
+    assert_eq!(saved[0].model_hash, "a-model");
+    assert_eq!(saved[1].model_hash, "z-model");
+    assert_eq!(
+        saved[1].pricing,
+        TokenPricingSettings {
+            input_per_million: 3.0,
+            output_per_million: 15.0,
+            cache_read_per_million: 0.3,
+            cache_write_per_million: 3.75,
+        }
+    );
+
+    let (status, body) = send(
+        router.clone(),
+        "PUT",
+        "/__byok-api__/api/settings/model-pricing",
+        None,
+        json!([
+            {"model_hash":"same","input_per_million":1,"output_per_million":1,"cache_read_per_million":1,"cache_write_per_million":1},
+            {"model_hash":"same","input_per_million":1,"output_per_million":1,"cache_read_per_million":1,"cache_write_per_million":1}
+        ]),
+    )
+    .await;
+    assert_eq!(status, StatusCode::BAD_REQUEST);
+    assert!(body.contains("duplicate model pricing"));
+
+    let (status, body) = send(
+        router,
+        "GET",
+        "/__byok-api__/api/settings/model-pricing",
+        None,
+        json!({}),
+    )
+    .await;
+    assert_eq!(status, StatusCode::OK);
+    assert_eq!(
+        serde_json::from_str::<Value>(&body).unwrap()[0]["model_hash"],
+        "a-model"
     );
 }
 

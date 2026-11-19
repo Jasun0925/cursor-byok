@@ -45,10 +45,10 @@
 | ☐ | [#294](https://github.com/leookun/cursor-byok/issues/294) 粘贴图片后，历史回放每轮重发 image 块，deepseek-v4-flash 文本模型，anthropic协议，每轮回复都提"图片依旧无法读取（Unsupported Image）" | B | 已新增模型级“移除图片输入”配置；真实 Cursor + Anthropic 文本模型待复测 | 开启后 provider-visible 历史会移除图片块，原始会话保留；服务端与桌面回归通过，见 [修复记录](history/issues/2026-10-04-issue294-fix.md)。 |
 | ☐ | [#290](https://github.com/leookun/cursor-byok/issues/290) claude报错signature | B | 当前签名回放路径验证通过；原网关待复测 | 新增 6 项 HTTP/SSE 与 checkpoint 回归，相关 197 项通过；没有生产代码改动，未确认原 Bedrock 网关根因，见 [复核记录](history/issues/2026-10-04-issue290-check.md)。 |
 | ☐ | [#199](https://github.com/leookun/cursor-byok/issues/199) 部分公益站grok4.5访问报错 | B | 本地 MCP schema 缺口已修复；原公益站待实测 | 顶层 `required:null` 规范化为空数组，Chat/Responses HTTP 回归通过；未确认原 Grok 网关根因，见 [修复记录](history/issues/2026-10-04-issue199-fix.md)。 |
-| ☐ | [#184](https://github.com/leookun/cursor-byok/issues/184) gemini模型不支持吗？ | B | 待现版复测 | 核对 Gemini 协议和 URL，405 先检查路由，不直接判模型不支持。 |
+| ☑（PR #36 已合入 main） | [#184](https://github.com/leookun/cursor-byok/issues/184) gemini模型不支持吗？ | B | 已增加 Google Gemini OpenAI 兼容预设，见 [PR #36](https://github.com/haohaomin/cursor-byok/pull/36) 和 [验证记录](history/issues/2026-11-13-issue463-gemini-openai-compat.md)；405 的原生协议路径仍不支持 | 使用 `generativelanguage.googleapis.com/v1beta/openai/chat/completions`；真实 Gemini Key 和原作者环境待验收。 |
 | ☐ | [#88](https://github.com/leookun/cursor-byok/issues/88) 配置的OpenAi模型出现Instructions are required | B | 本地连通性测试缺口已修复；原中转站待实测 | 测试请求补充非空系统指令，严格/宽松 Responses HTTP 回归通过；见 [修复记录](history/issues/2026-10-05-issue88-fix.md)。 |
 | ☐ | [#86](https://github.com/leookun/cursor-byok/issues/86) 响应出现&lt;think&gt;标签时出现异常中断 | B | 当前正文标签路径验证通过；原官方 API 待实测 | 新增 6 项回归确认完整/跨分片/未闭合标签与后续正文保留，断流明确报错；无生产代码改动，见 [复核记录](history/issues/2026-10-05-issue86-check.md)。 |
-| ☐ | [#463](https://github.com/leookun/cursor-byok/issues/463) Gemini Provider Support | C | 需求待评估 | 核对 Gemini 所用协议及 x-goog-api-key 鉴权入口；勿与 Anthropic 模型混判。 |
+| ☑（PR #36 已合入 main） | [#463](https://github.com/leookun/cursor-byok/issues/463) Gemini Provider Support | C | 已增加 Gemini OpenAI 兼容预设，见 [PR #36](https://github.com/haohaomin/cursor-byok/pull/36) 和 [验证记录](history/issues/2026-11-13-issue463-gemini-openai-compat.md)；原生 `generateContent` 协议仍未实现 | 使用 `generativelanguage.googleapis.com/v1beta/openai/chat/completions` 和 Bearer API Key；真实 Gemini Key 待验收。 |
 | ☐ | [#470](https://github.com/leookun/cursor-byok/issues/470) 谷歌模型的gemini 3.1pro模型也不能用 | D | 待补信息 | 主要证据为图片；补协议、请求地址类型和服务端错误。 |
 | ☐ | [#440](https://github.com/leookun/cursor-byok/issues/440) 谷歌里面的claude模型用不了 | D | 待补信息 | 补 Google 插件下具体 Claude 入口、授权状态和错误正文。 |
 | ☐ | [#379](https://github.com/leookun/cursor-byok/issues/379) Grok Responses API 的后台工具任务完成回调时，BYOK 代理组装回包缺少必填的 `tool_call_id` 字段，xAI 服务端直接参数校验失败 | D | 待补信息 | 正文为空；补缺失 tool_call_id 的请求和后台完成通知，勿只凭标题改协议。 |
@@ -159,13 +159,13 @@
 | 完成 | Issue / 原标题 | 分级 | 本地状态 | 下一步 / 证据线索 |
 | --- | --- | --- | --- | --- |
 | ☐ | [#324](https://github.com/leookun/cursor-byok/issues/324) 使用上的一些小痛点。 | B | 待现版复测 | 拆分配置复制、密钥显示和模型哈希冲突；先复现冲突，避免混合改动。 |
-| ☐ | [#471](https://github.com/leookun/cursor-byok/issues/471) 需求：增加一个配置备份功能 | C | 需求待评估 | 定义导出/导入字段、密钥处理和覆盖策略；先确认当前版本已有能力。 |
-| ☐ | [#417](https://github.com/leookun/cursor-byok/issues/417) 增加自定义定价 | C | 需求待评估 | 与 #150 的自定义价格需求归组，确认币种、计价单位和历史统计规则。 |
+| ◐ | [#471](https://github.com/leookun/cursor-byok/issues/471) 需求：增加一个配置备份功能 | C | 已实现内置模型 JSON 导出/导入；已补排序、并发刷新和大请求体回归；macOS 与 Oracle Linux 9.8 ARM64 定向验证通过 | 插件模型由插件配置独立管理，不进入本备份；导出包含 API Key，界面已提示妥善保管；真实打包桌面 UI 尚待人工验收。实现与验证见 [记录](history/issues/2026-11-13-issue471-model-backup.md)。 |
+| ☑（PR #39 已合入 main） | [#417](https://github.com/leookun/cursor-byok/issues/417) 增加自定义定价 | C | 已实现全局及逐模型 Token 价格；[PR #39](https://github.com/haohaomin/cursor-byok/pull/39) 已在当前 `main` 基线上通过本地验证并合入 | 以 `model_hash` 保存输入/输出/缓存读写单价；未设置覆盖时使用全局价格。插件模型暂沿用全局价格，见 [实现与验证](history/issues/2026-11-13-issue150-model-pricing.md)。 |
 | ☐（现版已支持） | [#254](https://github.com/leookun/cursor-byok/issues/254) 支持配置tab-server的baseurl，而不是内置一个 | C | 既有功能无需重写；路由、持久化及设置页受控验证通过 | 16 个 TAB RPC 的前缀/query/二进制转发、SQLite 重连、地址切换、流式交付与非法配置保护共 4 项测试通过；设置页接线已测。未修改生产代码；真实 Cursor TAB、HTTPS 服务及控制面账号未验，见 [核查与边界](history/issues/2026-11-06-issue254-tab-baseurl-check.md)。 |
-| ☐ | [#150](https://github.com/leookun/cursor-byok/issues/150) 提几个意见看看需求能否实现。 | C | 需求待评估 | 与 #417/#107 归组，明确自定义价格和按模型分项统计。 |
+| ☑（PR #34、#39 已合入 main） | [#150](https://github.com/leookun/cursor-byok/issues/150) 提几个意见看看需求能否实现。 | C | #107 按模型分项统计见 [PR #34](https://github.com/haohaomin/cursor-byok/pull/34)，逐模型 Token 定价见 [PR #39](https://github.com/haohaomin/cursor-byok/pull/39)；两者本地验证通过 | 首页总价和模型明细按 `model_hash` 选择覆盖价，其他模型使用全局价格；插件模型暂不单独定价。真实供应商、插件独立定价和发布版本仍待验收。见 [统计记录](history/issues/2026-11-12-issue107-model-usage-breakdown.md) 与 [定价验证](history/issues/2026-11-13-issue150-model-pricing.md)。 |
 | ☐ | [#146](https://github.com/leookun/cursor-byok/issues/146) Docker支持 | C | 需求待评估 | 明确桌面/纯服务部署目标后评估容器支持。 |
-| ☐ | [#107](https://github.com/leookun/cursor-byok/issues/107) 请问能不能在用量统计时候加个模型的分类 | C | 需求待评估 | 先核对现版分模型用量统计，另行确认 commit 模型路由。 |
-| ☐ | [#99](https://github.com/leookun/cursor-byok/issues/99) 关于批量添加模型和token用量统计的一点建议 | C | 需求待评估 | 先检查现版批量模型导入和统计；统计清零单独作为数据问题验证。 |
+| ☑（PR #34 已合入 main） | [#107](https://github.com/leookun/cursor-byok/issues/107) 请问能不能在用量统计时候加个模型的分类 | C | 概览四项统计可按模型展开；Store、工作区和浏览器回归通过 | Git 自动提交的本地模型/直连路径已核对，真实 Cursor Git UI 未验。 |
+| ◐ | [#99](https://github.com/leookun/cursor-byok/issues/99) 关于批量添加模型和token用量统计的一点建议 | C | 已支持发现模型后多选并批量添加；Token 用量统计已由 #107/#150 覆盖 | macOS 与 Oracle Linux 9.8 ARM64 的格式检查、控制 API 回归通过，Oracle Linux Clippy 通过；真实供应商返回模型列表、重复配置提示及已安装应用操作仍待手工验收，见 [验证记录](history/issues/2026-11-13-issue99-batch-models.md)。 |
 
 ### 社区讨论（1 项）
 

@@ -1,9 +1,10 @@
 import { formatCompactInteger, formatInteger } from "../../../shared/utils/numberFormat";
-import { useAppStore } from "../../../shared/store/appStore";
 import { Icon } from "../../../shared/ui/Icon";
 import { useTooltip, type TooltipAnchor } from "../../../shared/ui/Tooltip";
 import { informationOutlineIcon } from "../../../shared/ui/icons";
 import { CacheHitRateChart } from "./CacheHitRateChart";
+import type { UsageMetric } from "./ModelUsageDialog";
+import type { TokenCosts } from "../../../shared/utils/tokenPricing";
 import styles from "./HomeMetrics.module.scss";
 
 export type HomeMetricsData = {
@@ -14,6 +15,7 @@ export type HomeMetricsData = {
   promptTokens: number;
   cacheReadTokens: number;
   cacheWriteTokens: number;
+  costs: TokenCosts;
 };
 
 function formatMetricValue(value: number) {
@@ -28,10 +30,6 @@ function formatRate(value: number | null) {
 
 function calculateRate(numerator: number, denominator: number) {
   return denominator > 0 ? numerator / denominator : null;
-}
-
-function priceTokens(tokens: number, pricePerMillion: number) {
-  return (tokens / 1_000_000) * pricePerMillion;
 }
 
 function formatUSD(value: number) {
@@ -59,8 +57,7 @@ function InfoTooltip({ content }: { content: string }) {
   ><Icon icon={informationOutlineIcon} size="1.1em" /></button>;
 }
 
-export function HomeMetrics({ data, refreshVersion = 0 }: { data: HomeMetricsData; refreshVersion?: number }) {
-  const { pricing } = useAppStore();
+export function HomeMetrics({ data, onOpen, refreshVersion = 0 }: { data: HomeMetricsData; onOpen?: (metric: UsageMetric) => void; refreshVersion?: number }) {
   const inputTokens = Math.max(0, data.promptTokens - data.cacheReadTokens - data.cacheWriteTokens);
   const outputTokens = Math.max(0, data.tokenUsage - data.promptTokens);
   const defaultCacheHitRate = calculateRate(data.cacheReadTokens, data.cacheReadTokens + inputTokens);
@@ -69,12 +66,7 @@ export function HomeMetrics({ data, refreshVersion = 0 }: { data: HomeMetricsDat
     data.cacheReadTokens + data.cacheWriteTokens + inputTokens,
   );
   const successfulCallRate = calculateRate(data.successfulCalls, data.llmCalls);
-  const costs = {
-    input: priceTokens(inputTokens, pricing.input_per_million),
-    output: priceTokens(outputTokens, pricing.output_per_million),
-    cacheRead: priceTokens(data.cacheReadTokens, pricing.cache_read_per_million),
-    cacheWrite: priceTokens(data.cacheWriteTokens, pricing.cache_write_per_million),
-  };
+  const costs = data.costs;
   const totalCost = costs.input + costs.output + costs.cacheRead + costs.cacheWrite;
   const cacheCost = costs.cacheRead + costs.cacheWrite;
   const cacheTooltip = [
@@ -106,29 +98,14 @@ export function HomeMetrics({ data, refreshVersion = 0 }: { data: HomeMetricsDat
     t("缓存读写已计入提示词侧统计。"),
   ].join("\n");
   const costTooltip = [
-    t("按配置的 Token 价格估算。"),
+    t("按全局及模型级 Token 价格估算。"),
+    t("模型级定价会按每个模型的 Token 用量分别计算。"),
     t("缓存统计策略：默认口径（{rate}）", { rate: formatRate(defaultCacheHitRate) }),
     "",
-    t("普通输入：{tokens} × ${price}/1M = {cost}", {
-      tokens: formatMetricValue(inputTokens),
-      price: pricing.input_per_million,
-      cost: formatUSD(costs.input),
-    }),
-    t("模型输出：{tokens} × ${price}/1M = {cost}", {
-      tokens: formatMetricValue(outputTokens),
-      price: pricing.output_per_million,
-      cost: formatUSD(costs.output),
-    }),
-    t("缓存读取：{tokens} × ${price}/1M = {cost}", {
-      tokens: formatMetricValue(data.cacheReadTokens),
-      price: pricing.cache_read_per_million,
-      cost: formatUSD(costs.cacheRead),
-    }),
-    t("缓存写入：{tokens} × ${price}/1M = {cost}", {
-      tokens: formatMetricValue(data.cacheWriteTokens),
-      price: pricing.cache_write_per_million,
-      cost: formatUSD(costs.cacheWrite),
-    }),
+    t("普通输入成本：{cost}", { cost: formatUSD(costs.input) }),
+    t("模型输出成本：{cost}", { cost: formatUSD(costs.output) }),
+    t("缓存读取成本：{cost}", { cost: formatUSD(costs.cacheRead) }),
+    t("缓存写入成本：{cost}", { cost: formatUSD(costs.cacheWrite) }),
     "",
     t("合计：{cost}", { cost: formatUSD(totalCost) }),
   ].join("\n");
@@ -137,31 +114,33 @@ export function HomeMetrics({ data, refreshVersion = 0 }: { data: HomeMetricsDat
     <section className={styles.root} aria-label={t("调用统计")}>
       <article className={styles.metric}>
         <div className={styles.label}>{t("缓存命中率")}<InfoTooltip content={cacheTooltip} /></div>
-        <CacheHitRateChart rate={defaultCacheHitRate ?? 0} animationKey={refreshVersion} />
+        <button type="button" className={styles.details} aria-label={t("按模型查看：{metric}", { metric: t("缓存命中率") })} onClick={() => onOpen?.("cache")} disabled={!onOpen}>
+          <CacheHitRateChart rate={defaultCacheHitRate ?? 0} animationKey={refreshVersion} />
+        </button>
       </article>
       <article className={styles.metric}>
         <div className={styles.label}>{t("LLM 调用")}<InfoTooltip content={callsTooltip} /></div>
-        <div className={styles.body}>
+        <button type="button" className={styles.details} aria-label={t("按模型查看：{metric}", { metric: t("LLM 调用") })} onClick={() => onOpen?.("calls")} disabled={!onOpen}>
           <div className={styles.value} title={formatInteger(data.llmCalls)}>{formatCompactInteger(data.llmCalls)}</div>
           <div className={styles.secondary}>{t("成功 {successful} / 异常 {failed}", {
             successful: formatCompactInteger(data.successfulCalls),
             failed: formatCompactInteger(data.failedCalls),
           })}</div>
-        </div>
+        </button>
       </article>
       <article className={styles.metric}>
         <div className={styles.label}>{t("Token 消耗")}<InfoTooltip content={tokensTooltip} /></div>
-        <div className={styles.body}>
+        <button type="button" className={styles.details} aria-label={t("按模型查看：{metric}", { metric: t("Token 消耗") })} onClick={() => onOpen?.("tokens")} disabled={!onOpen}>
           <div className={styles.value} title={formatInteger(data.tokenUsage)}>{formatCompactInteger(data.tokenUsage)}</div>
           <div className={styles.secondary}>{t("提示词 {tokens}", { tokens: formatCompactInteger(data.promptTokens) })}</div>
-        </div>
+        </button>
       </article>
       <article className={styles.metric}>
         <div className={styles.label}>{t("价值估算")}<InfoTooltip content={costTooltip} /></div>
-        <div className={styles.body}>
+        <button type="button" className={styles.details} aria-label={t("按模型查看：{metric}", { metric: t("价值估算") })} onClick={() => onOpen?.("cost")} disabled={!onOpen}>
           <div className={styles.value} title={formatUSD(totalCost)}>{formatUSD(totalCost)}</div>
           <div className={styles.secondary}>{t("缓存读写 {cost}", { cost: formatUSD(cacheCost) })}</div>
-        </div>
+        </button>
       </article>
     </section>
   </div>;

@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ModelInput, ModelType } from "../../shared/api";
 import { defaultCustomHeadersText } from "../../shared/utils/modelDefaults";
 import { modelPresets, presetEndpoint, trimTrailingSlash, type ModelPreset } from "../../shared/utils/modelPresets";
@@ -6,6 +6,7 @@ import { Button } from "../../shared/ui/Button";
 import { Checkbox } from "../../shared/ui/Checkbox";
 import { FormField, SecretTextInput, TextInput } from "../../shared/ui/FormControls";
 import { JsonEditor } from "../../shared/ui/JsonEditor";
+import { ModelSelect, type ModelSelectOption } from "../../shared/ui/ModelSelect";
 import { Combobox, Select, type ComboboxHandle } from "../../shared/ui/Select";
 import { Switch } from "../../shared/ui/Switch";
 import { claudeIcon, openAiIcon } from "../../shared/ui/icons";
@@ -52,14 +53,20 @@ export const emptyCursorModelDraft = (): CursorModelDraft => ({
   anthropicExtraParamsText: "{}",
 });
 
-export function CursorModelEditor({ draft, modelOptions, discovering, onChange, onDiscover }: {
+export function CursorModelEditor({ draft, modelOptions, discovering, onChange, onDiscover, onBatchAdd, batchAdding = false }: {
   draft: CursorModelDraft;
   modelOptions: string[];
   discovering: boolean;
   onChange: (draft: CursorModelDraft) => void;
   onDiscover: () => Promise<boolean>;
+  onBatchAdd?: (modelIds: string[]) => Promise<boolean>;
+  batchAdding?: boolean;
 }) {
   const modelCombobox = useRef<ComboboxHandle>(null);
+  const [selectedDiscoveredModels, setSelectedDiscoveredModels] = useState<string[]>([]);
+  useEffect(() => {
+    setSelectedDiscoveredModels(modelOptions.length > 1 ? [...modelOptions] : []);
+  }, [modelOptions]);
   const setModel = (patch: Partial<ModelInput>) => onChange({ ...draft, model: { ...draft.model, ...patch } });
   const setType = (type: ModelType) => {
     // 切换协议类型时，若当前地址命中某预设的另一协议端点，自动换到该预设对应协议的端点，
@@ -98,6 +105,11 @@ export function CursorModelEditor({ draft, modelOptions, discovering, onChange, 
     })
     .flatMap((preset) => preset.models.map((item) => item.model_id));
   const combinedOptions = [...new Set([...modelOptions, ...presetModelOptions])];
+  const batchOptions: ModelSelectOption[] = modelOptions.map((model_id) => ({
+    value: model_id,
+    label: model_id,
+    group: t("已发现模型"),
+  }));
   const discoverModels = async () => {
     if (await onDiscover()) modelCombobox.current?.openAll();
   };
@@ -166,6 +178,23 @@ export function CursorModelEditor({ draft, modelOptions, discovering, onChange, 
       <FormField label="API Key" hint={t("访问模型服务所需的密钥。")}> <SecretTextInput placeholder="sk-xxxxxx" autoComplete="off" value={draft.model.api_key} onChange={(event) => setModel({ api_key: event.target.value })} /></FormField>
 
       <FormField label={t("模型名称")} hint={t("可以直接输入模型标识，也可以读取接口返回的模型列表。")}><Combobox ref={modelCombobox} value={draft.model.model_id} options={combinedOptions} placeholder="gpt-5" append={<Button className={styles.discoverButton} disabled={discovering || !canDiscover} onClick={() => void discoverModels()}>{discovering ? t("获取中…") : t("获取模型")}</Button>} onChange={(model_id) => setModel({ model_id, display_name: draft.model.display_name || model_id })} /></FormField>
+      {onBatchAdd && batchOptions.length > 1 && <div className={`${styles.fullWidth} ${styles.batchModels}`}>
+        <ModelSelect
+          label={t("选择要添加的模型")}
+          options={batchOptions}
+          mode="multiple"
+          value={selectedDiscoveredModels}
+          onChange={setSelectedDiscoveredModels}
+          disabled={batchAdding}
+        />
+        <Button
+          size="small"
+          disabled={batchAdding || selectedDiscoveredModels.length === 0}
+          onClick={() => void onBatchAdd(selectedDiscoveredModels)}
+        >
+          {batchAdding ? t("正在添加…") : t("批量添加 {count} 个模型", { count: selectedDiscoveredModels.length })}
+        </Button>
+      </div>}
       <FormField label={t("显示名称")} hint={t("仅用于界面展示，不会改变发送给模型服务的模型名称。")}> <TextInput placeholder={t("例如：主力模型")} value={draft.model.display_name} onChange={(event) => setModel({ display_name: event.target.value })} /></FormField>
       <FormField className={styles.fullWidth} label={t("备注")} hint={t("显示在 Cursor 模型说明中。")}> <TextInput placeholder={t("请输入模型备注")} value={draft.model.tooltip_data} onChange={(event) => setModel({ tooltip_data: event.target.value })} /></FormField>
 

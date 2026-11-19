@@ -83,6 +83,8 @@
 
 ## PR 调查与验收
 
+- [2026-11-13 · 上游 PR #433：本地代理路由的选择性实现](pull-requests/2026-11-13-pr433-proxy-routing.md)
+
 - [2026-09-29 · PR424 完整修复候选与验证 · 2026-09-29](pull-requests/2026-09-29-pr424-fix-result.md)
 - [2026-09-29 · 424 测试与 macOS 构建问题处理 · 2026-09-29](pull-requests/2026-09-29-pr424-test.md)
 - [2026-09-30 · 421 验证与补齐修复](pull-requests/2026-09-30-pr421-validation.md)

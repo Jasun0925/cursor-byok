@@ -1,4 +1,6 @@
 //! Persists application settings.
+use std::collections::BTreeSet;
+
 use serde::{Deserialize, Deserializer, Serialize};
 
 use crate::Result;
@@ -12,6 +14,7 @@ const DESKTOP_SETTINGS_KEY: &str = "desktop_lifecycle";
 const COMMIT_SETTINGS_KEY: &str = "commit_settings";
 const CURSOR_TAKEOVER_ENABLED_KEY: &str = "cursor_takeover_enabled";
 const PRICING_SETTINGS_KEY: &str = "token_pricing";
+const MODEL_PRICING_SETTINGS_KEY: &str = "model_token_pricing";
 const EXTERNAL_API_SETTINGS_KEY: &str = "external_api";
 
 /// Embedded default system prompts for commit message generation.
@@ -49,6 +52,13 @@ impl Default for TokenPricingSettings {
             cache_write_per_million: 6.25,
         }
     }
+}
+
+#[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
+pub struct ModelTokenPricing {
+    pub model_hash: String,
+    #[serde(flatten)]
+    pub pricing: TokenPricingSettings,
 }
 
 #[derive(Clone, Copy, Debug, Default, Deserialize, PartialEq, Eq, Serialize)]
@@ -505,14 +515,78 @@ impl Store {
         .await?;
         Ok(settings)
     }
+
+    pub async fn model_pricing_settings(&self) -> Result<Vec<ModelTokenPricing>> {
+        let value = sqlx::query_scalar::<_, String>(
+            "SELECT value_json FROM service_settings WHERE setting_key = ?",
+        )
+        .bind(MODEL_PRICING_SETTINGS_KEY)
+        .fetch_optional(&self.pool)
+        .await?;
+        value
+            .map(|value| serde_json::from_str(&value).map_err(Into::into))
+            .unwrap_or_else(|| Ok(Vec::new()))
+    }
+
+    pub async fn set_model_pricing_settings(
+        &self,
+        mut settings: Vec<ModelTokenPricing>,
+    ) -> Result<Vec<ModelTokenPricing>> {
+        let mut model_hashes = BTreeSet::new();
+        for entry in &mut settings {
+            entry.model_hash = entry.model_hash.trim().to_owned();
+            if entry.model_hash.is_empty() {
+                return Err(crate::Error::Config(
+                    "model pricing requires a model hash".into(),
+                ));
+            }
+            if !model_hashes.insert(entry.model_hash.clone()) {
+                return Err(crate::Error::Config(format!(
+                    "duplicate model pricing for {}",
+                    entry.model_hash
+                )));
+            }
+            for (label, value) in [
+                ("input_per_million", entry.pricing.input_per_million),
+                ("output_per_million", entry.pricing.output_per_million),
+                (
+                    "cache_read_per_million",
+                    entry.pricing.cache_read_per_million,
+                ),
+                (
+                    "cache_write_per_million",
+                    entry.pricing.cache_write_per_million,
+                ),
+            ] {
+                if !value.is_finite() || value < 0.0 {
+                    return Err(crate::Error::Config(format!(
+                        "model pricing {label} must be a finite non-negative number"
+                    )));
+                }
+            }
+        }
+        settings.sort_by(|left, right| left.model_hash.cmp(&right.model_hash));
+        let value_json = serde_json::to_string(&settings)?;
+        let _write = self.writes.lock().await;
+        sqlx::query(
+            "INSERT INTO service_settings(setting_key, value_json, updated_at_ms) VALUES (?, ?, ?) ON CONFLICT(setting_key) DO UPDATE SET value_json = excluded.value_json, updated_at_ms = excluded.updated_at_ms",
+        )
+        .bind(MODEL_PRICING_SETTINGS_KEY)
+        .bind(value_json)
+        .bind(now_ms())
+        .execute(&self.pool)
+        .await?;
+        Ok(settings)
+    }
 }
 
 #[cfg(test)]
 mod tests {
     use super::{
-        read_proxy_settings, CommitPromptLocale, CommitSettings, ExternalApiSettings, ProxyMode,
-        ProxySettingsInput, ProxySettingsSecret, Store, TokenPricingSettings,
-        DEFAULT_COMMIT_PROMPT_EN_US, DEFAULT_COMMIT_PROMPT_ZH_CN, PROXY_SETTINGS_KEY,
+        read_proxy_settings, CommitPromptLocale, CommitSettings, ExternalApiSettings,
+        ModelTokenPricing, ProxyMode, ProxySettingsInput, ProxySettingsSecret, Store,
+        TokenPricingSettings, DEFAULT_COMMIT_PROMPT_EN_US, DEFAULT_COMMIT_PROMPT_ZH_CN,
+        PROXY_SETTINGS_KEY,
     };
 
     /// The `outbound_proxy` row exactly as builds before the `system` -> `default`
@@ -646,6 +720,66 @@ mod tests {
         assert_eq!(saved, custom);
 
         assert_eq!(store.pricing_settings().await.unwrap(), custom);
+    }
+
+    #[tokio::test]
+    async fn model_pricing_settings_persist_sorted_and_validate() {
+        let directory = tempfile::tempdir().unwrap();
+        let url = format!("sqlite://{}", directory.path().join("test.db").display());
+        let store = Store::connect(&url).await.unwrap();
+
+        assert!(store.model_pricing_settings().await.unwrap().is_empty());
+        let entries = vec![
+            ModelTokenPricing {
+                model_hash: " z-model ".into(),
+                pricing: TokenPricingSettings {
+                    input_per_million: 3.0,
+                    output_per_million: 15.0,
+                    cache_read_per_million: 0.3,
+                    cache_write_per_million: 3.75,
+                },
+            },
+            ModelTokenPricing {
+                model_hash: "a-model".into(),
+                pricing: TokenPricingSettings::default(),
+            },
+        ];
+        let saved = store.set_model_pricing_settings(entries).await.unwrap();
+        assert_eq!(saved[0].model_hash, "a-model");
+        assert_eq!(saved[1].model_hash, "z-model");
+        assert_eq!(store.model_pricing_settings().await.unwrap(), saved);
+
+        let duplicate = vec![
+            ModelTokenPricing {
+                model_hash: "same".into(),
+                pricing: TokenPricingSettings::default(),
+            },
+            ModelTokenPricing {
+                model_hash: " same ".into(),
+                pricing: TokenPricingSettings::default(),
+            },
+        ];
+        assert!(store.set_model_pricing_settings(duplicate).await.is_err());
+        assert!(store
+            .set_model_pricing_settings(vec![ModelTokenPricing {
+                model_hash: "invalid".into(),
+                pricing: TokenPricingSettings {
+                    input_per_million: -1.0,
+                    ..TokenPricingSettings::default()
+                },
+            }])
+            .await
+            .is_err());
+        assert!(store
+            .set_model_pricing_settings(vec![ModelTokenPricing {
+                model_hash: "invalid".into(),
+                pricing: TokenPricingSettings {
+                    input_per_million: f64::NAN,
+                    ..TokenPricingSettings::default()
+                },
+            }])
+            .await
+            .is_err());
     }
 
     #[tokio::test]

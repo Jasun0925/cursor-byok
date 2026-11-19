@@ -1,5 +1,6 @@
 import type { ModelType } from "../api";
 import deepseekIcon from "../assets/provider-icons/deepseek.svg";
+import geminiIcon from "../assets/provider-icons/gemini.svg";
 import huoshanIcon from "../assets/provider-icons/huoshan.png";
 import kimiIcon from "../assets/provider-icons/kimi.svg";
 import minimaxIcon from "../assets/provider-icons/minimax.svg";
@@ -55,6 +56,17 @@ const openaiChat = (baseUrl: string): ModelPresetEndpoint => ({ baseUrl, useFull
 const openaiFullUrl = (url: string): ModelPresetEndpoint => ({ baseUrl: url, useFullUrl: true, openaiEndpoint: "/v1/chat/completions", customHeaders: null });
 
 export const modelPresets: ModelPreset[] = [
+  {
+    key: "gemini",
+    name: "Google Gemini（OpenAI 兼容）",
+    icon: geminiIcon,
+    keyHint: "Google AI Studio → Gemini API Key；使用 OpenAI 兼容接口（原生 generateContent 暂不支持）",
+    endpoints: {
+      anthropic: null,
+      openai: openaiFullUrl("https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"),
+    },
+    models: [entry("gemini-3.8-flash", "Gemini 3.8 Flash", 1000000, 65536)],
+  },
   {
     key: "zhipu",
     name: "智谱 GLM",

@@ -1,0 +1,29 @@
+{
+  "issue": 107,
+  "date": "2026-11-12",
+  "status": "implemented_waiting_for_pr",
+  "scope": {
+    "time_and_model_filters": true,
+    "running_calls_excluded_from_call_counts": true,
+    "token_usage_includes_recorded_running_rows": true,
+    "historical_and_plugin_model_ids": true,
+    "per_model_pricing": false,
+    "real_cursor_or_provider": false
+  },
+  "tests": {
+    "store_overview": { "passed": 4, "failed": 0 },
+    "workspace_tests": { "passed": true, "ignored": 14 },
+    "frontend_check": "passed",
+    "i18n_scan": "passed",
+    "clippy": "passed",
+    "tauri_debug_no_bundle": "passed",
+    "browser": {
+      "real_react": true,
+      "models_rendered": 16,
+      "metric_cards_open_dialog": true,
+      "virtual_list": true,
+      "escape_closes_and_returns_focus": true,
+      "synthetic_management_api": true
+    }
+  }
+}

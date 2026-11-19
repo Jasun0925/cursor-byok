@@ -10,6 +10,18 @@
 | --- | --- | --- |
 | [#46](https://github.com/haohaomin/cursor-byok/pull/46) / `8704198` | 补充 Linux RPM、DEB 和 AppImage 的依赖说明与发行版兼容边界，记录 Rocky/RHEL/Fedora 尚未进入发布矩阵 | 5 个 Markdown 文件的相对链接检查通过，`git diff --check` 通过，并核对 release workflow 的 Ubuntu 22.04/WebKitGTK 4.1 构建依赖；Sourcery 复审通过。真实 Rocky/RHEL/Fedora 安装、启动和托盘验收尚未完成。详见 [Issue #486](https://github.com/leookun/cursor-byok/issues/486)。 |
 
+## 2026-11-13 本 fork PR #45
+
+| PR / head | 解决目标与范围 | 验证状态与边界 |
+| --- | --- | --- |
+| [#45](https://github.com/haohaomin/cursor-byok/pull/45) / `11e40c9` | Issue #99：发现供应商模型列表后多选并批量添加；Token 用量统计沿用已合入的 #107/#150 | macOS 与 Oracle Linux 9.8 ARM64 的格式检查和控制 API 批量回归均通过；Oracle Linux Clippy 通过。桌面检查、四语言扫描和 Tauri debug/no-bundle 构建也已通过；当前没有 GitHub Actions 检查。真实供应商 `/models` 返回及已安装应用 UI 待手工验收。 |
+
+## 2026-11-13 本 fork PR #44
+
+| PR / head | 解决目标与范围 | 验证边界 |
+| --- | --- | --- |
+| [#44](https://github.com/haohaomin/cursor-byok/pull/44) / `64104cf` | 为模型设置增加内置模型 JSON 配置备份导出/导入；导入按模型哈希跳过重复项，并补齐排序、并发刷新、导出 URL 和大请求体边界 | 原始提交工作区 Rust 293 项通过、14 项忽略；修复后新增排序/大请求体回归，前端检查、四语言扫描、Clippy 和 Tauri debug 构建通过；Oracle Linux 9.8 ARM64 上 fmt、4 项导入回归和 Clippy 通过；Sourcery 复审通过，但该分支没有 GitHub Actions 运行记录。真实安装包文件选择器和跨电脑导入尚待人工验收。详见 [Issue #471 记录](history/issues/2026-11-13-issue471-model-backup.md)。 |
+
 ## 2026-11-06 已合并 PR 的测试状态
 
 本 fork 最近合并的 #12、#14、#15、#16、#17、#18、#19、#20、#21、#22、#23，最终 PR 提交的 Frontend、Rust Linux、Desktop Rust Windows/macOS 检查均通过。合并后 main `b6936e885db61` 的 [CI](https://github.com/haohaomin/cursor-byok/actions/runs/42147293009) 也全部通过。
@@ -120,10 +132,10 @@
 | [#420](https://github.com/leookun/cursor-byok/pull/420) | MCP schema 整数约束规范化 | B（本地已合入） | 原 PR：1；+182/-31 | 本轮服务端 387 测试及 Clippy 通过 | 已合入并推送 main（`e2f17e0`） | 已补齐原补丁的大整数精度缺陷；合并保留空 schema、properties 和 required 修复，新增组合回归。v1.1.0 已包含该合入，未新增真实 UI 验证；上游仍 OPEN、仓库已归档。见 [合并记录](history/pull-requests/2026-10-19-branch-integration.md)。 |
 | [#483](https://github.com/leookun/cursor-byok/pull/483) | CodeBuddy CN 与后台自动签到 | C | 38；+4888/-211 | 未见 | 冲突 1 | 高：38 文件，新增宿主调度、锁、状态持久化、凭据刷新及导出策略；作者未测真实流式聊天。 **下一步：**单独验证调度取消/重启/跨日、账号并发与 token 日志保护，再测真实聊天。 |
 | [#474](https://github.com/leookun/cursor-byok/pull/474) | 代理缓存刷新，夹带规则黑名单 | C | 6；+242/-1 | 4✓ | 无文本冲突 | 高且有具体问题：与标题无关的规则正文日志、匹配规则删除、返回成功但未保存。 **2026-10-27：**网络部分已独立实现并补验证；规则删除/正文日志仍不采用。见[#508 修复](history/issues/2026-10-27-issue508-fix.md)。 |
-| [#458](https://github.com/leookun/cursor-byok/pull/458) | Windows cmd 转义及 CA 信任范围 | C | 3；+7/-8 | 未见 | 无文本冲突 | 高且有具体问题：同时把证书安装/检测由 LocalMachine 改为 CurrentUser，已有安装可能误报未信任。 **下一步：**拆出 cmd 修复，保留当前证书存储约定；Windows 实机验证终端与转义。 |
+| [#458](https://github.com/leookun/cursor-byok/pull/458) | Windows cmd 转义及 CA 信任范围 | C | 3；+7/-8 | 未见 | 无文本冲突 | cmd 参数修复已由 fork PR #14 合入 main；证书改为 CurrentUser 的部分暂不采用，会让既有 LocalMachine 证书被误报为未信任。上游补丁已完成交叉编译和工作区回归，但没有 Windows 实机证书验收；除非先定义迁移策略，否则不再重复发布。 |
 | [#447](https://github.com/leookun/cursor-byok/pull/447) | Agent 路由、模型别名与 CLI 启动器 | C | 19；+1120/-2 | 未见 | 冲突 1 | 高：19 文件多功能；与 fork 的控制路由冲突；上游作者不愿维护新 launcher 栈。 **下一步：**拆出 bidi/MCP/路由修复；逐项验证。CLI 优先评估官方 agent -e 入口。 |
 | [#437](https://github.com/leookun/cursor-byok/pull/437) | Antigravity 模型和额度管理大改 | C | 60；+2847/-1037 | 未见 | 冲突 1 | 高：60 文件，包含数据库 0010、账号/模型管理及非必要 release workflow 改写。 **下一步：**拆出功能和发版流程；用数据库副本测升级，保护 fork 的更新源与签名。 |
-| [#433](https://github.com/leookun/cursor-byok/pull/433) | 所有 Cursor 请求经本地代理 | C | 2；+72/-4 | 未见 | 无文本冲突 | 高且有具体问题：若干云端/FileSync 接口无条件返回 400/404，早于 TAB Direct 分流；还强开 custom-protocol。 **下一步：**撤出硬编码拒绝和构建特性改动；测试账号云功能、TAB 三种模式及代理切换。 |
+| [#433](https://github.com/leookun/cursor-byok/pull/433) | 所有 Cursor 请求经本地代理 | C | 2；+72/-4（上游） | 上游无可用 checks | 选择性重实现 | 本 fork 只采用非 Tab Cursor 请求进入本地路由、CONNECT 不重写两项；明确舍弃硬编码 400/404 短路和 `custom-protocol` feature。4 项代理单元测试、Clippy、桌面检查和全工作区回归通过；真实代理网络与 Cursor UI 待验，见[验证记录](history/pull-requests/2026-11-13-pr433-proxy-routing.md)。 |
 | [#378](https://github.com/leookun/cursor-byok/pull/378) | 自动压缩持久化和恢复 | C | 8；+1082/-58 | 未见 | 冲突 3 | 高：checkpoint 发布屏障、重试/恢复和超时共同改变；当前引擎及输出模块冲突。 **下一步：**移植到现有生命周期；验证压缩后立即失败、重启恢复、前缀稳定性。 |
 | [#375](https://github.com/leookun/cursor-byok/pull/375) | ResumeAction 上下文与继续执行 | C | 5；+295/-18 | 未见 | 冲突 3 | 高：actor/请求编译路径已变化，涉及重复执行和无进展重试。 **下一步：**按现有 compile 模块移植；验证取消、重复 Resume、工具完成后的继续执行。 |
 | [#364](https://github.com/leookun/cursor-byok/pull/364) | 工具调用 ID 上限 64→256 | C（选择性重实现） | 1 个生产文件；新增 4 项回归 | 本 fork 本地全目标通过；[PR #19](https://github.com/haohaomin/cursor-byok/pull/19) CI 全平台通过 | 冲突 1 | 不采用全局 256；保留 provider 的 64 字节边界，长 ID 用完整 SHA-256 十六进制值稳定映射，避免截断碰撞。实现与测试见[记录](history/pull-requests/2026-11-06-pr364-tool-call-id.md)。 |
@@ -158,9 +170,9 @@
 
 [本地代理](https://github.com/leookun/cursor-byok/blob/a5b1ce085d6a48e9fa83866f49dbb198ae753c70/server/src/local_app/proxy.rs#L134) 在检查 Cursor host、TAB Direct 分流之前匹配 `local_stub_status`，对 FileSync、BackgroundComposer 等接口直接返回 400/404；未检查账号是否真的没有这些功能。对依赖这些接口的用户会改变行为，不能视为纯粹的出站代理修复。Cargo 同时强制开启 `custom-protocol`，需要独立验证开发运行模式。
 
-### #458：小 diff 也有安装行为变化
+### #458：cmd 修复已采用，证书范围改动暂缓
 
-[证书安装](https://github.com/leookun/cursor-byok/blob/5b63b8586a22975114e955933022b1f3c64a9de4/server/src/local_app/ca/mod.rs#L91) 与 Windows 检测一起转到 CurrentUser，而既有 LocalMachine 证书不再被这段检测识别。应拆开终端参数修复和证书范围调整。上游行内 review 也指出此问题；本次未做 Windows 实机测试。
+[证书安装](https://github.com/leookun/cursor-byok/blob/5b63b8586a22975114e955933022b1f3c64a9de4/server/src/local_app/ca/mod.rs#L91) 与 Windows 检测一起转到 CurrentUser，而既有 LocalMachine 证书不再被这段检测识别。cmd 参数部分已经由 fork PR #14 合入 main；证书范围部分即使交叉编译和工作区回归通过，也不能替代 Windows 实机证书验收，因此暂不采用，避免把现有安装标记为未信任。
 
 ### #437 / #483：插件标题下还有共享基础设施改动
 

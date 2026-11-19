@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { api, pluginText, type Overview } from "../../shared/api";
 import { ContributionCalendarChart } from "./charts/ContributionCalendarChart";
 import { DailyTokenUsageChart } from "./charts/DailyTokenUsageChart";
+import { ModelUsageDialog, type UsageMetric } from "./metrics/ModelUsageDialog";
 import { HomeMetrics } from "./metrics/HomeMetrics";
 import { PageContent } from "../../shell/layout/PageContent";
 import type { VirtualPageSection } from "../../shell/layout/VirtualPage";
@@ -12,6 +13,7 @@ import { formatTimeInput, parseTimeInput } from "../../shared/utils/parseTimeInp
 import { modelProviderName } from "../../shared/utils/modelProvider";
 import { claudeIcon, flatColorOrganizationIcon, openAiIcon } from "../../shared/ui/icons";
 import { useI18n } from "../../i18n/store";
+import { aggregateUsageCosts, costsForMetrics } from "../../shared/utils/tokenPricing";
 
 type TimeRange = { startMs: number; endMs: number };
 
@@ -53,8 +55,9 @@ function presetRange(preset: Exclude<OverviewRangePreset, "custom">, now = new D
 }
 
 export function HomePage() {
-  const { overview, busy, models, plugins } = useAppStore();
+  const { overview, busy, models, plugins, pricing, modelPricing } = useAppStore();
   const { locale } = useI18n();
+  const [usageMetric, setUsageMetric] = useState<UsageMetric | null>(null);
   const [preset, setPreset] = useState<OverviewRangePreset>("month");
   const [quick, setQuick] = useState<QuickPreset | null>(null);
   const [customRange, setCustomRange] = useState<TimeRange | null>(null);
@@ -71,6 +74,8 @@ export function HomePage() {
   useEffect(() => {
     if (!selectedRange) return;
     let active = true;
+    setRangeOverview(null);
+    setUsageMetric(null);
     setRangeBusy(true);
     void api.overview({
       ...selectedRange,
@@ -84,6 +89,10 @@ export function HomePage() {
   }, [preset, customRange, overview, refreshVersion, appliedModels]);
 
   const filteredOverview = rangeOverview ?? overview;
+  const modelUsage = filteredOverview.model_usage ?? [];
+  const costs = modelUsage.length > 0
+    ? aggregateUsageCosts(modelUsage, pricing, modelPricing)
+    : costsForMetrics(filteredOverview.metrics, pricing);
   const dailyTokenUsage = filteredOverview.token_usage_series.map((bucket) => ({
     bucketStartMs: bucket.bucket_start_ms,
     inputTokens: bucket.input_tokens,
@@ -100,6 +109,7 @@ export function HomePage() {
     promptTokens: filteredOverview.metrics.prompt_tokens,
     cacheReadTokens: filteredOverview.metrics.cache_read_tokens,
     cacheWriteTokens: filteredOverview.metrics.cache_write_tokens,
+    costs,
   };
   const openCustom = (open: boolean) => {
     if (open && !customStart && !customEnd) {
@@ -169,7 +179,11 @@ export function HomePage() {
     {
       key: "metrics",
       estimatedHeight: 130,
-      content: <HomeMetrics data={metrics} refreshVersion={refreshVersion} />,
+      content: <HomeMetrics
+        data={metrics}
+        refreshVersion={refreshVersion}
+        onOpen={rangeOverview && !rangeBusy ? setUsageMetric : undefined}
+      />,
     },
 
     {
@@ -199,5 +213,12 @@ export function HomePage() {
       onRefresh={() => void refresh()}
     /></PageActions>
     <PageContent title={t("概览")} sections={sections} />
+    <ModelUsageDialog
+      metric={rangeOverview && !rangeBusy ? usageMetric : null}
+      rows={modelUsage}
+      pricing={pricing}
+      modelPricing={modelPricing}
+      onClose={() => setUsageMetric(null)}
+    />
   </>;
 }

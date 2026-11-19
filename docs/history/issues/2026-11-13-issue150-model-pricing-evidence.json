@@ -1,0 +1,59 @@
+{
+  "date": "2026-11-13",
+  "issues": [150, 417],
+  "scope": "per-model token pricing for local BYOK usage",
+  "status": "merged_main_not_released",
+  "identity": "model_hash",
+  "fallback": "global pricing",
+  "plugin_pricing": "not_supported_separately",
+  "tests": [
+    {
+      "command": "cargo test -p cursor-server --lib store::settings::tests --config 'profile.dev.package.sqlx-macros.strip=\"none\"'",
+      "result": "9 passed, 0 failed"
+    },
+    {
+      "command": "cargo test -p cursor-server --test external_api model_pricing_settings_round_trip_through_control_api --config 'profile.dev.package.sqlx-macros.strip=\"none\"'",
+      "result": "1 passed, 0 failed"
+    },
+    {
+      "command": "NO_PROXY=127.0.0.1,localhost,::1 cargo test --locked --workspace --config 'profile.dev.package.sqlx-macros.strip=\"none\"'",
+      "result": "578 passed, 0 failed, 14 ignored"
+    },
+    {
+      "command": "cargo clippy -p cursor-server --lib --all-targets --config 'profile.dev.package.sqlx-macros.strip=\"none\"' -- -D warnings",
+      "result": "passed"
+    },
+    {
+      "command": "npm --prefix apps/desktop run i18n:scan",
+      "result": "passed"
+    },
+    {
+      "command": "npm --prefix apps/desktop run check",
+      "result": "passed"
+    },
+    {
+      "command": "CARGO_TARGET_DIR=/Users/renhao/works/cursor-byok/target npm --prefix apps/desktop run tauri:build -- --debug --no-bundle -- --config 'profile.dev.package.sqlx-macros.strip=\"none\"'",
+      "result": "passed"
+    }
+  ],
+  "browser": {
+    "route": "/product-demo/demo/index.html?locale=en-US",
+    "configured_models": 16,
+    "changed_model": "mock-gpt",
+    "changed_field": "input_per_million",
+    "changed_value": 2,
+    "saved_value_visible": "$2 / $8 / $0.15 / $1.5",
+    "home_estimated_value_after_save": "$12.19",
+    "detail_model_cost": "$0.2466",
+    "detail_uncached_input_cost": "$0.0032",
+    "detail_output_cost": "$0.1977",
+    "detail_cache_read_cost": "$0.0235",
+    "detail_cache_write_cost": "$0.0222",
+    "console_errors": 0
+  },
+  "limitations": [
+    "No real provider requests were sent.",
+    "Plugin models still use global pricing.",
+    "The usage-breakdown PR #34 and pricing integration PR #39 are merged into main; this change is not yet included in a new release."
+  ]
+}

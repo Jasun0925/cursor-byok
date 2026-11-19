@@ -8,9 +8,9 @@ use axum::{
 use serde::{Deserialize, Serialize};
 
 use crate::store::{
-    CommitPromptLocale, CommitSettings, DesktopSettings, ExternalApiSettings, PortSettings,
-    ProxySettings, ProxySettingsInput, StatisticsStorage, StatisticsStorageScope, TabSettings,
-    TokenPricingSettings,
+    CommitPromptLocale, CommitSettings, DesktopSettings, ExternalApiSettings, ModelTokenPricing,
+    PortSettings, ProxySettings, ProxySettingsInput, StatisticsStorage, StatisticsStorageScope,
+    TabSettings, TokenPricingSettings,
 };
 
 use super::{ControlService, ObservabilitySettings};
@@ -159,6 +159,19 @@ pub async fn update_pricing_settings(
     Json(settings): Json<TokenPricingSettings>,
 ) -> Result<Json<TokenPricingSettings>> {
     Ok(Json(service.set_pricing_settings(settings).await?))
+}
+
+pub async fn get_model_pricing_settings(
+    State(service): State<ControlService>,
+) -> Result<Json<Vec<ModelTokenPricing>>> {
+    Ok(Json(service.model_pricing_settings().await?))
+}
+
+pub async fn update_model_pricing_settings(
+    State(service): State<ControlService>,
+    Json(settings): Json<Vec<ModelTokenPricing>>,
+) -> Result<Json<Vec<ModelTokenPricing>>> {
+    Ok(Json(service.set_model_pricing_settings(settings).await?))
 }
 
 fn requested_commit_locale(headers: &HeaderMap) -> CommitPromptLocale {

@@ -873,8 +873,8 @@ impl ConversationOutput {
 
     async fn abort_execs(&self) {
         self.tasks.cancel();
-        for id in self.tool_runtime.drain_running().await {
-            let _ = self.handle.emit(&codec::abort(id));
+        for message in self.tool_runtime.drain_running().await {
+            let _ = self.handle.emit(&message);
         }
     }
 
@@ -1088,8 +1088,8 @@ impl ConversationOutput {
     }
 
     async fn interrupt_execs(&self) {
-        for id in self.tools.interrupt_for_message().await {
-            let _ = self.handle.emit(&codec::abort(id));
+        for message in self.tools.interrupt_for_message().await {
+            let _ = self.handle.emit(&message);
         }
     }
 

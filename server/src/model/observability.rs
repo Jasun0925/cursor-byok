@@ -265,9 +265,20 @@ mod overview {
         }
     }
 
+    #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
+    pub struct ModelUsage {
+        pub model_hash: Option<String>,
+        pub model_id: String,
+        pub display_name: String,
+        pub provider_type: String,
+        pub provider_url: String,
+        pub metrics: OverviewMetrics,
+    }
+
     #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize)]
     pub struct Overview {
         pub metrics: OverviewMetrics,
+        pub model_usage: Vec<ModelUsage>,
         pub token_usage_granularity: TokenUsageGranularity,
         pub token_usage_series: Vec<TokenUsageBucket>,
     }

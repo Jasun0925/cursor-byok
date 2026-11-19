@@ -1,0 +1,101 @@
+@use "../../styles/typography" as type;
+
+.content,
+.customFields {
+  display: grid;
+  gap: 14px;
+}
+
+.modelSection {
+  display: grid;
+  gap: 12px;
+  padding-top: 8px;
+  border-top: 1px solid var(--vscode-sideBar-border);
+}
+
+.modelHeader {
+  display: grid;
+  gap: 4px;
+}
+
+.modelRow {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--vscode-sideBar-border);
+  border-radius: var(--oa-overlay-radius);
+}
+
+.modelIdentity {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+
+  strong { overflow-wrap: anywhere; }
+  code {
+    color: var(--vscode-descriptionForeground);
+    font-size: type.$font-size-xs;
+    overflow-wrap: anywhere;
+  }
+}
+
+.modelFields {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.modelField {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+  color: var(--vscode-descriptionForeground);
+  font-size: type.$font-size-xs;
+}
+
+.content {
+  padding: 16px;
+}
+
+.row {
+  min-width: 0;
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.control {
+  width: min(320px, 50%);
+}
+
+.value {
+  min-width: 0;
+  max-width: 70%;
+  color: var(--vscode-descriptionForeground);
+  overflow-wrap: anywhere;
+  text-align: right;
+}
+
+.headerAction {
+  padding: 4px;
+  color: var(--vscode-textLink-foreground);
+  background: transparent;
+  border: 0;
+  font-size: type.$font-size-xs;
+
+  &:hover { color: var(--vscode-textLink-activeForeground); }
+  &:disabled { opacity: .5; }
+}
+
+.actionGroup {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+@media (max-width: 680px) {
+  .control { width: 68%; }
+  .modelFields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
