@@ -178,7 +178,7 @@ impl ToolDispatcher {
         }
     }
 
-    pub async fn interrupt_for_message(&self) -> Vec<u32> {
+    pub async fn interrupt_for_message(&self) -> Vec<pb::AgentServerMessage> {
         self.edit_schedule.lock().await.clear();
         self.runtime.interrupt_for_message().await
     }

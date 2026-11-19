@@ -127,6 +127,12 @@ export function installDemoApi() {
 
     if (path === "/models" && method === "GET") return json(models);
     if (path === "/models" && method === "POST") return json(models);
+    if (path === "/models/backup/import" && method === "POST") {
+      const total = body && typeof body === "object" && Array.isArray((body as { models?: unknown }).models)
+        ? (body as { models: unknown[] }).models.length
+        : 0;
+      return json({ imported: 0, skipped: total, total });
+    }
     if (path === "/models/order") return json(models);
     if (path === "/models/discover") return json({ models: models.map((model) => model.model_id) });
     if (path === "/models/import-v0049" && method === "GET") {

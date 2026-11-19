@@ -76,7 +76,7 @@ impl Store {
         Ok(saved)
     }
 
-    pub(super) async fn create_models_if_missing(
+    pub(crate) async fn create_models_if_missing(
         &self,
         inputs: &[ModelConfigInput],
     ) -> Result<usize> {
@@ -92,8 +92,15 @@ impl Store {
         let now = now_ms();
         let _write = self.writes.lock().await;
         let mut transaction = self.pool.begin().await?;
+        let max_sort_order =
+            sqlx::query_scalar::<_, i64>("SELECT COALESCE(MAX(sort_order), 0) FROM model_configs")
+                .fetch_one(&mut *transaction)
+                .await?;
         let mut inserted = 0;
-        for (hash, input) in &normalized {
+        for (index, (hash, input)) in normalized.iter_mut().enumerate() {
+            input.sort_order = max_sort_order
+                .checked_add(i64::try_from(index + 1).expect("model order fits in i64"))
+                .expect("model order fits in i64");
             inserted += usize::from(
                 insert_model_with_conflict(&mut transaction, hash, input, now, true).await?,
             );
@@ -191,6 +198,7 @@ impl Store {
     }
 
     pub async fn reorder_models(&self, model_hashes: &[String]) -> Result<Vec<ModelConfig>> {
+        let _write = self.writes.lock().await;
         let current = self.models().await?;
         let current_hashes = current
             .iter()
@@ -210,7 +218,6 @@ impl Store {
         }
 
         let now = now_ms();
-        let _write = self.writes.lock().await;
         let mut transaction = self.pool.begin().await?;
         for (index, hash) in model_hashes.iter().enumerate() {
             sqlx::query(
