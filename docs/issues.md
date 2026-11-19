@@ -165,7 +165,7 @@
 | ☑（PR #34、#39 已合入 main） | [#150](https://github.com/leookun/cursor-byok/issues/150) 提几个意见看看需求能否实现。 | C | #107 按模型分项统计见 [PR #34](https://github.com/haohaomin/cursor-byok/pull/34)，逐模型 Token 定价见 [PR #39](https://github.com/haohaomin/cursor-byok/pull/39)；两者本地验证通过 | 首页总价和模型明细按 `model_hash` 选择覆盖价，其他模型使用全局价格；插件模型暂不单独定价。真实供应商、插件独立定价和发布版本仍待验收。见 [统计记录](history/issues/2026-11-12-issue107-model-usage-breakdown.md) 与 [定价验证](history/issues/2026-11-13-issue150-model-pricing.md)。 |
 | ☐ | [#146](https://github.com/leookun/cursor-byok/issues/146) Docker支持 | C | 需求待评估 | 明确桌面/纯服务部署目标后评估容器支持。 |
 | ☑（PR #34 已合入 main） | [#107](https://github.com/leookun/cursor-byok/issues/107) 请问能不能在用量统计时候加个模型的分类 | C | 概览四项统计可按模型展开；Store、工作区和浏览器回归通过 | Git 自动提交的本地模型/直连路径已核对，真实 Cursor Git UI 未验。 |
-| ☐ | [#99](https://github.com/leookun/cursor-byok/issues/99) 关于批量添加模型和token用量统计的一点建议 | C | 需求待评估 | 先检查现版批量模型导入和统计；统计清零单独作为数据问题验证。 |
+| ◐ | [#99](https://github.com/leookun/cursor-byok/issues/99) 关于批量添加模型和token用量统计的一点建议 | C | 已支持发现模型后多选并批量添加；Token 用量统计已由 #107/#150 覆盖 | macOS 与 Oracle Linux 9.8 ARM64 的格式检查、控制 API 回归通过，Oracle Linux Clippy 通过；真实供应商返回模型列表、重复配置提示及已安装应用操作仍待手工验收，见 [验证记录](history/issues/2026-11-13-issue99-batch-models.md)。 |
 
 ### 社区讨论（1 项）
 

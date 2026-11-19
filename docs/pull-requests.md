@@ -4,6 +4,12 @@
 >
 > 之前投稿的 #487、#500、#501 因用户要求删除源分支而关闭，均未合入上游；修复提交保留在本 fork main。评论尝试被归档只读的 403 拒绝，见 [回复记录](history/pull-requests/2026-10-27-community-replies.md)。
 
+## 2026-11-13 本 fork PR #45
+
+| PR / head | 解决目标与范围 | 验证状态与边界 |
+| --- | --- | --- |
+| [#45](https://github.com/haohaomin/cursor-byok/pull/45) / `11e40c9` | Issue #99：发现供应商模型列表后多选并批量添加；Token 用量统计沿用已合入的 #107/#150 | macOS 与 Oracle Linux 9.8 ARM64 的格式检查和控制 API 批量回归均通过；Oracle Linux Clippy 通过。桌面检查、四语言扫描和 Tauri debug/no-bundle 构建也已通过；当前没有 GitHub Actions 检查。真实供应商 `/models` 返回及已安装应用 UI 待手工验收。 |
+
 ## 2026-11-13 本 fork PR #44
 
 | PR / head | 解决目标与范围 | 验证边界 |

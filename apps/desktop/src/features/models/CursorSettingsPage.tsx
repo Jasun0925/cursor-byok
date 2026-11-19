@@ -30,6 +30,7 @@ export function CursorSettingsPage() {
   const [editing, setEditing] = useState<Model | null>(null);
   const [modelOptions, setModelOptions] = useState<string[]>([]);
   const [discovering, setDiscovering] = useState(false);
+  const [batchAdding, setBatchAdding] = useState(false);
   const [caCommand, setCaCommand] = useState<string | null>(null);
   const [waitingForCaRefresh, setWaitingForCaRefresh] = useState(false);
   const [deleting, setDeleting] = useState<Model | null>(null);
@@ -120,6 +121,37 @@ export function CursorSettingsPage() {
     const input = draftInput(draft);
     if (editing) return appStore.updateCursorModel(editing.model_hash, input);
     return (await appStore.createModels([input]))?.[0] ?? null;
+  };
+  const batchAddModels = async (modelIds: string[]): Promise<boolean> => {
+    if (!draft || modelIds.length === 0) return false;
+    setBatchAdding(true);
+    try {
+      const inputs = modelIds.map((model_id, index) => draftInput({
+        ...draft,
+        model: {
+          ...draft.model,
+          sort_order: models.length + index + 1,
+          model_id,
+          display_name: draft.model.display_name.trim() || model_id,
+          tooltip_data: draft.model.tooltip_data.trim() || model_id,
+        },
+      }));
+      const created = await appStore.createModels(inputs);
+      if (!created) {
+        message(appStore.getSnapshot().error || t("批量添加失败"));
+        return false;
+      }
+      message(t("批量添加完成：新增 {count} 个模型", { count: created.length }));
+      setDraft(null);
+      setEditing(null);
+      setModelOptions([]);
+      return true;
+    } catch (cause) {
+      message(errorText(cause));
+      return false;
+    } finally {
+      setBatchAdding(false);
+    }
   };
   const save = async () => {
     try {
@@ -408,9 +440,9 @@ export function CursorSettingsPage() {
     >
       <p>{t("关闭后将移除 Cursor 本地代理配置。如果你需要登陆官方账号，通常不需要关闭操作，推荐直接登陆你的账号即可(byok模型与官方账号的模型已支持无缝衔接)，是否继续关闭并清理代理？")}</p>
     </ConfirmDialog>
-    <Modal fullHeight open={draft !== null} title={editing ? t("编辑模型") : t("添加模型")} banner={draft && (editorTesting || editorTestState) ? <CursorModelTestResult state={editorTestState} testing={editorTesting} /> : undefined} busy={cursorBusy || backupBusy || savingAndTesting} onClose={() => { if (editing && editorTesting) void cancelModelTest(editing.model_hash); setDraft(null); setEditing(null); }} onSubmit={() => void save()} submitLabel={t("保存")} secondaryAction={<button type="button" className={controls.secondary} disabled={cursorBusy || backupBusy || savingAndTesting} onClick={() => void (editorTesting && editing ? cancelModelTest(editing.model_hash) : saveAndTest())}>{savingAndTesting ? t("处理中…") : editorTesting ? t("取消测试") : t("保存并测试")}</button>}>
+    <Modal fullHeight open={draft !== null} title={editing ? t("编辑模型") : t("添加模型")} banner={draft && (editorTesting || editorTestState) ? <CursorModelTestResult state={editorTestState} testing={editorTesting} /> : undefined} busy={cursorBusy || backupBusy || savingAndTesting || batchAdding} onClose={() => { if (editing && editorTesting) void cancelModelTest(editing.model_hash); setDraft(null); setEditing(null); }} onSubmit={() => void save()} submitLabel={t("保存")} secondaryAction={<button type="button" className={controls.secondary} disabled={cursorBusy || backupBusy || savingAndTesting || batchAdding} onClick={() => void (editorTesting && editing ? cancelModelTest(editing.model_hash) : saveAndTest())}>{savingAndTesting ? t("处理中…") : editorTesting ? t("取消测试") : t("保存并测试")}</button>}>
       {draft && <>
-        <CursorModelEditor draft={draft} modelOptions={modelOptions} discovering={discovering} onChange={setDraft} onDiscover={discover} />
+        <CursorModelEditor draft={draft} modelOptions={modelOptions} discovering={discovering} onChange={setDraft} onDiscover={discover} onBatchAdd={editing ? undefined : batchAddModels} batchAdding={batchAdding} />
       </>}
     </Modal>
     <ConfirmDialog open={caCommand !== null} title={t("安装本地 CA")} cancelLabel={t("关闭")} confirmLabel={t("打开终端")} onCancel={() => setCaCommand(null)} onConfirm={openCaTerminal}>

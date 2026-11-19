@@ -251,6 +251,41 @@ async fn model_backup_import_accepts_payloads_larger_than_the_default_json_limit
 }
 
 #[tokio::test]
+async fn model_create_accepts_a_batch_of_discovered_models() {
+    let (router, _provider, store, _directory) = setup().await;
+    let mut first = model_input();
+    first.display_name = "Batch one".into();
+    first.model_id = "batch/one".into();
+    let mut second = first.clone();
+    second.display_name = "Batch two".into();
+    second.model_id = "batch/two".into();
+
+    let (status, body) = send(
+        router.clone(),
+        "POST",
+        "/__byok-api__/api/models",
+        None,
+        json!({
+            "models": [serde_json::to_value(first).unwrap(), serde_json::to_value(second).unwrap()]
+        }),
+    )
+    .await;
+    assert_eq!(status, StatusCode::CREATED);
+    let created = serde_json::from_str::<Vec<Value>>(&body).unwrap();
+    assert_eq!(created.len(), 2);
+    assert_eq!(
+        created
+            .iter()
+            .map(|model| model["model_id"].as_str().unwrap())
+            .collect::<HashSet<_>>(),
+        HashSet::from(["batch/one", "batch/two"])
+    );
+
+    let saved = store.models().await.unwrap();
+    assert_eq!(saved.len(), 3);
+}
+
+#[tokio::test]
 async fn model_pricing_settings_round_trip_through_control_api() {
     let (router, _provider, _store, _directory) = setup().await;
     let (status, body) = send(
