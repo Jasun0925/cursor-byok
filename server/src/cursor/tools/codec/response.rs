@@ -15,6 +15,7 @@ use crate::{
 use super::request::edit_write_request;
 
 pub enum ClientExecEvent {
+    Messages(Vec<pb::AgentServerMessage>),
     Delta(Box<pb::AgentServerMessage>),
     Message(Box<pb::AgentServerMessage>),
     Completed(Box<ToolCompletion>),
@@ -138,18 +139,18 @@ pub async fn client_event(
     Ok(event)
 }
 
-pub async fn stream_closed(id: u32, pending: &CursorToolRuntime) -> Result<Option<ToolCompletion>> {
+pub async fn stream_closed(id: u32, pending: &CursorToolRuntime) -> Result<ClientExecEvent> {
     if pending.is_interrupted(id).await {
         pending.discard_exec(id).await;
-        return Ok(None);
+        return Ok(ClientExecEvent::Pending);
     }
     let Some(entry) = pending.take_exec(id).await else {
-        return Ok(None);
+        return Ok(ClientExecEvent::Pending);
     };
     let error = "Cursor Exec stream closed before returning a terminal result";
     if matches!(entry.stage, ExecStage::Semble(_)) {
-        super::super::semble::fail(entry, pending, error.into()).await?;
-        return Ok(None);
+        let message = super::super::semble::fail(entry, pending, error.into()).await?;
+        return Ok(ClientExecEvent::Messages(vec![message]));
     }
 
     if entry.call.name.eq_ignore_ascii_case("Shell") || entry.call.name.eq_ignore_ascii_case("Bash")
@@ -168,7 +169,7 @@ pub async fn stream_closed(id: u32, pending: &CursorToolRuntime) -> Result<Optio
             .and_then(serde_json::Value::as_str)
             .unwrap_or_default()
             .to_string();
-        return Ok(Some(result::from_exec(
+        return Ok(ClientExecEvent::Completed(Box::new(result::from_exec(
             entry,
             &pb::exec_client_message::Message::ShellResult(pb::ShellResult {
                 result: Some(pb::shell_result::Result::SpawnError(pb::ShellSpawnError {
@@ -178,7 +179,7 @@ pub async fn stream_closed(id: u32, pending: &CursorToolRuntime) -> Result<Optio
                 })),
                 ..Default::default()
             }),
-        )?));
+        )?)));
     }
     let rendered = match &entry.stage {
         ExecStage::DynamicMcp(definition) => {
@@ -189,23 +190,26 @@ pub async fn stream_closed(id: u32, pending: &CursorToolRuntime) -> Result<Optio
     let rendered = match rendered {
         Ok(rendered) => rendered,
         Err(Error::Protocol(message)) => {
-            return Ok(Some(compat::failure_with_message(&entry.call, message)));
+            return Ok(ClientExecEvent::Completed(Box::new(
+                compat::failure_with_message(&entry.call, message),
+            )));
         }
         Err(Error::Json(error)) => {
-            return Ok(Some(compat::failure_with_message(
-                &entry.call,
-                error.to_string(),
+            return Ok(ClientExecEvent::Completed(Box::new(
+                compat::failure_with_message(&entry.call, error.to_string()),
             )));
         }
         Err(error) => return Err(error),
     };
-    Ok(Some(ToolCompletion::from_rendered(
-        &entry.call,
-        entry.started_at_ms,
-        error.into(),
-        true,
-        rendered,
-    )?))
+    Ok(ClientExecEvent::Completed(Box::new(
+        ToolCompletion::from_rendered(
+            &entry.call,
+            entry.started_at_ms,
+            error.into(),
+            true,
+            rendered,
+        )?,
+    )))
 }
 
 fn is_terminal(message: &pb::exec_client_message::Message) -> bool {

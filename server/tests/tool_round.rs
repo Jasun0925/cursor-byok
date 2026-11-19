@@ -733,10 +733,11 @@ async fn exec_stream_close_without_a_terminal_result_becomes_a_tool_error() {
     shell.arguments = json!({"command": "git status"});
     let id = pending.reserve_exec(&shell, &exec_context()).await.unwrap();
 
-    let completion = codec::stream_closed(id, &pending)
-        .await
-        .unwrap()
-        .expect("a running Exec should complete when its stream closes");
+    let codec::ClientExecEvent::Completed(completion) =
+        codec::stream_closed(id, &pending).await.unwrap()
+    else {
+        panic!("a running Exec should complete when its stream closes");
+    };
 
     assert_eq!(completion.result().call_id, "call-1");
     assert!(completion.result().is_error);
@@ -753,7 +754,10 @@ async fn exec_stream_close_without_a_terminal_result_becomes_a_tool_error() {
             if error.error == "Cursor Exec stream closed before returning a terminal result"
     ));
     assert!(pending.exec_call(id).await.is_none());
-    assert!(codec::stream_closed(id, &pending).await.unwrap().is_none());
+    assert!(matches!(
+        codec::stream_closed(id, &pending).await.unwrap(),
+        codec::ClientExecEvent::Pending
+    ));
 }
 
 #[tokio::test]

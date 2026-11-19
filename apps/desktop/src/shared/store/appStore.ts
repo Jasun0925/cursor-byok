@@ -68,6 +68,7 @@ let snapshot: AppSnapshot = {
 };
 
 let pluginRevision = 0;
+let refreshRevision = 0;
 
 const listeners = new Set<() => void>();
 
@@ -93,7 +94,8 @@ export const appStore = {
   getSnapshot: () => snapshot,
 
   async refresh() {
-    const revision = pluginRevision;
+    const refreshId = ++refreshRevision;
+    const pluginRevisionAtStart = pluginRevision;
     update({ busy: true, error: null });
     try {
       const [models, calls, overview, settings, ports, pricing, modelPricing, cursorHarness, pluginRuntime, plugins] = await Promise.all([
@@ -108,11 +110,13 @@ export const appStore = {
         api.pluginRuntime(),
         api.plugins(),
       ]);
-      update({ models, calls, overview, detailed: settings.detailed, ports, pricing, modelPricing, cursorHarness, ...(revision === pluginRevision ? { pluginRuntime, plugins } : {}) });
+      if (refreshId === refreshRevision) {
+        update({ models, calls, overview, detailed: settings.detailed, ports, pricing, modelPricing, cursorHarness, ...(pluginRevisionAtStart === pluginRevision ? { pluginRuntime, plugins } : {}) });
+      }
     } catch (cause) {
-      update({ error: cause instanceof Error ? cause.message : String(cause) });
+      if (refreshId === refreshRevision) update({ error: cause instanceof Error ? cause.message : String(cause) });
     } finally {
-      update({ busy: false });
+      if (refreshId === refreshRevision) update({ busy: false });
     }
   },
 

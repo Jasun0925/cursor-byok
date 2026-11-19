@@ -10,6 +10,12 @@
 | --- | --- | --- |
 | [#45](https://github.com/haohaomin/cursor-byok/pull/45) / `11e40c9` | Issue #99：发现供应商模型列表后多选并批量添加；Token 用量统计沿用已合入的 #107/#150 | macOS 与 Oracle Linux 9.8 ARM64 的格式检查和控制 API 批量回归均通过；Oracle Linux Clippy 通过。桌面检查、四语言扫描和 Tauri debug/no-bundle 构建也已通过；当前没有 GitHub Actions 检查。真实供应商 `/models` 返回及已安装应用 UI 待手工验收。 |
 
+## 2026-11-13 本 fork PR #44
+
+| PR / head | 解决目标与范围 | 验证边界 |
+| --- | --- | --- |
+| [#44](https://github.com/haohaomin/cursor-byok/pull/44) / `64104cf` | 为模型设置增加内置模型 JSON 配置备份导出/导入；导入按模型哈希跳过重复项，并补齐排序、并发刷新、导出 URL 和大请求体边界 | 原始提交工作区 Rust 293 项通过、14 项忽略；修复后新增排序/大请求体回归，前端检查、四语言扫描、Clippy 和 Tauri debug 构建通过；Oracle Linux 9.8 ARM64 上 fmt、4 项导入回归和 Clippy 通过；Sourcery 复审通过，但该分支没有 GitHub Actions 运行记录。真实安装包文件选择器和跨电脑导入尚待人工验收。详见 [Issue #471 记录](history/issues/2026-11-13-issue471-model-backup.md)。 |
+
 ## 2026-11-06 已合并 PR 的测试状态
 
 本 fork 最近合并的 #12、#14、#15、#16、#17、#18、#19、#20、#21、#22、#23，最终 PR 提交的 Frontend、Rust Linux、Desktop Rust Windows/macOS 检查均通过。合并后 main `b6936e885db61` 的 [CI](https://github.com/haohaomin/cursor-byok/actions/runs/42147293009) 也全部通过。

@@ -1,5 +1,8 @@
 //! One Semble call owns collection Execs, immutable bodies and its search worker.
 
+mod collection;
+
+use collection::Collection;
 use std::sync::{atomic::AtomicBool, Arc};
 
 use crate::{
@@ -21,6 +24,7 @@ use super::{
 };
 
 pub(crate) struct SembleExecution {
+    collection: Collection,
     operation: SembleOperation,
     collector: Collector,
     pub(super) cancelled: Arc<AtomicBool>,
@@ -34,7 +38,7 @@ pub(crate) async fn start(
     call: &ToolCall,
     context: &ExecContext,
     store: Option<Store>,
-) -> Result<Option<pb::AgentServerMessage>> {
+) -> Result<Vec<pb::AgentServerMessage>> {
     let tool_name = call.name.to_ascii_lowercase();
     let operation =
         SembleOperation::parse(&tool_name, call.arguments.clone()).map_err(Error::Protocol)?;
@@ -54,7 +58,7 @@ pub(crate) async fn start(
         runtime
             .attach_search_worker(&call.call_id, &cancelled, worker.abort_handle())
             .await;
-        return Ok(None);
+        return Ok(Vec::new());
     }
     let root = normalize_root(operation.repo());
     if !valid_root(&root)
@@ -80,53 +84,31 @@ pub(crate) async fn start(
     let command = collector.command().map_err(Error::Protocol)?;
     let cancelled = runtime.register_search(&call.call_id).await;
     let state = Box::new(SembleExecution {
+        collection: Collection::new(call, context, command),
         operation,
         collector,
         cancelled,
         results: results.clone(),
         store,
     });
-    let id = runtime
-        .reserve_semble(call, context, state, started)
-        .await?;
-    Ok(Some(request(id, call, context, command)))
+    runtime.reserve_semble(call, context, state, started).await
 }
 
-fn request(
-    id: u32,
-    call: &ToolCall,
-    context: &ExecContext,
-    command: String,
-) -> pb::AgentServerMessage {
-    let args = pb::ShellArgs {
-        command: command.clone(),
-        working_directory: call.arguments["repo"].as_str().unwrap_or_default().into(),
-        tool_call_id: call.call_id.clone(),
-        simple_commands: vec![command],
-        timeout: 30_000,
-        hard_timeout: Some(30_000),
-        timeout_behavior: pb::TimeoutBehavior::Cancel as i32,
-        file_output_threshold_bytes: Some((search::snapshot::MAX_OUTPUT_BYTES + 1024) as u64),
-        // This collector is read-only. Let Cursor apply its configured Shell
-        // policy and approval flow, just as for ordinary Shell requests. Do not
-        // force an unavailable sandbox or request an unsandboxed escalation.
-        close_stdin: true,
-        conversation_id: Some(context.conversation_id.clone()),
-        admin_command_denylist: context.admin_command_denylist.clone(),
-        description: Some("Collect allowed workspace files for semantic search".into()),
-        ..Default::default()
-    };
-    pb::AgentServerMessage {
-        message: Some(pb::agent_server_message::Message::ExecServerMessage(
-            pb::ExecServerMessage {
-                id,
-                exec_id: uuid::Uuid::new_v4().to_string(),
-                message: Some(pb::exec_server_message::Message::ShellStreamArgs(args)),
-                ..Default::default()
-            },
-        )),
-        ..Default::default()
+impl SembleExecution {
+    pub(super) fn request(&self, id: u32, model_call_id: &str) -> Vec<pb::AgentServerMessage> {
+        self.collection.request(id, model_call_id)
     }
+}
+
+pub(crate) fn cancelled_card(entry: &PendingExec, error: &str) -> Option<pb::AgentServerMessage> {
+    let ExecStage::Semble(state) = &entry.stage else {
+        return None;
+    };
+    Some(
+        state
+            .collection
+            .completed(&entry.call.model_call_id, Some(error)),
+    )
 }
 
 pub(crate) async fn client_event(
@@ -161,15 +143,18 @@ pub(crate) async fn client_event(
                 value.reason
             )),
             Some(Event::Backgrounded(_)) => {
+                let mut messages = vec![codec::abort(message.id)];
                 if let Some(entry) = runtime.take_exec(message.id).await {
-                    fail(
-                        entry,
-                        runtime,
-                        "Workspace collection must remain in the foreground".into(),
-                    )
-                    .await?;
+                    messages.push(
+                        fail(
+                            entry,
+                            runtime,
+                            "Workspace collection must remain in the foreground".into(),
+                        )
+                        .await?,
+                    );
                 }
-                return Ok(ClientExecEvent::Message(Box::new(codec::abort(message.id))));
+                return Ok(ClientExecEvent::Messages(messages));
             }
         },
         Some(Message::ShellResult(shell)) if shell.is_background != Some(true) => {
@@ -206,8 +191,9 @@ pub(crate) async fn client_event(
             } else {
                 format!("{error}: {detail}")
             };
-            fail(entry, runtime, error).await?;
-            Ok(ClientExecEvent::Pending)
+            Ok(ClientExecEvent::Messages(vec![
+                fail(entry, runtime, error).await?,
+            ]))
         }
     }
 }
@@ -219,10 +205,11 @@ async fn append(
     stdout: bool,
 ) -> Result<ClientExecEvent> {
     if let Err(error) = runtime.append_semble_output(id, text, stdout).await {
+        let mut messages = vec![codec::abort(id)];
         if let Some(entry) = runtime.take_exec(id).await {
-            fail(entry, runtime, error).await?;
+            messages.push(fail(entry, runtime, error).await?);
         }
-        Ok(ClientExecEvent::Message(Box::new(codec::abort(id))))
+        Ok(ClientExecEvent::Messages(messages))
     } else {
         Ok(ClientExecEvent::Pending)
     }
@@ -240,6 +227,7 @@ async fn advance(entry: PendingExec, runtime: &CursorToolRuntime) -> Result<Clie
     let ExecStage::Semble(mut state) = stage else {
         return Err(Error::Protocol("Invalid Semble execution stage".into()));
     };
+    let collected = state.collection.completed(&call.model_call_id, None);
     match state.collector.accept(&stdout) {
         Ok(Some(files)) => {
             let owner = runtime.clone();
@@ -258,25 +246,27 @@ async fn advance(entry: PendingExec, runtime: &CursorToolRuntime) -> Result<Clie
             runtime
                 .attach_search_worker(&call_id, &cancelled, worker.abort_handle())
                 .await;
-            Ok(ClientExecEvent::Pending)
+            Ok(ClientExecEvent::Messages(vec![collected]))
         }
         Ok(None) => match state.collector.command() {
             Ok(command) => {
-                let id = runtime
-                    .reserve_semble(&call, &context, state, started_at_ms)
-                    .await?;
-                Ok(ClientExecEvent::Message(Box::new(request(
-                    id, &call, &context, command,
-                ))))
+                state.collection = Collection::new(&call, &context, command);
+                let mut messages = vec![collected];
+                messages.extend(
+                    runtime
+                        .reserve_semble(&call, &context, state, started_at_ms)
+                        .await?,
+                );
+                Ok(ClientExecEvent::Messages(messages))
             }
             Err(error) => {
                 complete_error(&call, started_at_ms, state, runtime, error).await;
-                Ok(ClientExecEvent::Pending)
+                Ok(ClientExecEvent::Messages(vec![collected]))
             }
         },
         Err(error) => {
             complete_error(&call, started_at_ms, state, runtime, error).await;
-            Ok(ClientExecEvent::Pending)
+            Ok(ClientExecEvent::Messages(vec![collected]))
         }
     }
 }
@@ -285,12 +275,14 @@ pub(crate) async fn fail(
     entry: PendingExec,
     runtime: &CursorToolRuntime,
     error: String,
-) -> Result<()> {
+) -> Result<pb::AgentServerMessage> {
+    let card = cancelled_card(&entry, &error)
+        .ok_or_else(|| Error::Protocol("Invalid Semble execution stage".into()))?;
     let ExecStage::Semble(state) = entry.stage else {
         return Err(Error::Protocol("Invalid Semble execution stage".into()));
     };
     complete_error(&entry.call, entry.started_at_ms, state, runtime, error).await;
-    Ok(())
+    Ok(card)
 }
 
 async fn complete_error(

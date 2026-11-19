@@ -22,11 +22,50 @@ fn context() -> ExecContext {
     }
 }
 
-fn unwrap_exec(message: pb::AgentServerMessage) -> pb::ExecServerMessage {
+fn unwrap_exec_message(message: pb::AgentServerMessage) -> pb::ExecServerMessage {
     let Some(pb::agent_server_message::Message::ExecServerMessage(exec)) = message.message else {
         panic!("expected Exec");
     };
     exec
+}
+
+fn unwrap_exec(messages: Vec<pb::AgentServerMessage>) -> pb::ExecServerMessage {
+    let execs = messages
+        .into_iter()
+        .filter(|message| {
+            matches!(
+                message.message,
+                Some(pb::agent_server_message::Message::ExecServerMessage(_))
+            )
+        })
+        .collect::<Vec<_>>();
+    assert_eq!(execs.len(), 1);
+    unwrap_exec_message(execs.into_iter().next().unwrap())
+}
+
+fn completed_card(message: &pb::AgentServerMessage) -> &pb::ToolCallCompletedUpdate {
+    let Some(pb::agent_server_message::Message::InteractionUpdate(update)) = &message.message
+    else {
+        panic!("expected card update");
+    };
+    let Some(pb::interaction_update::Message::ToolCallCompleted(completed)) = &update.message
+    else {
+        panic!("expected completed card");
+    };
+    assert!(completed
+        .tool_call
+        .as_ref()
+        .unwrap()
+        .completed_at_ms
+        .is_some());
+    completed
+}
+
+fn shell_call_id(exec: &pb::ExecServerMessage) -> &str {
+    let Some(pb::exec_server_message::Message::ShellStreamArgs(args)) = &exec.message else {
+        panic!("expected collection request");
+    };
+    &args.tool_call_id
 }
 
 fn inventory(id: u32) -> pb::ExecClientMessage {
@@ -56,13 +95,91 @@ fn inventory(id: u32) -> pb::ExecClientMessage {
 }
 
 #[tokio::test]
+async fn collection_publishes_a_distinct_terminal_card_before_requesting_approval() {
+    use crate::cursor::tools::{ToolBatchState, ToolDispatcher};
+    use std::collections::{BTreeMap, HashSet};
+    let runtime = CursorToolRuntime::default();
+    let dispatcher = ToolDispatcher::new(runtime.clone());
+    let dispatched = dispatcher
+        .start_batch(
+            &[call()],
+            ToolBatchState {
+                completed: &HashSet::new(),
+                started: &HashSet::new(),
+                response_text: "",
+                response_thinking: "",
+            },
+            &[],
+            &BTreeMap::new(),
+            &context(),
+        )
+        .await
+        .unwrap();
+    let messages = &dispatched[0].messages;
+    let exec_index = messages
+        .iter()
+        .position(|message| {
+            matches!(
+                message.message,
+                Some(pb::agent_server_message::Message::ExecServerMessage(_))
+            )
+        })
+        .unwrap();
+    let exec = unwrap_exec_message(messages[exec_index].clone());
+    let Some(pb::exec_server_message::Message::ShellStreamArgs(args)) = exec.message else {
+        panic!("expected collector Shell");
+    };
+    assert_ne!(
+        args.tool_call_id,
+        call().call_id,
+        "MCP cards cannot host terminal review"
+    );
+    let card = messages[..exec_index]
+        .iter()
+        .find_map(|message| {
+            let Some(pb::agent_server_message::Message::InteractionUpdate(update)) =
+                &message.message
+            else {
+                return None;
+            };
+            let Some(pb::interaction_update::Message::ToolCallStarted(started)) = &update.message
+            else {
+                return None;
+            };
+            if started.call_id == args.tool_call_id {
+                Some(started)
+            } else {
+                None
+            }
+        })
+        .expect("publish the terminal card before its Exec can request approval");
+    assert_eq!(card.model_call_id, call().model_call_id);
+    let tool = card.tool_call.as_ref().unwrap();
+    assert_eq!(
+        tool.tool_call_id.as_deref(),
+        Some(args.tool_call_id.as_str())
+    );
+    let Some(pb::tool_call::Tool::ShellToolCall(shell)) = &tool.tool else {
+        panic!("terminal review requires a Shell card");
+    };
+    assert_eq!(shell.args.as_ref(), Some(&args));
+    assert!(!args.skip_approval);
+    assert!(args.requested_sandbox_policy.is_none());
+    assert!(dispatched[0].completion.is_none());
+    assert_eq!(
+        runtime.exec_call(exec.id).await.unwrap().name,
+        "SembleSearch"
+    );
+    runtime.drain_running().await;
+}
+
+#[tokio::test]
 async fn filesystem_search_uses_cursor_policy_without_requesting_an_override() {
     let runtime = CursorToolRuntime::default();
     let (sender, _receiver) = tool_result_channel();
     let exec = unwrap_exec(
         start(&runtime, &sender, &call(), &context(), None)
             .await
-            .unwrap()
             .unwrap(),
     );
     let Some(pb::exec_server_message::Message::ShellStreamArgs(args)) = exec.message else {
@@ -85,22 +202,42 @@ async fn completed_inventory_advances_once_and_cancellation_ignores_late_results
     let first = unwrap_exec(
         start(&runtime, &sender, &call(), &context(), None)
             .await
-            .unwrap()
             .unwrap(),
     );
     let reply = inventory(first.id);
-    let ClientExecEvent::Message(second) = codec::client_event(&reply, &runtime).await.unwrap()
+    let ClientExecEvent::Messages(second) = codec::client_event(&reply, &runtime).await.unwrap()
     else {
         panic!("expected read batch");
     };
-    let second = unwrap_exec(*second);
+    assert_eq!(
+        second.len(),
+        3,
+        "close old card, open new card, then request Exec"
+    );
+    assert_eq!(completed_card(&second[0]).call_id, shell_call_id(&first));
+    assert!(
+        !format!("{:?}", second[0]).contains("auth.rs"),
+        "raw inventory must not enter the card result"
+    );
+    let second = unwrap_exec(second);
     assert_ne!(second.id, first.id);
+    assert_ne!(shell_call_id(&second), shell_call_id(&first));
+    assert!(
+        receiver.try_recv().is_none(),
+        "collection is not a model completion"
+    );
     assert!(matches!(
         codec::client_event(&reply, &runtime).await.unwrap(),
         ClientExecEvent::Pending
     ));
     assert_eq!(runtime.running_exec_ids().await, vec![second.id]);
-    assert_eq!(runtime.interrupt_for_message().await, vec![second.id]);
+    let cancelled = runtime.interrupt_for_message().await;
+    assert_eq!(cancelled.len(), 2);
+    assert_eq!(cancelled[0], codec::abort(second.id));
+    assert_eq!(
+        completed_card(&cancelled[1]).call_id,
+        shell_call_id(&second)
+    );
     assert!(matches!(
         codec::client_event(&inventory(second.id), &runtime)
             .await
@@ -111,6 +248,82 @@ async fn completed_inventory_advances_once_and_cancellation_ignores_late_results
 }
 
 #[tokio::test]
+async fn rejection_closes_the_terminal_card_and_returns_one_parent_result_without_retry() {
+    let runtime = CursorToolRuntime::default();
+    let (sender, mut receiver) = tool_result_channel();
+    let exec = unwrap_exec(
+        start(&runtime, &sender, &call(), &context(), None)
+            .await
+            .unwrap(),
+    );
+    assert!(receiver.try_recv().is_none());
+    let rejected = pb::ExecClientMessage {
+        id: exec.id,
+        message: Some(pb::exec_client_message::Message::ShellStream(
+            pb::ShellStream {
+                event: Some(pb::shell_stream::Event::Rejected(pb::ShellRejected {
+                    reason: "User chose to skip".into(),
+                    ..Default::default()
+                })),
+            },
+        )),
+        ..Default::default()
+    };
+    let ClientExecEvent::Messages(messages) =
+        codec::client_event(&rejected, &runtime).await.unwrap()
+    else {
+        panic!("expected terminal card completion");
+    };
+    assert_eq!(
+        messages.len(),
+        1,
+        "rejection must not dispatch another collector"
+    );
+    assert_eq!(completed_card(&messages[0]).call_id, shell_call_id(&exec));
+    let completion = receiver.recv().await.unwrap().unwrap();
+    assert_eq!(completion.result().call_id, call().call_id);
+    assert!(completion.result().is_error);
+    assert!(completion.result().content.contains("User chose to skip"));
+    assert!(matches!(
+        completion.tool_call().tool,
+        Some(pb::tool_call::Tool::McpToolCall(_))
+    ));
+    assert!(runtime.running_exec_ids().await.is_empty());
+    assert!(matches!(
+        codec::client_event(&rejected, &runtime).await.unwrap(),
+        ClientExecEvent::Pending
+    ));
+    assert!(receiver.try_recv().is_none());
+}
+
+#[tokio::test]
+async fn every_interruption_closes_collection_cards_without_a_synthetic_model_result() {
+    for mode in 0..3 {
+        let runtime = CursorToolRuntime::default();
+        let (sender, mut receiver) = tool_result_channel();
+        let exec = unwrap_exec(
+            start(&runtime, &sender, &call(), &context(), None)
+                .await
+                .unwrap(),
+        );
+        let messages = match mode {
+            0 => runtime.drain_running().await,
+            1 => runtime.interrupt_for_run_replacement().await,
+            _ => runtime.interrupt_for_message().await,
+        };
+        assert_eq!(messages.len(), 2);
+        assert_eq!(messages[0], codec::abort(exec.id));
+        assert_eq!(completed_card(&messages[1]).call_id, shell_call_id(&exec));
+        assert!(runtime.running_exec_ids().await.is_empty());
+        assert!(matches!(
+            codec::stream_closed(exec.id, &runtime).await.unwrap(),
+            ClientExecEvent::Pending
+        ));
+        assert!(receiver.try_recv().is_none());
+    }
+}
+
+#[tokio::test]
 async fn permission_denial_and_stream_close_complete_only_the_original_tool() {
     for closed in [false, true] {
         let runtime = CursorToolRuntime::default();
@@ -118,14 +331,13 @@ async fn permission_denial_and_stream_close_complete_only_the_original_tool() {
         let exec = unwrap_exec(
             start(&runtime, &sender, &call(), &context(), None)
                 .await
-                .unwrap()
                 .unwrap(),
         );
         if closed {
-            assert!(codec::stream_closed(exec.id, &runtime)
-                .await
-                .unwrap()
-                .is_none());
+            assert!(matches!(
+                codec::stream_closed(exec.id, &runtime).await.unwrap(),
+                ClientExecEvent::Messages(_)
+            ));
         } else {
             let denied = pb::ExecClientMessage {
                 id: exec.id,
@@ -206,7 +418,6 @@ async fn overflowing_collection_aborts_exec_and_reports_one_original_tool_error(
     let exec = unwrap_exec(
         start(&runtime, &sender, &call(), &context(), None)
             .await
-            .unwrap()
             .unwrap(),
     );
     let output = pb::ExecClientMessage {
@@ -222,7 +433,7 @@ async fn overflowing_collection_aborts_exec_and_reports_one_original_tool_error(
     };
     assert!(matches!(
         codec::client_event(&output, &runtime).await.unwrap(),
-        ClientExecEvent::Message(_)
+        ClientExecEvent::Messages(_)
     ));
     let completion = receiver.recv().await.unwrap().unwrap();
     assert_eq!(completion.result().call_id, "search-call");
@@ -286,7 +497,6 @@ async fn real_model_host_exec_round_trip_search_and_related() {
         let mut exec = unwrap_exec(
             start(&runtime, &sender, &call, &context, None)
                 .await
-                .unwrap()
                 .unwrap(),
         );
         let mut rounds = 0;
@@ -333,8 +543,18 @@ async fn real_model_host_exec_round_trip_search_and_related() {
             };
             rounds += 1;
             match codec::client_event(&reply, &runtime).await.unwrap() {
-                ClientExecEvent::Message(next) => exec = unwrap_exec(*next),
-                ClientExecEvent::Pending => break,
+                ClientExecEvent::Messages(next) => {
+                    if next.iter().any(|message| {
+                        matches!(
+                            message.message,
+                            Some(pb::agent_server_message::Message::ExecServerMessage(_))
+                        )
+                    }) {
+                        exec = unwrap_exec(next);
+                    } else {
+                        break;
+                    }
+                }
                 _ => panic!("raw collection must not be a provider-visible tool completion"),
             }
             assert!(rounds <= 2);

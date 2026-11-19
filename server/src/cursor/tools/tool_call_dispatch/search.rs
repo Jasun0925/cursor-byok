@@ -18,9 +18,9 @@ pub(super) async fn start(
     context: &ExecContext,
     store: Option<Store>,
 ) -> Result<ToolStart> {
-    let message = semble::start(runtime, results, call, context, store).await?;
+    let messages = semble::start(runtime, results, call, context, store).await?;
     Ok(ToolStart {
-        messages: message.into_iter().collect(),
+        messages,
         completion: None,
     })
 }
