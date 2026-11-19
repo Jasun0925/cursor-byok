@@ -510,6 +510,10 @@ impl ControlService {
         })
     }
 
+    pub async fn import_model_backup(&self, models: &[ModelConfigInput]) -> Result<usize> {
+        self.store.create_models_if_missing(models).await
+    }
+
     pub async fn preview_v0049_models(&self) -> Result<LegacyModelImportPreview> {
         let path = crate::config::v0049_config_path()?;
         let plan = self.store.preview_v0049_model_config(&path).await?;

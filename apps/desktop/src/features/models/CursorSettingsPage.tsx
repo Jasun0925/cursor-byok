@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { api, configuredPluginModels, type Model, type ModelInput } from "../../shared/api";
+import { api, configuredPluginModels, type Model, type ModelBackup, type ModelInput } from "../../shared/api";
 import { CursorCaGate, CursorCaProvider, CursorModelGate, CursorModelProvider } from "./CursorGates";
 import { CursorModelCards, cursorModelGroups, type CursorModelGroup, type CursorModelGrouping } from "./CursorModelCards";
 import { CursorModelEditor, emptyCursorModelDraft, type CursorModelDraft } from "./CursorModelEditor";
@@ -45,8 +45,10 @@ export function CursorSettingsPage() {
   const [groupBaseUrlDraft, setGroupBaseUrlDraft] = useState("");
   const [groupApiKeyDraft, setGroupApiKeyDraft] = useState("");
   const [groupSettingsBusy, setGroupSettingsBusy] = useState(false);
+  const [backupBusy, setBackupBusy] = useState(false);
   const activeModelTests = useRef(new Map<string, { testId: string; controller: AbortController; cancelling: boolean }>());
   const addModelButton = useRef<HTMLButtonElement>(null);
+  const backupInput = useRef<HTMLInputElement>(null);
   const caReady = cursorHarness?.ca === "ready";
   const cursorTakenOver = cursorHarness?.settings_applied ?? false;
   const takeoverLabel = cursorTakenOver ? t("关闭接管Cursor") : t("开启接管Cursor");
@@ -262,11 +264,51 @@ export function CursorSettingsPage() {
     }
   }, [message]);
 
+  const exportBackup = () => {
+    const backup: ModelBackup = {
+      format: "cursor-byok-models",
+      version: 1,
+      models: models.map(modelInput),
+    };
+    const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `cursor-byok-models-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.append(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 0);
+    message(t("模型配置已导出"));
+  };
+
+  const importBackup = async (file: File) => {
+    setBackupBusy(true);
+    try {
+      let value: unknown;
+      try {
+        value = JSON.parse(await file.text());
+      } catch {
+        throw new Error(t("配置备份不是有效 JSON"));
+      }
+      const backup = parseModelBackup(value);
+      const result = await api.importModelBackup(backup);
+      await appStore.refresh();
+      message(result.imported > 0
+        ? t("导入完成：新增 {imported} 个模型，跳过 {skipped} 个已存在模型", { imported: result.imported, skipped: result.skipped })
+        : t("配置中的 {count} 个模型均已存在，无需重复导入", { count: result.skipped }));
+    } catch (cause) {
+      message(errorText(cause), { duration: 5000 });
+    } finally {
+      setBackupBusy(false);
+    }
+  };
+
   const list = <CursorModelCards
     models={models}
     pluginModels={pluginModels}
     grouping={grouping}
-    disabled={cursorBusy}
+    disabled={cursorBusy || backupBusy}
     testingModelHashes={testingModelHashes}
     testResults={modelTestResults}
     onTest={(model) => void testModel(model)}
@@ -288,10 +330,10 @@ export function CursorSettingsPage() {
     setCaCommand(null);
     setWaitingForCaRefresh(true);
   };
-  const content = <CursorCaProvider><CursorCaGate busy={cursorBusy} waitingForRefresh={waitingForCaRefresh} onInitialize={() => void initializeCa()} onRefresh={() => void refreshCa()}>
+  const content = <CursorCaProvider><CursorCaGate busy={cursorBusy || backupBusy} waitingForRefresh={waitingForCaRefresh} onInitialize={() => void initializeCa()} onRefresh={() => void refreshCa()}>
     <div className={styles.page}>
       <LegacyModelImport afterImportFocusRef={addModelButton}>{({ busy: importingLegacyModels, previewing, open }) =>
-        <CursorModelProvider><CursorModelGate busy={cursorBusy || importingLegacyModels} previewingImport={previewing} onAdd={openNew} onImport={open}>{list}</CursorModelGate></CursorModelProvider>
+        <CursorModelProvider><CursorModelGate busy={cursorBusy || backupBusy || importingLegacyModels} previewingImport={previewing} onAdd={openNew} onImport={open}>{list}</CursorModelGate></CursorModelProvider>
       }</LegacyModelImport>
     </div>
   </CursorCaGate></CursorCaProvider>;
@@ -311,7 +353,7 @@ export function CursorSettingsPage() {
         <TooltipTrigger label={takeoverLabel}>
           <Switch
             checked={cursorTakenOver}
-            disabled={cursorBusy || (!cursorTakenOver && !caReady)}
+            disabled={cursorBusy || backupBusy || (!cursorTakenOver && !caReady)}
             label={takeoverLabel}
             onChange={(enabled) => {
               if (enabled) void appStore.setCursorEnabled(true);
@@ -320,17 +362,36 @@ export function CursorSettingsPage() {
           />
         </TooltipTrigger>
         {testTargets.length > 0 && <div className={styles.groupActions} role="group" aria-label={t("操作")}>
-          <button type="button" title={t("默认平铺")} aria-pressed={grouping === "flat"} onClick={() => setGrouping("flat")}>{t("默认平铺")}</button>
-          {canGroupByProvider && <button type="button" title={t("按供应商")} aria-pressed={grouping === "provider"} onClick={() => setGrouping("provider")}>{t("按供应商")}</button>}
-          {canGroupByType && <button type="button" title={t("按类型")} aria-pressed={grouping === "type"} onClick={() => setGrouping("type")}>{t("按类型")}</button>}
-          <button type="button" title={batchTesting ? t("取消全部测试") : t("一键测试")} disabled={cursorBusy || (!batchTesting && testingModelHashes.size > 0)} onClick={() => void (batchTesting ? cancelAllModelTests() : testAllModels())}>{batchTesting ? t("取消全部测试") : t("一键测试")}</button>
+          <button type="button" title={t("默认平铺")} aria-pressed={grouping === "flat"} disabled={cursorBusy || backupBusy} onClick={() => setGrouping("flat")}>{t("默认平铺")}</button>
+          {canGroupByProvider && <button type="button" title={t("按供应商")} aria-pressed={grouping === "provider"} disabled={cursorBusy || backupBusy} onClick={() => setGrouping("provider")}>{t("按供应商")}</button>}
+          {canGroupByType && <button type="button" title={t("按类型")} aria-pressed={grouping === "type"} disabled={cursorBusy || backupBusy} onClick={() => setGrouping("type")}>{t("按类型")}</button>}
+          <button type="button" title={batchTesting ? t("取消全部测试") : t("一键测试")} disabled={cursorBusy || backupBusy || (!batchTesting && testingModelHashes.size > 0)} onClick={() => void (batchTesting ? cancelAllModelTests() : testAllModels())}>{batchTesting ? t("取消全部测试") : t("一键测试")}</button>
         </div>}
       </div>
     </PageActions>
     <PageActions>
+      <input
+        ref={backupInput}
+        type="file"
+        accept=".json,application/json"
+        hidden
+        onChange={(event) => {
+          const file = event.currentTarget.files?.[0];
+          event.currentTarget.value = "";
+          if (file) void importBackup(file);
+        }}
+      />
+      <div className={styles.groupActions} role="group" aria-label={t("模型配置备份")}>
+        <TooltipTrigger label={t("仅备份内置模型配置；导出文件包含 API Key，请妥善保管")}>
+          <button type="button" className={controls.secondary} disabled={backupBusy || cursorBusy || models.length === 0} onClick={exportBackup}>{t("导出配置")}</button>
+        </TooltipTrigger>
+        <TooltipTrigger label={t("仅支持本项目导出的 JSON 文件")}>
+          <button type="button" className={controls.secondary} disabled={backupBusy || cursorBusy} onClick={() => backupInput.current?.click()}>{backupBusy ? t("导入中…") : t("导入配置")}</button>
+        </TooltipTrigger>
+      </div>
       <OpenCursorButton />
       <TooltipTrigger label={t("Remote SSH 指南")}><button type="button" className={controls.secondary} aria-label={t("Remote SSH 指南")} onClick={() => setRemoteGuideOpen(true)}>SSH</button></TooltipTrigger>
-      <TooltipTrigger label={caReady ? t("添加模型") : t("请先初始化 CA")}><button ref={addModelButton} className={controls.iconButton} aria-label={t("添加模型")} disabled={!caReady || cursorBusy} onClick={openNew}><Icon icon={addIcon} size="1.1em" /></button></TooltipTrigger>
+      <TooltipTrigger label={caReady ? t("添加模型") : t("请先初始化 CA")}><button ref={addModelButton} className={controls.iconButton} aria-label={t("添加模型")} disabled={!caReady || cursorBusy || backupBusy} onClick={openNew}><Icon icon={addIcon} size="1.1em" /></button></TooltipTrigger>
     </PageActions>
     <PageContent title="Cursor" sections={[{ key: "cursor-settings", estimatedHeight: estimatedModelHeight, content }]} />
     <CursorRemoteGuide open={remoteGuideOpen} onClose={() => setRemoteGuideOpen(false)} />
@@ -347,7 +408,7 @@ export function CursorSettingsPage() {
     >
       <p>{t("关闭后将移除 Cursor 本地代理配置。如果你需要登陆官方账号，通常不需要关闭操作，推荐直接登陆你的账号即可(byok模型与官方账号的模型已支持无缝衔接)，是否继续关闭并清理代理？")}</p>
     </ConfirmDialog>
-    <Modal fullHeight open={draft !== null} title={editing ? t("编辑模型") : t("添加模型")} banner={draft && (editorTesting || editorTestState) ? <CursorModelTestResult state={editorTestState} testing={editorTesting} /> : undefined} busy={cursorBusy || savingAndTesting} onClose={() => { if (editing && editorTesting) void cancelModelTest(editing.model_hash); setDraft(null); setEditing(null); }} onSubmit={() => void save()} submitLabel={t("保存")} secondaryAction={<button type="button" className={controls.secondary} disabled={cursorBusy || savingAndTesting} onClick={() => void (editorTesting && editing ? cancelModelTest(editing.model_hash) : saveAndTest())}>{savingAndTesting ? t("处理中…") : editorTesting ? t("取消测试") : t("保存并测试")}</button>}>
+    <Modal fullHeight open={draft !== null} title={editing ? t("编辑模型") : t("添加模型")} banner={draft && (editorTesting || editorTestState) ? <CursorModelTestResult state={editorTestState} testing={editorTesting} /> : undefined} busy={cursorBusy || backupBusy || savingAndTesting} onClose={() => { if (editing && editorTesting) void cancelModelTest(editing.model_hash); setDraft(null); setEditing(null); }} onSubmit={() => void save()} submitLabel={t("保存")} secondaryAction={<button type="button" className={controls.secondary} disabled={cursorBusy || backupBusy || savingAndTesting} onClick={() => void (editorTesting && editing ? cancelModelTest(editing.model_hash) : saveAndTest())}>{savingAndTesting ? t("处理中…") : editorTesting ? t("取消测试") : t("保存并测试")}</button>}>
       {draft && <>
         <CursorModelEditor draft={draft} modelOptions={modelOptions} discovering={discovering} onChange={setDraft} onDiscover={discover} />
       </>}
@@ -375,6 +436,14 @@ export function CursorSettingsPage() {
 function modelInput(model: Model): ModelInput {
   const { model_hash: _hash, created_at_ms: _created, updated_at_ms: _updated, ...input } = model;
   return input;
+}
+
+function parseModelBackup(value: unknown): ModelBackup {
+  if (!value || typeof value !== "object") throw new Error(t("配置备份格式无效"));
+  const record = value as Record<string, unknown>;
+  if (record.format !== "cursor-byok-models" || record.version !== 1) throw new Error(t("配置备份格式无效"));
+  if (!Array.isArray(record.models) || record.models.length === 0) throw new Error(t("配置备份必须包含至少一个模型"));
+  return { format: "cursor-byok-models", version: 1, models: record.models as ModelInput[] };
 }
 
 /** 组内所有模型取值一致时返回该值,否则返回 null(表单留空表示保持不变)。 */

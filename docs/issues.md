@@ -159,7 +159,7 @@
 | 完成 | Issue / 原标题 | 分级 | 本地状态 | 下一步 / 证据线索 |
 | --- | --- | --- | --- | --- |
 | ☐ | [#324](https://github.com/leookun/cursor-byok/issues/324) 使用上的一些小痛点。 | B | 待现版复测 | 拆分配置复制、密钥显示和模型哈希冲突；先复现冲突，避免混合改动。 |
-| ☐ | [#471](https://github.com/leookun/cursor-byok/issues/471) 需求：增加一个配置备份功能 | C | 需求待评估 | 定义导出/导入字段、密钥处理和覆盖策略；先确认当前版本已有能力。 |
+| ◐ | [#471](https://github.com/leookun/cursor-byok/issues/471) 需求：增加一个配置备份功能 | C | 已实现内置模型 JSON 导出/导入；已补排序、并发刷新和大请求体回归；macOS 与 Oracle Linux 9.8 ARM64 定向验证通过 | 插件模型由插件配置独立管理，不进入本备份；导出包含 API Key，界面已提示妥善保管；真实打包桌面 UI 尚待人工验收。实现与验证见 [记录](history/issues/2026-11-13-issue471-model-backup.md)。 |
 | ☑（PR #39 已合入 main） | [#417](https://github.com/leookun/cursor-byok/issues/417) 增加自定义定价 | C | 已实现全局及逐模型 Token 价格；[PR #39](https://github.com/haohaomin/cursor-byok/pull/39) 已在当前 `main` 基线上通过本地验证并合入 | 以 `model_hash` 保存输入/输出/缓存读写单价；未设置覆盖时使用全局价格。插件模型暂沿用全局价格，见 [实现与验证](history/issues/2026-11-13-issue150-model-pricing.md)。 |
 | ☐（现版已支持） | [#254](https://github.com/leookun/cursor-byok/issues/254) 支持配置tab-server的baseurl，而不是内置一个 | C | 既有功能无需重写；路由、持久化及设置页受控验证通过 | 16 个 TAB RPC 的前缀/query/二进制转发、SQLite 重连、地址切换、流式交付与非法配置保护共 4 项测试通过；设置页接线已测。未修改生产代码；真实 Cursor TAB、HTTPS 服务及控制面账号未验，见 [核查与边界](history/issues/2026-11-06-issue254-tab-baseurl-check.md)。 |
 | ☑（PR #34、#39 已合入 main） | [#150](https://github.com/leookun/cursor-byok/issues/150) 提几个意见看看需求能否实现。 | C | #107 按模型分项统计见 [PR #34](https://github.com/haohaomin/cursor-byok/pull/34)，逐模型 Token 定价见 [PR #39](https://github.com/haohaomin/cursor-byok/pull/39)；两者本地验证通过 | 首页总价和模型明细按 `model_hash` 选择覆盖价，其他模型使用全局价格；插件模型暂不单独定价。真实供应商、插件独立定价和发布版本仍待验收。见 [统计记录](history/issues/2026-11-12-issue107-model-usage-breakdown.md) 与 [定价验证](history/issues/2026-11-13-issue150-model-pricing.md)。 |
