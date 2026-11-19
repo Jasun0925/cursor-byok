@@ -4,6 +4,12 @@
 >
 > 之前投稿的 #487、#500、#501 因用户要求删除源分支而关闭，均未合入上游；修复提交保留在本 fork main。评论尝试被归档只读的 403 拒绝，见 [回复记录](history/pull-requests/2026-10-27-community-replies.md)。
 
+## 2026-11-13 本 fork PR #46
+
+| PR / head | 解决目标与范围 | 验证边界 |
+| --- | --- | --- |
+| [#46](https://github.com/haohaomin/cursor-byok/pull/46) / `8704198` | 补充 Linux RPM、DEB 和 AppImage 的依赖说明与发行版兼容边界，记录 Rocky/RHEL/Fedora 尚未进入发布矩阵 | 5 个 Markdown 文件的相对链接检查通过，`git diff --check` 通过，并核对 release workflow 的 Ubuntu 22.04/WebKitGTK 4.1 构建依赖；Sourcery 复审通过。真实 Rocky/RHEL/Fedora 安装、启动和托盘验收尚未完成。详见 [Issue #486](https://github.com/leookun/cursor-byok/issues/486)。 |
+
 ## 2026-11-13 本 fork PR #45
 
 | PR / head | 解决目标与范围 | 验证状态与边界 |
