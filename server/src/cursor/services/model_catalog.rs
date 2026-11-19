@@ -41,6 +41,10 @@ struct AvailableModel {
     supports_images: Option<bool>,
     #[prost(bool, optional, tag = "14")]
     supports_max_mode: Option<bool>,
+    #[prost(int32, optional, tag = "15")]
+    context_token_limit: Option<i32>,
+    #[prost(int32, optional, tag = "16")]
+    context_token_limit_for_max_mode: Option<i32>,
     #[prost(string, optional, tag = "17")]
     client_display_name: Option<String>,
     #[prost(string, optional, tag = "18")]
@@ -501,6 +505,12 @@ fn available_model(model: &ModelConfig) -> AvailableModel {
         supports_thinking: Some(true),
         supports_images: Some(true),
         supports_max_mode: Some(true),
+        context_token_limit: model
+            .context_window_tokens
+            .and_then(|tokens| i32::try_from(tokens).ok()),
+        context_token_limit_for_max_mode: model
+            .context_window_tokens
+            .and_then(|tokens| i32::try_from(tokens).ok()),
         client_display_name: Some(model.display_name.clone()),
         server_model_name: Some(model.model_hash.clone()),
         supports_non_max_mode: Some(true),
@@ -755,6 +765,8 @@ fn available_plugin_model(model: &PluginModelDescriptor) -> AvailableModel {
         supports_thinking: Some(true),
         supports_images: Some(model.images),
         supports_max_mode: Some(false),
+        context_token_limit: None,
+        context_token_limit_for_max_mode: None,
         client_display_name: Some(model.display_name.clone()),
         server_model_name: Some(model.id.clone()),
         supports_non_max_mode: Some(true),
@@ -943,5 +955,46 @@ mod tests {
         );
         assert!(default.display_name.contains("High"));
         assert!(!default.display_name.contains("272K"));
+    }
+
+    #[test]
+    fn available_builtin_model_advertises_context_token_limits() {
+        let mut model = model();
+        model.context_window_tokens = Some(272_000);
+        let available = available_model(&model);
+
+        assert_eq!(available.context_token_limit, Some(272_000));
+        assert_eq!(available.context_token_limit_for_max_mode, Some(272_000));
+    }
+
+    #[test]
+    fn oversized_builtin_context_limit_is_omitted_instead_of_truncated() {
+        let mut model = model();
+        model.context_window_tokens = Some(i32::MAX as u64 + 1);
+        let available = available_model(&model);
+
+        assert_eq!(available.context_token_limit, None);
+        assert_eq!(available.context_token_limit_for_max_mode, None);
+    }
+
+    #[test]
+    fn plugin_model_does_not_advertise_a_builtin_context_limit() {
+        let available = available_plugin_model(&PluginModelDescriptor {
+            id: "plugin:test/provider/model".into(),
+            plugin_id: "plugin:test".into(),
+            plugin_name: "Test Plugin".into(),
+            provider_id: "provider".into(),
+            model_id: "model".into(),
+            display_name: "Plugin Model".into(),
+            description: None,
+            icon: String::new(),
+            provider_type: "test".into(),
+            max_output_tokens: None,
+            images: false,
+            enabled: true,
+        });
+
+        assert_eq!(available.context_token_limit, None);
+        assert_eq!(available.context_token_limit_for_max_mode, None);
     }
 }

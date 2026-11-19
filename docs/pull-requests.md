@@ -4,6 +4,12 @@
 >
 > 之前投稿的 #487、#500、#501 因用户要求删除源分支而关闭，均未合入上游；修复提交保留在本 fork main。评论尝试被归档只读的 403 拒绝，见 [回复记录](history/pull-requests/2026-10-27-community-replies.md)。
 
+## 2026-11-13 上游 PR #427 的独立实现
+
+| PR / head | 解决目标与范围 | 采用方式与验证边界 |
+| --- | --- | --- |
+| [#48](https://github.com/haohaomin/cursor-byok/pull/48) / `c60a9e5` | `AvailableModels` 返回内置模型的上下文 token 上限 | 补齐 protobuf 字段 15、16，保留插件模型为空并增加溢出保护；macOS 格式检查、Linux ARM64 定向单测通过。真实 Cursor UI/provider 尚未验收；详见[验证记录](history/pull-requests/2026-11-13-pr427-context-token-limit.md)。 |
+
 ## 2026-11-13 本 fork PR #47
 
 | PR / head | 解决目标与范围 | 验证边界 |

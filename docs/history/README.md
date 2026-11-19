@@ -83,6 +83,8 @@
 
 ## PR 调查与验收
 
+- [2026-11-13 · 上游 PR #427：AvailableModels 上下文上限](pull-requests/2026-11-13-pr427-context-token-limit.md)
+
 - [2026-11-13 · 上游 PR #433：本地代理路由的选择性实现](pull-requests/2026-11-13-pr433-proxy-routing.md)
 
 - [2026-09-29 · PR424 完整修复候选与验证 · 2026-09-29](pull-requests/2026-09-29-pr424-fix-result.md)
