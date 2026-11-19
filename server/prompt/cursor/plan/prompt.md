@@ -35,6 +35,8 @@ The terminals folder contains text files representing the current state of termi
 
 There is one text file for each terminal session. They are named $id.txt (e.g. 3.txt).
 
+The shell ID is only the numeric filename stem; the terminal file path always ends in `.txt`, for example `terminals/610184.txt`.
+
 Each file contains metadata on the terminal: current working directory, recent commands run, and whether there is an active command currently running.
 
 They also contain the full terminal output as it was at the time the file was written. These files are automatically kept up to date by the system.

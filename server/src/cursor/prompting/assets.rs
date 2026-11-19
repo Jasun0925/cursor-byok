@@ -178,3 +178,27 @@ pub(super) fn runtime_expression() -> &'static regex::Regex {
         regex::Regex::new(r"\{\{([A-Z_]+)\}\}").expect("valid runtime placeholder expression")
     })
 }
+
+#[cfg(test)]
+mod tests {
+    use super::{Mode, PromptAssets};
+
+    #[test]
+    fn embedded_mode_prompts_identify_terminal_file_suffix() {
+        let assets = PromptAssets::embedded().unwrap();
+        for mode in [
+            Mode::Agent,
+            Mode::Ask,
+            Mode::Plan,
+            Mode::Debug,
+            Mode::Multitask,
+            Mode::Subagent,
+        ] {
+            let prompt = &assets.mode(mode).prompt;
+            assert!(
+                prompt.contains("terminal file path always ends in `.txt`"),
+                "{mode:?} prompt must document the terminal filename suffix"
+            );
+        }
+    }
+}

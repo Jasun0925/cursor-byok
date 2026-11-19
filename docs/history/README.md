@@ -34,6 +34,7 @@
 - [2026-10-09 · Issue #300：后台 Shell 等待复核](issues/2026-10-09-issue300-check.md)
 - [2026-10-09 · Issue #301：单行中文 JSON 的 Shell 展示复核](issues/2026-10-09-issue301-check.md)
 - [2026-10-10 · Issue #302：后台终端文件漏 .txt 后缀](issues/2026-10-10-issue302-check.md)
+- [2026-11-13 · Issue #302：明确后台终端文件名后缀](issues/2026-11-13-issue302-terminal-file-suffix.md)
 - [2026-10-10 · Issue #341：Cursor 原生文件变更登记回调](issues/2026-10-10-issue341-callback-check.md)
 - [2026-10-10 · Issue #341：回滚无效调查](issues/2026-10-10-issue341-check.md)
 - [2026-10-11 · Issue #288：同一会话切模型后 MCP 失效](issues/2026-10-11-issue288-check.md)

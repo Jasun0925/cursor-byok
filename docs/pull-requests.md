@@ -4,6 +4,12 @@
 >
 > 之前投稿的 #487、#500、#501 因用户要求删除源分支而关闭，均未合入上游；修复提交保留在本 fork main。评论尝试被归档只读的 403 拒绝，见 [回复记录](history/pull-requests/2026-10-27-community-replies.md)。
 
+## 2026-11-13 Issue #302 候选
+
+| PR / head | 解决目标与范围 | 验证边界 |
+| --- | --- | --- |
+| [#49](https://github.com/haohaomin/cursor-byok/pull/49) / `4b49235` | 在六个内置 Cursor 模式的终端文件提示中明确 `<shell_id>.txt` 命名，避免模型读取裸 Shell ID 路径 | 格式、差异检查、6/6 嵌入提示回归、远程 Linux 定向测试和 Clippy 通过；macOS Rust 测试受现有 SQLx 动态库装载错误阻断；真实 Cursor UI 尚未验收。详见 [Issue #302 记录](history/issues/2026-11-13-issue302-terminal-file-suffix.md)。 |
+
 ## 2026-11-13 上游 PR #427 的独立实现
 
 | PR / head | 解决目标与范围 | 采用方式与验证边界 |
