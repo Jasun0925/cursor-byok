@@ -1,16 +1,18 @@
 # 工作状态
 
-更新：2026-11-13；本轮合并与 v1.1.0 发布状态已通过 GitHub API 和产物下载核对。历史测试与环境状态保留原核对日期。逐项调查见 [Issue 清单](issues.md)，原始测试见 [历史资料](history/README.md)。
+更新：2026-11-21；最新源码合并与 GitHub Release 元数据已重新核对，v1.1.0 产物下载结果沿用历史记录。历史测试与环境状态保留原核对日期。逐项调查见 [Issue 清单](issues.md)，原始测试见 [历史资料](history/README.md)。
 
 **2026-11-13 进展：**#150/#417 的逐模型 Token 定价已通过 [PR #39](https://github.com/haohaomin/cursor-byok/pull/39) 合入 `main`（合并提交 `e53e97e`）；原 #35 是合入已先落地的 #34 分支，未直接进入主线，已由 #39 在当前主线基线上重新集成。设置页按 `model_hash` 保存输入、输出、缓存读取和缓存写入单价；首页总计与按模型明细按覆盖价计算，未配置覆盖时使用全局价格。当前主线联合回归为 293 个服务端单测通过、0 失败、14 忽略，桌面检查、Clippy 和生产构建通过。插件模型暂使用全局价格，真实供应商和发布版本仍待验收，见 [定价验证记录](history/issues/2026-11-13-issue150-model-pricing.md)。
 
-**结论：远程 Semble、Grok 与 GPT/Google OAuth 的已提交实现均已合入 main，并随 v1.1.0 发布。Semble 独立终端审批卡片候选仍有 10 个本地文件未提交、未推送。真实 OAuth 账号、Semble 批准/拒绝及 Windows Cursor UI 仍待验收。**
+**当前结论：2026-11-19 已将 PR #13、#43–#49 合入 main。Semble 独立终端审批卡片修复已提交、推送并合入 #13；批量模型导入与配置备份的冲突已解决。最新公开版本仍为 v1.1.0，这八项新增合并尚未发布。真实 OAuth 账号、Semble 批准/拒绝及 Windows Cursor UI 仍待验收。**
 
 **2026-11-13 进展：**上游 PR #433 已按当前 Rust/Tauri 架构选择性重实现：非 Tab 的 Cursor host 请求进入本地路由，CONNECT 隧道保持原始 authority；硬编码云端 400/404 短路和 `custom-protocol` feature 未采用。定向代理测试、Clippy、桌面检查和工作区回归通过，真实代理网络与 Cursor UI 待验，见[验证记录](history/pull-requests/2026-11-13-pr433-proxy-routing.md)。**
 
 **2026-11-13 进展：Issue #505 的多个 reasoning signature 修复已通过 fork PR #12 合入 `main`（合并提交 `21f0b3c`），并随 v1.1.0 发布；`cursor-server --all-targets` 通过（465 通过、14 忽略）。真实 Cursor 与原网关仍未验收，不能据此宣称所有供应商都已覆盖。**
 
 **2026-11-13 进展：Issue #463/#184 已增加 Google Gemini OpenAI 兼容预设，使用完整 `v1beta/openai/chat/completions` 地址和现有 Bearer 鉴权；前端类型检查、构建与浏览器配置验证通过，已通过 [PR #36](https://github.com/haohaomin/cursor-byok/pull/36) 合入 `main`。原生 `generateContent` 协议和真实 Gemini Key 尚未验收，见 [验证记录](history/issues/2026-11-13-issue463-gemini-openai-compat.md)。**
+
+**2026-11-21 Windows 验证：**普通用户会话下，真实 Win32 证书检测的已信任、未信任、非法 PEM 三项检查通过。证书安装等待交互确认超时，端到端安装仍未通过；见 [验证记录](history/issues/2026-11-21-windows-ca-check.md)。
 
 ## 1. 已发布的成果
 
@@ -24,7 +26,7 @@ v1.1.0 已发布，涵盖近期主线维护修复，见 [发布与资产核验](
 
 ## 2. 已合入 main 的近期工作
 
-2026-11-13 通过 GitHub API 只读核对：远端 `main` 为 `28e325d9503b093a31558538603c36c46108c165`。源码合入状态不能替代安装包发布状态。
+2026-11-21 通过 GitHub API 与 Git 核对：远端 `main` 为 `68c4dfbc99bcba8f5e56d6e0535b4f2c92a584de`。本 fork 没有开放 PR。源码合入状态不能替代安装包发布状态。
 
 | 工作 | main 中的结果 | 证据 |
 | --- | --- | --- |
@@ -42,13 +44,15 @@ v1.1.0 已发布，涵盖近期主线维护修复，见 [发布与资产核验](
 
 | PR | 合并提交 | 已合入内容 | 仍待验证 |
 | --- | --- | --- | --- |
-| [PR #8](https://github.com/haohaomin/cursor-byok/pull/8) | `07f9951` | 远程采集、忽略规则、分页、Python 导入隔离 | 独立终端审批卡片补丁未提交；真实批准/拒绝和 Windows Cursor UI |
+| [PR #8](https://github.com/haohaomin/cursor-byok/pull/8) | `07f9951` | 远程采集、忽略规则、分页、Python 导入隔离 | 独立终端审批卡片补丁已通过 #13 合入、待发布；真实批准/拒绝和 Windows Cursor UI |
 | [PR #4](https://github.com/haohaomin/cursor-byok/pull/4) | `e24eddf` | Grok 自动/手动续期、凭据轮换、插件 API 2、详细日志认证重试 | 真实 Grok 账号；API 1 外部插件需适配 API 2 |
 | [PR #6](https://github.com/haohaomin/cursor-byok/pull/6) | `91db826` | GPT/Google 续期、有限重试、冷却、旧凭据保护、Google 手动配额刷新 | 真实 GPT/Google 账号 |
 
 本轮合并记录与 CI 见 [集成记录](history/2026-11-04-branch-integration.md)。OAuth 详细记录已进入当前文档目录：[Grok](history/issues/2026-10-27-issue445-check.md)、[GPT/Google](history/issues/2026-10-28-issue481-check.md)。这些源码已进入 v1.1.0 安装包；合入、构建及自动化通过不等于真实账号或客户端验收。
 
-## 4. 上轮新增、尚未提交的审批修复
+## 4. 审批修复已合入，真实 UI 待验收
+
+[PR #13](https://github.com/haohaomin/cursor-byok/pull/13) 已于 2026-11-19 合入，提交 `d3fdc07`。下述 2026-10/11 调查与测试保留原日期，未提交状态已被这次合并取代；真实批准/拒绝仍未验收。
 
 真实 Cursor **3.27.22** 的 SSH 测试已发出一次 SembleSearch。BYOK 收到的唯一 Exec 事件是 `rejected: Review cancelled or failed`，没有 Start/Exit。用户没有点击拒绝，因此这次不能算“拒绝验收通过”。请求与两次模型调用均正常结束，见 [脱敏证据](history/issues/2026-10-30-issue469-approval-evidence.json)。
 
@@ -83,7 +87,7 @@ server/tests/tool_round.rs            # 断流错误结果的回归适配
 | `cargo fmt --all -- --check`、`git diff --check` | 2026-11-01 重新执行，通过 | 当时工作区的格式、差异有效性 |
 | 修复后 Cursor 点击批准 / 拒绝 | **未完成** | 后续界面工具报 ScreenCaptureKit `-3812`；不能用自动化代替 |
 
-本节的 522 项结果属于当时 remote-semble 的本地审批候选，不能移作 OAuth 分支的测试证据。2026-11-04 合并版本的独立 CI 计数与日志见 [集成记录](history/2026-11-04-branch-integration.md)，这些 CI 不覆盖未提交的审批补丁。
+本节的 522 项结果属于当时 remote-semble 的本地审批候选，不能移作 OAuth 分支的测试证据。2026-11-04 合并版本的独立 CI 计数与日志见 [集成记录](history/2026-11-04-branch-integration.md)，这些历史 CI 不覆盖当时尚未合入的审批补丁。
 
 ## 6. 环境收尾与剩余事项
 
@@ -94,6 +98,6 @@ server/tests/tool_round.rs            # 断流错误结果的回归适配
 - 隔离服务已经停止，50745/50746 两个端口关闭；正式后端健康检查为 204。
 - 已清理测试期间含凭据的临时数据库副本、设置备份、服务日志和重复 example；脱敏证据、测试日志及合成远端工作区保留用于复核。
 - 测试时临时移除的 Command Allowlist `python3` 项：**尚无恢复确认**。它不保存在上述 settings.json 中，不能用设置文件摘要宣称已恢复。
-- 当前审批候选仍保留在 `codex/remote-semble` 的本地工作区，未提交。功能实现已另行合入；本地审批候选没有随合并上传，也不包含在 v1.1.0 安装包中。
+- 审批补丁已通过 #13 合入 main，仍不包含在 v1.1.0 安装包中。
 
-后续顺序：确认允许列表恢复情况 → 在可操作的 Cursor 中验收候选审批（批准后只执行一次、拒绝不执行、等待不超时）→ 提交/推送并核对该提交的 CI → 决定合入。OAuth 实现已合入，真实账号验收等待可用测试账号；#155 的未覆盖边界独立保留，不以 #469 的搜索测试代替。
+后续顺序：确认允许列表恢复情况 → 在可操作的 Cursor 中验收已合入的审批修复（批准后只执行一次、拒绝不执行、等待不超时）→ 核对待发版提交的 CI → 准备发布。OAuth 实现已合入，真实账号验收等待可用测试账号；#155 的未覆盖边界独立保留，不以 #469 的搜索测试代替。

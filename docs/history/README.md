@@ -8,6 +8,7 @@
 
 ## Issue 调查与验收
 
+- [2026-11-21 · Windows 普通用户 CA 检测与安装边界](issues/2026-11-21-windows-ca-check.md)
 - [2026-10-28 · GPT / Google OAuth 续期验证](issues/2026-10-28-issue481-check.md)
 
 - [2026-10-27 · Grok OAuth 续期验证](issues/2026-10-27-issue445-check.md)
