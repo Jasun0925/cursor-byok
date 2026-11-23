@@ -1,6 +1,10 @@
 name: Release desktop app
 
 on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
   push:
     tags:
       - "v*"
@@ -15,16 +19,26 @@ concurrency:
 jobs:
   prepare:
     name: Prepare release
+    # Only successful same-repository main push CI may prepare an automatic release.
+    if: >-
+      github.event_name == 'push' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.head_branch == 'main' &&
+       github.event.workflow_run.head_repository.full_name == github.repository)
     runs-on: ubuntu-latest
     outputs:
       should_publish: ${{ steps.release.outputs.should_publish }}
       version: ${{ steps.version.outputs.version }}
+      release_sha: ${{ steps.version.outputs.release_sha }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
 
       - name: Verify release author
+        if: github.event_name == 'push'
         env:
           REPOSITORY_OWNER: ${{ github.repository_owner }}
         shell: bash
@@ -44,7 +58,19 @@ jobs:
             exit 1
           fi
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Prepare automatic version and tag
+        id: automatic
+        if: github.event_name == 'workflow_run'
+        env:
+          CI_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: node .github/scripts/prepare-auto-release.mjs
+
       - name: Read and verify app version
+        if: github.event_name == 'push' || steps.automatic.outputs.should_publish == 'true'
         id: version
         shell: bash
         run: |
@@ -53,23 +79,30 @@ jobs:
           cargo_version=$(sed -n '/^version = / { s/version = "\([^"]*\)"/\1/p; q; }' apps/desktop/src-tauri/Cargo.toml)
           test "${version}" = "${package_version}"
           test "${version}" = "${cargo_version}"
-          test "${GITHUB_REF_TYPE}" = "tag"
-          test "${GITHUB_REF_NAME}" = "v${version}"
+          if [[ "${GITHUB_EVENT_NAME}" = "push" ]]; then
+            test "${GITHUB_REF_TYPE}" = "tag"
+            test "${GITHUB_REF_NAME}" = "v${version}"
+          fi
+          release_sha=$(git rev-parse HEAD)
+          test "$(git rev-parse "v${version}^{commit}")" = "${release_sha}"
           git fetch origin main:refs/remotes/origin/main
-          if ! git merge-base --is-ancestor "${GITHUB_SHA}" origin/main; then
+          if ! git merge-base --is-ancestor "${release_sha}" origin/main; then
             echo "Release tag must point to a commit contained in origin/main" >&2
             exit 1
           fi
           echo "version=${version}" >> "${GITHUB_OUTPUT}"
+          echo "release_sha=${release_sha}" >> "${GITHUB_OUTPUT}"
 
       - name: Check whether this version is already published
+        if: steps.version.outputs.version != ''
         id: release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ steps.version.outputs.version }}
         shell: bash
         run: |
-          state=$(gh release view "v${VERSION}" --json isDraft --jq 'if .isDraft then "draft" else "published" end' 2>/dev/null || true)
+          state=$(gh api --paginate "repos/${GITHUB_REPOSITORY}/releases" \
+            --jq ".[] | select(.tag_name == \"v${VERSION}\") | if .draft then \"draft\" else \"published\" end")
           if [[ "${state}" = "published" ]]; then
             echo "Version ${VERSION} is already published; nothing to do."
             echo "should_publish=false" >> "${GITHUB_OUTPUT}"
@@ -106,6 +139,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare.outputs.release_sha }}
 
       - name: Install Linux system dependencies
         if: matrix.platform == 'linux-x86_64'
@@ -208,6 +243,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare.outputs.release_sha }}
 
       - uses: actions/download-artifact@v4
         with:
@@ -275,6 +312,16 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ needs.prepare.outputs.version }}
         run: gh release upload "v${VERSION}" legacy-update/* --clobber
+
+      - name: Generate automatic release notes
+        if: github.event_name == 'workflow_run'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ needs.prepare.outputs.version }}
+        run: |
+          gh api "repos/${GITHUB_REPOSITORY}/releases/generate-notes" \
+            -f "tag_name=v${VERSION}" --jq .body > release-notes.md
+          gh release edit "v${VERSION}" --notes-file release-notes.md
 
       - name: Publish the completed release
         env:
