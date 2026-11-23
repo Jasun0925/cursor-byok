@@ -1,0 +1,42 @@
+{
+  "date": "2026-11-23",
+  "version": "1.2.1",
+  "cursor_version": "3.28.7",
+  "platform": "windows",
+  "user_session": 1,
+  "scope": "real Cursor Agent short acceptance; excludes 20-minute task",
+  "byok_zip_sha256": "6f30223414923d8193fce39b3ca39555bec35d4030cc81ea262ebb4f2fd78dcd",
+  "ca": {
+    "initialize": "passed",
+    "ready": "passed",
+    "thumbprint": "CB101B5DACAC8EB4A7E597726D15F035A4A79829",
+    "removed_after_test": true
+  },
+  "cursor_harness": {
+    "takeover_ui": "passed",
+    "isolated_user_data_dir": true,
+    "agent_request": "blocked_before_submission",
+    "provider_request_count": 0,
+    "proxy_observations": [
+      "GetMe returned 401 Unauthorized",
+      "GetPlanInfo returned 401 Unauthorized",
+      "GetEffectiveUserPlugins returned 401 Unauthorized",
+      "AvailableModels was not visible in the model picker"
+    ],
+    "cursor_gate_observations": [
+      "molten_agents_window off for signed-in account",
+      "cursor_agent_host gate disabled",
+      "effective agent-host topology disabled"
+    ]
+  },
+  "cleanup": {
+    "settings_sha256_after": "9AFAF3C8ECAF87257174D6801265E7EAB0F28CD6A0F9CF5796FAE96C40FB5355",
+    "settings_restored": true,
+    "temporary_ca_removed": true,
+    "temporary_model_removed": true,
+    "temporary_processes_removed": true,
+    "temporary_tasks_removed": true,
+    "original_cursor_state_touched": false
+  },
+  "status": "blocked_by_cursor_account_gate"
+}
