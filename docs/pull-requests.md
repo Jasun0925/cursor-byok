@@ -4,9 +4,9 @@
 >
 > 之前投稿的 #487、#500、#501 因用户要求删除源分支而关闭，均未合入上游；修复提交保留在本 fork main。评论尝试被归档只读的 403 拒绝，见 [回复记录](history/pull-requests/2026-10-27-community-replies.md)。
 
-## 2026-11-21 合入状态核对
+## 2026-11-23 发布状态核对
 
-2026-11-19 已依次合入以下八项；远端 main 为 `68c4dfb`，本 fork 开放 PR 数为 0。最新公开版本仍为 v1.1.0，未包含这批新增合并。下列旧日期的候选 head 和测试描述仅表示当时证据，不能再据此判断为“未合并”。
+2026-11-19 已依次合入以下八项；当时 main 为 `68c4dfb`，本 fork 开放 PR 数为 0。2026-11-23 已随 v1.2.1 发布，[四平台资产与更新清单核验](history/releases.md#v121)通过。下列旧日期的候选 head 和测试描述仅表示当时证据，不能再据此判断为“未合并”。
 
 | PR | 内容 | 合并提交 |
 | --- | --- | --- |
@@ -81,7 +81,7 @@
 
 | PR / head | 解决目标与范围 | 采用方式与验证边界 |
 | --- | --- | --- |
-| [#18](https://github.com/haohaomin/cursor-byok/pull/18) / `08bf3ba` | 增加俄语桌面本地化 | 按当前 fork 的 source 词条重新生成并补译 `ru-RU`，接入系统语言解析、设置选择器和 i18n 校验；本地检查与四组 CI 通过，已合入 main。真实安装包 UI 切换待发布前复核。 |
+| [#18](https://github.com/haohaomin/cursor-byok/pull/18) / `08bf3ba` | 增加俄语桌面本地化 | 按当前 fork 的 source 词条重新生成并补译 `ru-RU`，接入系统语言解析、设置选择器和 i18n 校验；本地检查与四组 CI 通过，已合入 main。真实安装包 UI 切换仍待实机复核。 |
 
 ## 2026-11-06 本 fork PR #23
 
@@ -127,7 +127,7 @@
 | [#513](https://github.com/leookun/cursor-byok/pull/513) fix: keep sessions running after failed writes and incomplete subagent requests | `87ee81dced16` | 17 | 已独立修复可复现的连接池污染；使用 SQLx 归还检查，保留正常回滚连接，未导入 WriteSession 或重复子代理补丁。7 项定向与 446 项工作区回归通过，[证据](history/pull-requests/2026-10-27-pr513-recovery.md)；已随 v1.1.0 发布。 |
 | [#512](https://github.com/leookun/cursor-byok/pull/512) feat(auto-review): review Shell, WebFetch and MCP calls when Auto-review is on | `08f5c335c6a0` | 12 | Auto-review 新协议与审批行为；需真实客户端验收，未合入。 |
 | [#485](https://github.com/leookun/cursor-byok/pull/485) [codex] Fix BYOK Agent tools, subagents and native todos | `49e29e3756e1` | 12 | 工具/子代理/todo 综合补丁；先拆分需求，避免覆盖现有完整生命周期修复。 |
-| [#498](https://github.com/leookun/cursor-byok/pull/498) fix(remote-ssh): restore BYOK for Cursor 3.21+ SSH (#469) | `c7114878c330` | 35 | 选择性采用，未整体合入。配置指南与 WebFetch 分页已有 [真实 SSH 验证](history/issues/2026-10-27-issue469-webfetch-fix.md)；早期快照候选的 [启动/忽略/身份缺陷](history/issues/2026-10-27-issue469-semble-check.md)有独立失败证据。重写的采集及分页实现已通过 fork PR #8 合入 main，审批修复已通过 #13 合入、待发布，真实批准/拒绝待验收，见 [工作状态](work-status.md)。已随 v1.1.0 发布。 |
+| [#498](https://github.com/leookun/cursor-byok/pull/498) fix(remote-ssh): restore BYOK for Cursor 3.21+ SSH (#469) | `c7114878c330` | 35 | 选择性采用，未整体合入。配置指南与 WebFetch 分页已有 [真实 SSH 验证](history/issues/2026-10-27-issue469-webfetch-fix.md)；早期快照候选的 [启动/忽略/身份缺陷](history/issues/2026-10-27-issue469-semble-check.md)有独立失败证据。重写的采集及分页实现已通过 fork PR #8 合入 main，采集实现已随 v1.1.0 发布，审批修复已通过 #13 合入并随 v1.2.1 发布；真实批准/拒绝待验收，见 [工作状态](work-status.md)。 |
 | [#497](https://github.com/leookun/cursor-byok/pull/497) CODEX ACCOUNTS: choose one Codex account and show remaining quota | `a4199525ab82` | 40 | 账号选择、切换和额度 UI；需并发选择与首输出前后切换回归，未合入。 |
 | [#496](https://github.com/leookun/cursor-byok/pull/496) ALIAS MODELS: create model groups that fail over by priority | `fda59c5157a0` | 100 | 模型别名与故障转移共 100 文件；需数据库、会话粘性、失败重试语义专项设计。 |
 | [#495](https://github.com/leookun/cursor-byok/pull/495) ADD CUSTOM PLUGINS: install a plugin from a chosen directory | `0a8cece13535` | 18 | 自定义插件目录安装；需路径穿越、符号链接和账号保留验证，未合入。 |
@@ -139,7 +139,7 @@
 
 #424、#423、#421 的本地修复和既有发布记录见 [维护状态](maintenance-status.md)；它们的旧“待 UI / 待合入”过程描述不再作为待办。上游 #420 的完整 schema 修复已进 main，但 v1.0.17 不包含后续补修。
 
-远程 Semble（fork PR #8）、Grok（#4）和 GPT/Google OAuth（#6）均已于 2026-11-04 合入 main；已随 v1.1.0 发布。Semble 审批补丁已于 2026-11-19 通过 #13 合入，尚未发布；真实账号与客户端审批仍待验收，见 [工作状态](work-status.md)。
+远程 Semble（fork PR #8）、Grok（#4）和 GPT/Google OAuth（#6）均已于 2026-11-04 合入 main；已随 v1.1.0 发布。Semble 审批补丁已于 2026-11-19 通过 #13 合入，并随 v1.2.1 发布；真实账号与客户端审批仍待验收，见 [工作状态](work-status.md)。
 
 ## 2026-09-28 初筛的基线与方法
 

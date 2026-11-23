@@ -1,14 +1,14 @@
 # 工作状态
 
-更新：2026-11-23；源码合并与 GitHub Release 元数据沿用 2026-11-21 核对结果，v1.1.0 产物下载结果沿用历史记录。历史测试与环境状态保留原核对日期。逐项调查见 [Issue 清单](issues.md)，原始测试见 [历史资料](history/README.md)。
+更新：2026-11-23；v1.2.1 已发布并完成下载、签名和更新清单核验。历史测试与环境状态保留原核对日期。逐项调查见 [Issue 清单](issues.md)，原始测试见 [历史资料](history/README.md)。
 
 **2026-11-13 进展：**#150/#417 的逐模型 Token 定价已通过 [PR #39](https://github.com/haohaomin/cursor-byok/pull/39) 合入 `main`（合并提交 `e53e97e`）；原 #35 是合入已先落地的 #34 分支，未直接进入主线，已由 #39 在当前主线基线上重新集成。设置页按 `model_hash` 保存输入、输出、缓存读取和缓存写入单价；首页总计与按模型明细按覆盖价计算，未配置覆盖时使用全局价格。当前主线联合回归为 293 个服务端单测通过、0 失败、14 忽略，桌面检查、Clippy 和生产构建通过。插件模型暂使用全局价格，真实供应商和发布版本仍待验收，见 [定价验证记录](history/issues/2026-11-13-issue150-model-pricing.md)。
 
-**当前结论：2026-11-19 已将 PR #13、#43–#49 合入 main。Semble 独立终端审批卡片修复已提交、推送并合入 #13；批量模型导入与配置备份的冲突已解决。最新公开版本仍为 v1.1.0，这八项新增合并尚未发布。真实 OAuth 账号、Semble 批准/拒绝及 Windows Cursor UI 仍待验收。**
+**当前结论：2026-11-19 已将 PR #13、#43–#49 合入 main。Semble 独立终端审批卡片修复已提交、推送并合入 #13；批量模型导入与配置备份的冲突已解决。最新公开版本为 v1.2.1，已包含这八项新增合并。真实 OAuth 账号、Semble 批准/拒绝及 Windows Cursor UI 仍待验收。**
 
 **2026-11-13 进展：**上游 PR #433 已按当前 Rust/Tauri 架构选择性重实现：非 Tab 的 Cursor host 请求进入本地路由，CONNECT 隧道保持原始 authority；硬编码云端 400/404 短路和 `custom-protocol` feature 未采用。定向代理测试、Clippy、桌面检查和工作区回归通过，真实代理网络与 Cursor UI 待验，见[验证记录](history/pull-requests/2026-11-13-pr433-proxy-routing.md)。**
 
-**2026-11-13 进展：Issue #505 的多个 reasoning signature 修复已通过 fork PR #12 合入 `main`（合并提交 `21f0b3c`），并随 v1.1.0 发布；`cursor-server --all-targets` 通过（465 通过、14 忽略）。真实 Cursor 与原网关仍未验收，不能据此宣称所有供应商都已覆盖。**
+**2026-11-13 进展：Issue #505 的多个 reasoning signature 修复已通过 fork PR #12 合入 `main`（合并提交 `21f0b3c`），已随 v1.2.1 发布；`cursor-server --all-targets` 通过（465 通过、14 忽略）。真实 Cursor 与原网关仍未验收，不能据此宣称所有供应商都已覆盖。**
 
 **2026-11-13 进展：Issue #463/#184 已增加 Google Gemini OpenAI 兼容预设，使用完整 `v1beta/openai/chat/completions` 地址和现有 Bearer 鉴权；前端类型检查、构建与浏览器配置验证通过，已通过 [PR #36](https://github.com/haohaomin/cursor-byok/pull/36) 合入 `main`。原生 `generateContent` 协议和真实 Gemini Key 尚未验收，见 [验证记录](history/issues/2026-11-13-issue463-gemini-openai-compat.md)。**
 
@@ -16,7 +16,7 @@
 
 ## 1. 已发布的成果
 
-v1.1.0 已发布，涵盖近期主线维护修复，见 [发布与资产核验](history/releases.md#v110)。发布没有扩大真实账号、客户端审批等未完成场景的验收范围。
+v1.2.1 已发布，涵盖 v1.1.0 之后的模型备份、批量添加、逐模型定价、Windows 用户级 CA、上下文和终端修复，见 [发布与资产核验](history/releases.md#v121)。发布没有扩大真实账号、客户端审批等未完成场景的验收范围。
 
 | 工作 | 已完成部分 | 保留的边界 |
 | --- | --- | --- |
@@ -44,7 +44,7 @@ v1.1.0 已发布，涵盖近期主线维护修复，见 [发布与资产核验](
 
 | PR | 合并提交 | 已合入内容 | 仍待验证 |
 | --- | --- | --- | --- |
-| [PR #8](https://github.com/haohaomin/cursor-byok/pull/8) | `07f9951` | 远程采集、忽略规则、分页、Python 导入隔离 | 独立终端审批卡片补丁已通过 #13 合入、待发布；真实批准/拒绝和 Windows Cursor UI |
+| [PR #8](https://github.com/haohaomin/cursor-byok/pull/8) | `07f9951` | 远程采集、忽略规则、分页、Python 导入隔离 | 独立终端审批卡片补丁已通过 #13 合入并随 v1.2.1 发布；真实批准/拒绝和 Windows Cursor UI |
 | [PR #4](https://github.com/haohaomin/cursor-byok/pull/4) | `e24eddf` | Grok 自动/手动续期、凭据轮换、插件 API 2、详细日志认证重试 | 真实 Grok 账号；API 1 外部插件需适配 API 2 |
 | [PR #6](https://github.com/haohaomin/cursor-byok/pull/6) | `91db826` | GPT/Google 续期、有限重试、冷却、旧凭据保护、Google 手动配额刷新 | 真实 GPT/Google 账号 |
 
@@ -52,7 +52,7 @@ v1.1.0 已发布，涵盖近期主线维护修复，见 [发布与资产核验](
 
 ## 4. 审批修复已合入，真实 UI 待验收
 
-[PR #13](https://github.com/haohaomin/cursor-byok/pull/13) 已于 2026-11-19 合入，提交 `d3fdc07`。下述 2026-10/11 调查与测试保留原日期，未提交状态已被这次合并取代；真实批准/拒绝仍未验收。
+[PR #13](https://github.com/haohaomin/cursor-byok/pull/13) 已于 2026-11-19 合入，提交 `d3fdc07`，已随 v1.2.1 发布。下述 2026-10/11 调查与测试保留原日期，未提交状态已被这次合并取代；真实批准/拒绝仍未验收。
 
 真实 Cursor **3.27.22** 的 SSH 测试已发出一次 SembleSearch。BYOK 收到的唯一 Exec 事件是 `rejected: Review cancelled or failed`，没有 Start/Exit。用户没有点击拒绝，因此这次不能算“拒绝验收通过”。请求与两次模型调用均正常结束，见 [脱敏证据](history/issues/2026-10-30-issue469-approval-evidence.json)。
 
@@ -72,7 +72,7 @@ server/src/cursor/
 server/tests/tool_round.rs            # 断流错误结果的回归适配
 ```
 
-这部分包含 **8 个生产代码文件、2 个测试文件**，保留在 `codex/remote-semble` 的本地工作区；文档整理单独提交，不包含这些代码修改。终端卡片先于 Shell 请求，ID 与 MCP 卡片不同；采集分页、完成、拒绝、取消和断流都有收尾；原始源码采集正文不额外进入模型工具结果。没有设置跳过审批，没有修改 Cursor 安装文件。
+这部分包含 **8 个生产代码文件、2 个测试文件**，已通过 #13 进入 main 和 v1.2.1；不再是本地未提交候选。终端卡片先于 Shell 请求，ID 与 MCP 卡片不同；采集分页、完成、拒绝、取消和断流都有收尾；原始源码采集正文不额外进入模型工具结果。没有设置跳过审批，没有修改 Cursor 安装文件。
 
 ## 5. 已有测试结果
 
@@ -98,6 +98,6 @@ server/tests/tool_round.rs            # 断流错误结果的回归适配
 - 隔离服务已经停止，50745/50746 两个端口关闭；正式后端健康检查为 204。
 - 已清理测试期间含凭据的临时数据库副本、设置备份、服务日志和重复 example；脱敏证据、测试日志及合成远端工作区保留用于复核。
 - 测试时临时移除的 Command Allowlist `python3` 项：**尚无恢复确认**。它不保存在上述 settings.json 中，不能用设置文件摘要宣称已恢复。
-- 审批补丁已通过 #13 合入 main，仍不包含在 v1.1.0 安装包中。
+- 审批补丁已通过 #13 合入 main，并包含在 v1.2.1 安装包中。
 
-后续顺序：确认允许列表恢复情况 → 在可操作的 Cursor 中验收已合入的审批修复（批准后只执行一次、拒绝不执行、等待不超时）→ 核对待发版提交的 CI → 准备发布。OAuth 实现已合入，真实账号验收等待可用测试账号；#155 的未覆盖边界独立保留，不以 #469 的搜索测试代替。
+后续顺序：确认允许列表恢复情况 → 在可操作的 Cursor 中验收已合入的审批修复（批准后只执行一次、拒绝不执行、等待不超时）。v1.2.1 发布及资产核验已完成。OAuth 实现已合入，真实账号验收等待可用测试账号；#155 的未覆盖边界独立保留，不以 #469 的搜索测试代替。

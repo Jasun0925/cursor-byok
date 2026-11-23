@@ -1,16 +1,16 @@
 # 维护状态与上游问题处理
 
-更新：2026-11-23；发布元数据沿用 2026-11-21 核对结果。维护者：haohaomin。
+更新：2026-11-23；v1.2.1 发布及资产核验已完成。维护者：haohaomin。
 
 原仓库 [leookun/cursor-byok](https://github.com/leookun/cursor-byok) 已归档。这个 fork 继续收集原仓库的问题和候选补丁，复现后修复，并保留原作者与贡献者署名。它不是 Cursor 官方项目，也不是原作者指定的继任仓库。
 
-- 安装：[当前已发布的 v1.1.0](https://github.com/haohaomin/cursor-byok/releases/tag/v1.1.0)。
+- 安装：[当前已发布的 v1.2.1](https://github.com/haohaomin/cursor-byok/releases/tag/v1.2.1)。
 - 反馈：[本仓库 Issues](https://github.com/haohaomin/cursor-byok/issues)。请附原 Issue/PR 编号、操作系统、Cursor/BYOK 版本、模型协议、复现步骤和脱敏错误。
 - 贡献：[本仓库 Pull Requests](https://github.com/haohaomin/cursor-byok/pulls)。
 
-源码与安装包分别标记。v1.1.0 已包含本轮主线维护修复，具体内容与资产核验见 [发布记录](history/releases.md#v110)；未复现、部分通过或缺少原环境的条目不会标记为彻底解决。
+源码与安装包分别标记。v1.2.1 已包含本轮主线维护修复，具体内容与资产核验见 [发布记录](history/releases.md#v121)；未复现、部分通过或缺少原环境的条目不会标记为彻底解决。
 
-PR #13、#43–#49 已于 2026-11-19 合入 main，尚未发布。其中包括 Windows 用户级 CA、模型备份、批量添加模型、上下文上限与终端文件提示。Windows 普通用户的证书存储安装、检测和清理已于 2026-11-23 验证；临时证书已过期，有效证书的 HTTPS 与真实 BYOK UI 仍待验收；见 [验证记录](history/issues/2026-11-21-windows-ca-check.md)。
+PR #13、#43–#49 已于 2026-11-19 合入 main，并随 v1.2.1 发布。其中包括 Windows 用户级 CA、模型备份、批量添加模型、上下文上限与终端文件提示。Windows 普通用户的证书存储安装、检测和清理已于 2026-11-23 验证；临时证书已过期，有效证书的 HTTPS 与真实 BYOK UI 仍待验收；见 [验证记录](history/issues/2026-11-21-windows-ca-check.md)。
 
 ## 文档入口
 
@@ -38,7 +38,7 @@ PR #13、#43–#49 已于 2026-11-19 合入 main，尚未发布。其中包括 W
 - [#504](https://github.com/leookun/cursor-byok/issues/504)：已独立复现并修复活动 Run 中重复用户消息导致工具被中断的缺口，按消息 ID 在排队前去重。六项协议对照覆盖真实新消息、历史恢复和 Write 内容；原作者的全部症状仍缺请求样本，不能整体标为解决。[源码修复与验证边界](history/issues/2026-10-27-issue504-input-redelivery-fix.md)，已随 v1.1.0 发布。
 - [#155](https://github.com/leookun/cursor-byok/issues/155)：保持“完成一半”。普通后台短任务自动续答已通过；真实审批等待、压缩期间完成、最终补丁的输出通知等边界仍待验收。20 分钟测试按维护者本轮范围排除。[验收记录](history/issues/2026-10-19-issue155-acceptance.md)
 - [#505](https://github.com/leookun/cursor-byok/issues/505)：多个 reasoning signature。源码已改为按顺序保留 checkpoint 中的多个 signature，并合并模型流中的重复 replay state；465 项服务端全目标测试通过。真实 Cursor、原作者网关和签名样本仍待验收，不能标记为彻底解决。[修复与验证边界](history/issues/2026-11-06-issue505-fix.md)
-- [#469](https://github.com/leookun/cursor-byok/issues/469)：Remote SSH 基础 Agent 已有 [v1.0.17 可用的配置办法](remote-ssh.md)。WebFetch 分页已在源码修复并通过真实 SSH 验证；远程 Semble 的采集/分页/过滤已通过 fork PR #8 合入 main，已随 v1.1.0 发布。后续审批测试自动取消；独立终端卡片修复已通过 #13 合入 main，尚未发布，真实批准/拒绝待验证。见 [工作状态](work-status.md)与 [审批证据](history/issues/2026-10-30-issue469-approval-evidence.json)。
+- [#469](https://github.com/leookun/cursor-byok/issues/469)：Remote SSH 基础 Agent 已有 [v1.0.17 可用的配置办法](remote-ssh.md)。WebFetch 分页已在源码修复并通过真实 SSH 验证；远程 Semble 的采集/分页/过滤已通过 fork PR #8 合入 main，已随 v1.1.0 发布。后续审批测试自动取消；独立终端卡片修复已通过 #13 合入 main，并随 v1.2.1 发布，真实批准/拒绝待验证。见 [工作状态](work-status.md)与 [审批证据](history/issues/2026-10-30-issue469-approval-evidence.json)。
 - [#511](https://github.com/leookun/cursor-byok/issues/511)：已独立复现并修复“清理统计后文件不缩小”。两种范围、历史/模型保留、读连接占用、调用者断开及失败恢复均有临时库验证；本机 475 项、Linux 473 项、Windows/macOS 各 6 项回归通过，[PR #1](https://github.com/haohaomin/cursor-byok/pull/1)记录源码合入状态，已随 v1.1.0 发布。原作者 19.09 GB 主库的具体组成和增长来源仍待取证，[不能视作全部解决](history/issues/2026-10-27-issue511-storage-fix.md)。
 
 ## 清单与公开回复

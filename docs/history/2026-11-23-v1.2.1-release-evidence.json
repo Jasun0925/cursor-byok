@@ -1,0 +1,513 @@
+{
+  "version": "1.2.1",
+  "repository": "haohaomin/cursor-byok",
+  "release_url": "https://github.com/haohaomin/cursor-byok/releases/tag/v1.2.1",
+  "release_commit": "ada1ccee540887d625f12be2f3cee531a31e8460",
+  "release_run": "https://github.com/haohaomin/cursor-byok/actions/runs/45155404433",
+  "ci_run": "https://github.com/haohaomin/cursor-byok/actions/runs/45153701626",
+  "ci_commit": "37a99208ec5df5eb3c1fbd87d544a50e92d88781",
+  "initial_cancelled_release_run": "https://github.com/haohaomin/cursor-byok/actions/runs/45151870532",
+  "ci_note": "CI validated source commit; automatic release updates only the five desktop version manifests and locks.",
+  "updater_public_key_sha256": "a4e4479f2f264e2aa24e384b67e9adb0b57efa5225f1f76cad0be0249a28ce15",
+  "signature_verifier": "minisign-verify 0.2.5, existing cached Rust dependency",
+  "published_at": "2026-11-23T10:57:38Z",
+  "verified_at": "2026-11-23T11:02:07.470970+00:00",
+  "draft": false,
+  "prerelease": false,
+  "latest": true,
+  "assets": [
+    {
+      "name": "cursor-byok-1.2.1-linux-amd64.tar.gz",
+      "size": 31286090,
+      "sha256": "4e7dbdaa9b11e2691ce1c125fe9ef9b09fd28b3d8cec5b086074d139ae368e03",
+      "github_digest_verified": true
+    },
+    {
+      "name": "cursor-byok-1.2.1-macos-amd64.tar.gz",
+      "size": 30185619,
+      "sha256": "e1a6cfd463b89414f42dd0c9ff38179d7d92d74af3d0d47a0430fe60ab279107",
+      "github_digest_verified": true
+    },
+    {
+      "name": "cursor-byok-1.2.1-macos-arm64.tar.gz",
+      "size": 29059259,
+      "sha256": "e1744ade9b1e19f2b9bb9da320be4f714e9399c65afca97ddfd1711b49184412",
+      "github_digest_verified": true
+    },
+    {
+      "name": "cursor-byok-1.2.1-windows-amd64.zip",
+      "size": 28101601,
+      "sha256": "6f30223414923d8193fce39b3ca39555bec35d4030cc81ea262ebb4f2fd78dcd",
+      "github_digest_verified": true,
+      "signature": "valid"
+    },
+    {
+      "name": "cursor-byok-1.2.1-windows-amd64.zip.sig",
+      "size": 428,
+      "sha256": "8cf477079651d32ecde74326e2676b0ed1e7f696ff8534b159e9ace6914a22ed",
+      "github_digest_verified": true
+    },
+    {
+      "name": "Cursor.BYOK-1.2.1-1.x86_64.rpm",
+      "size": 31830303,
+      "sha256": "44f8cd34d034cae8da2e6a1ca38d492ae42ca190ef379606931e6cc403d1f106",
+      "github_digest_verified": true,
+      "signature": "valid"
+    },
+    {
+      "name": "Cursor.BYOK-1.2.1-1.x86_64.rpm.sig",
+      "size": 420,
+      "sha256": "e04cb9393d08ac6589ff2e6df4bc232dbc4846f3401845f9d76ded8c9ae9a134",
+      "github_digest_verified": true
+    },
+    {
+      "name": "Cursor.BYOK_1.2.1_aarch64.app.tar.gz",
+      "size": 29059259,
+      "sha256": "e1744ade9b1e19f2b9bb9da320be4f714e9399c65afca97ddfd1711b49184412",
+      "github_digest_verified": true,
+      "signature": "valid"
+    },
+    {
+      "name": "Cursor.BYOK_1.2.1_aarch64.app.tar.gz.sig",
+      "size": 412,
+      "sha256": "6d86208d67c4096a192bafb4df05c997899c8d2d38eb4c125190ddd206f0ba62",
+      "github_digest_verified": true
+    },
+    {
+      "name": "Cursor.BYOK_1.2.1_amd64.AppImage",
+      "size": 109550072,
+      "sha256": "64e86b1d64082733332aed361107cb5f766edd706c9507d018d0d54e61adce00",
+      "github_digest_verified": true,
+      "signature": "valid"
+    },
+    {
+      "name": "Cursor.BYOK_1.2.1_amd64.AppImage.sig",
+      "size": 424,
+      "sha256": "960c8384b93ba393280fbb20fb65a1b3ad5818cffd8f3875a0742bf40d2c2f34",
+      "github_digest_verified": true
+    },
+    {
+      "name": "Cursor.BYOK_1.2.1_amd64.deb",
+      "size": 31823334,
+      "sha256": "61e65440f510e7b2e1f86dcbddd3a43528206d8526815d393e0c148199bad246",
+      "github_digest_verified": true,
+      "signature": "valid"
+    },
+    {
+      "name": "Cursor.BYOK_1.2.1_amd64.deb.sig",
+      "size": 416,
+      "sha256": "6bb3ae89a1c0120d7f1b42fb8edd78cf43dc8e6f7062b24ad158018418569e33",
+      "github_digest_verified": true
+    },
+    {
+      "name": "Cursor.BYOK_1.2.1_x64-setup.exe",
+      "size": 21251841,
+      "sha256": "6c9de102b012be41a59d823b6e2687f5c2ba6cbd8d7c1d1846a8da493b863ca9",
+      "github_digest_verified": true,
+      "signature": "valid"
+    },
+    {
+      "name": "Cursor.BYOK_1.2.1_x64-setup.exe.sig",
+      "size": 424,
+      "sha256": "8ea434bba5781ec66880e775330b6f31a2771da2c0b9e81652a7fd406d6fb58f",
+      "github_digest_verified": true
+    },
+    {
+      "name": "Cursor.BYOK_1.2.1_x64.app.tar.gz",
+      "size": 30185619,
+      "sha256": "e1a6cfd463b89414f42dd0c9ff38179d7d92d74af3d0d47a0430fe60ab279107",
+      "github_digest_verified": true,
+      "signature": "valid"
+    },
+    {
+      "name": "Cursor.BYOK_1.2.1_x64.app.tar.gz.sig",
+      "size": 412,
+      "sha256": "9b599d46e6e0853f071df8b4227c02a7b21c4bf25f46714a02c7e0e312e57c3a",
+      "github_digest_verified": true
+    },
+    {
+      "name": "latest.json",
+      "size": 6045,
+      "sha256": "32aa8cc579fe68acb21c3914458dbad2c506ca7df2be7e56705d25461bba6aec",
+      "github_digest_verified": true
+    },
+    {
+      "name": "portable-latest.json",
+      "size": 720,
+      "sha256": "7600e9c76e51beab450aa94af20aa0776af06d70ec06a21b7f40d17169d2bf59",
+      "github_digest_verified": true
+    },
+    {
+      "name": "update.json",
+      "size": 1208,
+      "sha256": "90e346a04858bdf0e933718dd4b14372c387c6f98b466c2aa96985de303fcbee",
+      "github_digest_verified": true
+    }
+  ],
+  "manifests": {
+    "latest.json": {
+      "version": "1.2.1",
+      "platforms": [
+        "linux-x86_64",
+        "linux-x86_64-appimage",
+        "linux-x86_64-deb",
+        "linux-x86_64-rpm",
+        "darwin-aarch64",
+        "darwin-aarch64-app",
+        "windows-x86_64",
+        "windows-x86_64-nsis",
+        "darwin-x86_64",
+        "darwin-x86_64-app"
+      ],
+      "urls_verified": true
+    },
+    "portable-latest.json": {
+      "version": "1.2.1",
+      "platforms": [
+        "windows-x86_64"
+      ],
+      "urls_verified": true
+    },
+    "update.json": {
+      "version": "1.2.1",
+      "platforms": [
+        "macos-arm64",
+        "macos-amd64",
+        "windows-amd64",
+        "linux-amd64"
+      ],
+      "urls_verified": true
+    }
+  },
+  "latest_endpoints": [
+    {
+      "owner": "haohaomin",
+      "manifest": "latest.json",
+      "version": "1.2.1"
+    },
+    {
+      "owner": "haohaomin",
+      "manifest": "portable-latest.json",
+      "version": "1.2.1"
+    },
+    {
+      "owner": "haohaomin",
+      "manifest": "update.json",
+      "version": "1.2.1"
+    },
+    {
+      "owner": "renhao12356578",
+      "manifest": "latest.json",
+      "version": "1.2.1"
+    },
+    {
+      "owner": "renhao12356578",
+      "manifest": "portable-latest.json",
+      "version": "1.2.1"
+    },
+    {
+      "owner": "renhao12356578",
+      "manifest": "update.json",
+      "version": "1.2.1"
+    }
+  ],
+  "ci_jobs": [
+    {
+      "name": "Desktop Rust (macos-latest)",
+      "conclusion": "success",
+      "test_result_batches": [
+        {
+          "passed": 14,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 41,
+          "failed": 0,
+          "ignored": 0
+        }
+      ]
+    },
+    {
+      "name": "Rust (Linux)",
+      "conclusion": "success",
+      "test_result_batches": [
+        {
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 299,
+          "failed": 0,
+          "ignored": 14
+        },
+        {
+          "passed": 0,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 8,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 10,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 18,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 18,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 5,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 23,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 3,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 13,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 1,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 16,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 7,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 8,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 2,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 9,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 22,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 10,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 42,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 41,
+          "failed": 0,
+          "ignored": 0
+        }
+      ]
+    },
+    {
+      "name": "Desktop Rust (windows-latest)",
+      "conclusion": "success",
+      "test_result_batches": [
+        {
+          "passed": 14,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 4,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 6,
+          "failed": 0,
+          "ignored": 0
+        },
+        {
+          "passed": 42,
+          "failed": 0,
+          "ignored": 0
+        }
+      ]
+    },
+    {
+      "name": "Frontend",
+      "conclusion": "success",
+      "test_result_batches": []
+    }
+  ],
+  "local_validation": {
+    "actionlint": "1.7.12 passed (shellcheck and pyflakes disabled)",
+    "server_clippy_all_targets": "passed after CA test module relocation",
+    "ca_regression_test": "passed",
+    "server_unit_tests_passed": 301,
+    "server_unit_tests_ignored": 14,
+    "external_api_tests_passed": 18,
+    "release_script_tests_passed": 12,
+    "frontend_check": "passed",
+    "tauri_debug_no_bundle": "passed with existing local SQLx build override",
+    "npm_audit_vulnerabilities": 0
+  },
+  "verification": "Downloaded all release assets; checked sizes and GitHub SHA-256 digests; verified seven Minisign signatures with the unchanged updater public key; checked manifest versions, coverage, URLs, signatures, legacy checksums and current/old-owner Latest endpoints.",
+  "limits": [
+    "No application installation or automatic upgrade was performed.",
+    "Real OAuth accounts, Semble approval/rejection, and Windows Cursor UI remain unverified.",
+    "Windows CurrentUser certificate store lifecycle passed with an expired isolated test certificate; this does not establish valid-certificate HTTPS or application Ready status.",
+    "Issue 155 remains partial; no 20-minute task test was run."
+  ]
+}

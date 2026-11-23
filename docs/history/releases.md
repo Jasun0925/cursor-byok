@@ -378,27 +378,35 @@
 
 <a id="v120"></a>
 
-## v1.2.0 发布记录
+## v1.2.0 发布中止记录
+
+2026-11-23，版本提交与标签已推送，标签提交为 `f3a0ecd4cb6e80a1f9fe59d8527c8443554b5b1b`。并行 CI 的 Linux Clippy 检出 `server/src/local_app/ca/mod.rs` 测试模块后仍有生产函数，报 `items_after_test_module`；工作区测试因该步骤失败而未运行。维护者已在安装包公开前取消 [发布运行](https://github.com/haohaomin/cursor-byok/actions/runs/45151870532)，保留标签，不改写或复用版本。对应 [CI](https://github.com/haohaomin/cursor-byok/actions/runs/45151861993) 不算通过。修复仅移动测试模块，不改变证书逻辑，后续版本使用 v1.2.1。
+
+<a id="v121"></a>
+
+## v1.2.1 发布记录
 
 本版本集中发布 v1.1.0 之后已合入主线的功能和修复，由 haohaomin 继续维护。感谢原项目作者及上游 Issue/PR 贡献者。
 
 ### 新增与改善
 
-- **模型配置备份与批量添加**：支持内置模型 JSON 导出/导入，导入跳过已有模型；补齐导入顺序、大文件和异步刷新处理。供应商模型列表支持多选后批量添加。（#471、#99；本仓库 PR #44、#45）
-- **按模型查看用量和费用**：首页提供各模型的 Token 用量与费用明细；可分别配置输入、输出、缓存读取和缓存写入单价，未设置时使用全局价格。（#150、#417；PR #34、#39）
-- **桌面体验**：默认跟随系统主题，新增俄语；模型设置页可以打开 Cursor；改进更新通知、批量模型测试操作、导入弹窗滚动与焦点，修复截断文字按钮的点击响应。（#371、#134、#119、#339、#370）
-- **Gemini 预设**：新增 Google Gemini 的 OpenAI 兼容接口配置；不等于支持原生 generateContent 协议。（#463、#184；PR #36）
+- **模型配置备份与批量添加**：支持内置模型 JSON 导出/导入，导入跳过已有模型；补齐导入顺序、大文件和异步刷新处理。供应商模型列表支持多选后批量添加。（上游 [#471](https://github.com/leookun/cursor-byok/issues/471)、[#99](https://github.com/leookun/cursor-byok/issues/99)；本仓库 PR #44、#45）
+- **按模型查看用量和费用**：首页提供各模型的 Token 用量与费用明细；可分别配置输入、输出、缓存读取和缓存写入单价，未设置时使用全局价格。（上游 [#150](https://github.com/leookun/cursor-byok/issues/150)、[#417](https://github.com/leookun/cursor-byok/issues/417)；本仓库 PR #34、#39）
+- **桌面体验**：默认跟随系统主题，新增俄语；模型设置页可以打开 Cursor；改进更新通知、批量模型测试操作、导入弹窗滚动与焦点，修复截断文字按钮的点击响应。（上游 [#371](https://github.com/leookun/cursor-byok/issues/371)、[#134](https://github.com/leookun/cursor-byok/issues/134)、[#119](https://github.com/leookun/cursor-byok/issues/119)、[#339](https://github.com/leookun/cursor-byok/issues/339)、[#370](https://github.com/leookun/cursor-byok/issues/370)）
+- **Gemini 预设**：新增 Google Gemini 的 OpenAI 兼容接口配置；不等于支持原生 generateContent 协议。（上游 [#463](https://github.com/leookun/cursor-byok/issues/463)、[#184](https://github.com/leookun/cursor-byok/issues/184)；本仓库 PR #36）
+
+- **自动发布**：应用或构建代码合入 main 后，在 CI 通过后生成稳定版本、构建四个平台安装包并发布；纯文档修改跳过发版。
 
 ### 修复的问题
 
-- **Windows 证书与终端**：本地 CA 改为安装、检测当前用户的 Root 存储，减少机器级权限需求；终端命令直接传入 cmd，避免 start 二次解析导致参数错位。（上游 PR #458；本仓库 PR #14、#43）
-- **Remote SSH 审批卡片**：Semble 内部采集使用独立终端卡片，补齐完成和取消时的卡片关闭，避免与搜索卡片共用执行标识。（#469；PR #13）
-- **长对话与继续执行**：优先采用用户设置的上下文窗口，向 Cursor 返回配置的上下文上限；在缺少 usage 数据时估算占用；支持运行时压缩提示、限制自动压缩等待时间，并补充恢复时的上下文与进度信息。（#350、#460、#343、#378、#375；上游 PR #427）
-- **模型与工具协议**：保留一轮内的多个 reasoning signature；减少工具调用 ID 截断碰撞；保留 Grep 分页和工作区上下文；补充本地会话标题与相关知识接口。（#505、#364、#237；上游 PR #211、#345）
-- **终端输出读取**：六个内置模式明确终端输出文件使用 `<shell_id>.txt`，减少漏写后缀导致的文件读取失败。（#302；PR #49）
-- **路由与提示安全**：补齐非 Tab 的 Cursor 请求本地代理路由，保留 CONNECT 原始目标；处理可能破坏提示结构的标签，并收紧 Agent 路由与诊断日志脱敏。（上游 PR #433；#229）
-- **使用文档**：补充 Linux 安装依赖、发行版兼容边界，以及 CA 必要性和外部 API 的使用方式。（#486、#352）
-
+- **Windows 证书与终端**：本地 CA 改为安装、检测当前用户的 Root 存储，减少机器级权限需求；终端命令直接传入 cmd，避免 start 二次解析导致参数错位。（上游 [PR #458](https://github.com/leookun/cursor-byok/pull/458)；本仓库 PR #14、#43）
+- **Remote SSH 审批卡片**：Semble 内部采集使用独立终端卡片，补齐完成和取消时的卡片关闭，避免与搜索卡片共用执行标识。（上游 [#469](https://github.com/leookun/cursor-byok/issues/469)；本仓库 PR #13）
+- **长对话与继续执行**：优先采用用户设置的上下文窗口，向 Cursor 返回配置的上下文上限；在缺少 usage 数据时估算占用；支持运行时压缩提示、限制自动压缩等待时间，并补充恢复时的上下文与进度信息。（上游 [#350](https://github.com/leookun/cursor-byok/issues/350)、[#460](https://github.com/leookun/cursor-byok/issues/460)、[#343](https://github.com/leookun/cursor-byok/issues/343)、[#378](https://github.com/leookun/cursor-byok/issues/378)、[#375](https://github.com/leookun/cursor-byok/issues/375)；上游 [PR #427](https://github.com/leookun/cursor-byok/pull/427)）
+- **模型与工具协议**：保留一轮内的多个 reasoning signature；减少工具调用 ID 截断碰撞；保留 Grep 分页和工作区上下文；补充本地会话标题与相关知识接口。（上游 [#505](https://github.com/leookun/cursor-byok/issues/505)、[#364](https://github.com/leookun/cursor-byok/issues/364)、[#237](https://github.com/leookun/cursor-byok/issues/237)；上游 [PR #211](https://github.com/leookun/cursor-byok/pull/211)、[PR #345](https://github.com/leookun/cursor-byok/pull/345)）
+- **终端输出读取**：六个内置模式明确终端输出文件使用 `<shell_id>.txt`，减少漏写后缀导致的文件读取失败。（上游 [#302](https://github.com/leookun/cursor-byok/issues/302)；本仓库 PR #49）
+- **路由与提示安全**：补齐非 Tab 的 Cursor 请求本地代理路由，保留 CONNECT 原始目标；处理可能破坏提示结构的标签，并收紧 Agent 路由与诊断日志脱敏。（上游 [PR #433](https://github.com/leookun/cursor-byok/pull/433)、[#229](https://github.com/leookun/cursor-byok/issues/229)）
+- **使用文档**：补充 Linux 安装依赖、发行版兼容边界，以及 CA 必要性和外部 API 的使用方式。（上游 [#486](https://github.com/leookun/cursor-byok/issues/486)、[#352](https://github.com/leookun/cursor-byok/issues/352)）
+- **构建检查**：将 CA 测试模块移至文件末尾，修复 Linux Clippy 的 `items_after_test_module` 错误。
 - **依赖安全更新**：更新兼容范围内的前端与开发工具依赖，并将 DOMPurify 固定到 3.4.17；本次 npm audit 检查为 0 项告警。
 
 ### 升级与验证边界
@@ -406,9 +414,18 @@
 - Windows 已有机器级 CA 不会自动迁移；更新后按应用提示在当前用户范围安装并刷新状态。企业设备的证书策略仍由管理员控制。
 - JSON 备份含模型 API Key，请妥善保管；插件模型及其授权由插件独立管理，不包含在该备份中。
 - Windows 普通用户下，证书存储的安装、检测和移除已验证。隔离测试证书运行时已过期，因此该结果不替代有效证书的 HTTPS 接入和完整应用界面验收。
-- #155 后台任务仍保留“部分完成”：普通短任务自动续答已有证据，真实审批等待、压缩期间完成等边界未完整覆盖；本次未做 20 分钟测试。
+- 上游 [#155](https://github.com/leookun/cursor-byok/issues/155) 后台任务仍保留“部分完成”：普通短任务自动续答已有证据，真实审批等待、压缩期间完成等边界未完整覆盖；本次未做 20 分钟测试。
 - 真实 OAuth 账号、原作者网关、Remote SSH 批准/拒绝、部分 Linux 发行版及完整安装包 UI 仍有待验收场景，不能把本次发版理解为所有上游问题均已解决。
 
-完整变化：[v1.1.0 → v1.2.0](https://github.com/haohaomin/cursor-byok/compare/v1.1.0...v1.2.0)。本项目为独立维护的社区项目，与 Cursor 官方无隶属或授权关系。
+完整变化：[v1.1.0 → v1.2.1](https://github.com/haohaomin/cursor-byok/compare/v1.1.0...v1.2.1)。本项目为独立维护的社区项目，与 Cursor 官方无隶属或授权关系。
 
-发布状态（2026-11-23）：已准备发布，待标签触发、云端构建及资产校验；不是已发布确认。
+### 发布与核验结果
+
+- 发布提交：`ada1ccee540887d625f12be2f3cee531a31e8460`；版本由成功 CI 后的自动发布流程递增到 v1.2.1，v1.2.0 标签保留且未公开发布。
+- [源码 CI](https://github.com/haohaomin/cursor-byok/actions/runs/45153701626)与[四平台发布工作流](https://github.com/haohaomin/cursor-byok/actions/runs/45155404433)全部成功。
+- [v1.2.1 Release](https://github.com/haohaomin/cursor-byok/releases/tag/v1.2.1) 为 Latest，`draft=false`、`prerelease=false`。
+- 实际下载全部 20 个附件，文件大小和 GitHub SHA-256 摘要均匹配；七个安装/更新包通过原 updater 公钥的 Minisign 签名验证。
+- `latest.json`、`portable-latest.json`、`update.json` 均为 1.2.1；平台覆盖、下载 URL、签名及旧版包校验和全部匹配，新旧仓库用户名的 Latest 更新入口均通过。
+- 本地桌面检查、Tauri debug/no-bundle 构建、301 项服务端单测（14 忽略）、18 项控制 API 测试、12 项发布脚本测试、CA 定向回归、Clippy 与 actionlint 均通过；npm audit 为 0 项告警。本地 SQLx 工具链沿用已有构建参数，没有修改项目构建配置。
+- 本轮没有安装或替换本机应用；产物下载和签名核验不等于应用内安装验收。
+- [结构化证据](2026-11-23-v1.2.1-release-evidence.json)。

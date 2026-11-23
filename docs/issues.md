@@ -1,6 +1,6 @@
 # Issue 清单
 
-更新：2026-11-21；PR #13、#43–#49 已合入 main，尚未进入最新公开版本 v1.1.0。上游元数据以 [2026-10-27 快照](history/issues/2026-10-27.snapshot.json) 为准，当时开放 104 项；保留首次收集的 100 项和后续 6 项，关闭或无法访问不等于本地已解决。
+更新：2026-11-23；PR #13、#43–#49 已合入 main，并进入最新公开版本 v1.2.1；[发布与核验](history/releases.md#v121)。上游元数据以 [2026-10-27 快照](history/issues/2026-10-27.snapshot.json) 为准，当时开放 104 项；保留首次收集的 100 项和后续 6 项，关闭或无法访问不等于本地已解决。
 
 - **先看进度**：[已做好与未完成工作](work-status.md)。
 - **看安装包包含什么**：[维护状态](maintenance-status.md)。
@@ -12,7 +12,7 @@
 
 | 项目 | 已完成 | 剩余 |
 | --- | --- | --- |
-| #469 远程 Semble | 主机采集/分页等已随 v1.1.0 发布；本地审批候选回归通过 | 审批修复已通过 PR #13 合入、待发布；真实批准/拒绝及 Windows Cursor UI 待验收 |
+| #469 远程 Semble | 主机采集/分页等已随 v1.1.0 发布；本地审批候选回归通过 | 审批修复已通过 PR #13 合入并随 v1.2.1 发布；真实批准/拒绝及 Windows Cursor UI 待验收 |
 | #445 / #481 OAuth | 实现与 API 2 已随 v1.1.0 发布，有隔离测试 | 真实账号验收 |
 | #155 后台任务 | v1.0.17 普通短任务自动续答和去重通过 | 仍为完成一半；审批、压缩等边界未完整覆盖，不测 20 分钟 |
 | #505 多 reasoning signature | 源码修复完成；checkpoint、模型流和 provider 回归通过 | 真实 Cursor/原网关待验收，见 [修复记录](history/issues/2026-11-06-issue505-fix.md) |
@@ -76,7 +76,7 @@
 | ☐ | [#472](https://github.com/leookun/cursor-byok/issues/472) 中断运行 | B | 评论报恢复，待现版复测 | 评论称更新 Cursor 后恢复；先核对当前版本，再复现复杂命令/长上下文中断。 |
 | ☐ | [#444](https://github.com/leookun/cursor-byok/issues/444) 使用grok free api接入，压缩后 基本完全忘记之前的事了 | B | 待现版复测 | 记录压缩前后摘要与 provider 历史，区分模型能力和上下文丢失。 |
 | ☐ | [#341](https://github.com/leookun/cursor-byok/issues/341) 回滚失效 | B | 已检查：两个入口手动实测通过，当前简单场景未复现 | 用户确认 Undo、Restore Checkpoint 均正常；2026-10-11 首次磁盘核对两个文件均为 value=1。后续额外编辑单独记录，未将其误判为回滚失败。未修改生产代码，原失败条件与隔离探针缺口仍保留；见 [新版补充验证](history/issues/2026-10-11-issue341-check.md)及[实机证据](history/issues/2026-10-11-issue341-live-evidence.json)。 |
-| ◐ | [#302](https://github.com/leookun/cursor-byok/issues/302) 模型读 terminal 输出漏 .txt 后缀：Read 找不到文件 / Model drops .txt suffix when reading shell terminal files | B | 修复已通过 [PR #49](https://github.com/haohaomin/cursor-byok/pull/49)，合入 main；提示资产、嵌入回归和远程 Linux 验证通过，待发布 | 六个内置模式现在明确说明 Shell ID 是数字文件名主体，终端路径始终以 `.txt` 结尾；2026-11-19 已用本机 SQLx 构建参数完成 macOS 服务端单测（301 通过、14 忽略）；真实 Cursor UI 尚未验收。详见 [候选记录](history/issues/2026-11-13-issue302-terminal-file-suffix.md)。 |
+| ◐ | [#302](https://github.com/leookun/cursor-byok/issues/302) 模型读 terminal 输出漏 .txt 后缀：Read 找不到文件 / Model drops .txt suffix when reading shell terminal files | B | 修复已通过 [PR #49](https://github.com/haohaomin/cursor-byok/pull/49)，合入 main；提示资产、嵌入回归和远程 Linux 验证通过，已随 v1.2.1 发布 | 六个内置模式现在明确说明 Shell ID 是数字文件名主体，终端路径始终以 `.txt` 结尾；2026-11-19 已用本机 SQLx 构建参数完成 macOS 服务端单测（301 通过、14 忽略）；真实 Cursor UI 尚未验收。详见 [候选记录](history/issues/2026-11-13-issue302-terminal-file-suffix.md)。 |
 | ☐（已检查，暂跳过） | [#301](https://github.com/leookun/cursor-byok/issues/301) Shell 命令输出被吞 — 客户端显示空白气泡 / Shell output swallowed in local mode | B | 2026-10-10 已标记检查完成；协议未复现，UI 未验证 | 11 KB / 66 KB 单行中文 JSON 实时增量完整，最终卡片、历史回放与模型结果非空；超长结果保留首尾和截断提示。9 项展示回归通过，UI 被锁屏阻断；见 [复核记录](history/issues/2026-10-09-issue301-check.md)。 |
 | ☐ | [#300](https://github.com/leookun/cursor-byok/issues/300) AwaitShell 后台 Shell 完成后未立即返回 / AwaitShell waits after background shell completes | B | v1.0.13 协议测试未复现；真实 UI 待测 | AwaitShell 已移除，数字/字符串 ID 均立即失败；成功 Shell 通知在 5–35 ms 调用模型，另有约 2 秒连接收尾，5 项定向回归通过。macOS -3811 阻断 UI，未测进程退出至客户端通知的延迟；见 [复核记录](history/issues/2026-10-09-issue300-check.md)。 |
 | ☐（暂后置） | [#297](https://github.com/leookun/cursor-byok/issues/297) 工具在长对话环境中的性能严重下降 | B | 用户选择以后日常使用时观察；长对话性能未复现 | 构建阻断已解除，6 项压缩回归通过；以后出现卡顿再分离模型、压缩、检查点与 Blob ACK 耗时，不记为修复完成；见 [调查记录](history/issues/2026-10-12-issue297-check.md)。 |
@@ -105,7 +105,7 @@
 
 | 完成 | Issue / 原标题 | 分级 | 本地状态 | 下一步 / 证据线索 |
 | --- | --- | --- | --- | --- |
-| ☐ | [#469](https://github.com/leookun/cursor-byok/issues/469) v1.0.0 版本在更新 cursor 后无法在服务器上使用 | A | 基础路由/检索已实测；审批修复已通过 PR #13 合入、待发布与实机验收 | v1.0.17 可用 [always 配置](remote-ssh.md)。已合入 main 的 WebFetch、采集、忽略规则、多批及大目录分页已有 [SSH 验收](history/issues/2026-10-27-issue469-paging-live.md)，[Python 导入隔离](history/issues/2026-10-28-issue469-python-isolation-fix.md)已修复。后续 [真实审批自动取消](history/issues/2026-10-30-issue469-approval-evidence.json)已复现；独立终端卡片候选自动化通过，批准/拒绝及 Windows Cursor UI 未验收，审批补丁未合入，采集实现已随 v1.1.0 发布。当前分支与测试边界见 [工作状态](work-status.md)。 |
+| ☐ | [#469](https://github.com/leookun/cursor-byok/issues/469) v1.0.0 版本在更新 cursor 后无法在服务器上使用 | A | 基础路由/检索已实测；审批修复已通过 PR #13 合入并随 v1.2.1 发布，实机验收待完成 | v1.0.17 可用 [always 配置](remote-ssh.md)。已合入 main 的 WebFetch、采集、忽略规则、多批及大目录分页已有 [SSH 验收](history/issues/2026-10-27-issue469-paging-live.md)，[Python 导入隔离](history/issues/2026-10-28-issue469-python-isolation-fix.md)已修复。后续 [真实审批自动取消](history/issues/2026-10-30-issue469-approval-evidence.json)已复现；独立终端卡片候选自动化通过，批准/拒绝及 Windows Cursor UI 未验收，审批补丁已随 v1.2.1 发布，采集实现已随 v1.1.0 发布。当前分支与测试边界见 [工作状态](work-status.md)。 |
 | ☐ | [#465](https://github.com/leookun/cursor-byok/issues/465) The model you chose is not available | A | 作者报恢复，待独立复测 | 作者称合并 #433 后恢复；需复测无真实调用记录的问题，不能直接照搬该 PR 的广泛拦截。 |
 | ☐ | [#478](https://github.com/leookun/cursor-byok/issues/478) 使用 multi model review 时候，无法选择官方模型+自定义模型 | B | 待现版复测 | 先复现 multi-model review 的模型列表和调用路由；区分官方/自定义模型限制。 |
 | ☐ | [#467](https://github.com/leookun/cursor-byok/issues/467) 插件代理不可用 | B | 待现版复测 | 区分 Cursor 扩展网络、系统代理与 BYOK 代理，记录实际出口。 |
@@ -149,7 +149,7 @@
 | ☐ | [#314](https://github.com/leookun/cursor-byok/issues/314) [Bug] macOS v0.0.49 首次启动后，通过菜单栏退出会导致应用卡死无响应 | B | 待现版复测 | 报告版本 0.0.49；先确认当前架构仍可复现首次启动退出卡死。 |
 | ☐ | [#283](https://github.com/leookun/cursor-byok/issues/283) 与原账号切换问题 | B | 待现版复测 | 旧版账号/设置损坏报告；仅用数据副本测试接管与恢复，禁止用删除数据库作为修复。 |
 | ☐ | [#256](https://github.com/leookun/cursor-byok/issues/256) windows有一定概率闪退 | B | 待现版复测 | 旧版 Windows 闪退日志；需现版崩溃堆栈和 Windows 环境。 |
-| ☐ | [#371](https://github.com/leookun/cursor-byok/issues/371) follow the system theme and set it as default. | C | PR #26 已合入；浏览器、构建及四组 CI 通过，原生应用待验 | 默认跟随系统、实时切换、显式选择保存及首屏主题已补齐。7 组首屏检查、10 次运行时核对、四语言检查及带本机 SQLx 工具链参数的 Tauri debug 构建通过；未发布，见 [修复与边界](history/issues/2026-11-06-issue371-system-theme.md)。 |
+| ☐ | [#371](https://github.com/leookun/cursor-byok/issues/371) follow the system theme and set it as default. | C | PR #26 已合入；浏览器、构建及四组 CI 通过，原生应用待验 | 默认跟随系统、实时切换、显式选择保存及首屏主题已补齐。7 组首屏检查、10 次运行时核对、四语言检查及带本机 SQLx 工具链参数的 Tauri debug 构建通过；已随 v1.2.1 发布，见 [修复与边界](history/issues/2026-11-06-issue371-system-theme.md)。 |
 | ☐（实现与局部实测完成） | [#134](https://github.com/leookun/cursor-byok/issues/134) 添加一个打开cursor 的快捷键按钮 | C | PR #27 已合入；macOS 原生分发、四语言布局及四组 CI 通过 | 复用 opener，仅允许 `cursor://`；普通浏览器隐藏。820×558 复测修复俄语工具栏挤出，原生权限失败及其他 URI 拒绝已验。冷启动、缺少 handler、Windows/Linux GUI 未验，见 [实现与验收](history/issues/2026-11-06-issue134-open-cursor.md)。 |
 | ☐（已修复待原生验收） | [#119](https://github.com/leookun/cursor-byok/issues/119) 有个小建议，更新提示关闭之后就不要弹出来了，可以用户手动点击 版本更新 | C | 已复现刷新后重复提醒并修复；浏览器与构建通过 | 记住最后自动提醒的版本，新版本仍提醒，设置更新入口保留；刷新、定时检查、存储读写失败及最小窗口通过。真实安装包重启未验，跨 origin 不保留，见 [修复与边界](history/issues/2026-11-06-issue119-update-notification.md)。 |
 | ☐ | [#370](https://github.com/leookun/cursor-byok/issues/370) Import modal scrollbar is not working | D | PR #29 已合入；浏览器、构建及最终提交四组 CI 通过 | 120 个模型时内部视口被撑高导致滚动失效；修正两层高度收缩，滚轮/拖拽、短内容、表格/详情回归通过。原报告正文为空，原生 GUI 待验；异步导入焦点已另行 [复现修复并测试](history/issues/2026-11-06-import-dialog-focus.md)，见 [滚动修复记录](history/issues/2026-11-06-issue370-modal-scroll.md)。 |
@@ -159,13 +159,13 @@
 | 完成 | Issue / 原标题 | 分级 | 本地状态 | 下一步 / 证据线索 |
 | --- | --- | --- | --- | --- |
 | ☐ | [#324](https://github.com/leookun/cursor-byok/issues/324) 使用上的一些小痛点。 | B | 待现版复测 | 拆分配置复制、密钥显示和模型哈希冲突；先复现冲突，避免混合改动。 |
-| ◐ | [#471](https://github.com/leookun/cursor-byok/issues/471) 需求：增加一个配置备份功能 | C | 已通过 PR #44 合入内置模型 JSON 导出/导入，待发布；已补排序、并发刷新和大请求体回归；macOS 与 Oracle Linux 9.8 ARM64 定向验证通过 | 插件模型由插件配置独立管理，不进入本备份；导出包含 API Key，界面已提示妥善保管；真实打包桌面 UI 尚待人工验收。实现与验证见 [记录](history/issues/2026-11-13-issue471-model-backup.md)。 |
+| ◐ | [#471](https://github.com/leookun/cursor-byok/issues/471) 需求：增加一个配置备份功能 | C | 已通过 PR #44 合入内置模型 JSON 导出/导入，并随 v1.2.1 发布；已补排序、并发刷新和大请求体回归；macOS 与 Oracle Linux 9.8 ARM64 定向验证通过 | 插件模型由插件配置独立管理，不进入本备份；导出包含 API Key，界面已提示妥善保管；真实打包桌面 UI 尚待人工验收。实现与验证见 [记录](history/issues/2026-11-13-issue471-model-backup.md)。 |
 | ☑（PR #39 已合入 main） | [#417](https://github.com/leookun/cursor-byok/issues/417) 增加自定义定价 | C | 已实现全局及逐模型 Token 价格；[PR #39](https://github.com/haohaomin/cursor-byok/pull/39) 已在当前 `main` 基线上通过本地验证并合入 | 以 `model_hash` 保存输入/输出/缓存读写单价；未设置覆盖时使用全局价格。插件模型暂沿用全局价格，见 [实现与验证](history/issues/2026-11-13-issue150-model-pricing.md)。 |
 | ☐（现版已支持） | [#254](https://github.com/leookun/cursor-byok/issues/254) 支持配置tab-server的baseurl，而不是内置一个 | C | 既有功能无需重写；路由、持久化及设置页受控验证通过 | 16 个 TAB RPC 的前缀/query/二进制转发、SQLite 重连、地址切换、流式交付与非法配置保护共 4 项测试通过；设置页接线已测。未修改生产代码；真实 Cursor TAB、HTTPS 服务及控制面账号未验，见 [核查与边界](history/issues/2026-11-06-issue254-tab-baseurl-check.md)。 |
 | ☑（PR #34、#39 已合入 main） | [#150](https://github.com/leookun/cursor-byok/issues/150) 提几个意见看看需求能否实现。 | C | #107 按模型分项统计见 [PR #34](https://github.com/haohaomin/cursor-byok/pull/34)，逐模型 Token 定价见 [PR #39](https://github.com/haohaomin/cursor-byok/pull/39)；两者本地验证通过 | 首页总价和模型明细按 `model_hash` 选择覆盖价，其他模型使用全局价格；插件模型暂不单独定价。真实供应商、插件独立定价和发布版本仍待验收。见 [统计记录](history/issues/2026-11-12-issue107-model-usage-breakdown.md) 与 [定价验证](history/issues/2026-11-13-issue150-model-pricing.md)。 |
 | ☐ | [#146](https://github.com/leookun/cursor-byok/issues/146) Docker支持 | C | 需求待评估 | 明确桌面/纯服务部署目标后评估容器支持。 |
 | ☑（PR #34 已合入 main） | [#107](https://github.com/leookun/cursor-byok/issues/107) 请问能不能在用量统计时候加个模型的分类 | C | 概览四项统计可按模型展开；Store、工作区和浏览器回归通过 | Git 自动提交的本地模型/直连路径已核对，真实 Cursor Git UI 未验。 |
-| ◐ | [#99](https://github.com/leookun/cursor-byok/issues/99) 关于批量添加模型和token用量统计的一点建议 | C | 已通过 PR #45 合入发现模型后多选并批量添加，待发布；Token 用量统计已由 #107/#150 覆盖 | macOS 与 Oracle Linux 9.8 ARM64 的格式检查、控制 API 回归通过，Oracle Linux Clippy 通过；真实供应商返回模型列表、重复配置提示及已安装应用操作仍待手工验收，见 [验证记录](history/issues/2026-11-13-issue99-batch-models.md)。 |
+| ◐ | [#99](https://github.com/leookun/cursor-byok/issues/99) 关于批量添加模型和token用量统计的一点建议 | C | 已通过 PR #45 合入发现模型后多选并批量添加，并随 v1.2.1 发布；Token 用量统计已由 #107/#150 覆盖 | macOS 与 Oracle Linux 9.8 ARM64 的格式检查、控制 API 回归通过，Oracle Linux Clippy 通过；真实供应商返回模型列表、重复配置提示及已安装应用操作仍待手工验收，见 [验证记录](history/issues/2026-11-13-issue99-batch-models.md)。 |
 
 ### 社区讨论（1 项）
 
