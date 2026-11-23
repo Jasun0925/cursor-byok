@@ -1,6 +1,6 @@
 # 工作状态
 
-更新：2026-11-21；最新源码合并与 GitHub Release 元数据已重新核对，v1.1.0 产物下载结果沿用历史记录。历史测试与环境状态保留原核对日期。逐项调查见 [Issue 清单](issues.md)，原始测试见 [历史资料](history/README.md)。
+更新：2026-11-23；源码合并与 GitHub Release 元数据沿用 2026-11-21 核对结果，v1.1.0 产物下载结果沿用历史记录。历史测试与环境状态保留原核对日期。逐项调查见 [Issue 清单](issues.md)，原始测试见 [历史资料](history/README.md)。
 
 **2026-11-13 进展：**#150/#417 的逐模型 Token 定价已通过 [PR #39](https://github.com/haohaomin/cursor-byok/pull/39) 合入 `main`（合并提交 `e53e97e`）；原 #35 是合入已先落地的 #34 分支，未直接进入主线，已由 #39 在当前主线基线上重新集成。设置页按 `model_hash` 保存输入、输出、缓存读取和缓存写入单价；首页总计与按模型明细按覆盖价计算，未配置覆盖时使用全局价格。当前主线联合回归为 293 个服务端单测通过、0 失败、14 忽略，桌面检查、Clippy 和生产构建通过。插件模型暂使用全局价格，真实供应商和发布版本仍待验收，见 [定价验证记录](history/issues/2026-11-13-issue150-model-pricing.md)。
 
@@ -12,7 +12,7 @@
 
 **2026-11-13 进展：Issue #463/#184 已增加 Google Gemini OpenAI 兼容预设，使用完整 `v1beta/openai/chat/completions` 地址和现有 Bearer 鉴权；前端类型检查、构建与浏览器配置验证通过，已通过 [PR #36](https://github.com/haohaomin/cursor-byok/pull/36) 合入 `main`。原生 `generateContent` 协议和真实 Gemini Key 尚未验收，见 [验证记录](history/issues/2026-11-13-issue463-gemini-openai-compat.md)。**
 
-**2026-11-21 Windows 验证：**普通用户会话下，真实 Win32 证书检测的已信任、未信任、非法 PEM 三项检查通过。证书安装等待交互确认超时，端到端安装仍未通过；见 [验证记录](history/issues/2026-11-21-windows-ca-check.md)。
+**2026-11-23 Windows 验证：**普通用户手动运行后，certutil 退出码 0，证书存储检测完成 false → true → false；确认已清理且未写入机器级存储。临时证书运行时已过期，这只证明存储安装/检测/移除；有效证书的应用 Ready 状态、HTTPS 与真实 BYOK UI 仍待验收；见 [验证记录](history/issues/2026-11-21-windows-ca-check.md)。
 
 ## 1. 已发布的成果
 

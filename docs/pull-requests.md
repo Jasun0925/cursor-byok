@@ -19,7 +19,7 @@
 | [#48](https://github.com/haohaomin/cursor-byok/pull/48) | 模型上下文上限 | `6906b1e` |
 | [#49](https://github.com/haohaomin/cursor-byok/pull/49) | 终端输出文件的 .txt 后缀 | `68c4dfb` |
 
-合并回归：18 项控制 API 测试通过；最终服务端单元测试 301 通过、0 失败、14 忽略；前端检查、四语言扫描和 macOS Tauri debug/no-bundle 构建通过。SQLx 动态库错误使用已有的本机构建参数解除，未修改项目构建配置。这些结果不代替真实客户端、供应商和 Windows 交互验收。PR #43 的 [2026-11-21 Windows 验证](history/issues/2026-11-21-windows-ca-check.md) 已补充普通用户 Win32 检测；实际安装仍待确认。
+合并回归：18 项控制 API 测试通过；最终服务端单元测试 301 通过、0 失败、14 忽略；前端检查、四语言扫描和 macOS Tauri debug/no-bundle 构建通过。SQLx 动态库错误使用已有的本机构建参数解除，未修改项目构建配置。这些结果不代替真实客户端、供应商和 Windows 交互验收。PR #43 的 [2026-11-21 Windows 验证](history/issues/2026-11-21-windows-ca-check.md) 已于 2026-11-23 补充普通用户存储安装/检测/清理闭环；临时证书已过期，有效证书的 HTTPS 与真实 BYOK UI 仍待验收。
 
 ## 2026-11-13 Issue #302 候选
 

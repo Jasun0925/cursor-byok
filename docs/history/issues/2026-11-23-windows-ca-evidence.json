@@ -1,0 +1,25 @@
+{
+  "checked_on": "2026-11-23",
+  "result_file_written_at_utc": "2026-11-23T08:29:43Z",
+  "baseline": "68c4dfbc99bcba8f5e56d6e0535b4f2c92a584de",
+  "session": 1,
+  "thumb": "7021CD816A805BFC3544D84645FBE7E3EC50F299",
+  "before": "installed=false",
+  "phase": "finished",
+  "admin": false,
+  "windows": [
+    "安全警告"
+  ],
+  "dialog": "安全警告",
+  "offscreen": false,
+  "bounds": "920,441,746,581",
+  "activation": true,
+  "exitCode": 0,
+  "after": "installed=true",
+  "machine": false,
+  "cleaned": "installed=false",
+  "source_sha256": "2a524903932350ea96cc4bd0c1503014456aa81cc64bcbcedeb6000811d78c41",
+  "certificate_not_before_utc": "2026-11-21T14:14:34Z",
+  "certificate_not_after_utc": "2026-11-22T14:14:34Z",
+  "scope": "Certificate store import, byte-match detection and removal only. Certificate had expired before the successful run; no TLS handshake or CaManager::state Ready assertion."
+}
