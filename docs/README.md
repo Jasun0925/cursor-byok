@@ -5,6 +5,7 @@
 | 你要找什么 | 入口 |
 | --- | --- |
 | 哪些做好、哪些没做；代码有没有提交 | [工作状态](work-status.md) |
+| main 提交后如何自动生成新版安装包 | [自动发布](automatic-releases.md) |
 | 安装包已经包含哪些修复 | [维护状态](maintenance-status.md) |
 | 所有 Issue 的进度与下一步 | [Issue 清单](issues.md) |
 | 上游 PR 能否采用、风险是什么 | [PR 审查清单](pull-requests.md) |
@@ -19,6 +20,7 @@
 docs/
 ├── README.md              # 文档导航
 ├── work-status.md         # 开发交付状态
+├── automatic-releases.md # 自动版本递增与发布流程
 ├── maintenance-status.md  # 用户可用范围
 ├── issues.md              # Issue 清单
 ├── pull-requests.md       # PR 审查清单

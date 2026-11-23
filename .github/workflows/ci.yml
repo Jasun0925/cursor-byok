@@ -75,6 +75,9 @@ jobs:
           cache: npm
           cache-dependency-path: apps/desktop/package-lock.json
 
+      - name: Test release automation
+        run: node --test .github/scripts/*.test.mjs
+
       - name: Install dependencies
         working-directory: apps/desktop
         run: npm ci
