@@ -8,6 +8,7 @@
 
 ## Issue 调查与验收
 
+- [2026-11-23 · Windows 有效 CA 安装、Ready 与 HTTPS 验收](issues/2026-11-23-windows-ca-valid-check.md)
 - [2026-11-21 · Windows 普通用户 CA 检测与安装边界](issues/2026-11-21-windows-ca-check.md)
 - [2026-10-28 · GPT / Google OAuth 续期验证](issues/2026-10-28-issue481-check.md)
 

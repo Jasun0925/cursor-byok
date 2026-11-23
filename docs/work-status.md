@@ -12,7 +12,7 @@
 
 **2026-11-13 进展：Issue #463/#184 已增加 Google Gemini OpenAI 兼容预设，使用完整 `v1beta/openai/chat/completions` 地址和现有 Bearer 鉴权；前端类型检查、构建与浏览器配置验证通过，已通过 [PR #36](https://github.com/haohaomin/cursor-byok/pull/36) 合入 `main`。原生 `generateContent` 协议和真实 Gemini Key 尚未验收，见 [验证记录](history/issues/2026-11-13-issue463-gemini-openai-compat.md)。**
 
-**2026-11-23 Windows 验证：**普通用户手动运行后，certutil 退出码 0，证书存储检测完成 false → true → false；确认已清理且未写入机器级存储。临时证书运行时已过期，这只证明存储安装/检测/移除；有效证书的应用 Ready 状态、HTTPS 与真实 BYOK UI 仍待验收；见 [验证记录](history/issues/2026-11-21-windows-ca-check.md)。
+**2026-11-23 Windows 验证：**有效 CA 的普通用户安装/检测/移除闭环已通过，补齐了[初测](history/issues/2026-11-21-windows-ca-check.md)使用过期证书的边界。完整生产模块五种状态对照通过；桌面手动安装后为 Ready，Windows 默认 TLS 客户端的 HTTPS 成功、错误主机名被拒绝，移除后恢复 Untrusted 并拒绝连接。未写入机器级存储，临时私钥、目录、任务及快捷方式均已清理。真实 BYOK 安装包 UI 与 Cursor 接管仍待验收，见 [完整记录](history/issues/2026-11-23-windows-ca-valid-check.md)。
 
 ## 1. 已发布的成果
 

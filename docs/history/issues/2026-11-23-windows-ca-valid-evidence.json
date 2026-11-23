@@ -1,0 +1,265 @@
+{
+  "schema_version": 1,
+  "date": "2026-11-23",
+  "baseline_commit": "0568285db1233d8ccaf5a9b452e89ebe208586eb",
+  "upstream_pull_request": 458,
+  "fork_pull_request": 43,
+  "production_source_sha256": {
+    "server/src/local_app/ca/mod.rs": "d0ebe4bf39787ac6f29ed7f2414283db6236d77d1c6031ecca4aecbcc71d5b29",
+    "server/src/local_app/ca/windows.rs": "2a524903932350ea96cc4bd0c1503014456aa81cc64bcbcedeb6000811d78c41"
+  },
+  "method": {
+    "unchanged_production_ca_module": true,
+    "adapted": [
+      "CLI",
+      "isolated config::managed_data_dir",
+      "Error/Result",
+      "CaState serialization"
+    ],
+    "native_windows_rust_version": "1.94.1",
+    "session": 1,
+    "admin": false,
+    "production_application_ui_tested": false
+  },
+  "preflight_with_strict_schannel_curl": {
+    "phase": "failed",
+    "utc": "2026-11-23T13:31:52.7839252Z",
+    "cases": [
+      {
+        "fixture": "missing",
+        "state": "missing",
+        "expected": "missing"
+      },
+      {
+        "fixture": "expired",
+        "state": "invalid",
+        "expected": "invalid"
+      },
+      {
+        "fixture": "not-ca",
+        "state": "invalid",
+        "expected": "invalid"
+      },
+      {
+        "fixture": "mismatch",
+        "state": "invalid",
+        "expected": "invalid"
+      },
+      {
+        "fixture": "valid",
+        "state": "untrusted",
+        "expected": "untrusted"
+      }
+    ],
+    "admin": false,
+    "session": 1,
+    "certificate": {
+      "subject": "CN=Cursor BYOK isolated HTTPS acceptance 20261123",
+      "thumbprint": "D3DB45BE3C51E9BCF0C77E90D8E4629BAF26F0EE",
+      "not_before_utc": "2026-11-23T13:26:55.0000000Z",
+      "not_after_utc": "2026-11-30T13:31:55.0000000Z"
+    },
+    "current_user_present": false,
+    "local_machine_present": false,
+    "install_command": "certutil -user -addstore -f Root \"C:\\Users\\renha\\AppData\\Local\\Temp\\cursor-byok-ca-valid-20261123\\cases\\valid\\ca\\ca.crt\"",
+    "https_system_store_before": {
+      "exit_code": 60,
+      "body": "",
+      "error": "curl: (60) schannel: SEC_E_UNTRUSTED_ROOT (0x80090325) - ֤�������ɲ������εİ䷢�����䷢�ġ�\r\nMore details here: https://curl.se/docs/sslcerts.html\r\n\r\ncurl failed to verify the legitimacy of the server and therefore could not\r\nestablish a secure connection to it. To learn more about this situation and\r\nhow to fix it, please visit the webpage mentioned above.\r\n"
+    },
+    "https_explicit_ca": {
+      "exit_code": 60,
+      "body": "",
+      "error": "curl: (60) schannel: the revocation status is unknown\r\nMore details here: https://curl.se/docs/sslcerts.html\r\n\r\ncurl failed to verify the legitimacy of the server and therefore could not\r\nestablish a secure connection to it. To learn more about this situation and\r\nhow to fix it, please visit the webpage mentioned above.\r\n"
+    },
+    "error": "Explicit isolated CA TLS control failed",
+    "finished_at_utc": "2026-11-23T13:31:59.3200646Z"
+  },
+  "validated_tls_control": {
+    "phase": "passed",
+    "started_at_utc": "2026-11-23T13:38:12.8230179Z",
+    "install_requested": false,
+    "admin": false,
+    "session": 1,
+    "certificate": {
+      "subject": "CN=Cursor BYOK isolated HTTPS acceptance 20261123",
+      "thumbprint": "D3DB45BE3C51E9BCF0C77E90D8E4629BAF26F0EE",
+      "not_after_utc": "2026-11-30T13:31:55.0000000Z"
+    },
+    "current_user_before": false,
+    "local_machine_before": false,
+    "state_before": "untrusted",
+    "https_system_store_before": {
+      "success": false,
+      "hostname": "localhost",
+      "error": "根据验证过程，远程证书无效。"
+    },
+    "https_explicit_ca_control": {
+      "localhost": {
+        "success": true,
+        "protocol": null
+      },
+      "wrong-host.invalid": {
+        "success": false,
+        "verify_code": 62,
+        "error": "Hostname mismatch, certificate is not valid for 'wrong-host.invalid'."
+      }
+    },
+    "install_command": "certutil -user -addstore -f Root \"C:\\Users\\renha\\AppData\\Local\\Temp\\cursor-byok-ca-valid-20261123\\cases\\valid\\ca\\ca.crt\"",
+    "current_user_after": false,
+    "local_machine_after": false,
+    "state_after": "untrusted",
+    "https_system_store_after": {
+      "success": false,
+      "hostname": "localhost",
+      "error": "根据验证过程，远程证书无效。"
+    },
+    "finished_at_utc": "2026-11-23T13:38:14.3942510Z"
+  },
+  "native_confirmation_attempt": {
+    "phase": "failed",
+    "started_at_utc": "2026-11-23T13:39:10.5618706Z",
+    "install_requested": true,
+    "admin": false,
+    "session": 1,
+    "certificate": {
+      "subject": "CN=Cursor BYOK isolated HTTPS acceptance 20261123",
+      "thumbprint": "D3DB45BE3C51E9BCF0C77E90D8E4629BAF26F0EE",
+      "not_after_utc": "2026-11-30T13:31:55.0000000Z"
+    },
+    "current_user_before": false,
+    "local_machine_before": false,
+    "state_before": "untrusted",
+    "https_system_store_before": {
+      "success": false,
+      "hostname": "localhost",
+      "error": "根据验证过程，远程证书无效。"
+    },
+    "https_explicit_ca_control": {
+      "localhost": {
+        "success": true,
+        "protocol": "TLSv1.3"
+      },
+      "wrong-host.invalid": {
+        "success": false,
+        "verify_code": 62,
+        "error": "Hostname mismatch, certificate is not valid for 'wrong-host.invalid'."
+      }
+    },
+    "install_command": "certutil -user -addstore -f Root \"C:\\Users\\renha\\AppData\\Local\\Temp\\cursor-byok-ca-valid-20261123\\cases\\valid\\ca\\ca.crt\"",
+    "error": "Native certificate confirmation timed out",
+    "current_user_after": false,
+    "local_machine_after": false,
+    "state_after": "untrusted",
+    "https_system_store_after": {
+      "success": false,
+      "hostname": "localhost",
+      "error": "根据验证过程，远程证书无效。"
+    },
+    "finished_at_utc": "2026-11-23T13:42:12.4167278Z"
+  },
+  "post_attempt_audit": {
+    "utc": "2026-11-23T13:43:12.3108234Z",
+    "current_user_present": false,
+    "local_machine_present": false,
+    "remaining_probe_processes": [],
+    "removed_tasks": [
+      "CursorBYOK-CAValid-Build-20261123",
+      "CursorBYOK-CAValid-Preflight-20261123",
+      "CursorBYOK-CAValid-TlsControl-20261123",
+      "CursorBYOK-CAValid-Acceptance-20261123"
+    ],
+    "production_sources": [
+      {
+        "file": "mod.rs",
+        "Hash": "D0EBE4BF39787AC6F29ED7F2414283DB6236D77D1C6031ECCA4AECBCC71D5B29"
+      },
+      {
+        "file": "windows.rs",
+        "Hash": "2A524903932350EA96CC4BD0C1503014456AA81CC64BCBCEDEB6000811D78C41"
+      }
+    ],
+    "manual_entry_exists": true,
+    "fixtures_retained_for_manual_retry": true
+  },
+  "handoff": {
+    "status": "completed",
+    "user_reported_manual_run_complete": true,
+    "temporary_fixture_retained": false,
+    "temporary_keys_retained": false,
+    "desktop_shortcut_retained": false
+  },
+  "limitations": [
+    "Tauri install button and real Cursor HTTPS not tested",
+    "Enterprise/group-policy scenarios not tested",
+    "Strict Schannel curl explicit-CA control failed with revocation status unknown; .NET default TLS validation success does not imply this stricter policy passes"
+  ],
+  "manual_desktop_acceptance": {
+    "phase": "passed",
+    "started_at_utc": "2026-11-23T14:04:59.4926043Z",
+    "install_requested": true,
+    "admin": false,
+    "session": 1,
+    "certificate": {
+      "subject": "CN=Cursor BYOK isolated HTTPS acceptance 20261123",
+      "thumbprint": "D3DB45BE3C51E9BCF0C77E90D8E4629BAF26F0EE",
+      "not_after_utc": "2026-11-30T13:31:55.0000000Z"
+    },
+    "current_user_before": false,
+    "local_machine_before": false,
+    "state_before": "untrusted",
+    "https_system_store_before": {
+      "success": false,
+      "hostname": "localhost",
+      "error": "根据验证过程，远程证书无效。"
+    },
+    "https_explicit_ca_control": {
+      "localhost": {
+        "success": true,
+        "protocol": "TLSv1.3"
+      },
+      "wrong-host.invalid": {
+        "success": false,
+        "verify_code": 62,
+        "error": "Hostname mismatch, certificate is not valid for 'wrong-host.invalid'."
+      }
+    },
+    "install_command": "certutil -user -addstore -f Root \"C:\\Users\\renha\\AppData\\Local\\Temp\\cursor-byok-ca-valid-20261123\\cases\\valid\\ca\\ca.crt\"",
+    "certutil_exit_code": 0,
+    "certutil_output": "Root \"受信任的根证书颁发机构\"\r\n签名与公钥匹配\r\n证书 \"Cursor BYOK isolated HTTPS acceptance 20261123\" 添加到存储。\r\nCertUtil: -addstore 命令成功完成。\r\n",
+    "certutil_error": "libpng warning: iCCP: known incorrect sRGB profile\r\nlibpng warning: iCCP: known incorrect sRGB profile\r\nlibpng warning: iCCP: known incorrect sRGB profile\r\nlibpng warning: iCCP: known incorrect sRGB profile\r\nlibpng warning: iCCP: known incorrect sRGB profile\r\nlibpng warning: iCCP: known incorrect sRGB profile\r\nlibpng warning: iCCP: known incorrect sRGB profile\r\nlibpng warning: iCCP: known incorrect sRGB profile\r\nlibpng warning: iCCP: known incorrect sRGB profile\r\nlibpng warning: iCCP: known incorrect sRGB profile\r\nlibpng warning: iCCP: known incorrect sRGB profile\r\n",
+    "current_user_installed": true,
+    "local_machine_installed": false,
+    "state_installed": "ready",
+    "https_system_store_installed": {
+      "success": true,
+      "hostname": "localhost",
+      "body_matches": true
+    },
+    "https_wrong_hostname": {
+      "success": false,
+      "hostname": "wrong-host.invalid",
+      "error": "根据验证过程，远程证书无效。"
+    },
+    "current_user_after": false,
+    "local_machine_after": false,
+    "state_after": "untrusted",
+    "https_system_store_after": {
+      "success": false,
+      "hostname": "localhost",
+      "error": "根据验证过程，远程证书无效。"
+    },
+    "finished_at_utc": "2026-11-23T14:05:05.8981737Z"
+  },
+  "final_cleanup_audit": {
+    "utc": "2026-11-23T14:12:08.7505891Z",
+    "current_user_present": false,
+    "local_machine_present": false,
+    "active_probe_processes": 0,
+    "remaining_temporary_tasks": 0,
+    "closed_completed_test_consoles": 0,
+    "temporary_directory_removed": true,
+    "temporary_keys_removed": true,
+    "desktop_shortcut_removed": true
+  }
+}
