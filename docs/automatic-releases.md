@@ -33,3 +33,11 @@
 普通发版只需合并代码到 main，不需要手动改版本号或打标签。查看 GitHub Actions 中同一提交对应的 `CI` 与随后的 `Release desktop app`；只有发布任务成功且 Release 已公开，才表示新安装包可用。
 
 脚本测试：`node --test .github/scripts/*.test.mjs`。触发机制参见 [GitHub workflow_run](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#workflow_run) 和 [GITHUB_TOKEN 的递归触发限制](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow#triggering-a-workflow-from-a-workflow)。
+
+## 提交后完全没有 CI 运行
+
+先查看仓库的 Actions 网页。GitHub 可能因 fork 的 Actions 使用规模暂停整个仓库，此时 REST API 的 `enabled: true` 和单个 workflow 的 `state: active` 仍不足以证明可以运行。
+
+如果页面显示 `Workflows on this fork have been disabled` 或 `Workflows are not currently being run on this fork due to the scale of GitHub Actions usage`，由仓库维护者核对工作流后点击 `I understand my workflows, go ahead and re-enable them`。页面确认 Actions 已启用后，再推送新的 main 提交启动 CI；暂停期间的旧 push 不会自动补跑。
+
+2026-11-23：在启用自动发布时确认并恢复了这一仓库级暂停。恢复后仍需以实际 CI 和发布运行结果为准，不能只看设置页开关。
