@@ -1582,6 +1582,8 @@ async fn injected_user_context_interrupts_automatic_compaction() {
     let seed_answer = "x".repeat(400_000);
     provider.push(text_response(&seed_answer));
     provider.push_pending();
+    provider.push(text_response("durable summary first segment"));
+    provider.push(text_response("durable summary complete history"));
     provider.push(text_response("continued after compacting injection"));
     let assets = PromptAssets::load(
         std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -1690,7 +1692,11 @@ async fn injected_user_context_interrupts_automatic_compaction() {
     }
 
     let requests = provider.requests();
-    assert_eq!(requests.len(), 3);
+    assert_eq!(requests.len(), 5);
+    assert_eq!(
+        requests[1], requests[2],
+        "interruption retries the same source segment"
+    );
     assert!(
         requests[1]
             .prompt
@@ -1703,7 +1709,7 @@ async fn injected_user_context_interrupts_automatic_compaction() {
     assert!(!serde_json::to_string(&requests[1].history)
         .unwrap()
         .contains("injected follow-up"));
-    assert!(serde_json::to_string(&requests[2].history)
+    assert!(serde_json::to_string(&requests[4].history)
         .unwrap()
         .contains("injected follow-up"));
     assert!(saw_continued);

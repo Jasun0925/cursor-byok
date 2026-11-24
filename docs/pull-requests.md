@@ -119,7 +119,7 @@
 
 | PR | head | 文件数 | 本轮结论与下一步 |
 | --- | --- | ---: | --- |
-| [#493](https://github.com/leookun/cursor-byok/pull/493) Keep HTTP/2 when takeover relays Cursor streaming calls | `7ae7b030a07f` | 93 | 已复现出站缺少 HTTP/2/ALPN 及响应取消后上传未释放，独立候选已修复；93 文件的 head 已无正文所称 vendoring，不能整体采用。测试与采用范围见 [复核记录](history/pull-requests/2026-11-24-pr493-http2-relay.md)；真实 Cursor 与新增 Agent Run 路径仍待验。 |
+| [#493](https://github.com/leookun/cursor-byok/pull/493) Keep HTTP/2 when takeover relays Cursor streaming calls | `7ae7b030a07f` | 93 | 已复现出站缺少 HTTP/2/ALPN 及响应取消后上传未释放，独立实现已通过 fork PR #50 合入并随 v1.2.3 发布，跨平台 CI 通过；93 文件的 head 已无正文所称 vendoring，不能整体采用。测试与采用范围见 [复核记录](history/pull-requests/2026-11-24-pr493-http2-relay.md)；真实 Cursor 与新增 Agent Run 路径仍待验。 |
 | [#484](https://github.com/leookun/cursor-byok/pull/484) fix: accept incomplete Cursor subagent run protocol (parent headers, message id) | `ea5864a20e4d` | 5 | 对应入口修复已有 #477 覆盖；不重复合入，保留现有父子关系与幂等语义。 |
 | [#510](https://github.com/leookun/cursor-byok/pull/510) feat(plugins): add GitHub Copilot (copilot-auth) built-in provider plugin | `2d882ea88e8e` | 14 | 新 Copilot 插件；需账号授权、token 生命周期、请求路由、错误重试及额度验证。 |
 | [#515](https://github.com/leookun/cursor-byok/pull/515) fix: accept Cursor subagent runs with empty message_id | `ef0bd94b8681` | 6 | 不采用。主线准入 8 项通过；移植内容身份/丢弃单父头后 3 项回归，重复轮次历史缩短且父任务进度丢失，见 [复核](history/pull-requests/2026-10-28-pr515-check.md)。 |

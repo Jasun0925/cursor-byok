@@ -8,6 +8,8 @@
 
 ## Issue 调查与验收
 
+- [2026-11-24 · Issue #444：自动压缩保留早期任务与失败保护](issues/2026-11-24-issue444-compaction-retention.md)
+
 - [2026-11-24 · Issue #102：Responses 工具 ID 历史回放复测](issues/2026-11-24-issue102-check.md)
 - [2026-11-23 · Windows 有效 CA 安装、Ready 与 HTTPS 验收](issues/2026-11-23-windows-ca-valid-check.md)
 - [2026-11-23 · Windows Cursor Agent 验收记录与证据边界](issues/2026-11-23-windows-cursor-agent-acceptance.md)

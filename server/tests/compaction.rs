@@ -5,6 +5,8 @@ mod fake_provider;
 mod fixtures;
 #[path = "compaction/recovery.rs"]
 mod recovery;
+#[path = "compaction/retention.rs"]
+mod retention;
 
 use std::{collections::HashMap, sync::Arc, time::Duration};
 
@@ -244,7 +246,8 @@ async fn automatic_compaction_preflights_provider_input_and_records_rebuilt_toke
         .unwrap();
     let provider = fake_provider::FakeProvider::default();
     provider.push(text_response(&"x".repeat(400_000), 150_000, 1_000));
-    provider.push(text_response("automatic durable summary", 120_000, 20));
+    provider.push(text_response("first summary batch", 80_000, 20));
+    provider.push(text_response("automatic durable summary", 30_000, 20));
     provider.push(text_response("continued after compaction", 20_000, 20));
     let assets = PromptAssets::load(
         std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -307,35 +310,36 @@ async fn automatic_compaction_preflights_provider_input_and_records_rebuilt_toke
     assert!(compacted_tokens < 90_000);
 
     let requests = provider.requests();
-    assert_eq!(requests.len(), 3);
+    assert_eq!(requests.len(), 4);
     assert!(!requests[0].prompt.tools.is_empty());
     assert!(requests[1].prompt.tools.is_empty());
-    assert!(!requests[2].prompt.tools.is_empty());
-    assert!(requests[1]
-        .history
-        .iter()
-        .any(|message| match &message.content {
-            ProjectedContent::Assistant { text, .. } => text.len() == 400_000,
-            _ => false,
-        }));
-    assert!(requests[2]
-        .history
-        .iter()
-        .all(|message| match &message.content {
-            ProjectedContent::Assistant { text, .. } => text.len() != 400_000,
-            _ => true,
-        }));
+    assert!(requests[2].prompt.tools.is_empty());
+    assert!(!requests[3].prompt.tools.is_empty());
+    assert!(serde_json::to_string(&requests[2].history)
+        .unwrap()
+        .contains("first summary batch"));
+    assert!(serde_json::to_string(&requests[3].history)
+        .unwrap()
+        .contains("automatic durable summary"));
+    assert!(!serde_json::to_string(&requests[3].history)
+        .unwrap()
+        .contains(&"x".repeat(400_000)));
 }
 
 #[tokio::test]
-async fn stalled_automatic_compaction_falls_back_and_continues() {
+async fn stalled_automatic_compaction_preserves_small_history() {
     let (_directory, store) = fixtures::temp_store().await;
     let model = store
         .create_model(&windowed_model("stalled-compaction", Some(100_000)))
         .await
         .unwrap();
     let provider = fake_provider::FakeProvider::default();
-    provider.push(text_response(&"x".repeat(400_000), 150_000, 1_000));
+    provider.push(text_response(&"x".repeat(2_000), 150_000, 1_000));
+    // A provider refusal triggers compaction of a small history that can be
+    // preserved without any replacement if the summarizer stalls.
+    provider.push_error(cursor_server::Error::Provider(
+        "context_length_exceeded".into(),
+    ));
     provider.push_pending();
     provider.push(text_response(
         "continued after stalled compaction",
@@ -380,19 +384,22 @@ async fn stalled_automatic_compaction_falls_back_and_continues() {
     )
     .await;
 
-    assert!(matches!(second.end_stream, EndStream::Success {}));
+    assert!(
+        matches!(&second.end_stream, EndStream::Failure { error } if error.message.contains("timed out")),
+        "{:?}",
+        second.end_stream
+    );
     assert_eq!(second.summary_started, 1);
-    assert_eq!(second.summary_completed, 1);
+    assert_eq!(second.summary_completed, 0);
     let stored = store
         .load_current_messages(&ConversationId::new("stalled-compaction-conversation"))
         .await
         .unwrap();
-    assert!(serde_json::to_string(&stored)
-        .unwrap()
-        .contains("Durable recent conversation state"));
+    let retained = serde_json::to_string(&stored).unwrap();
+    assert!(retained.contains(&"x".repeat(2_000)));
+    assert!(!retained.contains("<conversation_summary>"));
     assert_eq!(provider.requests().len(), 3);
-    assert!(provider.requests()[1].prompt.tools.is_empty());
-    assert!(!provider.requests()[2].prompt.tools.is_empty());
+    assert!(provider.requests()[2].prompt.tools.is_empty());
 }
 
 #[tokio::test]
