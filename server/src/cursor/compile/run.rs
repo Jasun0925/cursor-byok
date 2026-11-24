@@ -14,8 +14,8 @@ use crate::{
         tools::runtime::{ExecContext, SubagentModel},
     },
     model::{
-        CanonicalMessage, ContentPart, ConversationId, MessageContent, Origin, PreparedRun,
-        PromptSpec, Role, RunAction, RunId, RunKind,
+        project_messages, CanonicalMessage, CheckpointId, ContentPart, ConversationId,
+        MessageContent, Origin, PreparedRun, PromptSpec, Role, RunAction, RunId, RunKind,
     },
     store::{BlobId, Store},
     Error, Result,
@@ -200,9 +200,18 @@ pub(crate) async fn prepare(
     };
     let base_checkpoint_id = match input_id.as_deref() {
         Some(input_id) => {
-            store
+            let anchored = store
                 .anchor_input(&conversation_id, input_id, proposed_base_checkpoint_id)
-                .await?
+                .await?;
+            repair_unprojectable_anchor(
+                store,
+                &conversation_id,
+                input_id,
+                anchored,
+                proposed_base_checkpoint_id,
+                base_messages.as_deref(),
+            )
+            .await?
         }
         None => proposed_base_checkpoint_id,
     };
@@ -460,6 +469,44 @@ fn validate_prompt_root(messages: &[CanonicalMessage]) -> Result<()> {
         ));
     };
     Ok(())
+}
+
+/// An input keeps the base it was first anchored to, so a retry continues from
+/// the same history. A base saved by an earlier BYOK version can hold history
+/// that no model request can be built from, such as a tool call without a
+/// result. Retrying it would fail forever, so the input moves to the history
+/// Cursor sent with this attempt once that history can be projected.
+async fn repair_unprojectable_anchor(
+    store: &Store,
+    conversation_id: &ConversationId,
+    input_id: &str,
+    anchored: CheckpointId,
+    proposed: CheckpointId,
+    proposed_messages: Option<&[CanonicalMessage]>,
+) -> Result<CheckpointId> {
+    if anchored == proposed {
+        return Ok(anchored);
+    }
+    let Some(proposed_messages) = proposed_messages else {
+        return Ok(anchored);
+    };
+    let anchored_messages = store.load_checkpoint_messages(anchored).await?;
+    let Err(error) = project_messages(&anchored_messages) else {
+        return Ok(anchored);
+    };
+    if project_messages(proposed_messages).is_err() {
+        return Ok(anchored);
+    }
+    tracing::warn!(
+        input_id,
+        anchored = anchored.0,
+        proposed = proposed.0,
+        %error,
+        "input base cannot be sent to a model; moving it to the history Cursor sent"
+    );
+    store
+        .reanchor_input(conversation_id, input_id, anchored, proposed)
+        .await
 }
 
 pub(crate) fn execution_run_id(request_id: &str) -> RunId {
@@ -762,6 +809,196 @@ fn exec_context(
 mod tests {
     use super::*;
 
+    mod anchor_repair {
+        use serde_json::json;
+
+        use super::*;
+        use crate::model::{ToolCallContent, ToolResultContent, ToolRoundId};
+
+        fn assistant(calls: &[&str]) -> CanonicalMessage {
+            CanonicalMessage {
+                message_id: "cursor-root:a:1".into(),
+                role: Role::Assistant,
+                origin: Origin::Assistant,
+                content: MessageContent::Assistant {
+                    text: String::new(),
+                    thinking: String::new(),
+                    tool_round_id: Some(ToolRoundId::from("cursor-root:a:1:tool-round")),
+                    replay_state: None,
+                    tool_calls: calls
+                        .iter()
+                        .enumerate()
+                        .map(|(index, call_id)| ToolCallContent {
+                            index,
+                            call_id: (*call_id).into(),
+                            name: "Grep".into(),
+                            arguments: json!({}),
+                        })
+                        .collect(),
+                },
+                runtime_event_id: None,
+            }
+        }
+
+        fn result(id: &str, call_id: &str) -> CanonicalMessage {
+            CanonicalMessage {
+                message_id: id.into(),
+                role: Role::Tool,
+                origin: Origin::Tool,
+                content: MessageContent::ToolResult(ToolResultContent {
+                    call_id: call_id.into(),
+                    name: "Grep".into(),
+                    content: "ok".into(),
+                    is_error: false,
+                    image: None,
+                    provider_parts: Vec::new(),
+                }),
+                runtime_event_id: None,
+            }
+        }
+
+        fn user(id: &str) -> CanonicalMessage {
+            CanonicalMessage::text(id, Role::User, Origin::User, "next question")
+        }
+
+        /// History an older BYOK saved: the second parallel call has no result.
+        fn broken() -> Vec<CanonicalMessage> {
+            vec![
+                assistant(&["grep", "dynamic"]),
+                result("cursor-root:a:2", "grep"),
+                user("cursor-root:a:3"),
+            ]
+        }
+
+        /// The same history after the missing result is settled as cancelled.
+        fn settled() -> Vec<CanonicalMessage> {
+            vec![
+                assistant(&["grep", "dynamic"]),
+                result("cursor-root:a:2", "grep"),
+                result("cursor-root:a:1:tool-round:cancelled:1", "dynamic"),
+                user("cursor-root:a:3"),
+            ]
+        }
+
+        async fn store() -> (tempfile::TempDir, Store) {
+            let directory = tempfile::tempdir().unwrap();
+            let url = format!("sqlite://{}", directory.path().join("test.db").display());
+            (directory, Store::connect(&url).await.unwrap())
+        }
+
+        #[tokio::test]
+        async fn a_retry_anchored_to_unprojectable_history_moves_to_the_settled_history() {
+            let (_directory, store) = store().await;
+            let conversation = ConversationId::new("conversation");
+            let broken_messages = broken();
+            let old_base = store
+                .import_checkpoint(&conversation, &broken_messages)
+                .await
+                .unwrap();
+            assert!(project_messages(&broken_messages).is_err());
+            store
+                .anchor_input(&conversation, "input-1", old_base)
+                .await
+                .unwrap();
+
+            let settled_messages = settled();
+            let proposed = store
+                .import_checkpoint(&conversation, &settled_messages)
+                .await
+                .unwrap();
+            assert_ne!(proposed, old_base);
+            let anchored = store
+                .anchor_input(&conversation, "input-1", proposed)
+                .await
+                .unwrap();
+            assert_eq!(anchored, old_base);
+
+            let base = repair_unprojectable_anchor(
+                &store,
+                &conversation,
+                "input-1",
+                anchored,
+                proposed,
+                Some(&settled_messages),
+            )
+            .await
+            .unwrap();
+            assert_eq!(base, proposed);
+            assert_eq!(
+                store
+                    .anchor_input(&conversation, "input-1", old_base)
+                    .await
+                    .unwrap(),
+                proposed
+            );
+            assert!(project_messages(&store.load_checkpoint_messages(base).await.unwrap()).is_ok());
+        }
+
+        #[tokio::test]
+        async fn a_projectable_anchor_is_kept_for_the_retry() {
+            let (_directory, store) = store().await;
+            let conversation = ConversationId::new("conversation");
+            let first = vec![user("cursor-root:b:1")];
+            let anchored = store
+                .import_checkpoint(&conversation, &first)
+                .await
+                .unwrap();
+            store
+                .anchor_input(&conversation, "input-1", anchored)
+                .await
+                .unwrap();
+            let settled_messages = settled();
+            let proposed = store
+                .import_checkpoint(&conversation, &settled_messages)
+                .await
+                .unwrap();
+
+            let base = repair_unprojectable_anchor(
+                &store,
+                &conversation,
+                "input-1",
+                anchored,
+                proposed,
+                Some(&settled_messages),
+            )
+            .await
+            .unwrap();
+            assert_eq!(base, anchored);
+        }
+
+        #[tokio::test]
+        async fn an_unprojectable_proposal_does_not_replace_the_anchor() {
+            let (_directory, store) = store().await;
+            let conversation = ConversationId::new("conversation");
+            let broken_messages = broken();
+            let anchored = store
+                .import_checkpoint(&conversation, &broken_messages)
+                .await
+                .unwrap();
+            store
+                .anchor_input(&conversation, "input-1", anchored)
+                .await
+                .unwrap();
+            let mut other = broken();
+            other.push(user("cursor-root:a:4"));
+            let proposed = store
+                .import_checkpoint(&conversation, &other)
+                .await
+                .unwrap();
+
+            let base = repair_unprojectable_anchor(
+                &store,
+                &conversation,
+                "input-1",
+                anchored,
+                proposed,
+                Some(&other),
+            )
+            .await
+            .unwrap();
+            assert_eq!(base, anchored);
+        }
+    }
     #[test]
     fn approved_plan_body_cannot_close_its_prompt_container() {
         let projection = execute_plan(&pb::ExecutePlanAction {
