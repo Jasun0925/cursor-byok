@@ -17,6 +17,9 @@ const PROXY_CHECK_INTERVAL: Duration = Duration::from_secs(2);
 
 mod proxy_fingerprint;
 
+#[cfg(test)]
+mod streaming_tests;
+
 #[derive(Clone)]
 pub struct NetworkClients {
     store: Store,

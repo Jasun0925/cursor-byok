@@ -35,7 +35,7 @@ parking_lot = "0.12"
 pem = "3"
 prost = "0.13"
 prost-types = "0.13"
-reqwest = { version = "0.12", default-features = false, features = ["blocking", "brotli", "deflate", "gzip", "json", "native-tls", "socks", "stream", "system-proxy", "zstd"] }
+reqwest = { version = "0.12", default-features = false, features = ["blocking", "brotli", "deflate", "gzip", "http2", "json", "native-tls-alpn", "socks", "stream", "system-proxy", "zstd"] }
 regex = "1"
 rcgen = { version = "0.14", features = ["aws_lc_rs", "pem", "x509-parser"] }
 scraper = "0.24"
@@ -64,7 +64,9 @@ prost-build = "0.13"
 protoc-bin-vendored = "3"
 
 [dev-dependencies]
+http-body-util = "0.1"
 tempfile = "3"
+tokio-rustls = "0.26"
 tower = { version = "0.5", features = ["util"] }
 
 [target.'cfg(windows)'.dependencies]
