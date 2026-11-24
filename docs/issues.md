@@ -1,6 +1,6 @@
 # Issue 清单
 
-更新：2026-11-23；PR #13、#43–#49 已合入 main，并进入最新公开版本 v1.2.1；[发布与核验](history/releases.md#v121)。上游元数据以 [2026-10-27 快照](history/issues/2026-10-27.snapshot.json) 为准，当时开放 104 项；保留首次收集的 100 项和后续 6 项，关闭或无法访问不等于本地已解决。
+更新：2026-11-24；PR #13、#43–#49 已合入 main，并进入最新公开版本 v1.2.1；[发布与核验](history/releases.md#v121)。上游元数据以 [2026-10-27 快照](history/issues/2026-10-27.snapshot.json) 为准，当时开放 104 项；保留首次收集的 100 项和后续 6 项，关闭或无法访问不等于本地已解决。
 
 - **先看进度**：[已做好与未完成工作](work-status.md)。
 - **看安装包包含什么**：[维护状态](maintenance-status.md)。
@@ -89,7 +89,7 @@
 | ☐（协议未复现） | [#174](https://github.com/leookun/cursor-byok/issues/174) 上游异常导致重试时会重复附加system_reminder块 | B | 2026-10-14 HTTP 重试及恢复共 5 项通过；UI 待验 | 两次 503 后三份请求正文逐字节一致，模式提示保持 2 段；4 项 #172 恢复回归通过。未改生产代码，未标记已解决，见 [复测记录](history/issues/2026-10-14-issue174-check.md)。 |
 | ☐ | [#172](https://github.com/leookun/cursor-byok/issues/172) 中途打断对话后，继续对话会丢失模型该轮对话模型已经输出及toolcall获取到的内容 | B | 代码已修复；服务端 348 项通过，真实 UI 待验收 | 中断文字持久化并发布检查点；保留已完成结果，仅取消未完成工具；连续失败重试保持历史前缀。尚未合并或发布，保持未勾选，见 [修复记录](history/issues/2026-10-08-issue172-fix.md)。 |
 | ◐（完成一半） | [#155](https://github.com/leookun/cursor-byok/issues/155) shell 超时 | B | 普通后台自动续答及去重重放通过；审批、压缩实机边界待覆盖，20 分钟按用户要求跳过 | 2026-10-19 当前补丁普通后台 25 秒实机自动续答通过；请求沙箱权限的第二组也完成，但没有审批弹窗，审批等待未覆盖。两条真实完成通知经单条、合批、倒序、拆批重放，模型调用总数保持 6、历史不变。界面输入故障导致压缩测试未发出；最终补丁 notify_on_output 与官方→BYOK 转入未重测。既有工作区 426 项回归通过。正式代理已恢复，正式库保持版本 10；未替换正式应用；修复已提交 main（2df03e3），v1.0.17 已发布，资产及更新清单核验通过。见 [验收报告](history/issues/2026-10-19-issue155-acceptance.md)、[验收证据](history/issues/2026-10-19-issue155-acceptance-evidence.json)、[补修报告](history/issues/2026-10-18-issue155-audit-fix.md)。 |
-| ☐ | [#102](https://github.com/leookun/cursor-byok/issues/102) 之前的那个issue关闭了，日志输出如下 | B | 待现版复测 | 正文报告 Responses id/call_id 混用；在当前历史回放代码复现，不归入文本补全修复。 |
+| ☐ | [#102](https://github.com/leookun/cursor-byok/issues/102) 之前的那个issue关闭了，日志输出如下 | B | 现版自动化未复现；原环境待验 | Chat → Responses 与 Responses 自身回放均保留 call_id 配对；SQLite 重开、Cursor 检查点及出站 HTTP 检查通过，相关回归 36 项通过。未改生产代码，见 [复测记录](history/issues/2026-11-24-issue102-check.md)。 |
 | ☐（协议缺口已修复 / UI 未复现） | [#55](https://github.com/leookun/cursor-byok/issues/55) AGENTS.md作用域问题 | B | 2026-10-14 已保留规则来源和范围；原 UI 行为未复现 | 原 2 项失败转通过，新增共 7 项回归；相关 211 项、Clippy 与格式检查通过。此前真实前后端三轮规则正确，修改后未重跑 UI；已合入 main，v1.0.15 发布已触发，未监视结果。见 [修复记录](history/issues/2026-10-14-issue55-fix.md)。 |
 | ☐ | [#327](https://github.com/leookun/cursor-byok/issues/327) 最新版beta5 版本缺少CreateGoal 工具，无法使用目标模式 | C | 需求待评估 | 核对当前 CreateGoal 工具声明与执行能力，旧 beta 的缺失需重新确认。 |
 | ☐ | [#139](https://github.com/leookun/cursor-byok/issues/139) cursorplan模式可以直接改之前的计划 | C | 需求待评估 | 核对 Plan 编辑工具与当前协议能力，补修改已有计划的步骤。 |

@@ -4,7 +4,7 @@
 
 **2026-11-13 进展：**#150/#417 的逐模型 Token 定价已通过 [PR #39](https://github.com/haohaomin/cursor-byok/pull/39) 合入 `main`（合并提交 `e53e97e`）；原 #35 是合入已先落地的 #34 分支，未直接进入主线，已由 #39 在当前主线基线上重新集成。设置页按 `model_hash` 保存输入、输出、缓存读取和缓存写入单价；首页总计与按模型明细按覆盖价计算，未配置覆盖时使用全局价格。当前主线联合回归为 293 个服务端单测通过、0 失败、14 忽略，桌面检查、Clippy 和生产构建通过。插件模型暂使用全局价格，真实供应商和发布版本仍待验收，见 [定价验证记录](history/issues/2026-11-13-issue150-model-pricing.md)。
 
-**当前结论：2026-11-19 已将 PR #13、#43–#49 合入 main。Semble 独立终端审批卡片修复已提交、推送并合入 #13；批量模型导入与配置备份的冲突已解决。最新公开版本为 v1.2.1，已包含这八项新增合并。真实 OAuth 账号、Semble 批准/拒绝仍待验收；Windows Cursor UI 的 CA 初始化与接管已通过，Agent 请求受 Cursor 账号门控阻断。**
+**当前结论：2026-11-19 已将 PR #13、#43–#49 合入 main。Semble 独立终端审批卡片修复已提交、推送并合入 #13；批量模型导入与配置备份的冲突已解决。最新公开版本为 v1.2.1，已包含这八项新增合并。真实 OAuth 账号、Semble 批准/拒绝仍待验收；Windows Cursor UI 的 CA 初始化与接管已通过，Agent 验收尚未完成，根因未确定。**
 
 **2026-11-13 进展：**上游 PR #433 已按当前 Rust/Tauri 架构选择性重实现：非 Tab 的 Cursor host 请求进入本地路由，CONNECT 隧道保持原始 authority；硬编码云端 400/404 短路和 `custom-protocol` feature 未采用。定向代理测试、Clippy、桌面检查和工作区回归通过，真实代理网络与 Cursor UI 待验，见[验证记录](history/pull-requests/2026-11-13-pr433-proxy-routing.md)。**
 
@@ -12,7 +12,9 @@
 
 **2026-11-13 进展：Issue #463/#184 已增加 Google Gemini OpenAI 兼容预设，使用完整 `v1beta/openai/chat/completions` 地址和现有 Bearer 鉴权；前端类型检查、构建与浏览器配置验证通过，已通过 [PR #36](https://github.com/haohaomin/cursor-byok/pull/36) 合入 `main`。原生 `generateContent` 协议和真实 Gemini Key 尚未验收，见 [验证记录](history/issues/2026-11-13-issue463-gemini-openai-compat.md)。**
 
-**2026-11-23 Windows 验证：**有效 CA 的普通用户安装/检测/移除闭环已通过，补齐了[初测](history/issues/2026-11-21-windows-ca-check.md)使用过期证书的边界。完整生产模块五种状态对照通过；桌面手动安装后为 Ready，Windows 默认 TLS 客户端的 HTTPS 成功、错误主机名被拒绝，移除后恢复 Untrusted 并拒绝连接。v1.2.1 安装包的 CA 初始化和 Cursor 接管 UI 也已通过；真实 Agent 请求被 Cursor 3.28.7 的账号功能门控阻断，provider 未收到请求。临时私钥、目录、任务及快捷方式已清理，见 [CA 记录](history/issues/2026-11-23-windows-ca-valid-check.md) 和 [Agent 记录](history/issues/2026-11-23-windows-cursor-agent-acceptance.md)。
+**2026-11-24 Issue #102：**工具 ID 混用在当前历史回放链路未复现。补充 Chat → Responses 和 Responses 自身回放两项自动化，相关回归共 36 项通过；未改生产代码，原作者旧历史与真实客户端仍待验，见 [复测记录](history/issues/2026-11-24-issue102-check.md)。
+
+**2026-11-23 Windows 验证：**有效 CA 的普通用户安装/检测/移除闭环已通过，补齐了[初测](history/issues/2026-11-21-windows-ca-check.md)使用过期证书的边界。完整生产模块五种状态对照通过；桌面手动安装后为 Ready，Windows 默认 TLS 客户端的 HTTPS 成功、错误主机名被拒绝，移除后恢复 Untrusted 并拒绝连接。v1.2.1 安装包的 CA 初始化和 Cursor 接管 UI 也已通过；真实 Agent 验收尚未完成：提交与 provider 存活未可靠确认，账号 401 和空日志不足以定位根因（2026-11-24 更正）。临时私钥、目录、任务及快捷方式已清理，见 [CA 记录](history/issues/2026-11-23-windows-ca-valid-check.md) 和 [Agent 记录](history/issues/2026-11-23-windows-cursor-agent-acceptance.md)。
 
 ## 1. 已发布的成果
 

@@ -15,18 +15,26 @@
   "cursor_harness": {
     "takeover_ui": "passed",
     "isolated_user_data_dir": true,
-    "agent_request": "blocked_before_submission",
-    "provider_request_count": 0,
+    "agent_request": "incomplete_submission_not_confirmed",
     "proxy_observations": [
       "GetMe returned 401 Unauthorized",
       "GetPlanInfo returned 401 Unauthorized",
       "GetEffectiveUserPlugins returned 401 Unauthorized",
-      "AvailableModels was not visible in the model picker"
+      "Temporary BYOK model was not visible in the model picker"
     ],
     "cursor_gate_observations": [
       "molten_agents_window off for signed-in account",
       "cursor_agent_host gate disabled",
       "effective agent-host topology disabled"
+    ],
+    "provider_logged_chat_requests": 0,
+    "limitations": [
+      "UI submission was not reliably confirmed",
+      "Provider task exited during retries; health was not rechecked before later attempts",
+      "Provider event log covered Chat Completions only, not BYOK Agent Run ingress",
+      "Disabled agent-host and agents-window gates do not prove legacy Agent is unavailable",
+      "Isolated token was not byte-compared with the production token generator",
+      "Temporary raw logs were cleaned; correction relies on retained execution records"
     ]
   },
   "cleanup": {
@@ -36,7 +44,8 @@
     "temporary_model_removed": true,
     "temporary_processes_removed": true,
     "temporary_tasks_removed": true,
-    "original_cursor_state_touched": false
+    "original_cursor_state_replaced_or_test_token_injected": false
   },
-  "status": "blocked_by_cursor_account_gate"
+  "status": "agent_acceptance_incomplete_cause_undetermined",
+  "reviewed_on": "2026-11-24"
 }

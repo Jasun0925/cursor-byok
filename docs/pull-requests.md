@@ -19,7 +19,7 @@
 | [#48](https://github.com/haohaomin/cursor-byok/pull/48) | 模型上下文上限 | `6906b1e` |
 | [#49](https://github.com/haohaomin/cursor-byok/pull/49) | 终端输出文件的 .txt 后缀 | `68c4dfb` |
 
-合并回归：18 项控制 API 测试通过；最终服务端单元测试 301 通过、0 失败、14 忽略；前端检查、四语言扫描和 macOS Tauri debug/no-bundle 构建通过。SQLx 动态库错误使用已有的本机构建参数解除，未修改项目构建配置。这些结果不代替真实客户端、供应商和 Windows 交互验收。PR #43 的 [有效 CA 后续验证](history/issues/2026-11-23-windows-ca-valid-check.md) 已在 Windows 普通用户下通过五种生产状态、安装后的 Ready/系统信任 HTTPS、错误主机名拒绝及移除后拒绝连接；真实 BYOK 安装包 UI 与 Cursor 接管仍待验收。
+合并回归：18 项控制 API 测试通过；最终服务端单元测试 301 通过、0 失败、14 忽略；前端检查、四语言扫描和 macOS Tauri debug/no-bundle 构建通过。SQLx 动态库错误使用已有的本机构建参数解除，未修改项目构建配置。这些结果不代替真实客户端、供应商和 Windows 交互验收。PR #43 的 [有效 CA 后续验证](history/issues/2026-11-23-windows-ca-valid-check.md) 已在 Windows 普通用户下通过五种生产状态、安装后的 Ready/系统信任 HTTPS、错误主机名拒绝及移除后拒绝连接；真实 BYOK 安装包的 CA 初始化与 Cursor 接管 UI 已通过，完整 Agent 请求仍待验收，见 [验收记录](history/issues/2026-11-23-windows-cursor-agent-acceptance.md)。
 
 ## 2026-11-13 Issue #302 候选
 
