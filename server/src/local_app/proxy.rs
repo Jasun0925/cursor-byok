@@ -18,6 +18,10 @@ use crate::{
 
 use super::ca::LoadedCa;
 
+#[cfg(test)]
+#[path = "proxy_stream_tests.rs"]
+mod stream_tests;
+
 #[derive(Default)]
 pub struct ProxyRuntime {
     url: Option<String>,

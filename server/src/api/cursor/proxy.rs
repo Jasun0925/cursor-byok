@@ -6,6 +6,8 @@ use axum::{
     extract::Extension,
     http::{header, Request, Response},
 };
+use futures_util::StreamExt;
+use tokio_util::sync::CancellationToken;
 
 use crate::Result;
 
@@ -96,10 +98,17 @@ async fn forward_request(
     remove_hop_by_hop_headers(&mut headers);
 
     let client = proxy.client().await?;
+    // HTTP/2 can keep uploading after the response is dropped. Tie both halves
+    // to the relay's lifetime so a cancelled client cannot leave an upload open.
+    let upload_cancel = CancellationToken::new();
+    let upload_guard = upload_cancel.clone().drop_guard();
+    let upload = body
+        .into_data_stream()
+        .take_until(upload_cancel.cancelled_owned());
     let upstream = client
         .request(parts.method.clone(), url)
         .headers(headers)
-        .body(reqwest::Body::wrap_stream(body.into_data_stream()))
+        .body(reqwest::Body::wrap_stream(upload))
         .send()
         .await;
 
@@ -120,7 +129,14 @@ async fn forward_request(
     let status = upstream.status();
     let mut response_headers = upstream.headers().clone();
     remove_hop_by_hop_headers(&mut response_headers);
-    let mut response = Response::new(Body::from_stream(upstream.bytes_stream()));
+    let response_stream = async_stream::stream! {
+        let _upload_guard = upload_guard;
+        let mut chunks = upstream.bytes_stream();
+        while let Some(chunk) = chunks.next().await {
+            yield chunk;
+        }
+    };
+    let mut response = Response::new(Body::from_stream(response_stream));
     *response.status_mut() = status;
     *response.headers_mut() = response_headers;
 

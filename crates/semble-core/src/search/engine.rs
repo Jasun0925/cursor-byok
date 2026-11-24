@@ -36,6 +36,7 @@ static EMBEDDERS: LazyLock<Mutex<HashMap<PathBuf, Arc<StaticEmbedder>>>> =
 impl SearchEngine {
     pub fn load_default(config: SembleConfig) -> Result<Self> {
         let client = reqwest::blocking::Client::builder()
+            .http1_only()
             .build()
             .map_err(|error| Error::ModelAsset(error.to_string()))?;
         Self::load_default_with_client(config, &client)

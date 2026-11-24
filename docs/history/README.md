@@ -88,6 +88,8 @@
 
 ## PR 调查与验收
 
+- [2026-11-24 · PR #493：HTTP/2 转发与上传取消](pull-requests/2026-11-24-pr493-http2-relay.md)
+
 - [2026-11-13 · 上游 PR #427：AvailableModels 上下文上限](pull-requests/2026-11-13-pr427-context-token-limit.md)
 
 - [2026-11-13 · 上游 PR #433：本地代理路由的选择性实现](pull-requests/2026-11-13-pr433-proxy-routing.md)

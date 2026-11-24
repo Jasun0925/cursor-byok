@@ -30,6 +30,7 @@ impl ModelAssets {
 
     pub fn ensure(cache_root: &Path) -> Result<Self> {
         let client = reqwest::blocking::Client::builder()
+            .http1_only()
             .build()
             .map_err(|error| Error::ModelAsset(error.to_string()))?;
         Self::ensure_with_client(cache_root, &client)
