@@ -6,8 +6,8 @@ use serde_json::{json, Map, Value};
 
 use crate::{
     model::{
-        project_messages, CanonicalMessage, ContentPart, ProjectedContent, ProjectedMessage, Role,
-        ToolCall, ToolCallContent, ToolRoundAssistant,
+        project_stored_messages, CanonicalMessage, ContentPart, ProjectedContent, ProjectedMessage,
+        Role, ToolCall, ToolCallContent, ToolRoundAssistant,
     },
     Error, Result,
 };
@@ -19,7 +19,7 @@ pub fn stable_messages(
     messages: &[CanonicalMessage],
     model: &str,
 ) -> Result<Vec<Vec<u8>>> {
-    let mut projected = project_messages(messages)?;
+    let mut projected = project_stored_messages(messages)?;
     if !instructions.is_empty() {
         projected.insert(
             0,
@@ -83,7 +83,7 @@ pub fn staged_final(
     dynamic_tools: &HashSet<String>,
     started_at_ms: u64,
 ) -> Result<String> {
-    let projected = project_messages(std::slice::from_ref(message))?;
+    let projected = project_stored_messages(std::slice::from_ref(message))?;
     let assistant = projected
         .first()
         .filter(|message| message.role == Role::Assistant)

@@ -14,8 +14,8 @@ use crate::{
         tools::runtime::{ExecContext, SubagentModel},
     },
     model::{
-        CanonicalMessage, ContentPart, ConversationId, MessageContent, Origin, PreparedRun,
-        PromptSpec, Role, RunAction, RunId, RunKind,
+        CanonicalMessage, CheckpointId, ContentPart, ConversationId, MessageContent, Origin,
+        PreparedRun, PromptSpec, Role, RunAction, RunId, RunKind,
     },
     store::{BlobId, Store},
     Error, Result,
@@ -200,9 +200,17 @@ pub(crate) async fn prepare(
     };
     let base_checkpoint_id = match input_id.as_deref() {
         Some(input_id) => {
-            store
+            let anchored = store
                 .anchor_input(&conversation_id, input_id, proposed_base_checkpoint_id)
-                .await?
+                .await?;
+            outgrown_anchor(
+                store,
+                input_id,
+                anchored,
+                proposed_base_checkpoint_id,
+                base_messages.as_deref(),
+            )
+            .await?
         }
         None => proposed_base_checkpoint_id,
     };
@@ -460,6 +468,40 @@ fn validate_prompt_root(messages: &[CanonicalMessage]) -> Result<()> {
         ));
     };
     Ok(())
+}
+
+/// A retried input normally continues from the base it was first anchored to.
+/// When an earlier attempt already wrote its turn into Cursor's history,
+/// Cursor sends that longer history with the retry. The checkpoint written
+/// back must keep every root Cursor sent, so a shorter anchored base can never
+/// be published; the retry continues from Cursor's history instead. The stored
+/// anchor is unchanged.
+async fn outgrown_anchor(
+    store: &Store,
+    input_id: &str,
+    anchored: CheckpointId,
+    proposed: CheckpointId,
+    proposed_messages: Option<&[CanonicalMessage]>,
+) -> Result<CheckpointId> {
+    let Some(proposed_messages) = proposed_messages else {
+        return Ok(anchored);
+    };
+    if anchored == proposed {
+        return Ok(anchored);
+    }
+    let anchored_len = store.load_checkpoint_messages(anchored).await?.len();
+    if anchored_len >= proposed_messages.len() {
+        return Ok(anchored);
+    }
+    tracing::warn!(
+        input_id,
+        anchored = anchored.0,
+        anchored_messages = anchored_len,
+        proposed = proposed.0,
+        proposed_messages = proposed_messages.len(),
+        "Cursor history moved past the input's base; continuing from Cursor's history"
+    );
+    Ok(proposed)
 }
 
 pub(crate) fn execution_run_id(request_id: &str) -> RunId {
@@ -761,6 +803,87 @@ fn exec_context(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    mod outgrown_anchor {
+        use super::*;
+
+        fn user(id: &str) -> CanonicalMessage {
+            CanonicalMessage::text(id, Role::User, Origin::User, "question")
+        }
+
+        async fn store() -> (tempfile::TempDir, Store) {
+            let directory = tempfile::tempdir().unwrap();
+            let url = format!("sqlite://{}", directory.path().join("test.db").display());
+            (directory, Store::connect(&url).await.unwrap())
+        }
+
+        #[tokio::test]
+        async fn a_retry_continues_from_a_longer_cursor_history() {
+            let (_directory, store) = store().await;
+            let conversation = ConversationId::new("conversation");
+            let first = vec![user("cursor-root:a:1")];
+            let anchored = store
+                .import_checkpoint(&conversation, &first)
+                .await
+                .unwrap();
+            store
+                .anchor_input(&conversation, "input-1", anchored)
+                .await
+                .unwrap();
+            let longer = vec![
+                user("cursor-root:a:1"),
+                user("cursor-root:a:2"),
+                user("cursor-root:a:3"),
+            ];
+            let proposed = store
+                .import_checkpoint(&conversation, &longer)
+                .await
+                .unwrap();
+            let kept = store
+                .anchor_input(&conversation, "input-1", proposed)
+                .await
+                .unwrap();
+            assert_eq!(kept, anchored);
+
+            let base = outgrown_anchor(&store, "input-1", kept, proposed, Some(&longer))
+                .await
+                .unwrap();
+            assert_eq!(base, proposed);
+            assert_eq!(
+                store
+                    .anchor_input(&conversation, "input-1", proposed)
+                    .await
+                    .unwrap(),
+                anchored,
+                "the stored anchor is unchanged"
+            );
+        }
+
+        #[tokio::test]
+        async fn a_retry_with_the_same_or_shorter_history_keeps_its_anchor() {
+            let (_directory, store) = store().await;
+            let conversation = ConversationId::new("conversation");
+            let longer = vec![user("cursor-root:a:1"), user("cursor-root:a:2")];
+            let anchored = store
+                .import_checkpoint(&conversation, &longer)
+                .await
+                .unwrap();
+            let shorter = vec![user("cursor-root:b:1")];
+            let proposed = store
+                .import_checkpoint(&conversation, &shorter)
+                .await
+                .unwrap();
+
+            let base = outgrown_anchor(&store, "input-1", anchored, proposed, Some(&shorter))
+                .await
+                .unwrap();
+            assert_eq!(base, anchored);
+            let base = outgrown_anchor(&store, "input-1", anchored, proposed, None)
+                .await
+                .unwrap();
+            assert_eq!(base, anchored);
+        }
+    }
 
     #[test]
     fn approved_plan_body_cannot_close_its_prompt_container() {

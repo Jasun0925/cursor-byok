@@ -10,7 +10,7 @@ use crate::{
     store::Store,
 };
 
-pub const CANCELLED_TOOL_MESSAGE: &str = "Tool execution was cancelled before completion.";
+pub use crate::model::CANCELLED_TOOL_MESSAGE;
 
 pub(super) async fn preserve_text(
     store: &Store,
