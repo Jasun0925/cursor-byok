@@ -12,6 +12,7 @@ use bytes::{BufMut, BytesMut};
 use prost::Message;
 use serde_json::{json, Map, Value};
 use sha2::{Digest, Sha256};
+use tokio::time::{timeout, Duration, Instant};
 
 use crate::{api::cursor::proxy, Error, Result};
 
@@ -27,6 +28,10 @@ const PINNED_AGENT_GATES: &[(&str, bool)] = &[
     ("agent_host_local_loop", false),
 ];
 const LOCAL_RULE: &str = "local_pinned";
+/// Cursor abandons a startup request that has no response headers after 30
+/// seconds and keeps its cached Statsig config, which may carry unpinned gates
+/// from a session without BYOK. Answer well before that with the local pins.
+const UPSTREAM_DEADLINE: Duration = Duration::from_secs(20);
 
 #[derive(Clone, PartialEq, Message)]
 struct BootstrapStatsigResponse {
@@ -40,24 +45,32 @@ pub async fn bootstrap_statsig(
     Extension(upstream): Extension<proxy::CursorProxy>,
     request: Request<Body>,
 ) -> Result<Response<Body>> {
+    bootstrap_within(&upstream, request, UPSTREAM_DEADLINE).await
+}
+
+async fn bootstrap_within(
+    upstream: &proxy::CursorProxy,
+    request: Request<Body>,
+    deadline: Duration,
+) -> Result<Response<Body>> {
     let user_id = bootstrap_user_id(request.headers());
-    match proxy::forward_buffered(&upstream, request).await {
-        Ok(response) if response.status.is_success() => match patch_upstream(response) {
-            Ok(response) => Ok(response),
-            Err(error) => {
-                tracing::warn!(%error, "Cursor Statsig bootstrap was invalid; using local bootstrap");
-                local_response(user_id.as_deref())
+    let started = Instant::now();
+    let result = timeout(deadline, proxy::forward_buffered(upstream, request)).await;
+    let elapsed_ms = started.elapsed().as_millis();
+    let error = match result {
+        Ok(Ok(response)) if response.status.is_success() => match patch_upstream(response) {
+            Ok(response) => {
+                tracing::info!(elapsed_ms, "pinned Cursor Statsig bootstrap");
+                return Ok(response);
             }
+            Err(error) => format!("invalid response: {error}"),
         },
-        Ok(response) => {
-            tracing::warn!(status = %response.status, "Cursor Statsig bootstrap was rejected; using local bootstrap");
-            local_response(user_id.as_deref())
-        }
-        Err(error) => {
-            tracing::warn!(%error, "Cursor Statsig bootstrap was unavailable; using local bootstrap");
-            local_response(user_id.as_deref())
-        }
-    }
+        Ok(Ok(response)) => format!("status {}", response.status),
+        Ok(Err(error)) => error.to_string(),
+        Err(_) => format!("no response within {}s", deadline.as_secs_f32()),
+    };
+    tracing::warn!(elapsed_ms, %error, "Cursor Statsig bootstrap failed; using local bootstrap");
+    local_response(user_id.as_deref())
 }
 
 fn patch_upstream(response: proxy::BufferedResponse) -> Result<Response<Body>> {

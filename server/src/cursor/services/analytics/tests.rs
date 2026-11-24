@@ -135,3 +135,49 @@ async fn missing_or_invalid_identity_does_not_invent_an_account() {
         assert_eq!(config["user"], json!({}));
     }
 }
+
+#[tokio::test]
+async fn stalled_upstream_answers_with_local_pins_before_cursor_gives_up() {
+    // A proxy that accepts the connection and never answers stalls the
+    // upstream bootstrap the way a hung Cursor backend connection does.
+    let stalled_proxy = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let address = format!("http://{}", stalled_proxy.local_addr().unwrap());
+    let held = tokio::spawn(async move {
+        let (connection, _) = stalled_proxy.accept().await.unwrap();
+        std::future::pending::<()>().await;
+        drop(connection);
+    });
+    let directory = tempfile::tempdir().unwrap();
+    let store = crate::store::Store::connect(&format!(
+        "sqlite://{}",
+        directory.path().join("test.db").display()
+    ))
+    .await
+    .unwrap();
+    store
+        .set_proxy_settings(crate::store::ProxySettingsInput {
+            mode: crate::store::ProxyMode::Custom,
+            address,
+            auth_enabled: false,
+            username: String::new(),
+            password: None,
+        })
+        .await
+        .unwrap();
+    let upstream = proxy::CursorProxy::cursor(crate::network::NetworkClients::new(store));
+    let request = Request::builder()
+        .uri(BOOTSTRAP_STATSIG_PATH)
+        .body(Body::empty())
+        .unwrap();
+
+    let response = bootstrap_within(&upstream, request, Duration::from_millis(200))
+        .await
+        .unwrap();
+
+    let config = config_from_response(response, false).await;
+    assert_eq!(
+        config["feature_gates"]["agent_host_local_loop"]["value"],
+        false
+    );
+    held.abort();
+}
