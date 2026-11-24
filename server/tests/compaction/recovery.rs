@@ -194,7 +194,12 @@ async fn post_auto_compaction_failure_resumes_from_persisted_checkpoint() {
             .await
             .unwrap();
         let provider = fake_provider::FakeProvider::default();
-        provider.push(text_response(&"h".repeat(400_000), 100_000, 20));
+        provider.push(text_response(&"h".repeat(2_000), 100_000, 20));
+        // Keep the source small enough for a complete fallback; the larger
+        // failure case is covered by retention.rs and must preserve history.
+        provider.push_error(cursor_server::Error::Provider(
+            "context_length_exceeded".into(),
+        ));
         if summary_fails {
             provider.push_results(rejected_after_text("UNCOMMITTED_AUTO_SUMMARY"));
         } else {
@@ -272,20 +277,20 @@ async fn post_auto_compaction_failure_resumes_from_persisted_checkpoint() {
         let requests = provider.requests();
         assert_eq!(
             requests.len(),
-            4,
+            5,
             "recovery must not summarize again or replay the failed request"
         );
-        assert!(requests[3].history.starts_with(&requests[2].history));
-        assert_eq!(requests[3].prompt, requests[2].prompt);
+        assert!(requests[4].history.starts_with(&requests[3].history));
+        assert_eq!(requests[4].prompt, requests[3].prompt);
         assert_eq!(
-            requests[3]
+            requests[4]
                 .history
                 .iter()
                 .filter(|message| message.message_id.starts_with("request-context:"))
                 .count(),
             1
         );
-        assert!(serde_json::to_string(&requests[3].history)
+        assert!(serde_json::to_string(&requests[4].history)
             .unwrap()
             .contains("saved post-summary progress"));
     }

@@ -1,10 +1,10 @@
 # 工作状态
 
-更新：2026-11-23；v1.2.1 已发布并完成下载、签名和更新清单核验。历史测试与环境状态保留原核对日期。逐项调查见 [Issue 清单](issues.md)，原始测试见 [历史资料](history/README.md)。
+更新：2026-11-24；v1.2.3 已发布并完成下载、签名和更新清单核验。历史测试与环境状态保留原核对日期。逐项调查见 [Issue 清单](issues.md)，原始测试见 [历史资料](history/README.md)。
 
 **2026-11-13 进展：**#150/#417 的逐模型 Token 定价已通过 [PR #39](https://github.com/haohaomin/cursor-byok/pull/39) 合入 `main`（合并提交 `e53e97e`）；原 #35 是合入已先落地的 #34 分支，未直接进入主线，已由 #39 在当前主线基线上重新集成。设置页按 `model_hash` 保存输入、输出、缓存读取和缓存写入单价；首页总计与按模型明细按覆盖价计算，未配置覆盖时使用全局价格。当前主线联合回归为 293 个服务端单测通过、0 失败、14 忽略，桌面检查、Clippy 和生产构建通过。插件模型暂使用全局价格，真实供应商和发布版本仍待验收，见 [定价验证记录](history/issues/2026-11-13-issue150-model-pricing.md)。
 
-**当前结论：2026-11-19 已将 PR #13、#43–#49 合入 main。Semble 独立终端审批卡片修复已提交、推送并合入 #13；批量模型导入与配置备份的冲突已解决。最新公开版本为 v1.2.1，已包含这八项新增合并。真实 OAuth 账号、Semble 批准/拒绝仍待验收；Windows Cursor UI 的 CA 初始化与接管已通过，Agent 验收尚未完成，根因未确定。**
+**当前结论：2026-11-19 已将 PR #13、#43–#49 合入 main。Semble 独立终端审批卡片修复已提交、推送并合入 #13；批量模型导入与配置备份的冲突已解决。最新公开版本为 v1.2.3，包含这八项新增合并及 PR #50 的 HTTP/2 代理修复。真实 OAuth 账号、Semble 批准/拒绝仍待验收；Windows Cursor UI 的 CA 初始化与接管已通过，Agent 验收尚未完成，根因未确定。**
 
 **2026-11-13 进展：**上游 PR #433 已按当前 Rust/Tauri 架构选择性重实现：非 Tab 的 Cursor host 请求进入本地路由，CONNECT 隧道保持原始 authority；硬编码云端 400/404 短路和 `custom-protocol` feature 未采用。定向代理测试、Clippy、桌面检查和工作区回归通过，真实代理网络与 Cursor UI 待验，见[验证记录](history/pull-requests/2026-11-13-pr433-proxy-routing.md)。**
 
@@ -16,9 +16,13 @@
 
 **2026-11-23 Windows 验证：**有效 CA 的普通用户安装/检测/移除闭环已通过，补齐了[初测](history/issues/2026-11-21-windows-ca-check.md)使用过期证书的边界。完整生产模块五种状态对照通过；桌面手动安装后为 Ready，Windows 默认 TLS 客户端的 HTTPS 成功、错误主机名被拒绝，移除后恢复 Untrusted 并拒绝连接。v1.2.1 安装包的 CA 初始化和 Cursor 接管 UI 也已通过；真实 Agent 验收尚未完成：提交与 provider 存活未可靠确认，账号 401 和空日志不足以定位根因（2026-11-24 更正）。临时私钥、目录、任务及快捷方式已清理，见 [CA 记录](history/issues/2026-11-23-windows-ca-valid-check.md) 和 [Agent 记录](history/issues/2026-11-23-windows-cursor-agent-acceptance.md)。
 
+**2026-11-24 Issue #444：**自动压缩丢弃早期轮次及失败兜底丢失历史已有失败复现；分批摘要、失败保留和中断处理候选通过定向回归，完整本机回归与 Clippy 已通过，跨平台 CI 待验。真实 Grok 未验收，见 [记录](history/issues/2026-11-24-issue444-compaction-retention.md)。
+
+**2026-11-24 PR #493：**选择性修复经 fork PR #50 合入，跨平台 CI 与 v1.2.3 发布核验通过。修复 Cursor 代理 HTTP/2 协商和响应取消后上传未释放；其他网关保持 HTTP/1.1。[测试与范围](history/pull-requests/2026-11-24-pr493-http2-relay.md)。
+
 ## 1. 已发布的成果
 
-v1.2.1 已发布，涵盖 v1.1.0 之后的模型备份、批量添加、逐模型定价、Windows 用户级 CA、上下文和终端修复，见 [发布与资产核验](history/releases.md#v121)。发布没有扩大真实账号、客户端审批等未完成场景的验收范围。
+v1.2.3 已发布，新增 HTTP/2 代理修复（[发布核验](history/releases.md#v123)）；v1.2.1 已涵盖 v1.1.0 之后的模型备份、批量添加、逐模型定价、Windows 用户级 CA、上下文和终端修复，见 [发布与资产核验](history/releases.md#v121)。发布没有扩大真实账号、客户端审批等未完成场景的验收范围。
 
 | 工作 | 已完成部分 | 保留的边界 |
 | --- | --- | --- |
