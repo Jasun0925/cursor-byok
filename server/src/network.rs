@@ -66,7 +66,7 @@ impl NetworkClients {
         if let Some(client) = cache.cursor.clone() {
             return Ok(client);
         }
-        let client = client_builder(&self.store)
+        let client = cursor_client_builder(&self.store)
             .await?
             .redirect(reqwest::redirect::Policy::none())
             .build()?;
@@ -149,6 +149,11 @@ impl NetworkClients {
 }
 
 pub async fn client_builder(store: &Store) -> Result<reqwest::ClientBuilder> {
+    // Providers and ordinary fetches keep their existing HTTP/1.1 transport.
+    Ok(cursor_client_builder(store).await?.http1_only())
+}
+
+async fn cursor_client_builder(store: &Store) -> Result<reqwest::ClientBuilder> {
     let settings = store.proxy_settings_secret().await?;
     // Use the platform TLS stack for compatibility with provider gateways that
     // only offer legacy TLS 1.2 cipher suites unsupported by rustls.
@@ -165,7 +170,9 @@ pub async fn client(store: &Store) -> Result<reqwest::Client> {
 
 pub async fn blocking_client_builder(store: &Store) -> Result<reqwest::blocking::ClientBuilder> {
     let settings = store.proxy_settings_secret().await?;
-    let mut builder = reqwest::blocking::Client::builder().use_native_tls();
+    let mut builder = reqwest::blocking::Client::builder()
+        .use_native_tls()
+        .http1_only();
     if settings.mode.is_custom() {
         builder = builder.proxy(custom_proxy(&settings)?);
     }

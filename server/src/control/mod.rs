@@ -40,7 +40,10 @@ pub fn proxy_web_router(service: ControlService, target: Url) -> Router {
 
 fn frontend_proxy_router(target: Url) -> Router {
     let state = FrontendProxy {
-        client: reqwest::Client::new(),
+        client: reqwest::Client::builder()
+            .http1_only()
+            .build()
+            .expect("build frontend proxy client"),
         target: target.as_str().trim_end_matches('/').to_string(),
     };
     Router::new()

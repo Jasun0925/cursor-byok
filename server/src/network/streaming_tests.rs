@@ -15,7 +15,7 @@ use hudsucker::{
     },
     rustls::{crypto::aws_lc_rs, pki_types::PrivateKeyDer, ServerConfig},
 };
-use rcgen::{BasicConstraints, CertificateParams, IsCa, KeyPair, KeyUsagePurpose};
+use rcgen::{BasicConstraints, CertificateParams, DnType, IsCa, KeyPair, KeyUsagePurpose};
 use tokio_stream::wrappers::ReceiverStream;
 
 use super::*;
@@ -26,18 +26,28 @@ enum ResponseLifetime {
     DropAfterRead,
 }
 
-async fn relay_exchange(protocol: &[u8], lifetime: ResponseLifetime) {
+enum ClientKind {
+    Cursor,
+    Shared,
+}
+
+async fn relay_exchange(protocol: &[u8], lifetime: ResponseLifetime, kind: ClientKind) -> Version {
     let ca_key = KeyPair::generate().unwrap();
     let mut ca_params = CertificateParams::new(Vec::<String>::new()).unwrap();
     ca_params.is_ca = IsCa::Ca(BasicConstraints::Unconstrained);
+    ca_params
+        .distinguished_name
+        .push(DnType::CommonName, "Cursor relay test CA");
     ca_params.key_usages = vec![KeyUsagePurpose::KeyCertSign, KeyUsagePurpose::CrlSign];
     let ca = ca_params.self_signed(&ca_key).unwrap();
     let issuer = rcgen::Issuer::from_ca_cert_pem(&ca.pem(), ca_key).unwrap();
     let leaf_key = KeyPair::generate().unwrap();
-    let leaf = CertificateParams::new(vec!["api2.cursor.sh".into()])
-        .unwrap()
-        .signed_by(&leaf_key, &issuer)
-        .unwrap();
+    let mut leaf_params = CertificateParams::new(vec!["api2.cursor.sh".into()]).unwrap();
+    leaf_params
+        .distinguished_name
+        .push(DnType::CommonName, "api2.cursor.sh");
+    leaf_params.use_authority_key_identifier_extension = true;
+    let leaf = leaf_params.signed_by(&leaf_key, &issuer).unwrap();
     let mut tls = ServerConfig::builder_with_provider(Arc::new(aws_lc_rs::default_provider()))
         .with_safe_default_protocol_versions()
         .unwrap()
@@ -84,9 +94,11 @@ async fn relay_exchange(protocol: &[u8], lifetime: ResponseLifetime) {
     let clients = NetworkClients::new(store.clone());
     clients.refresh_proxy_config().await;
     // Use the production builder. Only trust and DNS are isolated to this test endpoint.
-    let client = client_builder(&store)
-        .await
-        .unwrap()
+    let builder = match kind {
+        ClientKind::Cursor => cursor_client_builder(&store).await.unwrap(),
+        ClientKind::Shared => client_builder(&store).await.unwrap(),
+    };
+    let client = builder
         .redirect(reqwest::redirect::Policy::none())
         .no_proxy()
         .add_root_certificate(reqwest::Certificate::from_pem(ca.pem().as_bytes()).unwrap())
@@ -140,34 +152,45 @@ async fn relay_exchange(protocol: &[u8], lifetime: ResponseLifetime) {
     .await;
     server.abort();
     assert!(result.is_ok(), "Cursor relay stopped duplex progress");
-    let actual_version = observed.try_recv().unwrap();
-    let expected_version = if protocol == b"h2" {
-        Version::HTTP_2
-    } else {
-        Version::HTTP_11
-    };
-    assert_eq!(
-        actual_version, expected_version,
-        "Cursor relay did not negotiate the upstream protocol"
-    );
+    observed.try_recv().unwrap()
 }
 
 #[tokio::test]
 async fn cursor_relay_negotiates_http2_for_bidirectional_streaming() {
-    relay_exchange(b"h2", ResponseLifetime::Complete).await;
+    assert_eq!(
+        relay_exchange(b"h2", ResponseLifetime::Complete, ClientKind::Cursor).await,
+        Version::HTTP_2
+    );
 }
 
 #[tokio::test]
 async fn cursor_relay_still_accepts_http1_only_upstreams() {
-    relay_exchange(b"http/1.1", ResponseLifetime::Complete).await;
+    assert_eq!(
+        relay_exchange(b"http/1.1", ResponseLifetime::Complete, ClientKind::Cursor).await,
+        Version::HTTP_11
+    );
 }
 
 #[tokio::test]
 async fn cursor_relay_cancels_upload_when_response_is_dropped() {
-    relay_exchange(b"h2", ResponseLifetime::DropAfterRead).await;
+    assert_eq!(
+        relay_exchange(b"h2", ResponseLifetime::DropAfterRead, ClientKind::Cursor).await,
+        Version::HTTP_2
+    );
 }
 
 #[tokio::test]
 async fn cursor_relay_cancels_upload_when_unpolled_response_is_dropped() {
-    relay_exchange(b"h2", ResponseLifetime::DropBeforeRead).await;
+    assert_eq!(
+        relay_exchange(b"h2", ResponseLifetime::DropBeforeRead, ClientKind::Cursor).await,
+        Version::HTTP_2
+    );
+}
+
+#[tokio::test]
+async fn non_cursor_shared_clients_keep_http1_even_when_upstream_advertises_http2() {
+    assert_eq!(
+        relay_exchange(b"h2", ResponseLifetime::Complete, ClientKind::Shared).await,
+        Version::HTTP_11
+    );
 }
