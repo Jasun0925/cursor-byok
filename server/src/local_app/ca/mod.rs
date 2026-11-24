@@ -87,10 +87,7 @@ impl CaManager {
                     path
                 )
             }),
-            "windows" => Some(format!(
-                "certutil -addstore -f Root \"{}\"",
-                self.cert_path().display()
-            )),
+            "windows" => Some(windows_install_command(&self.cert_path())),
             "linux" => {
                 let anchor = linux_anchor_file();
                 Some(format!(
@@ -144,6 +141,10 @@ impl CaManager {
         write_atomic(&self.cert_path(), cert.pem().as_bytes(), 0o644)?;
         Ok(())
     }
+}
+
+fn windows_install_command(path: &std::path::Path) -> String {
+    format!("certutil -user -addstore -f Root \"{}\"", path.display())
 }
 
 fn parse_issuer(cert: &str, key: &str) -> Result<Issuer<'static, KeyPair>> {
@@ -235,5 +236,19 @@ fn linux_refresh_command() -> &'static str {
     match linux_anchor_file().parent().and_then(|dir| dir.to_str()) {
         Some("/usr/local/share/ca-certificates") => "update-ca-certificates",
         _ => "update-ca-trust extract",
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::windows_install_command;
+    use std::path::Path;
+
+    #[test]
+    fn windows_install_command_targets_the_current_user_root_store() {
+        assert_eq!(
+            windows_install_command(Path::new(r#"C:\Users\test\ca.crt"#)),
+            r#"certutil -user -addstore -f Root "C:\Users\test\ca.crt""#
+        );
     }
 }

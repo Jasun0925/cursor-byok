@@ -23,8 +23,9 @@ use crate::{
     plugin::{PluginDescriptor, PluginRegistry, PluginRuntime, PluginRuntimeStatus},
     provider::{is_valid_response_event, ModelEvent, Provider},
     store::{
-        CommitSettings, DesktopSettings, ExternalApiSettings, PortSettings, ProxySettings,
-        ProxySettingsInput, StatisticsStorage, Store, TabSettings, TokenPricingSettings,
+        CommitSettings, DesktopSettings, ExternalApiSettings, ModelTokenPricing, PortSettings,
+        ProxySettings, ProxySettingsInput, StatisticsStorage, Store, TabSettings,
+        TokenPricingSettings,
     },
     Error, Result,
 };
@@ -509,6 +510,10 @@ impl ControlService {
         })
     }
 
+    pub async fn import_model_backup(&self, models: &[ModelConfigInput]) -> Result<usize> {
+        self.store.create_models_if_missing(models).await
+    }
+
     pub async fn preview_v0049_models(&self) -> Result<LegacyModelImportPreview> {
         let path = crate::config::v0049_config_path()?;
         let plan = self.store.preview_v0049_model_config(&path).await?;
@@ -715,6 +720,17 @@ impl ControlService {
         settings: TokenPricingSettings,
     ) -> Result<TokenPricingSettings> {
         self.store.set_pricing_settings(settings).await
+    }
+
+    pub async fn model_pricing_settings(&self) -> Result<Vec<ModelTokenPricing>> {
+        self.store.model_pricing_settings().await
+    }
+
+    pub async fn set_model_pricing_settings(
+        &self,
+        settings: Vec<ModelTokenPricing>,
+    ) -> Result<Vec<ModelTokenPricing>> {
+        self.store.set_model_pricing_settings(settings).await
     }
 }
 

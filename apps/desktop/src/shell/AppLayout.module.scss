@@ -133,6 +133,7 @@
   z-index: 12500;
   top: var(--window-safe-top);
   right: max(var(--app-page-padding), calc((100% - var(--app-page-max-width)) / 2));
+  max-width: calc(100% - 2 * var(--app-page-padding));
   height: calc(var(--app-content-top) - var(--window-safe-top));
   display: flex;
   align-items: center;
@@ -152,6 +153,7 @@
 .actions {
   height: var(--app-toolbar-height);
   min-width: var(--app-toolbar-height);
+  max-width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -159,12 +161,21 @@
   gap: 3px;
   box-shadow: 0 0px 6px 4px var(--vscode-editor-background);
   transform: translateX(6px);
+
+  > button {
+    flex-shrink: 0;
+  }
 }
 
 .pageActions {
   display: flex;
+  min-width: 0;
   align-items: center;
   gap: 3px;
+
+  &:last-child {
+    flex-shrink: 0;
+  }
 
   &:empty {
     display: none;

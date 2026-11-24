@@ -4,11 +4,13 @@ import type {
   ExternalApiSettings,
   LlmCall,
   Model,
+  ModelTokenPricing,
   Overview,
   OverviewTokenUsageBucket,
   ProxySettings,
   StatisticsStorage,
   TabSettings,
+  TokenPricingSettings,
 } from "../shared/api";
 
 const API_ROOT = "/__byok-api__/api";
@@ -87,6 +89,12 @@ let harnessStatus: CursorHarnessStatus = {
 
 let detailed = true;
 let portSettings = { proxy_port: 0, service_port: 0 };
+let pricing: TokenPricingSettings = {
+  input_per_million: 5,
+  output_per_million: 25,
+  cache_read_per_million: 0.5,
+  cache_write_per_million: 6.25,
+};
 let externalApiSettings: ExternalApiSettings = { enabled: false, api_key: "" };
 let proxySettings: ProxySettings = {
   mode: "default",
@@ -96,6 +104,13 @@ let proxySettings: ProxySettings = {
   has_password: false,
 };
 let tabSettings: TabSettings = { mode: "public", address: "" };
+let modelPricing: ModelTokenPricing[] = [{
+  model_hash: "mock-gpt",
+  input_per_million: 1.5,
+  output_per_million: 8,
+  cache_read_per_million: 0.15,
+  cache_write_per_million: 1.5,
+}];
 let storage: StatisticsStorage = { call_count: calls.length, trace_count: calls.length };
 
 export function installDemoApi() {
@@ -112,6 +127,12 @@ export function installDemoApi() {
 
     if (path === "/models" && method === "GET") return json(models);
     if (path === "/models" && method === "POST") return json(models);
+    if (path === "/models/backup/import" && method === "POST") {
+      const total = body && typeof body === "object" && Array.isArray((body as { models?: unknown }).models)
+        ? (body as { models: unknown[] }).models.length
+        : 0;
+      return json({ imported: 0, skipped: total, total });
+    }
     if (path === "/models/order") return json(models);
     if (path === "/models/discover") return json({ models: models.map((model) => model.model_id) });
     if (path === "/models/import-v0049" && method === "GET") {
@@ -149,6 +170,11 @@ export function installDemoApi() {
       portSettings = body as typeof portSettings;
       return json(portSettings);
     }
+    if (path === "/settings/pricing" && method === "GET") return json(pricing);
+    if (path === "/settings/pricing") {
+      pricing = body as TokenPricingSettings;
+      return json(pricing);
+    }
     if (path === "/settings/external-api" && method === "GET") return json(externalApiSettings);
     if (path === "/settings/external-api") {
       externalApiSettings = body as ExternalApiSettings;
@@ -172,6 +198,23 @@ export function installDemoApi() {
       tabSettings = body as TabSettings;
       return json(tabSettings);
     }
+    if (path === "/settings/model-pricing" && method === "GET") return json(modelPricing);
+    if (path === "/settings/model-pricing") {
+      modelPricing = [...(body as ModelTokenPricing[])].sort((left, right) => left.model_hash.localeCompare(right.model_hash));
+      return json(modelPricing);
+    }
+    if (path === "/settings/commit" && method === "GET") {
+      return json({ model_id: "", prompt: "", prompt_locale: "en-US", default_prompt: "Write a concise commit message." });
+    }
+    if (path === "/settings/commit") {
+      const next = body as { model_id?: string; prompt?: string; prompt_locale?: string };
+      return json({
+        model_id: next.model_id ?? "",
+        prompt: next.prompt ?? "",
+        prompt_locale: next.prompt_locale ?? "en-US",
+        default_prompt: "Write a concise commit message.",
+      });
+    }
     if (path === "/settings/desktop" && method === "GET") return json({ silent_start: false, show_dock_icon: true, show_cliproxy_tab: false });
     if (path === "/settings/desktop") return json(body);
     if (path === "/desktop/open-external-url") {
@@ -183,6 +226,10 @@ export function installDemoApi() {
       return empty();
     }
     if (path.endsWith("/dismissals")) return empty();
+    if (path === "/plugins" && method === "GET") return json([]);
+    if (path === "/plugins/runtime" && method === "GET") {
+      return json({ state: "unsupported", version: "demo", target: null, phase: null, downloaded_bytes: 0, total_bytes: null, error: null });
+    }
 
     return json({ message: `Unhandled demo endpoint: ${method} ${path}` }, 404);
   };
@@ -235,28 +282,45 @@ function createOverview(params: URLSearchParams): Overview {
   const step = granularity === "minute" ? 60_000 : granularity === "hour" ? 3_600_000 : 86_400_000;
   const count = granularity === "minute" ? Math.min(60, Math.max(10, Math.ceil(duration / step))) : granularity === "hour" ? Math.min(24, Math.max(8, Math.ceil(duration / step))) : Math.min(365, Math.max(7, Math.ceil(duration / step)));
   const series = createSeries(count, step, Number.isFinite(end) && end > 0 ? end : FIXED_NOW);
-  const totals = series.reduce((sum, bucket) => ({
-    input: sum.input + bucket.input_tokens,
-    cacheRead: sum.cacheRead + bucket.cache_read_tokens,
-    cacheWrite: sum.cacheWrite + bucket.cache_write_tokens,
-    output: sum.output + bucket.output_tokens,
-  }), { input: 0, cacheRead: 0, cacheWrite: 0, output: 0 });
   const llmCalls = Math.max(12, Math.round(count * 5.4));
 
+  const split = (value: number, index: number) => Math.floor(value / models.length) + (index < value % models.length ? 1 : 0);
+  const selected = params.get("model_hashes");
+  const hashes: string[] | null = selected ? JSON.parse(selected) : null;
+  const selectedIndexes = models.map((model, index) => ({ model, index })).filter(({ model }) => !hashes || hashes.includes(model.model_hash));
+  const modelUsage = selectedIndexes.map(({ model, index }) => {
+    const total = series.reduce((sum, bucket) => ({
+      input: sum.input + split(bucket.input_tokens, index),
+      output: sum.output + split(bucket.output_tokens, index),
+      read: sum.read + split(bucket.cache_read_tokens, index),
+      write: sum.write + split(bucket.cache_write_tokens, index),
+    }), { input: 0, output: 0, read: 0, write: 0 });
+    const failed = split(Math.max(1, Math.floor(llmCalls * 0.008)), index);
+    const successful = split(llmCalls - Math.max(1, Math.floor(llmCalls * 0.008)), index);
+    return {
+      model_hash: model.model_hash, model_id: model.model_id, display_name: model.display_name,
+      provider_type: model.type, provider_url: model.base_url,
+      metrics: {
+        llm_calls: successful + failed, successful_calls: successful, failed_calls: failed,
+        input_tokens: total.input, output_tokens: total.output, cache_read_tokens: total.read, cache_write_tokens: total.write,
+        prompt_tokens: total.input + total.read + total.write,
+        token_usage: total.input + total.read + total.write + total.output,
+      },
+    };
+  });
+  const metrics = { llm_calls: 0, successful_calls: 0, failed_calls: 0, input_tokens: 0, output_tokens: 0, cache_read_tokens: 0, cache_write_tokens: 0, prompt_tokens: 0, token_usage: 0 };
+  for (const row of modelUsage) for (const key of Object.keys(metrics) as (keyof typeof metrics)[]) metrics[key] += row.metrics[key];
   return {
-    metrics: {
-      llm_calls: llmCalls,
-      successful_calls: llmCalls - Math.max(1, Math.floor(llmCalls * 0.008)),
-      failed_calls: Math.max(1, Math.floor(llmCalls * 0.008)),
-      token_usage: totals.input + totals.cacheRead + totals.cacheWrite + totals.output,
-      prompt_tokens: totals.input + totals.cacheRead + totals.cacheWrite,
-      input_tokens: totals.input,
-      cache_read_tokens: totals.cacheRead,
-      cache_write_tokens: totals.cacheWrite,
-      output_tokens: totals.output,
-    },
+    metrics,
+    model_usage: modelUsage.sort((a, b) => b.metrics.token_usage - a.metrics.token_usage),
     token_usage_granularity: granularity,
-    token_usage_series: series,
+    token_usage_series: series.map((bucket) => ({
+      bucket_start_ms: bucket.bucket_start_ms,
+      input_tokens: selectedIndexes.reduce((sum, { index }) => sum + split(bucket.input_tokens, index), 0),
+      output_tokens: selectedIndexes.reduce((sum, { index }) => sum + split(bucket.output_tokens, index), 0),
+      cache_read_tokens: selectedIndexes.reduce((sum, { index }) => sum + split(bucket.cache_read_tokens, index), 0),
+      cache_write_tokens: selectedIndexes.reduce((sum, { index }) => sum + split(bucket.cache_write_tokens, index), 0),
+    })),
   };
 }
 

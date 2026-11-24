@@ -1,4 +1,4 @@
-import { cloneElement, useCallback, useEffect, useId, useRef, useState, type FocusEventHandler, type PointerEventHandler, type ReactElement } from "react";
+import { cloneElement, useCallback, useEffect, useId, useRef, useState, type FocusEventHandler, type MouseEventHandler, type PointerEventHandler, type ReactElement } from "react";
 import { useTooltip, type TooltipAnchor } from "./Tooltip";
 
 
@@ -8,6 +8,7 @@ function anchorFor(element: HTMLElement): TooltipAnchor {
 
 type TriggerProps = {
   "aria-describedby"?: string;
+  onClick?: MouseEventHandler<HTMLElement>;
   onPointerMove?: PointerEventHandler<HTMLElement>;
   onPointerLeave?: PointerEventHandler<HTMLElement>;
   onPointerDown?: PointerEventHandler<HTMLElement>;
@@ -15,7 +16,7 @@ type TriggerProps = {
   onBlur?: FocusEventHandler<HTMLElement>;
 };
 
-export function TooltipTrigger({ label, children }: { label: string; children: ReactElement<TriggerProps> }) {
+export function TooltipTrigger({ label, children, shouldShow }: { label: string; children: ReactElement<TriggerProps>; shouldShow?: () => boolean }) {
   const { show: showTooltip, hide: hideTooltip } = useTooltip();
   const [anchor, setAnchor] = useState<TooltipAnchor | null>(null);
   const tooltipId = useId();
@@ -48,9 +49,18 @@ export function TooltipTrigger({ label, children }: { label: string; children: R
 
   const trigger = cloneElement(children, {
     "aria-describedby": [children.props["aria-describedby"], anchor ? tooltipId : null].filter(Boolean).join(" ") || undefined,
+    onClick: (event) => {
+      children.props.onClick?.(event);
+      hide();
+    },
     onPointerMove: (event) => {
       children.props.onPointerMove?.(event);
-      if (event.pointerType !== "touch" && event.buttons === 0 && !anchor) {
+      if (event.pointerType === "touch" || event.buttons !== 0) return;
+      if (shouldShow?.() === false) {
+        if (anchor) hide();
+        return;
+      }
+      if (!anchor) {
         const nextAnchor = anchorFor(event.currentTarget);
         setAnchor(nextAnchor);
         showTooltip(nextAnchor, tooltipId, label);
@@ -67,7 +77,7 @@ export function TooltipTrigger({ label, children }: { label: string; children: R
     onFocus: (event) => {
       children.props.onFocus?.(event);
       clearTimer();
-      if (event.currentTarget.matches(":focus-visible")) {
+      if (event.currentTarget.matches(":focus-visible") && shouldShow?.() !== false) {
         const nextAnchor = anchorFor(event.currentTarget);
         setAnchor(nextAnchor);
         showTooltip(nextAnchor, tooltipId, label);

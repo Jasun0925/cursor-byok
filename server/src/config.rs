@@ -10,6 +10,7 @@ const DATA_DIR_NAME: &str = ".cursor-byok-v3";
 const DATABASE_FILE_NAME: &str = "cursor-byok.db";
 const V0049_DATA_DIR_NAME: &str = ".cursor-local-assistant-v2";
 const V0049_CONFIG_FILE_NAME: &str = "config.yaml";
+const COMPACTION_PROMPT_PATH: &str = "prompts/compaction.md";
 const DEFAULT_PROVIDER_REQUEST_TIMEOUT: Duration = Duration::from_secs(60 * 60);
 const DEFAULT_PROVIDER_STREAM_IDLE_TIMEOUT: Duration = Duration::from_secs(30 * 60);
 
@@ -29,6 +30,26 @@ pub fn v0049_config_path() -> Result<PathBuf> {
     Ok(home_dir
         .join(V0049_DATA_DIR_NAME)
         .join(V0049_CONFIG_FILE_NAME))
+}
+
+pub fn compaction_prompt_path() -> Result<PathBuf> {
+    Ok(managed_data_dir()?.join(COMPACTION_PROMPT_PATH))
+}
+
+pub fn compaction_prompt_override() -> Result<Option<String>> {
+    compaction_prompt_override_at(&compaction_prompt_path()?)
+}
+
+pub(crate) fn compaction_prompt_override_at(path: &std::path::Path) -> Result<Option<String>> {
+    match fs::read_to_string(path) {
+        Ok(prompt) if prompt.trim().is_empty() => Ok(None),
+        Ok(prompt) => Ok(Some(prompt)),
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(None),
+        Err(error) => Err(Error::Config(format!(
+            "cannot read compaction prompt at {}: {error}",
+            path.display()
+        ))),
+    }
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -155,6 +176,31 @@ fn database_url_for_dir(data_dir: &std::path::Path) -> Result<String> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn compaction_prompt_override_is_optional_and_reloaded() {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("compaction.md");
+
+        assert_eq!(compaction_prompt_override_at(&path).unwrap(), None);
+        fs::write(&path, "  \n").unwrap();
+        assert_eq!(compaction_prompt_override_at(&path).unwrap(), None);
+        fs::write(&path, "custom prompt").unwrap();
+        assert_eq!(
+            compaction_prompt_override_at(&path).unwrap().as_deref(),
+            Some("custom prompt")
+        );
+    }
+
+    #[test]
+    fn compaction_prompt_override_reports_invalid_utf8_path() {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("compaction.md");
+        fs::write(&path, [0xff]).unwrap();
+
+        let error = compaction_prompt_override_at(&path).unwrap_err();
+        assert!(error.to_string().contains(&path.display().to_string()));
+    }
 
     #[test]
     fn provider_timeout_defaults_match_runtime_boundaries() {

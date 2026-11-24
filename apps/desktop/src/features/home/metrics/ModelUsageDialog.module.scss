@@ -1,0 +1,13 @@
+@use "../../../styles/typography" as type;
+
+.list { flex: 1 1 auto; min-height: 0; }
+.note, .empty { color: var(--vscode-descriptionForeground); font-size: type.$font-size-base; }
+.row { padding: 14px; border: 1px solid var(--vscode-sideBar-border); border-radius: var(--oa-card-radius); }
+.heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: type.$font-size-base; }
+.heading strong { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.heading span { flex: 0 0 auto; font-variant-numeric: tabular-nums; }
+.provider { margin-top: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--vscode-descriptionForeground); font-size: type.$font-size-xs; }
+.values { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 16px 0 0; }
+.values dt, .values dd { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.values dt { color: var(--vscode-descriptionForeground); font-size: type.$font-size-xs; }
+.values dd { margin: 5px 0 0; font-size: type.$font-size-base; font-variant-numeric: tabular-nums; }

@@ -22,6 +22,13 @@ pub struct SaveModels {
 }
 
 #[derive(Deserialize)]
+pub struct ModelBackup {
+    pub format: String,
+    pub version: u32,
+    pub models: Vec<ModelConfigInput>,
+}
+
+#[derive(Deserialize)]
 pub struct ModelOrder {
     pub model_hashes: Vec<String>,
 }
@@ -38,6 +45,35 @@ pub async fn create(
         StatusCode::CREATED,
         Json(service.create_models(&input.models).await?),
     ))
+}
+
+pub async fn import_backup(
+    State(service): State<ControlService>,
+    Json(input): Json<ModelBackup>,
+) -> Result<Json<LegacyModelImportResult>> {
+    if input.format != "cursor-byok-models" {
+        return Err(crate::Error::Config(
+            "unsupported model backup format".into(),
+        ));
+    }
+    if input.version != 1 {
+        return Err(crate::Error::Config(format!(
+            "unsupported model backup version: {}",
+            input.version
+        )));
+    }
+    if input.models.is_empty() {
+        return Err(crate::Error::Config(
+            "model backup contains no models".into(),
+        ));
+    }
+    let total = input.models.len();
+    let imported = service.import_model_backup(&input.models).await?;
+    Ok(Json(LegacyModelImportResult {
+        imported,
+        skipped: total - imported,
+        total,
+    }))
 }
 
 pub async fn reorder(

@@ -1,4 +1,5 @@
 //! Coordinates command execution Tool results.
+mod grep;
 mod output;
 mod render;
 

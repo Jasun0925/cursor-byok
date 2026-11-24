@@ -161,11 +161,11 @@ function ModelListRow({ model, disabled, testing, result, onTest, onEdit, onDupl
   onDelete: () => void;
 }) {
   return <div className={styles.modelRow}>
-    <div className={styles.modelRowName}>
-      <span className={styles.modelRowNameText}>{model.display_name}</span>
-      <span className={styles.modelRowModelId}>{model.model_id}</span>
+    <span className={styles.modelRowNameText} title={model.display_name}>{model.display_name}</span>
+    <span className={styles.modelRowModelId} title={model.model_id}>{model.model_id}</span>
+    <div className={styles.modelRowResult}>
+      <CursorModelTestResult compact state={result} testing={testing} />
     </div>
-    <CursorModelTestResult compact state={result} testing={testing} />
     <div className={styles.modelCardActions}>
       <TruncatedButton size="small" disabled={disabled && !testing} label={testing ? t("取消测试") : t("测试")} onClick={onTest} />
       <TruncatedButton size="small" disabled={disabled} label={t("编辑")} onClick={onEdit} />
@@ -184,11 +184,11 @@ function PluginModelRow({ model, disabled, testing, result, onTest, onSettings }
   onSettings: () => void;
 }) {
   return <div className={styles.modelRow}>
-    <div className={styles.modelRowName}>
-      <span className={styles.modelRowNameText}>{model.displayName}</span>
-      <span className={styles.modelRowModelId}>{model.modelId}</span>
+    <span className={styles.modelRowNameText} title={model.displayName}>{model.displayName}</span>
+    <span className={styles.modelRowModelId} title={model.modelId}>{model.modelId}</span>
+    <div className={styles.modelRowResult}>
+      <CursorModelTestResult compact state={result} testing={testing} />
     </div>
-    <CursorModelTestResult compact state={result} testing={testing} />
     <div className={styles.modelCardActions}>
       <TruncatedButton size="small" disabled={disabled && !testing} label={testing ? t("取消测试") : t("测试")} onClick={onTest} />
       <TruncatedButton size="small" disabled={disabled} label={t("设置")} onClick={onSettings} />

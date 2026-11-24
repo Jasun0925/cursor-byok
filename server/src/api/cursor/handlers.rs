@@ -20,13 +20,17 @@ use crate::{
             proto::{agent::v1 as agent, aiserver::v1 as ai},
         },
         services::{
-            account, analytics, commit_message, compatibility, entitlement::FreeEntitlementCache,
-            knowledge, model_catalog, server_config, tab,
+            account, analytics, commit_message, compatibility, conversation_title,
+            entitlement::FreeEntitlementCache, knowledge, model_catalog, server_config, tab,
         },
         transport::{TransportParent, TransportRegistry},
     },
     Result,
 };
+
+#[cfg(test)]
+#[path = "title_tests.rs"]
+mod title_tests;
 
 pub fn router(
     registry: TransportRegistry,
@@ -61,7 +65,11 @@ fn router_with_proxy(
         )
         .route(
             "/agent.v1.AgentService/UpdateConversationMetadata",
-            post(compatibility::update_conversation_metadata),
+            post(conversation_title::update_metadata),
+        )
+        .route(
+            "/aiserver.v1.AiService/NameTab",
+            post(conversation_title::name_tab),
         )
         .route(
             "/aiserver.v1.AiService/GetServerConfig",
@@ -147,6 +155,10 @@ fn router_with_proxy(
         .route(
             "/aiserver.v1.AiService/KnowledgeBaseRemove",
             post(knowledge::remove),
+        )
+        .route(
+            "/aiserver.v1.AiService/FetchRelevantKnowledgeForConversation",
+            post(knowledge::relevant),
         )
         .route(
             analytics::BOOTSTRAP_STATSIG_PATH,

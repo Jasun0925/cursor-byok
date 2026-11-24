@@ -1,5 +1,5 @@
 //! Preserves Cursor rule provenance and applicability in model-visible context.
-use super::{pb, xml};
+use super::{neutralize_prompt_body, pb, xml};
 
 pub(super) fn section(rules: Vec<String>) -> Option<String> {
     if rules.is_empty() {
@@ -66,7 +66,7 @@ pub(super) fn compile(rule: &pb::CursorRule) -> String {
             xml(&rule.frontmatter)
         ));
     }
-    lines.push(rule.content.clone());
+    lines.push(neutralize_prompt_body(&rule.content));
     lines.push("</user_rule>".into());
     lines.join("\n")
 }

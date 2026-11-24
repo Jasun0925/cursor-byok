@@ -17,6 +17,7 @@ pub fn requested_model(request: &pb::AgentRunRequest) -> Result<ModelSpec> {
         .filter(|model| !model.is_empty())
     {
         ModelSpec {
+            inherit_model_options: true,
             model_id: model_id.into(),
             display_name: details
                 .map(|model| model.display_name.clone())
@@ -82,6 +83,7 @@ fn from_requested(
     details: Option<&pb::ModelDetails>,
 ) -> Result<ModelSpec> {
     let mut spec = ModelSpec {
+        inherit_model_options: true,
         model_id: model.model_id.clone(),
         display_name: details
             .map(|model| model.display_name.clone())

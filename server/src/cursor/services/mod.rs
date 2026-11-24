@@ -6,6 +6,7 @@ pub mod blob_sync;
 pub mod commit_message;
 pub mod compatibility;
 pub mod context_sync;
+pub mod conversation_title;
 pub(crate) mod entitlement;
 pub mod knowledge;
 pub mod model_catalog;

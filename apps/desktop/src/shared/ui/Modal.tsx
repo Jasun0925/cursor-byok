@@ -14,9 +14,11 @@ type ModalProps = {
   wide?: boolean;
   compact?: boolean;
   fullHeight?: boolean;
+  scrollBody?: boolean;
   role?: "dialog" | "alertdialog";
   ariaDescribedBy?: string;
   initialFocus?: "first" | "submit";
+  returnFocus?: () => HTMLElement | null;
   onClose: () => void;
   onSubmit?: () => void;
   secondaryAction?: ReactNode;
@@ -39,14 +41,16 @@ function focusableElements(root: HTMLElement) {
     .filter((element) => element.getClientRects().length > 0);
 }
 
-export function Modal({ id, open, title, children, banner, busy, wide, compact, fullHeight, role = "dialog", ariaDescribedBy, initialFocus = "first", onClose, onSubmit, secondaryAction, closeLabel = t("取消"), submitLabel = t("保存"), submitDisabled = false }: ModalProps) {
+export function Modal({ id, open, title, children, banner, busy, wide, compact, fullHeight, scrollBody = true, role = "dialog", ariaDescribedBy, initialFocus = "first", returnFocus, onClose, onSubmit, secondaryAction, closeLabel = t("取消"), submitLabel = t("保存"), submitDisabled = false }: ModalProps) {
   const dialog = useRef<HTMLDivElement>(null);
   const submitButton = useRef<HTMLButtonElement>(null);
   const closeRef = useRef(onClose);
   const busyRef = useRef(Boolean(busy));
+  const returnFocusRef = useRef(returnFocus);
   const titleId = useId();
   closeRef.current = onClose;
   busyRef.current = Boolean(busy);
+  returnFocusRef.current = returnFocus;
   useEffect(() => {
     if (!open) return;
     const previous = document.activeElement as HTMLElement | null;
@@ -75,25 +79,35 @@ export function Modal({ id, open, title, children, banner, busy, wide, compact, 
       }
     };
     document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      const target = returnFocusRef.current ? returnFocusRef.current() : previous;
+      if (target && document.contains(target)) target.focus();
+    };
+  }, [open]);
+  useEffect(() => {
+    if (!open) return;
     const focusFrame = requestAnimationFrame(() => {
       const currentDialog = dialog.current;
       if (!currentDialog) return;
-      const target = initialFocus === "submit" ? submitButton.current : focusableElements(currentDialog)[0];
+      const active = document.activeElement;
+      if (active !== currentDialog && currentDialog.contains(active) && !active?.matches(":disabled")) return;
+      const target = initialFocus === "submit" && !submitButton.current?.disabled
+        ? submitButton.current
+        : focusableElements(currentDialog)[0];
       (target ?? currentDialog).focus();
     });
-    return () => {
-      cancelAnimationFrame(focusFrame);
-      document.removeEventListener("keydown", onKey);
-      if (previous && document.contains(previous)) previous.focus();
-    };
-  }, [initialFocus, open]);
+    return () => cancelAnimationFrame(focusFrame);
+  }, [busy, initialFocus, open]);
   if (!open) return null;
   return createPortal(<div className={styles.mask}>
     <div className={styles.dragLayer} data-tauri-drag-region aria-hidden="true" />
     <div id={id} ref={dialog} className={[styles.dialog, wide && styles.wide, compact && styles.compact, fullHeight && styles.fullHeight].filter(Boolean).join(" ")} role={role} aria-modal="true" aria-labelledby={titleId} aria-describedby={ariaDescribedBy} tabIndex={-1}>
       <header id={titleId}>{title}</header>
       {banner && <div className={styles.banner}>{banner}</div>}
-      <ScrollableContent alwaysShowVertical className={styles.body} contentClassName={styles.bodyContent}>{children}</ScrollableContent>
+      {scrollBody
+        ? <ScrollableContent alwaysShowVertical className={styles.body} contentClassName={styles.bodyContent}>{children}</ScrollableContent>
+        : <div className={styles.fixedBody}>{children}</div>}
       <footer>
         <button type="button" className={controls.primary} disabled={busy} onClick={onClose}>{closeLabel}</button>
         {secondaryAction}

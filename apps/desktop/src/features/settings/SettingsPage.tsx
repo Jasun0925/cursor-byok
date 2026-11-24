@@ -279,7 +279,13 @@ export function SettingsPage() {
         <div className={styles.settingRow}>
           <div>
             <strong>{t("界面语言")}</strong>
-            <small>{t("默认跟随操作系统；不支持的系统语言使用英文。当前：{language}", { language: locale === "zh-CN" ? "简体中文" : locale === "pt-BR" ? "Português (Brasil)" : "English" })}</small>
+            <small>{t("默认跟随操作系统；不支持的系统语言使用英文。当前：{language}", {
+              language:
+                locale === "zh-CN" ? "简体中文"
+                : locale === "pt-BR" ? "Português (Brasil)"
+                : locale === "ru-RU" ? "Русский"
+                : "English",
+            })}</small>
           </div>
           <div className={styles.languageControl}>
             <Select
@@ -290,6 +296,7 @@ export function SettingsPage() {
                 { value: "zh-CN", label: "简体中文" },
                 { value: "en-US", label: "English" },
                 { value: "pt-BR", label: "Português (Brasil)" },
+                { value: "ru-RU", label: "Русский" },
               ]}
               onChange={(value) => setLocalePreference(value as LocalePreference)}
             />
@@ -301,10 +308,11 @@ export function SettingsPage() {
           {themeOptions.map(({ id }) => (
             <button
               className={theme === id ? styles.selected : ""}
+              aria-pressed={theme === id}
               key={id}
               onClick={() => appStore.selectTheme(id)}
             >
-              {id === "default-dark" ? t("默认暗色") : t("默认亮色")}
+              {id === "system" ? t("跟随系统主题") : id === "default-dark" ? t("深色") : t("浅色")}
             </button>
           ))}
         </div>

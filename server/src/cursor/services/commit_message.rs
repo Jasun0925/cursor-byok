@@ -111,7 +111,10 @@ async fn generate_local(
     Ok(response)
 }
 
-async fn ensure_configured_model(registry: &TransportRegistry, model_id: &str) -> Result<()> {
+pub(super) async fn ensure_configured_model(
+    registry: &TransportRegistry,
+    model_id: &str,
+) -> Result<()> {
     if model_id.starts_with(ADAPTER_ID_PREFIX) {
         let plugins = registry.plugins().ok_or_else(|| {
             Error::Provider(format!("commit plugin model {model_id} is unavailable"))

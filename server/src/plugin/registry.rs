@@ -141,6 +141,31 @@ pub struct PluginInvocationPlan {
 }
 
 impl PluginRegistry {
+    #[cfg(test)]
+    pub(crate) fn for_test(store: Store, root: &Path) -> Result<Self> {
+        let root = root.to_path_buf();
+        let runtime = PluginRuntime::new(root.join("runtime"))?;
+        let catalog = PluginCatalog::for_test(root.join("catalog"));
+        let data = PluginDataStore::for_test(root.join("data"))?;
+        Ok(Self {
+            inner: Arc::new(RegistryInner {
+                root,
+                operations: RwLock::new(()),
+                cancellation: parking_lot::RwLock::new(CancellationToken::new()),
+                reset_lock: Mutex::new(()),
+                store,
+                runtime,
+                catalog,
+                state: PluginStateStore::new(data),
+                entries: RwLock::new(None),
+                workers: Mutex::new(HashMap::new()),
+                oauth_sessions: Mutex::new(HashMap::new()),
+                preparation_locks: Mutex::new(HashMap::new()),
+                pending_preparations: Mutex::new(HashMap::new()),
+            }),
+        })
+    }
+
     pub fn managed(store: Store, runtime: PluginRuntime, app_version: String) -> Result<Self> {
         let data = PluginDataStore::managed()?;
         let catalog = PluginCatalog::managed(app_version)?;

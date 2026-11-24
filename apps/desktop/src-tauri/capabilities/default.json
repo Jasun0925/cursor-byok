@@ -25,6 +25,10 @@
     "allow-check-portable-update",
     "allow-install-portable-update",
     "clipboard-manager:allow-write-text",
+    {
+      "identifier": "opener:allow-open-url",
+      "allow": [{ "url": "cursor://" }]
+    },
     "autostart:default",
     "process:allow-restart",
     "opener:default",

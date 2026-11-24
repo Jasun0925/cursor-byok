@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from "react";
-import { api, type CursorHarnessStatus, type LlmCall, type Model, type ModelInput, type Overview, type PluginDescriptor, type PluginRuntimeStatus, type PortSettings, type TokenPricingSettings } from "../api";
+import { api, type CursorHarnessStatus, type LlmCall, type Model, type ModelInput, type ModelTokenPricing, type Overview, type PluginDescriptor, type PluginRuntimeStatus, type PortSettings, type TokenPricingSettings } from "../api";
 import { applyTheme, isThemeId, type ThemeId } from "../theme/theme";
 
 export const DEFAULT_TOKEN_PRICING: TokenPricingSettings = {
@@ -16,6 +16,7 @@ export type AppSnapshot = {
   detailed: boolean;
   ports: PortSettings;
   pricing: TokenPricingSettings;
+  modelPricing: ModelTokenPricing[];
   busy: boolean;
   error: string | null;
   theme: ThemeId;
@@ -26,8 +27,12 @@ export type AppSnapshot = {
 };
 
 const savedTheme = (): ThemeId => {
-  const saved = localStorage.getItem("cursor-byok.theme");
-  return isThemeId(saved) ? saved : "default-dark";
+  try {
+    const saved = localStorage.getItem("cursor-byok.theme");
+    return isThemeId(saved) ? saved : "system";
+  } catch {
+    return "system";
+  }
 };
 
 let snapshot: AppSnapshot = {
@@ -45,12 +50,14 @@ let snapshot: AppSnapshot = {
       cache_write_tokens: 0,
       output_tokens: 0,
     },
+    model_usage: [],
     token_usage_granularity: "day",
     token_usage_series: [],
   },
   detailed: false,
   ports: { proxy_port: 0, service_port: 0 },
   pricing: DEFAULT_TOKEN_PRICING,
+  modelPricing: [],
   busy: false,
   error: null,
   theme: savedTheme(),
@@ -61,6 +68,7 @@ let snapshot: AppSnapshot = {
 };
 
 let pluginRevision = 0;
+let refreshRevision = 0;
 
 const listeners = new Set<() => void>();
 
@@ -86,25 +94,29 @@ export const appStore = {
   getSnapshot: () => snapshot,
 
   async refresh() {
-    const revision = pluginRevision;
+    const refreshId = ++refreshRevision;
+    const pluginRevisionAtStart = pluginRevision;
     update({ busy: true, error: null });
     try {
-      const [models, calls, overview, settings, ports, pricing, cursorHarness, pluginRuntime, plugins] = await Promise.all([
+      const [models, calls, overview, settings, ports, pricing, modelPricing, cursorHarness, pluginRuntime, plugins] = await Promise.all([
         api.models(),
         api.calls(),
         api.overview(),
         api.observability(),
         api.ports(),
         api.pricingSettings(),
+        api.modelPricingSettings(),
         api.cursorHarness(),
         api.pluginRuntime(),
         api.plugins(),
       ]);
-      update({ models, calls, overview, detailed: settings.detailed, ports, pricing, cursorHarness, ...(revision === pluginRevision ? { pluginRuntime, plugins } : {}) });
+      if (refreshId === refreshRevision) {
+        update({ models, calls, overview, detailed: settings.detailed, ports, pricing, modelPricing, cursorHarness, ...(pluginRevisionAtStart === pluginRevision ? { pluginRuntime, plugins } : {}) });
+      }
     } catch (cause) {
-      update({ error: cause instanceof Error ? cause.message : String(cause) });
+      if (refreshId === refreshRevision) update({ error: cause instanceof Error ? cause.message : String(cause) });
     } finally {
-      update({ busy: false });
+      if (refreshId === refreshRevision) update({ busy: false });
     }
   },
 
@@ -304,8 +316,23 @@ export const appStore = {
       return false;
     }
   },
+  async updateModelPricingSettings(modelPricing: ModelTokenPricing[]) {
+    try {
+      update({ error: null });
+      update({ modelPricing: await api.setModelPricingSettings(modelPricing) });
+      return true;
+    } catch (cause) {
+      update({ error: cause instanceof Error ? cause.message : String(cause) });
+      return false;
+    }
+  },
   selectTheme(theme: ThemeId) {
-    localStorage.setItem("cursor-byok.theme", theme);
+    try {
+      if (theme === "system") localStorage.removeItem("cursor-byok.theme");
+      else localStorage.setItem("cursor-byok.theme", theme);
+    } catch {
+      // The preference still applies for this session when storage is unavailable.
+    }
     applyTheme(theme);
     update({ theme });
   },

@@ -1,4 +1,4 @@
-import { createContext, useContext, type ReactNode } from "react";
+import { createContext, useContext, type MouseEventHandler, type ReactNode } from "react";
 import { useAppStore } from "../../shared/store/appStore";
 import controls from "../../shared/ui/Controls.module.scss";
 import styles from "./CursorSettings.module.scss";
@@ -29,7 +29,7 @@ export function CursorModelProvider({ children }: { children: ReactNode }) {
   return <ModelsReady.Provider value={models.length > 0 || hasConfiguredPlugin}>{children}</ModelsReady.Provider>;
 }
 
-export function CursorModelGate({ busy, previewingImport, onAdd, onImport, children }: { busy: boolean; previewingImport: boolean; onAdd: () => void; onImport: () => void; children: ReactNode }) {
+export function CursorModelGate({ busy, previewingImport, onAdd, onImport, children }: { busy: boolean; previewingImport: boolean; onAdd: () => void; onImport: MouseEventHandler<HTMLButtonElement>; children: ReactNode }) {
   const ready = useContext(ModelsReady);
   if (ready) return children;
   return <div className={styles.gate}>

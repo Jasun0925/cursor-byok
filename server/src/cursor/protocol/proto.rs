@@ -8,6 +8,35 @@ pub mod agent {
 
 pub mod aiserver {
     pub mod v1 {
+        /// Wire subset of NameTabRequest: credentials and attached source data
+        /// are intentionally ignored by the local title generator.
+        #[derive(Clone, PartialEq, ::prost::Message)]
+        pub struct NameTabRequest {
+            #[prost(message, repeated, tag = "1")]
+            pub messages: Vec<NameTabMessage>,
+            #[prost(string, tag = "6")]
+            pub conversation_id: String,
+        }
+
+        /// Only the text and author from ConversationMessage are needed.
+        #[derive(Clone, PartialEq, ::prost::Message)]
+        pub struct NameTabMessage {
+            #[prost(string, tag = "1")]
+            pub text: String,
+            #[prost(int32, tag = "2")]
+            pub r#type: i32,
+        }
+
+        #[derive(Clone, PartialEq, ::prost::Message)]
+        pub struct NameTabResponse {
+            #[prost(string, tag = "1")]
+            pub name: String,
+            #[prost(string, tag = "2")]
+            pub reason: String,
+            #[prost(string, tag = "3")]
+            pub icon: String,
+        }
+
         #[derive(Clone, PartialEq, ::prost::Message)]
         pub struct BidiRequestId {
             #[prost(string, tag = "1")]

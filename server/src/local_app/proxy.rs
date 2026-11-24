@@ -3,7 +3,7 @@ use std::{net::SocketAddr, sync::Arc};
 
 use hudsucker::{
     certificate_authority::RcgenAuthority,
-    hyper::{Request, Uri},
+    hyper::{Method, Request, Uri},
     rustls::crypto::aws_lc_rs,
     Body, HttpContext, HttpHandler, Proxy, RequestOrResponse,
 };
@@ -17,6 +17,10 @@ use crate::{
 };
 
 use super::ca::LoadedCa;
+
+#[cfg(test)]
+#[path = "proxy_stream_tests.rs"]
+mod stream_tests;
 
 #[derive(Default)]
 pub struct ProxyRuntime {
@@ -113,8 +117,22 @@ impl HttpHandler for CursorRelay {
         mut request: Request<Body>,
     ) -> RequestOrResponse {
         let original = request.uri().clone();
-        let locally_routed = should_route_locally(original.path(), *self.tab_mode.read());
-        if is_cursor_host(original.host().unwrap_or_default()) && locally_routed {
+        // CONNECT is inspected before TLS MITM. Rewriting its authority to the
+        // local backend would prevent hudsucker from seeing the original
+        // Cursor host and disable interception for the connection.
+        if request.method() == Method::CONNECT {
+            return request.into();
+        }
+        // Route every non-Tab Cursor-host request through the local backend so
+        // the router fallback can use the configured outbound proxy. Tab paths
+        // in Direct mode keep their original upstream pass-through behavior.
+        let route_locally = should_route_cursor_request(
+            request.method(),
+            original.host().unwrap_or_default(),
+            original.path(),
+            *self.tab_mode.read(),
+        );
+        if route_locally {
             if let Ok(value) = original.to_string().parse() {
                 request.headers_mut().insert(UPSTREAM_URL_HEADER, value);
             }
@@ -163,6 +181,7 @@ fn is_local_path(path: &str) -> bool {
             | "/aiserver.v1.DashboardService/GetEffectiveUserPlugins"
             | "/aiserver.v1.DashboardService/GetUserPrivacyMode"
             | "/agent.v1.AgentService/UpdateConversationMetadata"
+            | "/aiserver.v1.AiService/NameTab"
             | "/aiserver.v1.AiService/GetServerConfig"
             | "/aiserver.v1.ServerConfigService/GetServerConfig"
             | "/aiserver.v1.AiService/AvailableModels"
@@ -183,6 +202,7 @@ fn is_local_path(path: &str) -> bool {
             | "/aiserver.v1.AiService/KnowledgeBaseList"
             | "/aiserver.v1.AiService/KnowledgeBaseUpdate"
             | "/aiserver.v1.AiService/KnowledgeBaseRemove"
+            | "/aiserver.v1.AiService/FetchRelevantKnowledgeForConversation"
             | "/aiserver.v1.AiService/WriteGitCommitMessage"
             | "/aiserver.v1.NetworkService/IsConnected"
             | "/aiserver.v1.AnalyticsService/BootstrapStatsig"
@@ -193,6 +213,12 @@ fn is_local_path(path: &str) -> bool {
 
 fn should_route_locally(path: &str, tab_mode: TabMode) -> bool {
     is_local_path(path) || (is_tab_path(path) && tab_mode != TabMode::Direct)
+}
+
+fn should_route_cursor_request(method: &Method, host: &str, path: &str, tab_mode: TabMode) -> bool {
+    method != Method::CONNECT
+        && is_cursor_host(host)
+        && (should_route_locally(path, tab_mode) || !is_tab_path(path))
 }
 
 #[cfg(test)]
@@ -209,14 +235,60 @@ mod tests {
             "/aiserver.v1.AiService/GetDefaultModel",
             "/aiserver.v1.AiService/GetDefaultModelNudgeData",
             "/aiserver.v1.AiService/AvailableDocs",
+            "/aiserver.v1.AiService/FetchRelevantKnowledgeForConversation",
             "/aiserver.v1.DashboardService/GetEffectiveUserPlugins",
             "/aiserver.v1.DashboardService/GetUserPrivacyMode",
             "/aiserver.v1.AuthService/GetUserMeta",
             "/agent.v1.AgentService/UpdateConversationMetadata",
+            "/aiserver.v1.AiService/NameTab",
             "/auth/full_stripe_profile",
             "/auth/stripe_profile",
         ] {
             assert!(is_local_path(path), "{path} must not reach Cursor upstream");
         }
+    }
+
+    #[test]
+    fn non_tab_cursor_paths_use_the_local_router_fallback() {
+        assert!(should_route_cursor_request(
+            &Method::POST,
+            "api2.cursor.sh",
+            "/unknown-cursor-endpoint",
+            TabMode::Direct,
+        ));
+        assert!(!should_route_cursor_request(
+            &Method::POST,
+            "example.com",
+            "/unknown-cursor-endpoint",
+            TabMode::Direct,
+        ));
+    }
+
+    #[test]
+    fn direct_tab_paths_remain_upstream_only() {
+        let path = "/aiserver.v1.AiService/StreamCpp";
+        assert!(is_tab_path(path));
+        assert!(!should_route_cursor_request(
+            &Method::POST,
+            "api2.cursor.sh",
+            path,
+            TabMode::Direct,
+        ));
+        assert!(should_route_cursor_request(
+            &Method::POST,
+            "api2.cursor.sh",
+            path,
+            TabMode::Public,
+        ));
+    }
+
+    #[test]
+    fn connect_tunnels_are_never_rewritten() {
+        assert!(!should_route_cursor_request(
+            &Method::CONNECT,
+            "api2.cursor.sh",
+            "/aiserver.v1.BidiService/BidiAppend",
+            TabMode::Public,
+        ));
     }
 }

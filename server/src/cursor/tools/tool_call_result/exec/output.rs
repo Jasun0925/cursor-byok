@@ -11,7 +11,7 @@ pub(super) fn output(
         Message::ReadResult(value) | Message::RedactedReadResult(value) => read(value),
         Message::WriteResult(value) => write(value),
         Message::DeleteResult(value) => delete(value),
-        Message::GrepResult(value) => grep(value),
+        Message::GrepResult(value) => super::grep::output(value),
         Message::DiagnosticsResult(value) => diagnostics(value, call),
         Message::McpResult(value) => mcp(value),
         Message::ReadMcpResourceExecResult(value) => read_mcp(value),
@@ -114,101 +114,6 @@ fn delete(value: &pb::DeleteResult) -> Result<(String, bool)> {
         R::FileBusy(value) => Ok((format!("file busy: {}", value.path), true)),
         R::Rejected(value) => Ok((value.reason.clone(), true)),
         R::Error(value) => Ok((value.error.clone(), true)),
-    }
-}
-
-fn grep(value: &pb::GrepResult) -> Result<(String, bool)> {
-    use pb::grep_result::Result as R;
-    match value.result.as_ref().ok_or_else(|| missing("grep"))? {
-        R::Success(value) => Ok((grep_success(value), false)),
-        R::Error(value) => Ok((value.error.clone(), true)),
-    }
-}
-
-fn grep_success(value: &pb::GrepSuccess) -> String {
-    let mut lines = Vec::new();
-    if let Some(result) = &value.active_editor_result {
-        grep_union(result, &mut lines);
-    }
-    let mut workspaces = value.workspace_results.iter().collect::<Vec<_>>();
-    workspaces.sort_unstable_by_key(|(name, _)| *name);
-    for (_, result) in workspaces {
-        grep_union(result, &mut lines);
-    }
-    if lines.is_empty() {
-        format!(
-            "No matches found for pattern `{}` in {}",
-            value.pattern, value.path
-        )
-    } else {
-        lines.join("\n")
-    }
-}
-
-fn grep_union(value: &pb::GrepUnionResult, lines: &mut Vec<String>) {
-    use pb::grep_union_result::Result as R;
-    match value.result.as_ref() {
-        Some(R::Files(value)) => {
-            lines.extend(value.files.iter().cloned());
-            grep_truncation(
-                value.client_truncated,
-                value.ripgrep_truncated,
-                value.total_files,
-                "files",
-                lines,
-            );
-        }
-        Some(R::Count(value)) => {
-            lines.extend(
-                value
-                    .counts
-                    .iter()
-                    .map(|count| format!("{}:{}", count.file, count.count)),
-            );
-            grep_truncation(
-                value.client_truncated,
-                value.ripgrep_truncated,
-                value.total_matches,
-                "matches",
-                lines,
-            );
-        }
-        Some(R::Content(value)) => {
-            for file in &value.matches {
-                lines.extend(file.matches.iter().map(|matched| {
-                    let separator = if matched.is_context_line { '-' } else { ':' };
-                    let truncated = if matched.content_truncated {
-                        " [line truncated]"
-                    } else {
-                        ""
-                    };
-                    format!(
-                        "{}{separator}{}{separator}{}{truncated}",
-                        file.file, matched.line_number, matched.content
-                    )
-                }));
-            }
-            grep_truncation(
-                value.client_truncated,
-                value.ripgrep_truncated,
-                value.total_matched_lines,
-                "matched lines",
-                lines,
-            );
-        }
-        None => {}
-    }
-}
-
-fn grep_truncation(
-    client_truncated: bool,
-    ripgrep_truncated: bool,
-    total: i32,
-    unit: &str,
-    lines: &mut Vec<String>,
-) {
-    if client_truncated || ripgrep_truncated {
-        lines.push(format!("[Results truncated; {total} total {unit}]"));
     }
 }
 

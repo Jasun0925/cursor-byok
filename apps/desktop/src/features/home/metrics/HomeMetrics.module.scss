@@ -57,8 +57,23 @@
   }
 }
 
-.body {
+.details {
   min-width: 0;
+  width: 100%;
+  display: block;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  border-radius: 4px;
+
+  &:hover { background: var(--vscode-list-hoverBackground); }
+  &:focus-visible { outline: 2px solid var(--vscode-focusBorder); outline-offset: 4px; }
+  &:disabled { cursor: default; opacity: 0.65; }
+  &:disabled:hover { background: transparent; }
 }
 
 .value {
@@ -75,7 +90,7 @@
   margin-top: 12px;
   overflow: hidden;
   color: var(--vscode-descriptionForeground);
-  font-size: 12px;
+  font-size: type.$font-size-xs;
   line-height: 1.4;
   text-overflow: ellipsis;
   white-space: nowrap;

@@ -41,6 +41,10 @@ struct AvailableModel {
     supports_images: Option<bool>,
     #[prost(bool, optional, tag = "14")]
     supports_max_mode: Option<bool>,
+    #[prost(int32, optional, tag = "15")]
+    context_token_limit: Option<i32>,
+    #[prost(int32, optional, tag = "16")]
+    context_token_limit_for_max_mode: Option<i32>,
     #[prost(string, optional, tag = "17")]
     client_display_name: Option<String>,
     #[prost(string, optional, tag = "18")]
@@ -229,20 +233,32 @@ const EFFORTS: [(&str, &str); 5] = [
 ];
 const DEFAULT_CONTEXT: &str = "200k";
 
-fn context_options(context_window_tokens: Option<u64>) -> Vec<(String, String)> {
-    let mut contexts = CONTEXTS
-        .into_iter()
-        .map(|(value, display_name)| (value.to_owned(), display_name.to_owned()))
-        .collect::<Vec<_>>();
-    if let Some(tokens) = context_window_tokens {
-        let value = tokens.to_string();
-        let duplicate = contexts
+fn configured_context(context_window_tokens: Option<u64>) -> Option<(String, String)> {
+    context_window_tokens.map(|tokens| {
+        CONTEXTS
             .iter()
-            .any(|(existing, _)| parse_token_count(existing) == Some(tokens));
-        if !duplicate {
-            contexts.push((value, format!("{} (Custom)", format_token_count(tokens))));
-        }
+            .find(|(value, _)| parse_token_count(value) == Some(tokens))
+            .map(|(value, display_name)| (value.to_string(), display_name.to_string()))
+            .unwrap_or_else(|| (tokens.to_string(), format_token_count(tokens)))
+    })
+}
+
+fn context_options(context_window_tokens: Option<u64>) -> Vec<(String, String)> {
+    let configured = configured_context(context_window_tokens);
+    let mut contexts = Vec::with_capacity(CONTEXTS.len() + configured.is_some() as usize);
+    if let Some(configured) = configured.as_ref() {
+        contexts.push(configured.clone());
     }
+    contexts.extend(
+        CONTEXTS
+            .into_iter()
+            .filter(|(value, _)| {
+                configured
+                    .as_ref()
+                    .is_none_or(|(configured_value, _)| configured_value != value)
+            })
+            .map(|(value, display_name)| (value.to_owned(), display_name.to_owned())),
+    );
     contexts
 }
 
@@ -351,6 +367,18 @@ async fn configured_plugin_models(registry: &TransportRegistry) -> Vec<PluginMod
     }
 }
 
+pub(super) async fn configured_default_model_id(registry: &TransportRegistry) -> Result<String> {
+    let models = registry.store().models().await?;
+    let plugins = configured_plugin_models(registry).await;
+    let id = default_model_id(&models, &plugins);
+    if id.is_empty() {
+        return Err(crate::Error::Config(
+            "configure a model before generating a conversation title".into(),
+        ));
+    }
+    Ok(id.to_owned())
+}
+
 fn default_model_details(
     models: &[ModelConfig],
     plugin_models: &[PluginModelDescriptor],
@@ -452,6 +480,9 @@ fn unary_payload(body: &Bytes) -> Result<(bool, &[u8])> {
 
 fn available_model(model: &ModelConfig) -> AvailableModel {
     let contexts = context_options(model.context_window_tokens);
+    let default_context = configured_context(model.context_window_tokens)
+        .map(|(value, _)| value)
+        .unwrap_or_else(|| DEFAULT_CONTEXT.to_owned());
     let tooltip = model_tooltip(model);
     let variants = model_variants(
         &model.model_hash,
@@ -459,6 +490,7 @@ fn available_model(model: &ModelConfig) -> AvailableModel {
         &tooltip,
         &contexts,
         true,
+        &default_context,
     );
     let legacy_slugs = variants
         .iter()
@@ -473,6 +505,12 @@ fn available_model(model: &ModelConfig) -> AvailableModel {
         supports_thinking: Some(true),
         supports_images: Some(true),
         supports_max_mode: Some(true),
+        context_token_limit: model
+            .context_window_tokens
+            .and_then(|tokens| i32::try_from(tokens).ok()),
+        context_token_limit_for_max_mode: model
+            .context_window_tokens
+            .and_then(|tokens| i32::try_from(tokens).ok()),
         client_display_name: Some(model.display_name.clone()),
         server_model_name: Some(model.model_hash.clone()),
         supports_non_max_mode: Some(true),
@@ -585,6 +623,7 @@ fn model_variants(
     tooltip: &TooltipData,
     contexts: &[(String, String)],
     thinking: bool,
+    default_context: &str,
 ) -> Vec<ModelVariant> {
     // 非思考模型没有 Effort 轴,变体网格只剩 Context × Fast。
     let efforts: &[Option<(&str, &str)>] = if thinking {
@@ -599,7 +638,7 @@ fn model_variants(
         &[None]
     };
     let mut variants = Vec::with_capacity(contexts.len() * efforts.len() * 2);
-    for (context, context_name) in contexts {
+    for (context, _) in contexts {
         for effort in efforts {
             for fast in [false, true] {
                 variants.push(model_variant(
@@ -607,9 +646,9 @@ fn model_variants(
                     display_name,
                     tooltip,
                     context,
-                    context_name,
                     *effort,
                     fast,
+                    default_context,
                 ));
             }
         }
@@ -622,19 +661,19 @@ fn model_variant(
     display_name: &str,
     tooltip: &TooltipData,
     context: &str,
-    context_name: &str,
     effort: Option<(&str, &str)>,
     fast: bool,
+    default_context: &str,
 ) -> ModelVariant {
     let mut suffix = Vec::with_capacity(3);
-    if context != DEFAULT_CONTEXT {
-        suffix.push(context_name);
+    if context != default_context {
+        suffix.push(context_display_name(context));
     }
     if let Some((_, effort_name)) = effort {
-        suffix.push(effort_name);
+        suffix.push(effort_name.to_owned());
     }
     if fast {
-        suffix.push("Fast");
+        suffix.push("Fast".to_owned());
     }
     let suffix = suffix.join(" ");
     let display_name = if suffix.is_empty() {
@@ -645,7 +684,7 @@ fn model_variant(
         )
     };
     let is_default =
-        context == DEFAULT_CONTEXT && !fast && effort.is_none_or(|(effort, _)| effort == "high");
+        context == default_context && !fast && effort.is_none_or(|(effort, _)| effort == "high");
     let mut parameter_values = vec![ModelParameterValue {
         id: "context".into(),
         value: context.into(),
@@ -684,6 +723,15 @@ fn model_variant(
     }
 }
 
+fn context_display_name(context: &str) -> String {
+    CONTEXTS
+        .iter()
+        .find(|(value, _)| *value == context)
+        .map(|(_, display_name)| (*display_name).to_owned())
+        .or_else(|| parse_token_count(context).map(format_token_count))
+        .unwrap_or_else(|| context.to_owned())
+}
+
 fn model_tooltip(model: &ModelConfig) -> TooltipData {
     TooltipData {
         markdown_content: Some(model.tooltip_data.clone()),
@@ -696,7 +744,14 @@ fn available_plugin_model(model: &PluginModelDescriptor) -> AvailableModel {
     };
     // Effort 与上下文档位由宿主统一提供,与内置模型一致;插件不再声明这两项。
     let contexts = context_options(None);
-    let variants = model_variants(&model.id, &model.display_name, &tooltip, &contexts, true);
+    let variants = model_variants(
+        &model.id,
+        &model.display_name,
+        &tooltip,
+        &contexts,
+        true,
+        DEFAULT_CONTEXT,
+    );
     let legacy_slugs = variants
         .iter()
         .filter_map(|variant| variant.legacy_slug.clone())
@@ -710,6 +765,8 @@ fn available_plugin_model(model: &PluginModelDescriptor) -> AvailableModel {
         supports_thinking: Some(true),
         supports_images: Some(model.images),
         supports_max_mode: Some(false),
+        context_token_limit: None,
+        context_token_limit_for_max_mode: None,
         client_display_name: Some(model.display_name.clone()),
         server_model_name: Some(model.id.clone()),
         supports_non_max_mode: Some(true),
@@ -859,5 +916,85 @@ mod tests {
             nudge.models_with_no_default_switch,
             vec!["local-model-hash"]
         );
+    }
+
+    #[test]
+    fn configured_context_is_first_and_has_no_custom_suffix() {
+        let contexts = context_options(Some(272_000));
+        assert_eq!(contexts[0], ("272000".into(), "272K".into()));
+        assert_eq!(contexts[1], ("200k".into(), "200K".into()));
+        assert!(!contexts[0].1.contains("Custom"));
+    }
+
+    #[test]
+    fn configured_builtin_context_reuses_the_builtin_value() {
+        assert_eq!(
+            configured_context(Some(200_000)),
+            Some(("200k".into(), "200K".into()))
+        );
+        assert_eq!(context_options(Some(200_000)).len(), CONTEXTS.len());
+    }
+
+    #[test]
+    fn configured_context_is_the_default_model_variant() {
+        let mut model = model();
+        model.context_window_tokens = Some(272_000);
+        let available = available_model(&model);
+        let default = available
+            .variants
+            .iter()
+            .find(|variant| variant.is_default_non_max_config == Some(true))
+            .expect("configured context default variant");
+        assert_eq!(
+            default
+                .parameter_values
+                .iter()
+                .find(|parameter| parameter.id == "context")
+                .map(|parameter| parameter.value.as_str()),
+            Some("272000")
+        );
+        assert!(default.display_name.contains("High"));
+        assert!(!default.display_name.contains("272K"));
+    }
+
+    #[test]
+    fn available_builtin_model_advertises_context_token_limits() {
+        let mut model = model();
+        model.context_window_tokens = Some(272_000);
+        let available = available_model(&model);
+
+        assert_eq!(available.context_token_limit, Some(272_000));
+        assert_eq!(available.context_token_limit_for_max_mode, Some(272_000));
+    }
+
+    #[test]
+    fn oversized_builtin_context_limit_is_omitted_instead_of_truncated() {
+        let mut model = model();
+        model.context_window_tokens = Some(i32::MAX as u64 + 1);
+        let available = available_model(&model);
+
+        assert_eq!(available.context_token_limit, None);
+        assert_eq!(available.context_token_limit_for_max_mode, None);
+    }
+
+    #[test]
+    fn plugin_model_does_not_advertise_a_builtin_context_limit() {
+        let available = available_plugin_model(&PluginModelDescriptor {
+            id: "plugin:test/provider/model".into(),
+            plugin_id: "plugin:test".into(),
+            plugin_name: "Test Plugin".into(),
+            provider_id: "provider".into(),
+            model_id: "model".into(),
+            display_name: "Plugin Model".into(),
+            description: None,
+            icon: String::new(),
+            provider_type: "test".into(),
+            max_output_tokens: None,
+            images: false,
+            enabled: true,
+        });
+
+        assert_eq!(available.context_token_limit, None);
+        assert_eq!(available.context_token_limit_for_max_mode, None);
     }
 }

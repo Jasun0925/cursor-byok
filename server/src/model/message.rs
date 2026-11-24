@@ -1,6 +1,6 @@
 //! Defines canonical append-only Conversation Messages.
 use serde::{Deserialize, Serialize};
-use serde_json::Value;
+use serde_json::{json, Value};
 
 use super::{ToolImageReference, ToolRoundId};
 
@@ -47,6 +47,91 @@ pub struct ToolResultContent {
 pub struct ProviderReplayState {
     pub provider_kind: String,
     pub value: Value,
+}
+
+/// Combines replay states emitted by one model cycle without discarding a
+/// later state. Providers normally emit one state, but a streamed assistant
+/// turn can contain several signed reasoning blocks.
+pub fn merge_replay_states(
+    states: impl IntoIterator<Item = ProviderReplayState>,
+) -> Option<ProviderReplayState> {
+    let states = states.into_iter().collect::<Vec<_>>();
+    if states.is_empty() {
+        return None;
+    }
+    if states.len() == 1 {
+        return states.into_iter().next();
+    }
+
+    let provider_kind = states[0].provider_kind.as_str();
+    if states
+        .iter()
+        .all(|state| state.provider_kind == provider_kind)
+    {
+        match provider_kind {
+            "anthropic" | "openai_responses" => {
+                let field = if provider_kind == "anthropic" {
+                    "blocks"
+                } else {
+                    "items"
+                };
+                let mut combined = Vec::new();
+                for state in &states {
+                    let Some(items) = state.value.get(field).and_then(Value::as_array) else {
+                        combined.clear();
+                        break;
+                    };
+                    combined.extend(items.iter().cloned());
+                }
+                if !combined.is_empty() {
+                    return Some(ProviderReplayState {
+                        provider_kind: provider_kind.into(),
+                        value: json!({field: combined}),
+                    });
+                }
+            }
+            "openai_chat" => {
+                let reasoning = states
+                    .iter()
+                    .map(|state| state.value.get("reasoning_content").and_then(Value::as_str))
+                    .collect::<Option<Vec<_>>>()
+                    .map(|parts| parts.concat());
+                if let Some(reasoning) = reasoning {
+                    return Some(ProviderReplayState {
+                        provider_kind: provider_kind.into(),
+                        value: json!({"reasoning_content": reasoning}),
+                    });
+                }
+            }
+            // Cursor opaque replay state is the list of reasoning parts
+            // `[{text, signature?}]` written back verbatim by the checkpoint
+            // encoder, so several states concatenate in order.
+            "cursor_opaque" if states.iter().all(|state| state.value.is_array()) => {
+                return Some(ProviderReplayState {
+                    provider_kind: provider_kind.into(),
+                    value: Value::Array(
+                        states
+                            .iter()
+                            .filter_map(|state| state.value.as_array())
+                            .flatten()
+                            .cloned()
+                            .collect(),
+                    ),
+                });
+            }
+            _ => {}
+        }
+    }
+
+    Some(ProviderReplayState {
+        provider_kind: "cursor_byok_sequence".into(),
+        value: Value::Array(
+            states
+                .into_iter()
+                .map(|state| json!({"provider_kind": state.provider_kind, "value": state.value}))
+                .collect(),
+        ),
+    })
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]

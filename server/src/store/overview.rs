@@ -7,7 +7,7 @@ use chrono::Utc;
 use sqlx::Row;
 
 use crate::{
-    model::{Overview, OverviewMetrics, TokenUsageBucket, TokenUsageGranularity},
+    model::{ModelUsage, Overview, OverviewMetrics, TokenUsageBucket, TokenUsageGranularity},
     Result,
 };
 
@@ -20,6 +20,9 @@ const MINUTE_MS: i64 = 60_000;
 const HOUR_MS: i64 = 60 * MINUTE_MS;
 const DAY_MS: i64 = 24 * HOUR_MS;
 
+#[cfg(test)]
+mod tests;
+
 impl Store {
     pub async fn overview(
         &self,
@@ -28,35 +31,34 @@ impl Store {
         model_hashes: Option<&str>,
         bucket_ms: Option<i64>,
     ) -> Result<Overview> {
-        let call_row = sqlx::query(
-            "SELECT
-                COUNT(*) AS llm_calls,
-                COALESCE(SUM(status = 'completed'), 0) AS successful_calls,
-                COALESCE(SUM(status != 'completed'), 0) AS failed_calls
-             FROM llm_calls
-             WHERE status != 'running'
-               AND (? IS NULL OR created_at_ms >= ?)
-               AND (? IS NULL OR created_at_ms < ?)
-               AND (? IS NULL OR model_hash IN (SELECT value FROM json_each(?)))",
-        )
-        .bind(start_ms)
-        .bind(start_ms)
-        .bind(end_ms)
-        .bind(end_ms)
-        .bind(model_hashes)
-        .bind(model_hashes)
-        .fetch_one(&self.pool)
-        .await?;
-        let token_row = sqlx::query(&format!(
-            "SELECT
+        // Keep the breakdown and series on one read snapshot so a call that finishes during this
+        // request cannot make the two views disagree.
+        let mut tx = self.pool.begin().await?;
+        // One grouped query supplies both the total and its breakdown, even while calls finish.
+        let rows = sqlx::query(&format!(
+            "WITH filtered AS (
+                SELECT *, ROW_NUMBER() OVER (
+                    PARTITION BY model_hash, model_id, provider_type, provider_url
+                    ORDER BY created_at_ms DESC, call_id DESC
+                ) AS latest_rank
+                FROM llm_calls
+                WHERE (? IS NULL OR created_at_ms >= ?)
+                  AND (? IS NULL OR created_at_ms < ?)
+                  AND (? IS NULL OR model_hash IN (SELECT value FROM json_each(?)))
+            )
+            SELECT model_hash, model_id,
+                MAX(CASE WHEN latest_rank = 1 THEN display_name END) AS display_name,
+                provider_type, provider_url,
+                SUM(status != 'running') AS llm_calls,
+                SUM(status = 'completed') AS successful_calls,
+                SUM(status NOT IN ('running', 'completed')) AS failed_calls,
                 COALESCE(SUM({fresh_input}), 0) AS input_tokens,
-                COALESCE(SUM(COALESCE(cache_read_tokens, 0)), 0) AS cache_read_tokens,
-                COALESCE(SUM(COALESCE(cache_write_tokens, 0)), 0) AS cache_write_tokens,
-                COALESCE(SUM(COALESCE(output_tokens, 0)), 0) AS output_tokens
-             FROM llm_calls
-             WHERE (? IS NULL OR created_at_ms >= ?)
-               AND (? IS NULL OR created_at_ms < ?)
-               AND (? IS NULL OR model_hash IN (SELECT value FROM json_each(?)))",
+                COALESCE(SUM(cache_read_tokens), 0) AS cache_read_tokens,
+                COALESCE(SUM(cache_write_tokens), 0) AS cache_write_tokens,
+                COALESCE(SUM(output_tokens), 0) AS output_tokens
+             FROM filtered
+             GROUP BY model_hash, model_id, provider_type, provider_url
+             ORDER BY model_id, provider_url, provider_type, model_hash",
             fresh_input = fresh_input_sql(),
         ))
         .bind(start_ms)
@@ -65,25 +67,53 @@ impl Store {
         .bind(end_ms)
         .bind(model_hashes)
         .bind(model_hashes)
-        .fetch_one(&self.pool)
+        .fetch_all(&mut *tx)
         .await?;
-
-        let input_tokens = non_negative(token_row.try_get("input_tokens")?);
-        let cache_read_tokens = non_negative(token_row.try_get("cache_read_tokens")?);
-        let cache_write_tokens = non_negative(token_row.try_get("cache_write_tokens")?);
-        let output_tokens = non_negative(token_row.try_get("output_tokens")?);
-        let prompt_tokens = saturating_sum(&[input_tokens, cache_read_tokens, cache_write_tokens]);
-        let metrics = OverviewMetrics {
-            llm_calls: call_row.try_get("llm_calls")?,
-            successful_calls: call_row.try_get("successful_calls")?,
-            failed_calls: call_row.try_get("failed_calls")?,
-            token_usage: prompt_tokens.saturating_add(output_tokens),
-            prompt_tokens,
-            input_tokens,
-            cache_read_tokens,
-            cache_write_tokens,
-            output_tokens,
-        };
+        let mut model_usage = Vec::with_capacity(rows.len());
+        let mut metrics = OverviewMetrics::default();
+        for row in rows {
+            let input_tokens = non_negative(row.try_get("input_tokens")?);
+            let cache_read_tokens = non_negative(row.try_get("cache_read_tokens")?);
+            let cache_write_tokens = non_negative(row.try_get("cache_write_tokens")?);
+            let output_tokens = non_negative(row.try_get("output_tokens")?);
+            let prompt_tokens =
+                saturating_sum(&[input_tokens, cache_read_tokens, cache_write_tokens]);
+            let usage = OverviewMetrics {
+                llm_calls: row.try_get("llm_calls")?,
+                successful_calls: row.try_get("successful_calls")?,
+                failed_calls: row.try_get("failed_calls")?,
+                token_usage: prompt_tokens.saturating_add(output_tokens),
+                prompt_tokens,
+                input_tokens,
+                cache_read_tokens,
+                cache_write_tokens,
+                output_tokens,
+            };
+            metrics.llm_calls = metrics.llm_calls.saturating_add(usage.llm_calls);
+            metrics.successful_calls = metrics
+                .successful_calls
+                .saturating_add(usage.successful_calls);
+            metrics.failed_calls = metrics.failed_calls.saturating_add(usage.failed_calls);
+            metrics.token_usage = metrics.token_usage.saturating_add(usage.token_usage);
+            metrics.prompt_tokens = metrics.prompt_tokens.saturating_add(usage.prompt_tokens);
+            metrics.input_tokens = metrics.input_tokens.saturating_add(usage.input_tokens);
+            metrics.cache_read_tokens = metrics
+                .cache_read_tokens
+                .saturating_add(usage.cache_read_tokens);
+            metrics.cache_write_tokens = metrics
+                .cache_write_tokens
+                .saturating_add(usage.cache_write_tokens);
+            metrics.output_tokens = metrics.output_tokens.saturating_add(usage.output_tokens);
+            model_usage.push(ModelUsage {
+                model_hash: row.try_get("model_hash")?,
+                model_id: row.try_get("model_id")?,
+                display_name: row.try_get("display_name")?,
+                provider_type: row.try_get("provider_type")?,
+                provider_url: row.try_get("provider_url")?,
+                metrics: usage,
+            });
+        }
+        model_usage.sort_by_key(|row| std::cmp::Reverse(row.metrics.token_usage));
 
         let (token_usage_granularity, bucket_ms, series_start_ms, bucket_count) =
             token_usage_buckets(start_ms, end_ms, bucket_ms);
@@ -107,7 +137,7 @@ impl Store {
         .bind(end_ms)
         .bind(model_hashes)
         .bind(model_hashes)
-        .fetch_all(&self.pool)
+        .fetch_all(&mut *tx)
         .await?;
         let mut recorded = rows
             .into_iter()
@@ -137,8 +167,11 @@ impl Store {
             })
             .collect();
 
+        tx.commit().await?;
+
         Ok(Overview {
             metrics,
+            model_usage,
             token_usage_granularity,
             token_usage_series,
         })

@@ -96,6 +96,38 @@ pub(crate) struct KnowledgeBaseRemoveResponse {
     success: bool,
 }
 
+#[derive(Clone, PartialEq, Message)]
+pub(crate) struct FetchRelevantKnowledgeForConversationRequest {
+    #[prost(string, tag = "1")]
+    _request_id: String,
+    #[prost(bytes = "vec", repeated, tag = "2")]
+    _conversation: Vec<Vec<u8>>,
+    #[prost(string, optional, tag = "3")]
+    _git_origin: Option<String>,
+    #[prost(int32, optional, tag = "4")]
+    limit: Option<i32>,
+    #[prost(string, repeated, tag = "5")]
+    _tagged_filenames: Vec<String>,
+}
+
+#[derive(Clone, PartialEq, Message)]
+pub(crate) struct FetchRelevantKnowledgeForConversationResponse {
+    #[prost(message, repeated, tag = "1")]
+    knowledge_items: Vec<RelevantKnowledgeItem>,
+}
+
+#[derive(Clone, PartialEq, Message)]
+pub(crate) struct RelevantKnowledgeItem {
+    #[prost(string, tag = "1")]
+    title: String,
+    #[prost(string, tag = "2")]
+    knowledge: String,
+    #[prost(string, tag = "3")]
+    knowledge_id: String,
+    #[prost(bool, tag = "4")]
+    is_generated: bool,
+}
+
 /// 规则存储与并发锁;经 axum Extension 注入四个 handler。
 #[derive(Clone)]
 pub struct KnowledgeService {
@@ -323,6 +355,40 @@ pub async fn remove(
     store.remove(&message.id)?;
     store.record_remove(&message.id)?;
     proto(KnowledgeBaseRemoveResponse { success: true })
+}
+
+/// Returns the local global-rule mirror for Cursor's relevance request.
+///
+/// Cursor sends conversation and filename hints, but global rules apply to
+/// every conversation in this fork. Keeping the endpoint local also lets an
+/// offline rule mirror work when the upstream knowledge service is unavailable.
+pub async fn relevant(
+    Extension(service): Extension<KnowledgeService>,
+    request: Request<Body>,
+) -> Result<Response<Body>> {
+    let (_, body) = request.into_parts();
+    let body = to_bytes(body, usize::MAX).await.map_err(|error| {
+        crate::Error::Protocol(format!("cannot read rule request body: {error}"))
+    })?;
+    let request: FetchRelevantKnowledgeForConversationRequest = connect::decode_unary(&body)?;
+    let _guard = service.inner.lock.lock().await;
+    let records = service.inner.store.list()?;
+    let limit = request
+        .limit
+        .filter(|limit| *limit >= 0)
+        .map(|limit| limit as usize)
+        .unwrap_or(usize::MAX);
+    let knowledge_items = records
+        .into_iter()
+        .take(limit)
+        .map(|record| RelevantKnowledgeItem {
+            title: record.title,
+            knowledge: record.knowledge,
+            knowledge_id: record.id,
+            is_generated: record.is_generated,
+        })
+        .collect();
+    proto(FetchRelevantKnowledgeForConversationResponse { knowledge_items })
 }
 
 async fn buffered(request: Request<Body>) -> Result<(axum::http::request::Parts, Bytes)> {

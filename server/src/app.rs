@@ -37,7 +37,10 @@ impl App {
                 .set_port(store.port_settings().await?.service_port);
         }
         let assets = PromptAssets::embedded()?;
-        let compiler = PromptCompiler::new(assets);
+        let compiler = PromptCompiler::with_compaction_prompt_path(
+            assets,
+            crate::config::compaction_prompt_path()?,
+        );
         let plugin_runtime = PluginRuntime::managed()?;
         let plugins = PluginRegistry::managed(
             store.clone(),

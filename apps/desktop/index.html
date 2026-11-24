@@ -16,19 +16,19 @@
     </style>
     <script>
       (() => {
+        let saved = null;
         try {
-          const theme = localStorage.getItem("cursor-byok.theme") === "default-light"
-            ? "default-light"
-            : "default-dark";
-          const light = theme === "default-light";
-          const background = light ? "#fcfcfc" : "#141414";
-          document.documentElement.dataset.theme = theme;
-          document.documentElement.style.setProperty("--startup-background", background);
-          document.documentElement.style.colorScheme = light ? "light" : "dark";
-          document.querySelector('meta[name="theme-color"]')?.setAttribute("content", background);
+          saved = localStorage.getItem("cursor-byok.theme");
         } catch {
-          // The inline CSS already provides the dark-theme fallback.
+          // Use the system preference when storage is unavailable.
         }
+        const light = saved === "default-light"
+          || (saved !== "default-dark" && !window.matchMedia("(prefers-color-scheme: dark)").matches);
+        const background = light ? "#fcfcfc" : "#141414";
+        document.documentElement.dataset.theme = light ? "default-light" : "default-dark";
+        document.documentElement.style.setProperty("--startup-background", background);
+        document.documentElement.style.colorScheme = light ? "light" : "dark";
+        document.querySelector('meta[name="theme-color"]')?.setAttribute("content", background);
       })();
     </script>
     <title>Cursor BYOK</title>

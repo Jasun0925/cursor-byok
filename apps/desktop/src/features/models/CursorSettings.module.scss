@@ -7,12 +7,19 @@
 
 .takeoverActions {
   display: flex;
+  min-width: 0;
   align-items: center;
   gap: 7px;
+
+  > button {
+    flex-shrink: 0;
+  }
 }
 
 .takeoverStatus {
-  min-width: 39px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   color: var(--vscode-descriptionForeground);
   font-size: type.$font-size-xs;
   text-align: right;
@@ -21,11 +28,15 @@
 
 .groupActions {
   display: flex;
+  min-width: 0;
   align-items: center;
   overflow: hidden;
   border-radius: 5px;
 
   button {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
     height: 25px;
     padding: 0 8px;
     color: var(--vscode-descriptionForeground);
@@ -140,34 +151,40 @@
   flex-direction: column;
 }
 .modelRow {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: repeat(2, minmax(24px, auto));
+  grid-template-areas: "name actions" "id result";
   align-items: center;
-  flex-wrap: wrap;
-  gap: 10px 12px;
+  gap: 2px 12px;
   padding: 10px 2px;
   border-top: 1px solid var(--vscode-sideBar-border);
-}
-.modelRowName {
-  min-width: 0;
-  flex: 1 1 200px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
 
-  .modelRowNameText,
-  .modelRowModelId {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  > .modelCardActions {
+    grid-area: actions;
   }
-  .modelRowNameText {
-    color: var(--vscode-foreground);
-    font-size: type.$font-size-base;
-  }
-  .modelRowModelId {
-    color: var(--vscode-descriptionForeground);
-    font-size: type.$font-size-2xs;
-  }
+}
+.modelRowNameText,
+.modelRowModelId {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.modelRowNameText {
+  grid-area: name;
+  color: var(--vscode-foreground);
+  font-size: type.$font-size-base;
+}
+.modelRowModelId {
+  grid-area: id;
+  color: var(--vscode-descriptionForeground);
+  font-size: type.$font-size-2xs;
+}
+.modelRowResult {
+  grid-area: result;
+  display: flex;
+  justify-content: flex-end;
 }
 .modelCard {
   position: relative;
@@ -305,6 +322,16 @@
 .fullWidth {
   width: 100%;
   grid-column: 1 / -1;
+}
+.batchModels {
+  display: flex;
+  align-items: end;
+  gap: 8px;
+
+  > :first-child {
+    flex: 1;
+    min-width: 0;
+  }
 }
 .discoverButton {
   min-height: 34px;

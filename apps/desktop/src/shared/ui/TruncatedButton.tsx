@@ -1,4 +1,4 @@
-import { useRef, useState, type ComponentProps } from "react";
+import { useRef, type ComponentProps } from "react";
 import { Button } from "./Button";
 import { TooltipTrigger } from "./TooltipTrigger";
 import styles from "./TruncatedButton.module.scss";
@@ -10,13 +10,13 @@ import styles from "./TruncatedButton.module.scss";
  */
 export function TruncatedButton({ label, ...props }: ComponentProps<typeof Button> & { label: string }) {
   const element = useRef<HTMLSpanElement>(null);
-  const [truncated, setTruncated] = useState(false);
-  const measure = () => {
+  const isTruncated = () => {
     const text = element.current;
-    if (text) setTruncated(text.scrollWidth > text.clientWidth);
+    return text !== null && text.scrollWidth > text.clientWidth;
   };
-  const button = <Button {...props} onPointerEnter={measure} onFocus={measure}>
-    <span ref={element} className={styles.label}>{label}</span>
-  </Button>;
-  return truncated ? <TooltipTrigger label={label}>{button}</TooltipTrigger> : button;
+  return <TooltipTrigger label={label} shouldShow={isTruncated}>
+    <Button {...props}>
+      <span ref={element} className={styles.label}>{label}</span>
+    </Button>
+  </TooltipTrigger>;
 }

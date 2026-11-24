@@ -373,7 +373,17 @@ async fn retrying_one_background_completion_does_not_call_the_model_again() {
     };
     request.action = Some(pb::ConversationAction {
         action: Some(pb::conversation_action::Action::ResumeAction(
-            pb::ResumeAction::default(),
+            pb::ResumeAction {
+                request_context: Some(pb::RequestContext {
+                    env: Some(pb::RequestContextEnv {
+                        os_version: "windows".into(),
+                        shell: "pwsh".into(),
+                        workspace_paths: vec!["C:/workspace".into()],
+                        ..Default::default()
+                    }),
+                    ..Default::default()
+                }),
+            },
         )),
         ..Default::default()
     });
@@ -383,6 +393,32 @@ async fn retrying_one_background_completion_does_not_call_the_model_again() {
         provider.requests().len(),
         2,
         "explicit Resume must remain available"
+    );
+    let resumed_history = &provider.requests()[1].history;
+    let resumed_text = serde_json::to_string(resumed_history).unwrap();
+    assert_eq!(
+        resumed_history
+            .iter()
+            .filter(|message| message.message_id == "request-context:resume:explicit-resume")
+            .count(),
+        1,
+        "ResumeAction context must use the stable transport request identity"
+    );
+    assert_eq!(
+        resumed_history
+            .iter()
+            .filter(|message| message.message_id == "resume-prompt:explicit-resume")
+            .count(),
+        1,
+        "ResumeAction continuation prompt must use the stable transport request identity"
+    );
+    assert!(
+        resumed_text.contains("Shell: pwsh"),
+        "ResumeAction request context must reach the resumed model call"
+    );
+    assert!(
+        resumed_text.contains("<resume>"),
+        "ResumeAction without pending tools must append a continuation prompt"
     );
 
     let messages = store

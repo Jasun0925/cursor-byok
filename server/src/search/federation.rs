@@ -44,7 +44,12 @@ impl WebSearch {
         E: Into<SearchEngine>,
     {
         Self {
-            client: SearchClient::Direct(reqwest::Client::new()),
+            client: SearchClient::Direct(
+                reqwest::Client::builder()
+                    .http1_only()
+                    .build()
+                    .expect("build search client"),
+            ),
             engines: engines.into_iter().map(Into::into).collect(),
         }
     }

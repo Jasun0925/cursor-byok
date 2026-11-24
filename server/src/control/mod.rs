@@ -9,7 +9,7 @@ mod settings;
 
 use axum::{
     body::{to_bytes, Body},
-    extract::State,
+    extract::{DefaultBodyLimit, State},
     http::{header, header::CONTENT_TYPE, HeaderValue, Method, Request, Response, StatusCode},
     routing::{any, get, post, put},
     Router,
@@ -40,7 +40,10 @@ pub fn proxy_web_router(service: ControlService, target: Url) -> Router {
 
 fn frontend_proxy_router(target: Url) -> Router {
     let state = FrontendProxy {
-        client: reqwest::Client::new(),
+        client: reqwest::Client::builder()
+            .http1_only()
+            .build()
+            .expect("build frontend proxy client"),
         target: target.as_str().trim_end_matches('/').to_string(),
     };
     Router::new()
@@ -113,6 +116,10 @@ pub fn api_router(service: ControlService) -> Router {
         .route(
             "/__byok-api__/api/models",
             get(models::list).post(models::create),
+        )
+        .route(
+            "/__byok-api__/api/models/backup/import",
+            post(models::import_backup).layer(DefaultBodyLimit::max(16 * 1024 * 1024)),
         )
         .route("/__byok-api__/api/models/discover", post(models::discover))
         .route(
@@ -217,6 +224,10 @@ pub fn api_router(service: ControlService) -> Router {
         .route(
             "/__byok-api__/api/settings/pricing",
             get(settings::get_pricing_settings).put(settings::update_pricing_settings),
+        )
+        .route(
+            "/__byok-api__/api/settings/model-pricing",
+            get(settings::get_model_pricing_settings).put(settings::update_model_pricing_settings),
         )
         .route(
             "/__byok-api__/api/harness/cursor/status",

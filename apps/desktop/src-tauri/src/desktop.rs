@@ -7,6 +7,9 @@ use std::{
     time::Duration,
 };
 
+#[cfg(target_os = "windows")]
+use std::os::windows::process::CommandExt;
+
 use axum::{
     extract::{Extension, Json},
     http::StatusCode,
@@ -89,9 +92,9 @@ fn open_terminal_with_command(command: String) -> tauri::Result<()> {
     }
     #[cfg(target_os = "windows")]
     {
-        Command::new("cmd")
-            .args(["/C", "start", "cmd", "/K", &command])
-            .spawn()?;
+        let mut process = Command::new("cmd");
+        process.arg("/K").raw_arg(command);
+        process.spawn()?;
         Ok(())
     }
     #[cfg(target_os = "linux")]

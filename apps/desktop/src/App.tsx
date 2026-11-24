@@ -16,6 +16,7 @@ import { useAppStore } from "./shared/store/appStore";
 import { updateStore } from "./shared/store/updateStore";
 
 const AUTO_UPDATE_CHECK_INTERVAL_MS = 6 * 60 * 60 * 1_000;
+const LAST_NOTIFIED_UPDATE_KEY = "cursor-byok.last-notified-update";
 
 export function App() {
   return (
@@ -61,6 +62,12 @@ function AppMessages() {
       const previousVersion = updateStore.getSnapshot().availableVersion;
       void updateStore.check().then((version) => {
         if (disposed || !version || version === previousVersion) return;
+        try {
+          if (localStorage.getItem(LAST_NOTIFIED_UPDATE_KEY) === version) return;
+          localStorage.setItem(LAST_NOTIFIED_UPDATE_KEY, version);
+        } catch {
+          // The current session still suppresses repeats when storage is unavailable.
+        }
         showMessage(t("发现新版本 {version}，可在设置中安装", { version }), { duration: 6_000 });
       }).catch(() => {
         if (!disposed) lastAutomaticUpdateCheckAt.current = 0;

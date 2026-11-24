@@ -3,6 +3,8 @@ use std::collections::BTreeMap;
 
 use crate::{cursor::protocol::proto::agent::v1 as pb, Error, Result};
 
+use super::context;
+
 pub(super) const FOLLOW_UP: &str = concat!(
     "Perform any necessary follow-up actions in response to the subagent completion above. ",
     "If no follow-up work is needed, no further action is required. ",
@@ -154,8 +156,14 @@ fn completion_context(
             }
         ),
         format!("status: {}", status_name(status)),
-        format!("task_id: {}", completion.task_id),
-        format!("title: {}", completion.title),
+        format!(
+            "task_id: {}",
+            context::neutralize_prompt_body(&completion.task_id)
+        ),
+        format!(
+            "title: {}",
+            context::neutralize_prompt_body(&completion.title)
+        ),
     ];
     optional_field(
         &mut fields,
@@ -178,7 +186,10 @@ fn completion_context(
 
 fn optional_field(fields: &mut Vec<String>, name: &str, value: Option<&str>) {
     if let Some(value) = value.filter(|value| !value.is_empty()) {
-        fields.push(format!("{name}: {value}"));
+        fields.push(format!(
+            "{name}: {}",
+            context::neutralize_prompt_body(value)
+        ));
     }
 }
 
@@ -202,7 +213,9 @@ pub(crate) fn task_completion(
     let mut message = CanonicalMessage::text(
         format!("runtime:{event_id}"), Role::User, Origin::Runtime,
         format!("<system_notification>\nTask {} has finished (status: {}).\n{}\n</system_notification>\n{FOLLOW_UP}",
-            result.call_id, if result.is_error { "error" } else { "success" }, result.content),
+            context::neutralize_prompt_body(&result.call_id),
+            if result.is_error { "error" } else { "success" },
+            context::neutralize_prompt_body(&result.content)),
     );
     message.runtime_event_id = Some(event_id);
     message

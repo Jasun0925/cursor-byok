@@ -6,7 +6,7 @@ use tokio::sync::mpsc;
 use tokio_util::sync::CancellationToken;
 
 use crate::{
-    model::{normalize_tool_name, ProviderReplayState, ToolCall, Usage},
+    model::{merge_replay_states, normalize_tool_name, ProviderReplayState, ToolCall, Usage},
     provider::{FinishReason, ModelEvent, ProviderStream},
 };
 
@@ -246,11 +246,13 @@ pub async fn consume_model_cycle(
                 None => Err("provider ended an unknown tool index"),
             },
             ModelEvent::ProviderReplayState(state) => {
-                if replay_state.replace(state).is_some() {
-                    Err("provider emitted duplicate ProviderReplayState")
-                } else {
-                    Ok(())
-                }
+                replay_state = merge_replay_states(
+                    replay_state
+                        .take()
+                        .into_iter()
+                        .chain(std::iter::once(state)),
+                );
+                Ok(())
             }
             ModelEvent::Usage(value) => {
                 if usage.replace(value).is_some() {

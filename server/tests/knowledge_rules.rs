@@ -89,6 +89,38 @@ struct RemoveResponse {
     success: bool,
 }
 
+#[derive(Clone, PartialEq, Message)]
+struct RelevantRequest {
+    #[prost(string, tag = "1")]
+    request_id: String,
+    #[prost(bytes = "vec", repeated, tag = "2")]
+    conversation: Vec<Vec<u8>>,
+    #[prost(string, optional, tag = "3")]
+    git_origin: Option<String>,
+    #[prost(int32, optional, tag = "4")]
+    limit: Option<i32>,
+    #[prost(string, repeated, tag = "5")]
+    tagged_filenames: Vec<String>,
+}
+
+#[derive(Clone, PartialEq, Message)]
+struct RelevantResponse {
+    #[prost(message, repeated, tag = "1")]
+    knowledge_items: Vec<RelevantItem>,
+}
+
+#[derive(Clone, PartialEq, Message)]
+struct RelevantItem {
+    #[prost(string, tag = "1")]
+    title: String,
+    #[prost(string, tag = "2")]
+    knowledge: String,
+    #[prost(string, tag = "3")]
+    knowledge_id: String,
+    #[prost(bool, tag = "4")]
+    is_generated: bool,
+}
+
 fn proto_request(message: &impl Message) -> Request<Body> {
     Request::post("/test")
         .header(header::CONTENT_TYPE, "application/proto")
@@ -213,4 +245,48 @@ async fn updating_missing_rule_reports_failure() {
     .unwrap();
     let updated: UpdateResponse = decode(response).await;
     assert!(!updated.success);
+}
+
+#[tokio::test]
+async fn relevant_knowledge_returns_local_rules_and_honors_limit() {
+    let (_store_dir, store) = fixtures::temp_store().await;
+    let upstream = CursorProxy::cursor(cursor_server::network::NetworkClients::new(store));
+    let rules_dir = tempfile::tempdir().unwrap();
+    let service = KnowledgeService::with_root(rules_dir.path().join("rules")).unwrap();
+
+    for (knowledge, title) in [("first rule", "First"), ("second rule", "Second")] {
+        let response = knowledge::add(
+            Extension(upstream.clone()),
+            Extension(service.clone()),
+            proto_request(&AddRequest {
+                knowledge: knowledge.into(),
+                title: title.into(),
+                git_origin: "remote-origin".into(),
+            }),
+        )
+        .await
+        .unwrap();
+        assert!(decode::<AddResponse>(response).await.success);
+    }
+
+    let response = knowledge::relevant(
+        Extension(service),
+        proto_request(&RelevantRequest {
+            request_id: "conversation-request".into(),
+            conversation: vec![b"conversation".to_vec()],
+            git_origin: Some("different-origin".into()),
+            limit: Some(1),
+            tagged_filenames: vec!["src/main.rs".into()],
+        }),
+    )
+    .await
+    .unwrap();
+    let relevant: RelevantResponse = decode(response).await;
+    assert_eq!(relevant.knowledge_items.len(), 1);
+    assert_eq!(relevant.knowledge_items[0].title, "Second");
+    assert_eq!(relevant.knowledge_items[0].knowledge, "second rule");
+    assert!(!relevant.knowledge_items[0].is_generated);
+    assert!(relevant.knowledge_items[0]
+        .knowledge_id
+        .starts_with("local-"));
 }

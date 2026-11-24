@@ -43,4 +43,5 @@ export const chevronDoubleRightIcon = icon('<path fill="currentColor" d="M5.59 7
 export const windowCloseIcon = icon('<path fill="currentColor" d="M13.46 12L19 17.54V19h-1.46L12 13.46L6.46 19H5v-1.46L10.54 12L5 6.46V5h1.46L12 10.54L17.54 5H19v1.46z"/>');
 export const windowMaximizeIcon = icon('<path fill="currentColor" d="M4 4h16v16H4zm2 4v10h12V8z"/>');
 export const windowMinimizeIcon = icon('<path fill="currentColor" d="M20 14H4v-4h16"/>');
+export const openInNewIcon = icon('<path fill="currentColor" d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7h-2zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3z"/>');
 export const windowRestoreIcon = icon('<path fill="currentColor" d="M4 8h4V4h12v12h-4v4H4zm12 0v6h2V6h-8v2zM6 12v6h8v-6z"/>');

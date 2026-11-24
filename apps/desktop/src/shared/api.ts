@@ -87,6 +87,12 @@ export interface LegacyModelImportResult {
   total: number;
 }
 
+export interface ModelBackup {
+  format: "cursor-byok-models";
+  version: 1;
+  models: ModelInput[];
+}
+
 export interface ModelConnectivityResult {
   duration_ms: number;
   first_valid_response_ms: number | null;
@@ -178,6 +184,10 @@ export interface TokenPricingSettings {
   output_per_million: number;
   cache_read_per_million: number;
   cache_write_per_million: number;
+}
+
+export interface ModelTokenPricing extends TokenPricingSettings {
+  model_hash: string;
 }
 
 export type PluginRuntimeState = "uninitialized" | "initializing" | "ready" | "failed" | "unsupported";
@@ -377,8 +387,18 @@ export interface OverviewTokenUsageBucket {
   output_tokens: number;
 }
 
+export interface ModelUsage {
+  model_hash: string | null;
+  model_id: string;
+  display_name: string;
+  provider_type: string;
+  provider_url: string;
+  metrics: OverviewMetrics;
+}
+
 export interface Overview {
   metrics: OverviewMetrics;
+  model_usage: ModelUsage[];
   token_usage_granularity: TokenUsageGranularity;
   token_usage_series: OverviewTokenUsageBucket[];
 }
@@ -486,6 +506,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 export const api = {
   models: () => request<Model[]>("/models"),
   createModels: (models: ModelInput[]) => request<Model[]>("/models", { method: "POST", body: JSON.stringify({ models }) }),
+  importModelBackup: (backup: ModelBackup) => request<LegacyModelImportResult>("/models/backup/import", { method: "POST", body: JSON.stringify(backup) }),
   reorderModels: (modelHashes: string[]) => request<Model[]>("/models/order", { method: "PUT", body: JSON.stringify({ model_hashes: modelHashes }) }),
   discoverModels: (input: ModelDiscoveryInput) => request<{ models: string[] }>("/models/discover", { method: "POST", body: JSON.stringify(input) }),
   previewV0049Models: () => request<LegacyModelImportPreview>("/models/import-v0049"),
@@ -560,4 +581,6 @@ export const api = {
   setCommitSettings: (settings: CommitSettings) => request<CommitSettingsView>("/settings/commit", { method: "PUT", body: JSON.stringify(settings) }),
   pricingSettings: () => request<TokenPricingSettings>("/settings/pricing"),
   setPricingSettings: (settings: TokenPricingSettings) => request<TokenPricingSettings>("/settings/pricing", { method: "PUT", body: JSON.stringify(settings) }),
+  modelPricingSettings: () => request<ModelTokenPricing[]>("/settings/model-pricing"),
+  setModelPricingSettings: (settings: ModelTokenPricing[]) => request<ModelTokenPricing[]>("/settings/model-pricing", { method: "PUT", body: JSON.stringify(settings) }),
 };

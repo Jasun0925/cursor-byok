@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type MouseEventHandler, type ReactNode, type RefObject } from "react";
 import { api, type LegacyModelImportPreview } from "../../shared/api";
 import { appStore } from "../../shared/store/appStore";
 import { ConfirmDialog } from "../../shared/ui/ConfirmDialog";
@@ -8,20 +8,31 @@ import styles from "./LegacyModelImport.module.scss";
 type LegacyModelImportControl = {
   busy: boolean;
   previewing: boolean;
-  open: () => void;
+  open: MouseEventHandler<HTMLButtonElement>;
 };
 
-export function LegacyModelImport({ children }: { children: (control: LegacyModelImportControl) => ReactNode }) {
+export function LegacyModelImport({ children, afterImportFocusRef }: { children: (control: LegacyModelImportControl) => ReactNode; afterImportFocusRef?: RefObject<HTMLElement | null> }) {
   const message = useMessage();
   const [preview, setPreview] = useState<LegacyModelImportPreview | null>(null);
   const [previewing, setPreviewing] = useState(false);
   const [importing, setImporting] = useState(false);
+  const trigger = useRef<HTMLButtonElement | null>(null);
+  const previewFailed = useRef(false);
+  const returnFocus = useCallback(() => trigger.current?.isConnected ? trigger.current : afterImportFocusRef?.current ?? null, [afterImportFocusRef]);
 
-  const open = async () => {
+  useEffect(() => {
+    if (previewing || !previewFailed.current) return;
+    previewFailed.current = false;
+    if (document.activeElement === document.body) returnFocus()?.focus();
+  }, [previewing, returnFocus]);
+
+  const open = async (button: HTMLButtonElement) => {
+    trigger.current = button;
     try {
       setPreviewing(true);
       setPreview(await api.previewV0049Models());
     } catch (cause) {
+      previewFailed.current = true;
       message(errorText(cause));
     } finally {
       setPreviewing(false);
@@ -49,11 +60,12 @@ export function LegacyModelImport({ children }: { children: (control: LegacyMode
   };
 
   return <>
-    {children({ busy: previewing || importing, previewing, open: () => void open() })}
+    {children({ busy: previewing || importing, previewing, open: (event) => void open(event.currentTarget) })}
     <ConfirmDialog
       open={preview !== null}
       title={t("确认导入旧版模型配置")}
       busy={importing}
+      returnFocus={returnFocus}
       wide
       cancelLabel={t("取消")}
       confirmLabel={t("确认导入")}

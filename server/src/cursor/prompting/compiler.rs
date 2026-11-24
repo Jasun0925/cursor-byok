@@ -1,5 +1,5 @@
 //! Compiles stable Prompt specifications for Cursor modes.
-use std::collections::BTreeMap;
+use std::{collections::BTreeMap, path::PathBuf};
 
 use crate::{
     model::{ModelSpec, PromptSpec, ToolDefinition},
@@ -11,11 +11,22 @@ use super::{assets::runtime_expression, Mode, PromptAssets};
 #[derive(Clone)]
 pub struct PromptCompiler {
     assets: PromptAssets,
+    compaction_prompt_path: Option<PathBuf>,
 }
 
 impl PromptCompiler {
     pub fn new(assets: PromptAssets) -> Self {
-        Self { assets }
+        Self {
+            assets,
+            compaction_prompt_path: None,
+        }
+    }
+
+    pub fn with_compaction_prompt_path(assets: PromptAssets, path: PathBuf) -> Self {
+        Self {
+            assets,
+            compaction_prompt_path: Some(path),
+        }
     }
 
     pub fn runtime_message(&self, mode: Mode, values: &BTreeMap<&str, String>) -> Result<String> {
@@ -40,12 +51,13 @@ impl PromptCompiler {
             .display_name
             .as_deref()
             .unwrap_or(model.model_id.as_str());
+        let prompt = match (mode, &self.compaction_prompt_path) {
+            (Mode::Compaction, Some(path)) => crate::config::compaction_prompt_override_at(path)?
+                .unwrap_or_else(|| self.assets.mode(mode).prompt.clone()),
+            _ => self.assets.mode(mode).prompt.clone(),
+        };
         Ok(PromptSpec {
-            instructions: self
-                .assets
-                .mode(mode)
-                .prompt
-                .replace("{{FAKE_MODEL_NAME}}", fake_model_name),
+            instructions: prompt.replace("{{FAKE_MODEL_NAME}}", fake_model_name),
             tools,
         })
     }
@@ -91,4 +103,46 @@ fn append_dynamic_tools(
         tools.push(tool);
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn compaction_prompt_override_reloads_without_affecting_other_modes() {
+        let directory = tempfile::tempdir().unwrap();
+        let path = directory.path().join("compaction.md");
+        let assets = PromptAssets::embedded().unwrap();
+        let compiler = PromptCompiler::with_compaction_prompt_path(assets, path.clone());
+        let model = ModelSpec::new("test-model");
+        let default_compaction = compiler
+            .prompt_spec(Mode::Compaction, &model, &[], false)
+            .unwrap();
+        let default_agent = compiler
+            .prompt_spec(Mode::Agent, &model, &[], false)
+            .unwrap();
+
+        std::fs::write(&path, "custom {{FAKE_MODEL_NAME}} summary").unwrap();
+        let custom_compaction = compiler
+            .prompt_spec(Mode::Compaction, &model, &[], false)
+            .unwrap();
+        assert_eq!(custom_compaction.instructions, "custom test-model summary");
+        assert_eq!(
+            compiler
+                .prompt_spec(Mode::Agent, &model, &[], false)
+                .unwrap()
+                .instructions,
+            default_agent.instructions
+        );
+
+        std::fs::write(&path, " \n").unwrap();
+        assert_eq!(
+            compiler
+                .prompt_spec(Mode::Compaction, &model, &[], false)
+                .unwrap()
+                .instructions,
+            default_compaction.instructions
+        );
+    }
 }
