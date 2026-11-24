@@ -1,14 +1,14 @@
 # 维护状态与上游问题处理
 
-更新：2026-11-23；v1.2.1 发布及资产核验已完成。维护者：haohaomin。
+更新：2026-11-24；v1.2.3 发布及资产核验已完成。维护者：haohaomin。
 
 原仓库 [leookun/cursor-byok](https://github.com/leookun/cursor-byok) 已归档。这个 fork 继续收集原仓库的问题和候选补丁，复现后修复，并保留原作者与贡献者署名。它不是 Cursor 官方项目，也不是原作者指定的继任仓库。
 
-- 安装：[当前已发布的 v1.2.1](https://github.com/haohaomin/cursor-byok/releases/tag/v1.2.1)。
+- 安装：[当前已发布的 v1.2.3](https://github.com/haohaomin/cursor-byok/releases/tag/v1.2.3)。
 - 反馈：[本仓库 Issues](https://github.com/haohaomin/cursor-byok/issues)。请附原 Issue/PR 编号、操作系统、Cursor/BYOK 版本、模型协议、复现步骤和脱敏错误。
 - 贡献：[本仓库 Pull Requests](https://github.com/haohaomin/cursor-byok/pulls)。
 
-源码与安装包分别标记。v1.2.1 已包含本轮主线维护修复，具体内容与资产核验见 [发布记录](history/releases.md#v121)；未复现、部分通过或缺少原环境的条目不会标记为彻底解决。
+源码与安装包分别标记。v1.2.3 新增 HTTP/2 代理修复，具体内容与资产核验见 [发布记录](history/releases.md#v123)；未复现、部分通过或缺少原环境的条目不会标记为彻底解决。
 
 PR #13、#43–#49 已于 2026-11-19 合入 main，并随 v1.2.1 发布。其中包括 Windows 用户级 CA、模型备份、批量添加模型、上下文上限与终端文件提示。Windows 普通用户下，有效 CA 的安装、生产 Ready 状态、系统信任 HTTPS、错误主机名拒绝及移除后拒绝连接均已实测通过；临时信任和私钥等已清理。BYOK 安装包的 CA 初始化和 Cursor 接管 UI 已通过；真实 Agent 验收尚未完成：提交与 provider 存活未可靠确认，账号 401 和空日志不足以定位根因（2026-11-24 更正），见 [CA 记录](history/issues/2026-11-23-windows-ca-valid-check.md) 与 [Agent 记录](history/issues/2026-11-23-windows-cursor-agent-acceptance.md)。
 

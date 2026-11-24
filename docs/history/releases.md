@@ -429,3 +429,17 @@
 - 本地桌面检查、Tauri debug/no-bundle 构建、301 项服务端单测（14 忽略）、18 项控制 API 测试、12 项发布脚本测试、CA 定向回归、Clippy 与 actionlint 均通过；npm audit 为 0 项告警。本地 SQLx 工具链沿用已有构建参数，没有修改项目构建配置。
 - 本轮没有安装或替换本机应用；产物下载和签名核验不等于应用内安装验收。
 - [结构化证据](2026-11-23-v1.2.1-release-evidence.json)。
+
+<a id="v123"></a>
+
+## v1.2.3 发布验证记录
+
+来源日期：2026-11-24。包含 fork PR #50 对上游 PR #493 的选择性实现：Cursor 出站代理启用 HTTP/2 ALPN，响应结束或取消时释放仍打开的上传流；普通模型网关保持 HTTP/1.1。
+
+- 源码合并：`be3fd7d295df0a9d756336c41a82742081b5369a`；[main CI](https://github.com/haohaomin/cursor-byok/actions/runs/45348989897) 全部成功。
+- [自动发布](https://github.com/haohaomin/cursor-byok/actions/runs/45350075141) 四平台及最终发布成功；[v1.2.3](https://github.com/haohaomin/cursor-byok/releases/tag/v1.2.3) 为 Latest，draft=false，prerelease=false。
+- 实际下载全部 20 项资产，大小与 GitHub SHA-256 全部匹配；沿用现有 updater 公钥，7 份 Minisign 签名全部有效。
+- `latest.json`、`portable-latest.json`、`update.json` 的版本、平台、URL、签名与旧版包校验和均匹配。新旧仓库用户名的 Latest 更新入口均返回相同清单。
+- 先前 v1.2.2 由 #102 回放测试与证据修订自动发布；未改生产代码。该版本仅核对发布状态和资产目录，没有另做完整下载签名验收。
+
+完整摘要见 [结构化证据](2026-11-24-v1.2.3-release-evidence.json)。本次没有安装到用户机器；真实 Cursor Agent/语音与上游新增 Run listener 未验收。#444 压缩历史修复尚未包含在 v1.2.3。

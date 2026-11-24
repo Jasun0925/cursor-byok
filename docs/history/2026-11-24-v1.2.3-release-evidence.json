@@ -1,0 +1,216 @@
+{
+  "version": "1.2.3",
+  "repository": "haohaomin/cursor-byok",
+  "release_url": "https://github.com/haohaomin/cursor-byok/releases/tag/v1.2.3",
+  "release_commit": "9f991e2bd7938384c9fbc84b2d9ef9455717ae1a",
+  "release_run": "https://github.com/haohaomin/cursor-byok/actions/runs/45350075141",
+  "ci_run": "https://github.com/haohaomin/cursor-byok/actions/runs/45348989897",
+  "ci_commit": "be3fd7d295df0a9d756336c41a82742081b5369a",
+  "published_at": "2026-11-24T08:03:18Z",
+  "verified_at": "2026-11-24T08:10:45.965690+00:00",
+  "draft": false,
+  "prerelease": false,
+  "latest": true,
+  "updater_public_key_sha256": "a4e4479f2f264e2aa24e384b67e9adb0b57efa5225f1f76cad0be0249a28ce15",
+  "signature_verifier": "minisign-verify 0.2.5, existing cached Rust dependency",
+  "assets": [
+    {
+      "name": "cursor-byok-1.2.3-linux-amd64.tar.gz",
+      "size": 31365636,
+      "sha256": "1a8de83e8ea3a4e1a99ee64f47459a07acf4f88d8d5ab89102f25fc91bb4e839",
+      "github_digest_verified": true
+    },
+    {
+      "name": "cursor-byok-1.2.3-macos-amd64.tar.gz",
+      "size": 30114986,
+      "sha256": "fa1f379886acda0073ba833dcf23bbaa8d993954d2d9fe4c2124bf82619a1829",
+      "github_digest_verified": true
+    },
+    {
+      "name": "cursor-byok-1.2.3-macos-arm64.tar.gz",
+      "size": 29074651,
+      "sha256": "70fd45ce7873d15ee36b29df88991b5c225f991694e3c6ee291e215d1d46ed15",
+      "github_digest_verified": true
+    },
+    {
+      "name": "cursor-byok-1.2.3-windows-amd64.zip",
+      "size": 28129374,
+      "sha256": "8aba24011ead6f5762cc49cdd35a7c6c195c7787c228708bf2edaa524e46d9a5",
+      "github_digest_verified": true,
+      "signature": "valid"
+    },
+    {
+      "name": "cursor-byok-1.2.3-windows-amd64.zip.sig",
+      "size": 428,
+      "sha256": "110f9bbb2103b829635b2863b529f6fc4132b7944fe63096375061c15b9a3833",
+      "github_digest_verified": true
+    },
+    {
+      "name": "Cursor.BYOK-1.2.3-1.x86_64.rpm",
+      "size": 31913617,
+      "sha256": "c6b592d6b6a5a9936c98b6c8c38973bbde28639a77c336578c439b55837bf0c6",
+      "github_digest_verified": true,
+      "signature": "valid"
+    },
+    {
+      "name": "Cursor.BYOK-1.2.3-1.x86_64.rpm.sig",
+      "size": 420,
+      "sha256": "23e1a80cd231c8ab7e3589617a6893aec31831f61bc133bf674d3acd8bb973cd",
+      "github_digest_verified": true
+    },
+    {
+      "name": "Cursor.BYOK_1.2.3_aarch64.app.tar.gz",
+      "size": 29074651,
+      "sha256": "70fd45ce7873d15ee36b29df88991b5c225f991694e3c6ee291e215d1d46ed15",
+      "github_digest_verified": true,
+      "signature": "valid"
+    },
+    {
+      "name": "Cursor.BYOK_1.2.3_aarch64.app.tar.gz.sig",
+      "size": 412,
+      "sha256": "279ff4dcc7873e837a69d709d07f981c94c71aad961d077d177784ca275691ec",
+      "github_digest_verified": true
+    },
+    {
+      "name": "Cursor.BYOK_1.2.3_amd64.AppImage",
+      "size": 109611512,
+      "sha256": "9000c3f8b06206055fd05dacc475f0055a6f67a1f336d78959d0fbcb5cf80a29",
+      "github_digest_verified": true,
+      "signature": "valid"
+    },
+    {
+      "name": "Cursor.BYOK_1.2.3_amd64.AppImage.sig",
+      "size": 424,
+      "sha256": "096bb5ccd58b5a9093d7ac94226dd60e81a6c147a317a002b9a44129f4ac811e",
+      "github_digest_verified": true
+    },
+    {
+      "name": "Cursor.BYOK_1.2.3_amd64.deb",
+      "size": 31906764,
+      "sha256": "8db13fc19494309745696073441eebb93b1cc53f3bc451339f653ea197579dad",
+      "github_digest_verified": true,
+      "signature": "valid"
+    },
+    {
+      "name": "Cursor.BYOK_1.2.3_amd64.deb.sig",
+      "size": 416,
+      "sha256": "80a1d2890691b0faa3f3be421f12c3f22c2d155f1e4b8bdca36bc28a288159b0",
+      "github_digest_verified": true
+    },
+    {
+      "name": "Cursor.BYOK_1.2.3_x64-setup.exe",
+      "size": 21267361,
+      "sha256": "8c50f3dd3465b2c6e6eaf1fee4f1b211fab3f47b6c45f1cb5ad3d72085f804c1",
+      "github_digest_verified": true,
+      "signature": "valid"
+    },
+    {
+      "name": "Cursor.BYOK_1.2.3_x64-setup.exe.sig",
+      "size": 424,
+      "sha256": "d36949b848db8e77f0073b1c0c550b3c805372943c7f02f51a23f8b44428bf81",
+      "github_digest_verified": true
+    },
+    {
+      "name": "Cursor.BYOK_1.2.3_x64.app.tar.gz",
+      "size": 30114986,
+      "sha256": "fa1f379886acda0073ba833dcf23bbaa8d993954d2d9fe4c2124bf82619a1829",
+      "github_digest_verified": true,
+      "signature": "valid"
+    },
+    {
+      "name": "Cursor.BYOK_1.2.3_x64.app.tar.gz.sig",
+      "size": 412,
+      "sha256": "e886d6110413723af33f30a2d2c30c89bb0a185793f021cbe9648824ad4ef157",
+      "github_digest_verified": true
+    },
+    {
+      "name": "latest.json",
+      "size": 6045,
+      "sha256": "88c1e5710f9ec210d1ba76b7d13e8e3ba1ce09a6c814e35b1ab135c6e799832f",
+      "github_digest_verified": true
+    },
+    {
+      "name": "portable-latest.json",
+      "size": 720,
+      "sha256": "13985736c945b1b952c41805a14b462d7f45057723dc0b391b5f88e7d3ff39ca",
+      "github_digest_verified": true
+    },
+    {
+      "name": "update.json",
+      "size": 1208,
+      "sha256": "3f8c77277609fefc264d0ea07e94e5df5ccb9419a8ddc9995b931a738c6ba231",
+      "github_digest_verified": true
+    }
+  ],
+  "manifests": {
+    "latest.json": {
+      "version": "1.2.3",
+      "platforms": [
+        "linux-x86_64",
+        "linux-x86_64-appimage",
+        "linux-x86_64-deb",
+        "linux-x86_64-rpm",
+        "darwin-aarch64",
+        "darwin-aarch64-app",
+        "windows-x86_64",
+        "windows-x86_64-nsis",
+        "darwin-x86_64",
+        "darwin-x86_64-app"
+      ],
+      "urls_verified": true
+    },
+    "portable-latest.json": {
+      "version": "1.2.3",
+      "platforms": [
+        "windows-x86_64"
+      ],
+      "urls_verified": true
+    },
+    "update.json": {
+      "version": "1.2.3",
+      "platforms": [
+        "macos-arm64",
+        "macos-amd64",
+        "windows-amd64",
+        "linux-amd64"
+      ],
+      "urls_verified": true
+    }
+  },
+  "latest_endpoints": [
+    {
+      "owner": "haohaomin",
+      "manifest": "latest.json",
+      "version": "1.2.3"
+    },
+    {
+      "owner": "haohaomin",
+      "manifest": "portable-latest.json",
+      "version": "1.2.3"
+    },
+    {
+      "owner": "haohaomin",
+      "manifest": "update.json",
+      "version": "1.2.3"
+    },
+    {
+      "owner": "renhao12356578",
+      "manifest": "latest.json",
+      "version": "1.2.3"
+    },
+    {
+      "owner": "renhao12356578",
+      "manifest": "portable-latest.json",
+      "version": "1.2.3"
+    },
+    {
+      "owner": "renhao12356578",
+      "manifest": "update.json",
+      "version": "1.2.3"
+    }
+  ],
+  "limits": [
+    "No installation or in-app upgrade performed.",
+    "Real Cursor Agent/voice and upstream PR493 new Run listener are not validated."
+  ]
+}
