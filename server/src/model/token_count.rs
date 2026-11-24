@@ -2,9 +2,9 @@
 
 use super::{ContentPart, ProjectedContent, ProjectedMessage, PromptSpec};
 
-const TOKENS_PER_MESSAGE_OVERHEAD: u64 = 8;
+pub(crate) const TOKENS_PER_MESSAGE_OVERHEAD: u64 = 8;
 const TOKENS_PER_TOOL_CALL_OVERHEAD: u64 = 6;
-const TOKENS_PER_IMAGE: u64 = 1_024;
+pub(crate) const TOKENS_PER_IMAGE: u64 = 1_024;
 
 pub(crate) fn estimate_context_tokens(prompt: &PromptSpec, messages: &[ProjectedMessage]) -> u64 {
     let instructions = estimate_text_tokens(&prompt.instructions);
@@ -82,7 +82,7 @@ fn estimate_json_tokens(value: &impl serde::Serialize) -> u64 {
         .unwrap_or_default()
 }
 
-fn estimate_text_tokens(text: &str) -> u64 {
+pub(crate) fn estimate_text_tokens(text: &str) -> u64 {
     let text = text.trim();
     if text.is_empty() {
         return 0;

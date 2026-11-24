@@ -327,7 +327,7 @@ async fn automatic_compaction_preflights_provider_input_and_records_rebuilt_toke
 }
 
 #[tokio::test]
-async fn stalled_automatic_compaction_falls_back_and_continues() {
+async fn stalled_automatic_compaction_preserves_small_history() {
     let (_directory, store) = fixtures::temp_store().await;
     let model = store
         .create_model(&windowed_model("stalled-compaction", Some(100_000)))
@@ -336,7 +336,7 @@ async fn stalled_automatic_compaction_falls_back_and_continues() {
     let provider = fake_provider::FakeProvider::default();
     provider.push(text_response(&"x".repeat(2_000), 150_000, 1_000));
     // A provider refusal triggers compaction of a small history that can be
-    // preserved completely if the summarizer stalls.
+    // preserved without any replacement if the summarizer stalls.
     provider.push_error(cursor_server::Error::Provider(
         "context_length_exceeded".into(),
     ));
@@ -384,19 +384,22 @@ async fn stalled_automatic_compaction_falls_back_and_continues() {
     )
     .await;
 
-    assert!(matches!(second.end_stream, EndStream::Success {}));
+    assert!(
+        matches!(&second.end_stream, EndStream::Failure { error } if error.message.contains("timed out")),
+        "{:?}",
+        second.end_stream
+    );
     assert_eq!(second.summary_started, 1);
-    assert_eq!(second.summary_completed, 1);
+    assert_eq!(second.summary_completed, 0);
     let stored = store
         .load_current_messages(&ConversationId::new("stalled-compaction-conversation"))
         .await
         .unwrap();
-    assert!(serde_json::to_string(&stored)
-        .unwrap()
-        .contains("Complete conversation state (summary unavailable)"));
-    assert_eq!(provider.requests().len(), 4);
+    let retained = serde_json::to_string(&stored).unwrap();
+    assert!(retained.contains(&"x".repeat(2_000)));
+    assert!(!retained.contains("<conversation_summary>"));
+    assert_eq!(provider.requests().len(), 3);
     assert!(provider.requests()[2].prompt.tools.is_empty());
-    assert!(!provider.requests()[3].prompt.tools.is_empty());
 }
 
 #[tokio::test]

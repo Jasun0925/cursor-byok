@@ -1,7 +1,7 @@
-//! Decides when to compact context and permits only complete fallback transcripts.
+//! Decides when to compact context and validates the rebuilt conversation.
 
 mod batches;
-pub(super) use batches::Batches;
+pub(super) use batches::{Batches, DEFAULT_CONTEXT_WINDOW, TRUST_INSTRUCTION};
 
 use std::{collections::HashSet, path::Path};
 
@@ -12,8 +12,6 @@ use crate::{
     },
     store::ContextUsageAnchor,
 };
-
-const FALLBACK_CHARS: usize = 12_000;
 
 /// Fraction of the context window kept free, as a divisor: 10 = 10%.
 ///
@@ -132,28 +130,6 @@ pub(super) fn partition(
         .filter(|message| !current_ids.contains(message.message_id.as_str()))
         .cloned();
     (compactable, retained)
-}
-
-/// A failed summary may only be replaced by a complete, bounded transcript.
-/// Never turn a failed provider call into a successful, destructive tail trim.
-pub(super) fn fallback_summary(messages: &[CanonicalMessage]) -> Result<String, String> {
-    use crate::model::{ContentPart, MessageContent};
-    if messages.iter().any(|message| match &message.content {
-        MessageContent::Parts { parts } => parts
-            .iter()
-            .any(|part| matches!(part, ContentPart::Image { .. })),
-        MessageContent::ToolResult(result) => result.image.is_some(),
-        MessageContent::Assistant { .. } => false,
-    }) {
-        return Err("automatic compaction failed and images cannot be preserved in a text fallback; original history has been preserved".into());
-    }
-    let serialized = serde_json::to_string(messages).map_err(|error| error.to_string())?;
-    if serialized.chars().count() > FALLBACK_CHARS {
-        return Err("automatic compaction failed and a complete fallback does not fit; original history has been preserved".into());
-    }
-    Ok(format!(
-        "Complete conversation state (summary unavailable):\n{serialized}"
-    ))
 }
 
 #[cfg(test)]

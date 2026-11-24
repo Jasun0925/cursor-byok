@@ -16,7 +16,7 @@
 
 **2026-11-23 Windows 验证：**有效 CA 的普通用户安装/检测/移除闭环已通过，补齐了[初测](history/issues/2026-11-21-windows-ca-check.md)使用过期证书的边界。完整生产模块五种状态对照通过；桌面手动安装后为 Ready，Windows 默认 TLS 客户端的 HTTPS 成功、错误主机名被拒绝，移除后恢复 Untrusted 并拒绝连接。v1.2.1 安装包的 CA 初始化和 Cursor 接管 UI 也已通过；真实 Agent 验收尚未完成：提交与 provider 存活未可靠确认，账号 401 和空日志不足以定位根因（2026-11-24 更正）。临时私钥、目录、任务及快捷方式已清理，见 [CA 记录](history/issues/2026-11-23-windows-ca-valid-check.md) 和 [Agent 记录](history/issues/2026-11-23-windows-cursor-agent-acceptance.md)。
 
-**2026-11-24 Issue #444：**自动压缩丢弃早期轮次及失败兜底丢失历史已有失败复现；分批摘要、失败保留和中断处理候选通过定向回归，完整本机回归与 Clippy 已通过，跨平台 CI 待验。真实 Grok 未验收，见 [记录](history/issues/2026-11-24-issue444-compaction-retention.md)。
+**2026-11-24 Issue #444：**自动压缩丢弃早期轮次及失败兜底丢失历史已有失败复现；分批摘要、失败保留和中断处理已提交 [PR #51](https://github.com/haohaomin/cursor-byok/pull/51)；审查补充后本机 597 项回归与 Clippy 通过，最终跨平台 CI 待验。真实 Grok 未验收，见 [记录](history/issues/2026-11-24-issue444-compaction-retention.md)。
 
 **2026-11-24 PR #493：**选择性修复经 fork PR #50 合入，跨平台 CI 与 v1.2.3 发布核验通过。修复 Cursor 代理 HTTP/2 协商和响应取消后上传未释放；其他网关保持 HTTP/1.1。[测试与范围](history/pull-requests/2026-11-24-pr493-http2-relay.md)。
 

@@ -130,6 +130,75 @@ async fn failed_large_automatic_summary_does_not_replace_history_with_its_tail()
 }
 
 #[tokio::test]
+async fn provider_overflow_without_configured_window_retries_summary_and_continues() {
+    let (_directory, store) = fixtures::temp_store().await;
+    let model = store
+        .create_model(&windowed_model("unknown-window", None))
+        .await
+        .unwrap();
+    let provider = fake_provider::FakeProvider::default();
+    provider.push(text_response(
+        &format!("COMPLETED_TASK {}", "x".repeat(30_000)),
+        4_000,
+        8_000,
+    ));
+    provider.push_error(cursor_server::Error::Provider(
+        "context_length_exceeded".into(),
+    ));
+    provider.push_error(cursor_server::Error::Provider(
+        "context_length_exceeded".into(),
+    ));
+    provider.push(text_response(
+        "ORIGINAL_GOAL; COMPLETED_TASK; next pending work",
+        8_000,
+        30,
+    ));
+    provider.push(text_response("continue only pending work", 500, 10));
+    let registry = registry(store, &provider);
+    let first = run(
+        &registry,
+        "unknown-first",
+        user_request(
+            "unknown-window",
+            "u1",
+            "ORIGINAL_GOAL",
+            &model.model_hash,
+            None,
+        ),
+    )
+    .await;
+    let second = run(
+        &registry,
+        "unknown-second",
+        user_request(
+            "unknown-window",
+            "u2",
+            "continue",
+            &model.model_hash,
+            first.checkpoints.last().cloned(),
+        ),
+    )
+    .await;
+    assert!(
+        matches!(second.end_stream, EndStream::Success {}),
+        "{:?}",
+        second.end_stream
+    );
+    assert_eq!(second.summary_completed, 1);
+    let requests = provider.requests();
+    assert_eq!(requests.len(), 5);
+    for index in [2, 3] {
+        assert!(requests[index].prompt.tools.is_empty());
+        assert!(serde_json::to_string(&requests[index].history)
+            .unwrap()
+            .contains("ORIGINAL_GOAL"));
+    }
+    assert!(serde_json::to_string(&requests[4].history)
+        .unwrap()
+        .contains("COMPLETED_TASK"));
+}
+
+#[tokio::test]
 async fn truncated_automatic_summary_preserves_history() {
     check_failed_summary("length").await;
 }

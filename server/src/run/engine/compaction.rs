@@ -39,18 +39,23 @@ impl RunEngine {
             .map_err(|_| client_failure())?;
         let mut history = crate::model::project_messages(&compactable)
             .map_err(|error| RunOutcome::Failed(error.into()))?;
-        hydrate_tool_images(&self.store, &mut history)
-            .await
+        if !prepared.model.strip_images {
+            hydrate_tool_images(&self.store, &mut history)
+                .await
+                .map_err(|error| RunOutcome::Failed(error.into()))?;
+        }
+        let mut batches = compaction::Batches::new(history, prepared.model.strip_images)
             .map_err(|error| RunOutcome::Failed(error.into()))?;
-        let mut batches =
-            compaction::Batches::new(history).map_err(|error| RunOutcome::Failed(error.into()))?;
         let mut model = prepared.model.clone();
         model.max_output_tokens = Some(compaction::OUTPUT_TOKENS);
         model.reasoning.enabled = false;
         model.reasoning.effort = None;
         let prompt = crate::model::PromptSpec {
-            instructions: compaction::instructions()
-                .map_err(|error| RunOutcome::Failed(error.into()))?,
+            instructions: format!(
+                "{}\n\n{}",
+                compaction::instructions().map_err(|error| RunOutcome::Failed(error.into()))?,
+                compaction::TRUST_INSTRUCTION
+            ),
             tools: Vec::new(),
         };
         let mut pending_insertions = Vec::new();
@@ -58,14 +63,17 @@ impl RunEngine {
         let mut compaction_usage = None;
         let mut last_call_index = None;
         let mut retry_history = None;
+        let mut summary_window = model
+            .context_window_tokens
+            .unwrap_or(compaction::DEFAULT_CONTEXT_WINDOW);
         let summary_result = loop {
             if cancellation.is_cancelled() {
                 return Err(RunOutcome::Cancelled);
             }
-            let next =
-                retry_history.take().map(Some).map(Ok).unwrap_or_else(|| {
-                    batches.next(&summary, &prompt, model.context_window_tokens)
-                });
+            let next = match retry_history.take() {
+                Some(history) => Ok(Some(history)),
+                None => batches.next(&summary, &prompt, Some(summary_window)),
+            };
             let history = match next {
                 Ok(Some(history)) => history,
                 Ok(None) => break Ok(summary),
@@ -179,18 +187,28 @@ impl RunEngine {
                     continue;
                 }
             }
+            let failure = match cycle {
+                Err(failure) => failure.failure,
+                Ok(_) => RunFailure::Provider(
+                    "automatic summary was truncated, empty, or requested tools".into(),
+                ),
+            };
+            if compaction::is_context_overflow(&format!("{failure:?}"))
+                && summary_window > compaction::OUTPUT_TOKENS * 2
+            {
+                summary_window /= 2;
+                batches.rewind(history);
+                tracing::warn!(
+                    summary_window,
+                    "summary exceeded provider context; retrying smaller batch"
+                );
+                continue;
+            }
             tracing::warn!(
-                timed_out,
-                failure = ?cycle.as_ref().err().map(|failure| &failure.failure),
-                "automatic compaction did not finish; attempting complete fallback"
+                ?failure,
+                "automatic compaction failed; preserving original history"
             );
-            break compaction::fallback_summary(&compactable).map_err(|message| {
-                let reason = match cycle {
-                    Err(failure) => format!("{:?}", failure.failure),
-                    Ok(_) => "summary was truncated, empty, or requested tools".into(),
-                };
-                RunFailure::Provider(format!("{reason}; {message}"))
-            });
+            break Err(failure);
         };
         let summary = match summary_result {
             Ok(summary) => summary,
