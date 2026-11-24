@@ -19,7 +19,7 @@
 
 这个仓库是 [Jasun0925/cursor-byok](https://github.com/Jasun0925/cursor-byok)。应用在本机运行网关，把 Cursor 的 Agent 请求转换成你配置的模型接口请求。
 
-它基于已归档的 [leookun/cursor-byok](https://github.com/leookun/cursor-byok)。安装包、更新和问题反馈都使用本仓库。当前发布版本是 [v1.0.23](https://github.com/Jasun0925/cursor-byok/releases/tag/v1.0.23)。
+它基于已归档的 [leookun/cursor-byok](https://github.com/leookun/cursor-byok)。安装包、更新和问题反馈都使用本仓库。当前发布版本是 [v1.0.24](https://github.com/Jasun0925/cursor-byok/releases/tag/v1.0.24)。
 
 > cursor-byok 免费开源，模型 API 可能收费。本项目与 Cursor 官方无隶属关系。本地网关会把请求发到你选择的模型服务。
 
@@ -33,6 +33,7 @@
 | [v1.0.21](https://github.com/Jasun0925/cursor-byok/releases/tag/v1.0.21) | 可在系统设置里开启 CLIProxyAPI 标签页：在所选目录启动 `cli-proxy-api`、查看输出、打开它的管理页面。最小化收到菜单栏托盘。移除「使用教程」标签页。 |
 | [v1.0.22](https://github.com/Jasun0925/cursor-byok/releases/tag/v1.0.22) | 系统设置可以清理已没有对话、图片或进行中任务使用的会话数据块，并回收空间。内置的 Grok、ChatGPT/Codex、Google 插件会自动续期 OAuth 凭据（插件 API 2，来自上游 v1.1.0）。BidiAppend 解码失败时日志不再写入请求内容。 |
 | [v1.0.23](https://github.com/Jasun0925/cursor-byok/releases/tag/v1.0.23) | 支持 Cursor 3.29 起以二进制字段（`data_binary`）发送的对话消息，修复新版 Cursor 发消息被 BYOK 拒收的问题。助手消息带多个推理签名时不再报错。 |
+| [v1.0.24](https://github.com/Jasun0925/cursor-byok/releases/tag/v1.0.24) | 合并上游 v1.2.4。自动压缩把完整历史分批交给摘要模型，摘要失败时保留原历史。Cursor 能看到每个模型配置的上下文窗口；模型接口不返回用量时由 BYOK 估算。过长的工具调用 ID 不再冲突。恢复对话时保留上下文。Cursor 转发使用 HTTP/2。桌面端：发现的模型可批量添加，模型配置可导出、导入 JSON 备份，可按模型设置 Token 价格并查看用量，默认跟随系统深浅色，工具栏可打开 Cursor，新增 Gemini 预设和俄语界面。Cursor 历史里缺少结果的工具调用不再导致报错（`assistant tool call has no result`）。Statsig 启动请求在 20 秒内应答。 |
 
 请从[最新发布](https://github.com/Jasun0925/cursor-byok/releases/latest)安装。每个版本的具体说明以该 Release 页面为准。
 
