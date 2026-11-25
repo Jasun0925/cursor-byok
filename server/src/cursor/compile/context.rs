@@ -233,7 +233,7 @@ pub fn compile_context(context: &pb::RequestContext, today: &str) -> String {
         format!(
             "<git_status>\nThis is the git status at the start of the conversation. Note that this status is a snapshot in time, and will not update during the conversation.\n\n\nGit repo: {}\n\n```\n{}\n```\n</git_status>",
             neutralize_prompt_body(&repo.path),
-            neutralize_prompt_body(&repo.status)
+            neutralize_prompt_body(&cap_git_status(&repo.status))
         )
     }));
     sections.extend(transcripts);
@@ -312,6 +312,77 @@ pub fn compile_context(context: &pb::RequestContext, today: &str) -> String {
         }
     }
     sections.join("\n\n")
+}
+
+/// Most status lines kept in `<git_status>`; the branch header counts as one.
+const GIT_STATUS_MAX_LINES: usize = 200;
+
+/// Keep the first [`GIT_STATUS_MAX_LINES`] lines of a `git status --short`
+/// snapshot and summarize the rest by change kind.
+///
+/// A repository with thousands of changed files otherwise adds tens of
+/// thousands of tokens to every request context. Short snapshots are
+/// returned unchanged.
+fn cap_git_status(status: &str) -> std::borrow::Cow<'_, str> {
+    let lines = status.lines().collect::<Vec<_>>();
+    if lines.len() <= GIT_STATUS_MAX_LINES {
+        return status.into();
+    }
+    let (kept, rest) = lines.split_at(GIT_STATUS_MAX_LINES);
+    // Order of the summary; zero counts are omitted.
+    const KINDS: [&str; 9] = [
+        "deleted",
+        "modified",
+        "renamed",
+        "added",
+        "copied",
+        "untracked",
+        "unmerged",
+        "ignored",
+        "other",
+    ];
+    let mut counts = [0usize; KINDS.len()];
+    let mut hidden = 0usize;
+    for line in rest {
+        if line.trim().is_empty() || line.starts_with("##") {
+            continue;
+        }
+        hidden += 1;
+        let mut code = line.chars();
+        let x = code.next().unwrap_or(' ');
+        let y = code.next().unwrap_or(' ');
+        let kind = match (x, y) {
+            ('?', '?') => "untracked",
+            ('!', '!') => "ignored",
+            ('U', _) | (_, 'U') | ('D', 'D') | ('A', 'A') => "unmerged",
+            ('R', _) | (_, 'R') => "renamed",
+            ('C', _) | (_, 'C') => "copied",
+            ('D', _) | (_, 'D') => "deleted",
+            ('A', _) | (_, 'A') => "added",
+            ('M' | 'T', _) | (_, 'M' | 'T') => "modified",
+            _ => "other",
+        };
+        let index = KINDS
+            .iter()
+            .position(|name| *name == kind)
+            .unwrap_or(KINDS.len() - 1);
+        counts[index] += 1;
+    }
+    let mut output = kept.join("\n");
+    if hidden == 0 {
+        return output.into();
+    }
+    let breakdown = KINDS
+        .iter()
+        .zip(counts)
+        .filter(|(_, count)| *count > 0)
+        .map(|(name, count)| format!("{count} {name}"))
+        .collect::<Vec<_>>()
+        .join(", ");
+    output.push_str(&format!(
+        "\n... {hidden} more changed files not listed ({breakdown}). Run `git status` for the full list."
+    ));
+    output.into()
 }
 
 fn compile_mcp_descriptor(server: &pb::McpDescriptor) -> Option<String> {
@@ -805,6 +876,62 @@ mod tests {
         ] {
             assert_eq!(neutralize_prompt_body(content), content);
         }
+    }
+
+    #[test]
+    fn short_git_status_is_rendered_unchanged() {
+        let status = std::iter::once("## main...origin/main".to_owned())
+            .chain((1..GIT_STATUS_MAX_LINES).map(|index| format!(" M src/file{index}.rs")))
+            .collect::<Vec<_>>()
+            .join("\n");
+        assert_eq!(status.lines().count(), GIT_STATUS_MAX_LINES);
+        assert_eq!(cap_git_status(&status), status.as_str());
+
+        let rendered = compile_context(
+            &pb::RequestContext {
+                git_repos: vec![pb::GitRepoInfo {
+                    path: "/repo".into(),
+                    status: status.clone(),
+                    ..Default::default()
+                }],
+                ..Default::default()
+            },
+            "2026-11-25",
+        );
+        assert!(rendered.contains(&format!("```\n{status}\n```")));
+        assert!(!rendered.contains("more changed files not listed"));
+    }
+
+    #[test]
+    fn long_git_status_keeps_the_head_and_counts_the_rest() {
+        let mut lines = vec!["## main...origin/main".to_owned()];
+        lines.extend((1..GIT_STATUS_MAX_LINES).map(|index| format!(" M kept{index}.txt")));
+        lines.extend((0..5).map(|index| format!(" D gone{index}.mp3")));
+        lines.extend((0..3).map(|index| format!(" M changed{index}.mp3")));
+        lines.extend((0..4).map(|index| format!("R  old{index} -> new{index}")));
+        lines.push("RM old -> new".into());
+        lines.extend((0..2).map(|index| format!("?? new{index}.txt")));
+        lines.push("UU conflict.rs".into());
+        lines.push("A  added.rs".into());
+        lines.push(String::new());
+        let status = lines.join("\n");
+
+        let capped = cap_git_status(&status);
+        let capped_lines = capped.lines().collect::<Vec<_>>();
+        assert_eq!(capped_lines.len(), GIT_STATUS_MAX_LINES + 1);
+        assert_eq!(
+            capped_lines[..GIT_STATUS_MAX_LINES],
+            lines[..GIT_STATUS_MAX_LINES]
+                .iter()
+                .map(String::as_str)
+                .collect::<Vec<_>>()[..]
+        );
+        assert_eq!(
+            capped_lines[GIT_STATUS_MAX_LINES],
+            "... 17 more changed files not listed (5 deleted, 3 modified, 5 renamed, \
+             1 added, 2 untracked, 1 unmerged). Run `git status` for the full list."
+        );
+        assert!(!capped.contains("gone0.mp3"));
     }
 
     #[test]
