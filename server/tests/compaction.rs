@@ -380,12 +380,12 @@ async fn stalled_automatic_compaction_preserves_small_history() {
             &model.model_hash,
             first.checkpoints.last().cloned(),
         ),
-        Duration::from_secs(35),
+        Duration::from_secs(70),
     )
     .await;
 
     assert!(
-        matches!(&second.end_stream, EndStream::Failure { error } if error.message.contains("timed out")),
+        matches!(&second.end_stream, EndStream::Failure { error } if error.message.contains("received nothing from the model")),
         "{:?}",
         second.end_stream
     );
@@ -400,6 +400,97 @@ async fn stalled_automatic_compaction_preserves_small_history() {
     assert!(!retained.contains("<conversation_summary>"));
     assert_eq!(provider.requests().len(), 3);
     assert!(provider.requests()[2].prompt.tools.is_empty());
+}
+
+#[tokio::test]
+async fn automatic_compaction_waits_for_a_summary_that_keeps_streaming() {
+    let (_directory, store) = fixtures::temp_store().await;
+    let model = store
+        .create_model(&windowed_model("slow-compaction", Some(100_000)))
+        .await
+        .unwrap();
+    let provider = fake_provider::FakeProvider::default();
+    provider.push(text_response(&"x".repeat(2_000), 150_000, 1_000));
+    provider.push_error(cursor_server::Error::Provider(
+        "context_length_exceeded".into(),
+    ));
+    // The summary streams for 40 seconds in total, longer than the old fixed
+    // 30 second limit, but never goes quiet for the idle limit.
+    let mut summary = vec![
+        ModelEvent::Start {
+            model_call_id: "call-slow-summary".into(),
+        },
+        ModelEvent::TextStart,
+    ];
+    summary.extend((0..6).map(|part| ModelEvent::TextDelta(format!("slow summary part {part}. "))));
+    summary.extend([
+        ModelEvent::TextEnd,
+        ModelEvent::Usage(Usage {
+            input_tokens: Some(20_000),
+            context_input_tokens: Some(20_000),
+            output_tokens: Some(200),
+            total_tokens: Some(20_200),
+            ..Default::default()
+        }),
+        ModelEvent::Done(FinishReason::Stop),
+    ]);
+    provider.push_paced(summary, Duration::from_secs(4));
+    provider.push(text_response("continued after slow compaction", 20_000, 20));
+    let assets = PromptAssets::load(
+        std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("prompt/cursor")
+            .as_path(),
+    )
+    .unwrap();
+    let registry = TransportRegistry::new(
+        store.clone(),
+        Arc::new(provider.clone()),
+        PromptCompiler::new(assets),
+    );
+
+    let first = run(
+        &registry,
+        "slow-first",
+        user_request(
+            "slow-compaction-conversation",
+            "slow-user-1",
+            "start",
+            &model.model_hash,
+            None,
+        ),
+    )
+    .await;
+    let started = std::time::Instant::now();
+    let second = run_with_timeout(
+        &registry,
+        "slow-second",
+        user_request(
+            "slow-compaction-conversation",
+            "slow-user-2",
+            "continue",
+            &model.model_hash,
+            first.checkpoints.last().cloned(),
+        ),
+        Duration::from_secs(70),
+    )
+    .await;
+
+    assert!(started.elapsed() > Duration::from_secs(30));
+    assert!(
+        !matches!(&second.end_stream, EndStream::Failure { .. }),
+        "{:?}",
+        second.end_stream
+    );
+    assert_eq!(second.summary_started, 1);
+    assert_eq!(second.summary_completed, 1);
+    let stored = store
+        .load_current_messages(&ConversationId::new("slow-compaction-conversation"))
+        .await
+        .unwrap();
+    let retained = serde_json::to_string(&stored).unwrap();
+    assert!(retained.contains("slow summary part 5."));
+    assert!(retained.contains("continued after slow compaction"));
+    assert_eq!(provider.requests().len(), 4);
 }
 
 #[tokio::test]

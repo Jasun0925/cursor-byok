@@ -22,6 +22,10 @@ enum FakeResponse {
     },
     Pending,
     EventsThenPending(Vec<ModelEvent>),
+    Paced {
+        events: Vec<ModelEvent>,
+        interval: std::time::Duration,
+    },
 }
 
 #[derive(Clone, Default)]
@@ -57,6 +61,13 @@ impl FakeProvider {
             .lock()
             .unwrap()
             .push_back(FakeResponse::Pending);
+    }
+    /// Streams each event after `interval`, like a slow model writing output.
+    pub fn push_paced(&self, events: Vec<ModelEvent>, interval: std::time::Duration) {
+        self.responses
+            .lock()
+            .unwrap()
+            .push_back(FakeResponse::Paced { events, interval });
     }
     pub fn push_gated(&self, events: Vec<ModelEvent>) -> Arc<tokio::sync::Notify> {
         let ready = Arc::new(tokio::sync::Notify::new());
@@ -99,6 +110,12 @@ impl Provider for FakeProvider {
             FakeResponse::Pending => Box::pin(stream::pending()),
             FakeResponse::EventsThenPending(events) => {
                 Box::pin(stream::iter(events.into_iter().map(Ok)).chain(stream::pending()))
+            }
+            FakeResponse::Paced { events, interval } => {
+                Box::pin(stream::iter(events).then(move |event| async move {
+                    tokio::time::sleep(interval).await;
+                    Ok(event)
+                }))
             }
         }
     }

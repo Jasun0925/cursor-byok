@@ -4,8 +4,22 @@ use std::collections::HashSet;
 use super::*;
 use crate::run::compaction;
 
-/// Bound each provider call; cancellation remains active between batches.
-const AUTO_COMPACTION_DEADLINE: Duration = Duration::from_secs(30);
+/// A summary call fails when the provider sends nothing for this long. Large
+/// histories need time before the first token, and a long summary streams for
+/// well over a minute, so the wait restarts on every streamed event.
+const AUTO_COMPACTION_IDLE_LIMIT: Duration = Duration::from_secs(60);
+/// Upper bound for one summary call even while it keeps streaming.
+const AUTO_COMPACTION_CALL_LIMIT: Duration = Duration::from_secs(600);
+
+fn compaction_timeout(message: String) -> Box<crate::run::ModelCycleFailure> {
+    Box::new(crate::run::ModelCycleFailure {
+        failure: RunFailure::Provider(message),
+        partial_text: String::new(),
+        partial_reasoning: String::new(),
+        usage: None,
+        retryable: false,
+    })
+}
 
 impl RunEngine {
     pub(super) async fn auto_compact(
@@ -99,8 +113,15 @@ impl RunEngine {
             };
             let cycle_cancellation = cancellation.child_token();
             let (silent_events, mut discarded_events) = tokio::sync::mpsc::channel(256);
-            let drain =
-                tokio::spawn(async move { while discarded_events.recv().await.is_some() {} });
+            let progress = std::sync::Arc::new(tokio::sync::Notify::new());
+            let drain = {
+                let progress = progress.clone();
+                tokio::spawn(async move {
+                    while discarded_events.recv().await.is_some() {
+                        progress.notify_one();
+                    }
+                })
+            };
             let mut timed_out = false;
             let mut break_messages = None;
             let cycle = {
@@ -110,8 +131,10 @@ impl RunEngine {
                     &cycle_cancellation,
                 );
                 tokio::pin!(cycle);
-                let deadline = tokio::time::sleep(AUTO_COMPACTION_DEADLINE);
-                tokio::pin!(deadline);
+                let idle = tokio::time::sleep(AUTO_COMPACTION_IDLE_LIMIT);
+                tokio::pin!(idle);
+                let call_limit = tokio::time::sleep(AUTO_COMPACTION_CALL_LIMIT);
+                tokio::pin!(call_limit);
                 loop {
                     tokio::select! {
                         biased;
@@ -143,19 +166,26 @@ impl RunEngine {
                             }
                         },
                         result = &mut cycle => break result,
-                        _ = &mut deadline => {
+                        _ = progress.notified() => {
+                            idle.as_mut().reset(
+                                tokio::time::Instant::now() + AUTO_COMPACTION_IDLE_LIMIT,
+                            );
+                        }
+                        _ = &mut idle => {
                             timed_out = true;
                             cycle_cancellation.cancel();
-                            break Err(Box::new(crate::run::ModelCycleFailure {
-                                failure: RunFailure::Provider(format!(
-                                    "automatic compaction timed out after {} seconds",
-                                    AUTO_COMPACTION_DEADLINE.as_secs()
-                                )),
-                                partial_text: String::new(),
-                                partial_reasoning: String::new(),
-                                usage: None,
-                                retryable: false,
-                            }));
+                            break Err(compaction_timeout(format!(
+                                "automatic compaction received nothing from the model for {} seconds",
+                                AUTO_COMPACTION_IDLE_LIMIT.as_secs()
+                            )));
+                        }
+                        _ = &mut call_limit => {
+                            timed_out = true;
+                            cycle_cancellation.cancel();
+                            break Err(compaction_timeout(format!(
+                                "automatic compaction did not finish within {} seconds",
+                                AUTO_COMPACTION_CALL_LIMIT.as_secs()
+                            )));
                         }
                     }
                 }

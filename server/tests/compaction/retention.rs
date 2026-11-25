@@ -273,7 +273,8 @@ async fn check_failed_summary(kind: &str) {
             &model.model_hash,
             first.checkpoints.last().cloned(),
         ),
-        Duration::from_secs(35),
+        // A stalled summary fails after the 60 second idle limit.
+        Duration::from_secs(70),
     )
     .await;
     assert!(
