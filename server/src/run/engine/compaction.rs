@@ -21,15 +21,17 @@ fn compaction_timeout(message: String) -> Box<crate::run::ModelCycleFailure> {
     })
 }
 
+/// A summary that could not be produced, so nothing was replaced. Messages
+/// that arrived during the attempt were appended; `checkpoint` includes them.
+pub(super) struct FailedSummary {
+    pub checkpoint: crate::model::CheckpointId,
+    pub failure: RunFailure,
+    pub usage: Option<Usage>,
+}
+
 /// Why automatic compaction ended without replacing the history.
 pub(super) enum CompactionFailure {
-    /// The summary could not be produced, so nothing was replaced. Messages
-    /// that arrived during the attempt were appended; `checkpoint` includes them.
-    Summary {
-        checkpoint: crate::model::CheckpointId,
-        failure: RunFailure,
-        usage: Option<Usage>,
-    },
+    Summary(Box<FailedSummary>),
     /// The run must end with this outcome (cancellation, client loss, storage
     /// or protocol errors).
     Run(RunOutcome),
@@ -283,11 +285,11 @@ impl RunEngine {
                     pending_insertions,
                 )
                 .await?;
-                return Err(CompactionFailure::Summary {
+                return Err(CompactionFailure::Summary(Box::new(FailedSummary {
                     checkpoint,
                     failure,
                     usage: compaction_usage,
-                });
+                })));
             }
         };
         let provider_call_index = last_call_index.expect("compaction produced a summary");

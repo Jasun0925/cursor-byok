@@ -4,7 +4,7 @@ use std::time::Duration;
 
 mod compaction;
 
-use compaction::CompactionFailure;
+use compaction::{CompactionFailure, FailedSummary};
 use tokio_util::sync::CancellationToken;
 
 use crate::{
@@ -240,11 +240,12 @@ impl RunEngine {
                         }
                         continue 'model;
                     }
-                    Err(CompactionFailure::Summary {
-                        checkpoint: next_checkpoint,
-                        failure,
-                        usage: compaction_usage,
-                    }) => {
+                    Err(CompactionFailure::Summary(failed)) => {
+                        let FailedSummary {
+                            checkpoint: next_checkpoint,
+                            failure,
+                            usage: compaction_usage,
+                        } = *failed;
                         // The original history is intact. Answer from it; if the
                         // provider then refuses it as too long, the overflow path
                         // below compacts once more and fails the turn if that
@@ -522,11 +523,12 @@ impl RunEngine {
                                     }
                                     continue 'model;
                                 }
-                                Err(CompactionFailure::Summary {
-                                    failure,
-                                    usage: compaction_usage,
-                                    ..
-                                }) => {
+                                Err(CompactionFailure::Summary(failed)) => {
+                                    let FailedSummary {
+                                        failure,
+                                        usage: compaction_usage,
+                                        ..
+                                    } = *failed;
                                     if let Some(compaction_usage) = compaction_usage {
                                         accumulate_usage(&mut usage, compaction_usage);
                                     }
