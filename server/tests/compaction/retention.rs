@@ -245,11 +245,7 @@ async fn check_failed_summary(kind: &str) {
             "401 synthetic summary failure".into(),
         )),
     }
-    provider.push(text_response(
-        "must not continue from a lossy summary",
-        500,
-        10,
-    ));
+    provider.push(text_response("ANSWERED_FROM_FULL_HISTORY", 150_000, 10));
     let registry = registry(store.clone(), &provider);
     let first = run(
         &registry,
@@ -277,16 +273,27 @@ async fn check_failed_summary(kind: &str) {
         Duration::from_secs(70),
     )
     .await;
+    // A failed summary leaves the history as it was, and the turn is answered
+    // from that full history instead of failing.
     assert!(
-        matches!(second.end_stream, EndStream::Failure { .. }),
+        matches!(second.end_stream, EndStream::Success {}),
         "{:?}",
         second.end_stream
     );
-    assert_eq!(second.summary_completed, 0);
-    assert_eq!(
-        provider.requests().len(),
-        if kind == "later" { 3 } else { 2 }
-    );
+    assert_eq!(second.summary_started, 1);
+    assert_eq!(second.summary_completed, 1);
+    assert!(second.summary.is_empty());
+    let requests = provider.requests();
+    let summary_calls = if kind == "later" { 2 } else { 1 };
+    assert_eq!(requests.len(), 2 + summary_calls);
+    let answer = requests.last().unwrap();
+    assert!(!answer.prompt.tools.is_empty());
+    let answered_from = serde_json::to_string(&answer.history).unwrap();
+    assert!(answered_from.contains("ORIGINAL_GOAL"));
+    assert!(answered_from.contains(&original_answer));
+    assert!(answered_from.contains("CURRENT_REQUEST"));
+    assert!(!answered_from.contains("<conversation_summary>"));
+    assert!(!answered_from.contains("UNCOMMITTED_"));
     let retained = store
         .load_current_messages(&ConversationId::new("retention-failed"))
         .await
@@ -295,8 +302,214 @@ async fn check_failed_summary(kind: &str) {
     assert!(retained.contains("ORIGINAL_GOAL"));
     assert!(retained.contains(&original_answer));
     assert!(retained.contains("CURRENT_REQUEST"));
+    assert!(retained.contains("ANSWERED_FROM_FULL_HISTORY"));
     assert!(!retained.contains("<conversation_summary>"));
     assert!(!retained.contains("UNCOMMITTED_"));
+}
+
+#[tokio::test]
+async fn provider_refusal_after_failed_summary_compacts_once_more_then_fails() {
+    let (_directory, store) = fixtures::temp_store().await;
+    let model = store
+        .create_model(&windowed_model("refusal-after-failure", Some(100_000)))
+        .await
+        .unwrap();
+    let provider = fake_provider::FakeProvider::default();
+    let original_answer = format!("COMPLETED_DO_NOT_REPEAT {}", "x".repeat(400_000));
+    provider.push(text_response(&original_answer, 150_000, 100_000));
+    // Preflight summary fails, so the model is called with the full history.
+    provider.push_error(cursor_server::Error::Provider(
+        "401 first summary failure".into(),
+    ));
+    // The provider refuses that history as too long; the overflow path gets
+    // one more summary attempt, and its failure ends the turn.
+    provider.push_error(cursor_server::Error::Provider(
+        "context_length_exceeded".into(),
+    ));
+    provider.push_error(cursor_server::Error::Provider(
+        "401 second summary failure".into(),
+    ));
+    provider.push(text_response("MUST_NOT_BE_REQUESTED", 500, 10));
+    let registry = registry(store.clone(), &provider);
+    let first = run(
+        &registry,
+        "refusal-after-failure-1",
+        user_request(
+            "refusal-after-failure",
+            "u1",
+            "ORIGINAL_GOAL",
+            &model.model_hash,
+            None,
+        ),
+    )
+    .await;
+    let second = run(
+        &registry,
+        "refusal-after-failure-2",
+        user_request(
+            "refusal-after-failure",
+            "u2",
+            "CURRENT_REQUEST",
+            &model.model_hash,
+            first.checkpoints.last().cloned(),
+        ),
+    )
+    .await;
+    assert!(
+        matches!(&second.end_stream, EndStream::Failure { error }
+            if error.message.contains("second summary failure")),
+        "{:?}",
+        second.end_stream
+    );
+    assert_eq!(second.summary_started, 2);
+    // Only the preflight failure closes the indicator; the failing overflow
+    // summary ends the turn instead.
+    assert_eq!(second.summary_completed, 1);
+    let requests = provider.requests();
+    assert_eq!(requests.len(), 4);
+    assert!(requests[1].prompt.tools.is_empty());
+    assert!(!requests[2].prompt.tools.is_empty());
+    assert!(requests[3].prompt.tools.is_empty());
+    let retained = store
+        .load_current_messages(&ConversationId::new("refusal-after-failure"))
+        .await
+        .unwrap();
+    let retained = serde_json::to_string(&retained).unwrap();
+    assert!(retained.contains(&original_answer));
+    assert!(retained.contains("CURRENT_REQUEST"));
+    assert!(!retained.contains("<conversation_summary>"));
+}
+
+#[tokio::test]
+async fn failed_preflight_summary_is_not_retried_after_a_tool_round() {
+    use cursor_server::{
+        model::{
+            CanonicalMessage, ModelSpec, PreparedRun, PromptSpec, RunAction, RunId, RunKind,
+            ToolResult,
+        },
+        run::{self, RunEngine, RunEvent, RunOutcome},
+    };
+    let (_directory, store) = fixtures::temp_store().await;
+    let model = store
+        .create_model(&windowed_model("no-summary-retry", Some(100_000)))
+        .await
+        .unwrap();
+    let provider = fake_provider::FakeProvider::default();
+    let original_answer = format!("COMPLETED_DO_NOT_REPEAT {}", "x".repeat(400_000));
+    provider.push(text_response(&original_answer, 150_000, 100_000));
+    provider.push_error(cursor_server::Error::Provider(
+        "401 synthetic summary failure".into(),
+    ));
+    provider.push(vec![
+        ModelEvent::Start {
+            model_call_id: "tool-call".into(),
+        },
+        ModelEvent::ToolCallStart {
+            index: 0,
+            call_id: "call-1".into(),
+            name: "Read".into(),
+        },
+        ModelEvent::ToolCallArgumentsDelta {
+            index: 0,
+            delta: "{\"path\":\"/tmp/a\"}".into(),
+        },
+        ModelEvent::ToolCallEnd { index: 0 },
+        ModelEvent::Done(FinishReason::ToolUse),
+    ]);
+    // A second summary attempt would take this response as its summary.
+    provider.push(text_response("FINAL_ANSWER", 150_000, 10));
+    let registry = registry(store.clone(), &provider);
+    run(
+        &registry,
+        "no-summary-retry-seed",
+        user_request(
+            "no-summary-retry",
+            "goal",
+            "ORIGINAL_GOAL",
+            &model.model_hash,
+            None,
+        ),
+    )
+    .await;
+    let conversation_id = ConversationId::new("no-summary-retry");
+    let mut spec = ModelSpec::new(&model.model_hash);
+    spec.context_window_tokens = Some(100_000);
+    let prepared = PreparedRun {
+        run_id: RunId::new("no-summary-retry-run"),
+        cursor_request_id: None,
+        base_checkpoint_id: store.ensure_conversation(&conversation_id).await.unwrap(),
+        conversation_id: conversation_id.clone(),
+        kind: RunKind::Root,
+        model: spec,
+        prompt: PromptSpec {
+            instructions: "continue".into(),
+            tools: Vec::new(),
+        },
+        initial_messages: vec![CanonicalMessage::text(
+            "current",
+            Role::User,
+            Origin::User,
+            "CURRENT_REQUEST",
+        )],
+        action: RunAction::Start,
+    };
+    let (port, mut session, handle) = run::channel(prepared.run_id.clone(), 32);
+    let cancellation = handle.cancellation();
+    let engine = tokio::spawn({
+        let store = store.clone();
+        let provider = provider.clone();
+        async move {
+            RunEngine::new(store, Arc::new(provider))
+                .run(prepared, port, cancellation)
+                .await
+        }
+    });
+    let events = tokio::spawn(async move {
+        let (mut started, mut failed, mut completed) = (0, 0, 0);
+        while let Some(event) = session.events.recv().await {
+            match event {
+                RunEvent::MessagesCommitted(committed) => committed.barrier.complete(Ok(())),
+                RunEvent::ExecuteToolRound { calls, .. } => {
+                    for call in calls {
+                        handle
+                            .tool_result(ToolResult {
+                                call_id: call.call_id,
+                                content: "TOOL_OUTPUT".into(),
+                                is_error: false,
+                                image: None,
+                            })
+                            .await;
+                    }
+                }
+                RunEvent::AutoCompactionStarted => started += 1,
+                RunEvent::AutoCompactionFailed => failed += 1,
+                RunEvent::AutoCompactionCompleted => completed += 1,
+                RunEvent::Ended(_) => break,
+                _ => {}
+            }
+        }
+        (started, failed, completed)
+    });
+    assert_eq!(
+        tokio::time::timeout(Duration::from_secs(10), engine)
+            .await
+            .unwrap()
+            .unwrap(),
+        RunOutcome::Completed
+    );
+    assert_eq!(events.await.unwrap(), (1, 1, 0));
+    let requests = provider.requests();
+    assert_eq!(requests.len(), 4);
+    let last = serde_json::to_string(&requests[3].history).unwrap();
+    assert!(last.contains(&original_answer));
+    assert!(last.contains("CURRENT_REQUEST"));
+    assert!(last.contains("TOOL_OUTPUT"));
+    assert!(!last.contains("<conversation_summary>"));
+    let retained =
+        serde_json::to_string(&store.load_current_messages(&conversation_id).await.unwrap())
+            .unwrap();
+    assert!(retained.contains("FINAL_ANSWER"));
+    assert!(!retained.contains("<conversation_summary>"));
 }
 
 #[tokio::test]

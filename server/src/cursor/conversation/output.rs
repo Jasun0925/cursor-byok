@@ -265,6 +265,12 @@ impl ConversationOutput {
                     RunEvent::AutoCompactionCompleted => {
                         self.handle.emit(&events::summary_completed())?;
                     }
+                    RunEvent::AutoCompactionFailed => {
+                        // Cursor has no failed-summary update. Closing the
+                        // summary indicator lets the turn continue normally;
+                        // no summary text or checkpoint is sent with it.
+                        self.handle.emit(&events::summary_completed())?;
+                    }
                     RunEvent::CycleInterrupted => {
                         response_text.clear();
                         response_thinking.clear();

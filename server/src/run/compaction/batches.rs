@@ -108,8 +108,8 @@ impl Batches {
         if self.messages.is_empty() {
             return Ok(None);
         }
-        let budget = super::context_budget(context_window.unwrap_or(DEFAULT_CONTEXT_WINDOW))
-            .saturating_sub(super::OUTPUT_TOKENS);
+        let window = context_window.unwrap_or(DEFAULT_CONTEXT_WINDOW);
+        let budget = super::context_budget(window).saturating_sub(super::output_tokens(window));
         let mut history = Vec::new();
         if !summary.is_empty() {
             history.push(text_message(
@@ -311,11 +311,11 @@ mod tests {
             assert!(!wire.contains("PRIVATE_REASONING_MUST_NOT_LEAK"));
             assert!(
                 wire.chars().filter(|ch| !ch.is_ascii()).count() as u64
-                    + super::super::OUTPUT_TOKENS
+                    + super::super::output_tokens(window)
                     <= super::super::context_budget(window)
             );
             assert!(
-                estimate_context_tokens(&prompt, &batch) + super::super::OUTPUT_TOKENS
+                estimate_context_tokens(&prompt, &batch) + super::super::output_tokens(window)
                     <= super::super::context_budget(window)
             );
             assert!(batch.iter().all(|message| message.role == Role::User));

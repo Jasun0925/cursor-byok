@@ -23,7 +23,17 @@ use crate::{
 /// there was room. A proportional reserve absorbs that drift and scales with
 /// the model: a 200K window keeps 20K free and a 1M window keeps 100K.
 const CONTEXT_RESERVE_DIVISOR: u64 = 10;
-pub(super) const OUTPUT_TOKENS: u64 = 4_096;
+/// Output limit range for one summary call. Long agent sessions carry many
+/// files, commands, and decisions, and 4K tokens cut those summaries short.
+/// Windows of 32K or less keep 4K so each input batch still has room.
+const MIN_OUTPUT_TOKENS: u64 = 4_096;
+const MAX_OUTPUT_TOKENS: u64 = 8_192;
+
+/// Output tokens reserved for a summary call against `context_window`: an
+/// eighth of the window, kept between 4K and 8K.
+pub(super) fn output_tokens(context_window: u64) -> u64 {
+    (context_window / 8).clamp(MIN_OUTPUT_TOKENS, MAX_OUTPUT_TOKENS)
+}
 pub(super) const INSTRUCTIONS: &str = "Summarize the conversation for the next model turn. Preserve goals, constraints, decisions, files, commands, errors, results, and unfinished work. Do not call tools. Return only the concise durable summary.";
 
 pub(super) fn instructions() -> crate::Result<String> {
@@ -157,6 +167,16 @@ mod tests {
             action: RunAction::Start,
             base_checkpoint_id: CheckpointId(1),
         }
+    }
+
+    #[test]
+    fn summary_output_is_an_eighth_of_the_window_between_4k_and_8k() {
+        assert_eq!(output_tokens(7_000), 4_096);
+        assert_eq!(output_tokens(32_768), 4_096);
+        assert_eq!(output_tokens(48_000), 6_000);
+        assert_eq!(output_tokens(65_536), 8_192);
+        assert_eq!(output_tokens(200_000), 8_192);
+        assert_eq!(output_tokens(1_000_000), 8_192);
     }
 
     #[test]

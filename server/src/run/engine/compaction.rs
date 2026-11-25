@@ -21,6 +21,26 @@ fn compaction_timeout(message: String) -> Box<crate::run::ModelCycleFailure> {
     })
 }
 
+/// Why automatic compaction ended without replacing the history.
+pub(super) enum CompactionFailure {
+    /// The summary could not be produced, so nothing was replaced. Messages
+    /// that arrived during the attempt were appended; `checkpoint` includes them.
+    Summary {
+        checkpoint: crate::model::CheckpointId,
+        failure: RunFailure,
+        usage: Option<Usage>,
+    },
+    /// The run must end with this outcome (cancellation, client loss, storage
+    /// or protocol errors).
+    Run(RunOutcome),
+}
+
+impl From<RunOutcome> for CompactionFailure {
+    fn from(outcome: RunOutcome) -> Self {
+        Self::Run(outcome)
+    }
+}
+
 impl RunEngine {
     pub(super) async fn auto_compact(
         &self,
@@ -29,7 +49,7 @@ impl RunEngine {
         messages: &[CanonicalMessage],
         client: &mut RunPort,
         cancellation: &CancellationToken,
-    ) -> std::result::Result<(crate::model::CheckpointId, Option<Usage>), RunOutcome> {
+    ) -> std::result::Result<(crate::model::CheckpointId, Option<Usage>), CompactionFailure> {
         let current_ids = prepared
             .initial_messages
             .iter()
@@ -45,7 +65,7 @@ impl RunEngine {
                     "context overflow after compaction: no conversation history can be compacted"
                         .into()
                 });
-            return Err(RunOutcome::Failed(RunFailure::Protocol(message)));
+            return Err(RunOutcome::Failed(RunFailure::Protocol(message)).into());
         }
 
         emit(client, RunEvent::AutoCompactionStarted)
@@ -61,7 +81,8 @@ impl RunEngine {
         let mut batches = compaction::Batches::new(history, prepared.model.strip_images)
             .map_err(|error| RunOutcome::Failed(error.into()))?;
         let mut model = prepared.model.clone();
-        model.max_output_tokens = Some(compaction::OUTPUT_TOKENS);
+        // A lower output limit configured for the model still applies.
+        let configured_output = model.max_output_tokens.filter(|&limit| limit > 0);
         model.reasoning.enabled = false;
         model.reasoning.effort = None;
         let prompt = crate::model::PromptSpec {
@@ -82,7 +103,7 @@ impl RunEngine {
             .unwrap_or(compaction::DEFAULT_CONTEXT_WINDOW);
         let summary_result = loop {
             if cancellation.is_cancelled() {
-                return Err(RunOutcome::Cancelled);
+                return Err(RunOutcome::Cancelled.into());
             }
             let next = match retry_history.take() {
                 Some(history) => Ok(Some(history)),
@@ -107,7 +128,14 @@ impl RunEngine {
                 provider_call_index,
                 request: crate::model::ModelRequest {
                     prompt: prompt.clone(),
-                    model: model.clone(),
+                    model: crate::model::ModelSpec {
+                        max_output_tokens: Some(
+                            configured_output
+                                .unwrap_or(u64::MAX)
+                                .min(compaction::output_tokens(summary_window)),
+                        ),
+                        ..model.clone()
+                    },
                     history: history.clone(),
                 },
             };
@@ -150,19 +178,20 @@ impl RunEngine {
                             Some(RunCommand::Cancel) => {
                                 cycle_cancellation.cancel();
                                 let _ = cycle.await;
-                                return Err(RunOutcome::Cancelled);
+                                return Err(RunOutcome::Cancelled.into());
                             }
                             Some(RunCommand::ToolResult(_)) => {
                                 cycle_cancellation.cancel();
                                 let _ = cycle.await;
                                 return Err(RunOutcome::Failed(RunFailure::Protocol(
                                     "received a tool result while automatic compaction was running".into(),
-                                )));
+                                ))
+                                .into());
                             }
                             None => {
                                 cycle_cancellation.cancel();
                                 let _ = cycle.await;
-                                return Err(client_failure());
+                                return Err(client_failure().into());
                             }
                         },
                         result = &mut cycle => break result,
@@ -224,7 +253,7 @@ impl RunEngine {
                 ),
             };
             if compaction::is_context_overflow(&format!("{failure:?}"))
-                && summary_window > compaction::OUTPUT_TOKENS * 2
+                && summary_window > compaction::output_tokens(summary_window) * 2
             {
                 summary_window /= 2;
                 batches.rewind(history);
@@ -245,7 +274,7 @@ impl RunEngine {
             Err(failure) => {
                 // Incoming messages belong to the conversation even if summarization
                 // failed. No partial summary has been committed at this point.
-                crate::run::messages::append_batches(
+                let (checkpoint, _) = crate::run::messages::append_batches(
                     &self.store,
                     prepared,
                     client,
@@ -254,7 +283,11 @@ impl RunEngine {
                     pending_insertions,
                 )
                 .await?;
-                return Err(RunOutcome::Failed(failure));
+                return Err(CompactionFailure::Summary {
+                    checkpoint,
+                    failure,
+                    usage: compaction_usage,
+                });
             }
         };
         let provider_call_index = last_call_index.expect("compaction produced a summary");

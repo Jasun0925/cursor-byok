@@ -4,6 +4,7 @@ use std::time::Duration;
 
 mod compaction;
 
+use compaction::CompactionFailure;
 use tokio_util::sync::CancellationToken;
 
 use crate::{
@@ -192,6 +193,10 @@ impl RunEngine {
         // per run. A second refusal after compacting means the current input
         // itself does not fit, and compacting again would only destroy history.
         let mut overflow_compacted = false;
+        // A failed preflight summary is not retried within the run: the model
+        // is called with the full history instead, and each tool round would
+        // otherwise pay for another summary attempt that is likely to fail.
+        let mut preflight_compaction_failed = false;
         'model: loop {
             if cancellation.is_cancelled() {
                 return (RunOutcome::Cancelled, usage);
@@ -219,6 +224,10 @@ impl RunEngine {
                 {
                     return (client_failure(), usage);
                 }
+            }
+            if let Some(estimated_tokens) =
+                compaction_estimate.filter(|_| !preflight_compaction_failed)
+            {
                 match self
                     .auto_compact(prepared, checkpoint, &messages, client, cancellation)
                     .await
@@ -231,7 +240,32 @@ impl RunEngine {
                         }
                         continue 'model;
                     }
-                    Err(outcome) => return (outcome, usage),
+                    Err(CompactionFailure::Summary {
+                        checkpoint: next_checkpoint,
+                        failure,
+                        usage: compaction_usage,
+                    }) => {
+                        // The original history is intact. Answer from it; if the
+                        // provider then refuses it as too long, the overflow path
+                        // below compacts once more and fails the turn if that
+                        // summary fails too.
+                        tracing::warn!(
+                            ?failure,
+                            estimated_tokens,
+                            checkpoint_id = next_checkpoint.0,
+                            "automatic compaction failed; continuing with the full history"
+                        );
+                        checkpoint = next_checkpoint;
+                        preflight_compaction_failed = true;
+                        if let Some(compaction_usage) = compaction_usage {
+                            accumulate_usage(&mut usage, compaction_usage);
+                        }
+                        if emit(client, RunEvent::AutoCompactionFailed).await.is_err() {
+                            return (client_failure(), usage);
+                        }
+                        continue 'model;
+                    }
+                    Err(CompactionFailure::Run(outcome)) => return (outcome, usage),
                 }
             }
             let provider_call_index = match self.store.begin_provider_call(&prepared.run_id).await {
@@ -488,7 +522,17 @@ impl RunEngine {
                                     }
                                     continue 'model;
                                 }
-                                Err(outcome) => return (outcome, usage),
+                                Err(CompactionFailure::Summary {
+                                    failure,
+                                    usage: compaction_usage,
+                                    ..
+                                }) => {
+                                    if let Some(compaction_usage) = compaction_usage {
+                                        accumulate_usage(&mut usage, compaction_usage);
+                                    }
+                                    return (RunOutcome::Failed(failure), usage);
+                                }
+                                Err(CompactionFailure::Run(outcome)) => return (outcome, usage),
                             }
                         }
                         if !should_retry(&cycle_failure, retries) {

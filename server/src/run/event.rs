@@ -107,6 +107,9 @@ pub struct MessagesCommitted {
 pub enum RunEvent {
     AutoCompactionStarted,
     AutoCompactionCompleted,
+    /// The summary failed, the history was left as it was, and the run
+    /// continues with it.
+    AutoCompactionFailed,
     CycleInterrupted,
     ModelAttemptFailed {
         attempt: u32,
